@@ -1,0 +1,126 @@
+ .dashboard {
+     text-align: center;
+     margin: 20px auto;
+     display: flex;
+     flex-direction: column;
+     justify-content: center;
+     align-items: center;
+     width: 100%;
+ }
+ .cardsContainer{
+     display: flex;
+     justify-content: center;
+     flex-direction: column;
+     margin: 0 auto;
+     text-align: center;
+ }
+
+     .userManagement {
+         margin: 60px auto;
+         text-align: center;
+         padding: 20px;
+         font-family: 'Inter', sans-serif;
+         background: radial-gradient(circle at 10% 50%, #5ff, #00b8b8 40%, #003333);
+         border-radius: 12px;
+         box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+         max-width: 1200px;
+     }
+
+     .subtitle {
+         font-size: 1.8rem;
+         font-weight: 600;
+         margin-bottom: 20px;
+         color: var(--color-black);
+     }
+
+     .table {
+         width: 100%;
+         border-collapse: separate;
+         border-spacing: 0 8px;
+     }
+
+     .table thead tr {
+         background-color: var(--color-active);
+         color: white;
+         text-align: left;
+     }
+
+     .table th, .table td {
+         padding: 12px 16px;
+     }
+
+     .table tr:hover {
+         background-color: var(--color-text);
+         cursor: pointer;
+     }
+
+     .table tbody tr {
+         background-color: var(--color-white);
+         border-radius: 10px;
+         box-shadow: 0 0.25rem 0.75rem var(--color-text);
+         transition: all 0.2s ease;
+     }
+
+     .table tbody tr:hover {
+         transform: translateY(-2px);
+         box-shadow: 0 0.25rem 0.75rem var(--color-border);
+     }
+
+     .actions {
+         display: flex;
+         justify-content: flex-end;
+         gap: 6px;
+         flex-wrap: wrap;
+     }
+
+     .statusActive {
+         color: var(--color-container);
+     }
+
+     .actions button {
+         color: var(--color-white);
+         border: none;
+         border-radius: 20px;
+         cursor: pointer;
+         font-size: 0.85rem;
+         font-weight: 500;
+         transition: all 0.2s ease;
+         justify-content: center;
+         align-items: center;
+         width: 80px;
+         height: 30px;
+     }
+
+     .actions button:hover {
+         background-color: var(--color-border);
+     }
+
+     .deleteButton {
+         background-color: #ef4444;
+     }
+
+     .deleteButton:hover {
+         background-color: var(--color-border);
+     }
+
+     .blockButton {
+         background-color: #9c8611;
+         color: white;
+         border: none;
+         display: flex;
+         border-radius: 4px;
+     }
+
+     .unblockButton {
+         background-color: var(--color-active);
+         color: var(--color-white);
+         border: none;
+         border-radius: 4px;
+         justify-content: center;
+         align-items: center;
+         width: 80px;
+         height: 30px;
+     }
+     .errorText{
+         color: var(--color-border);
+     }

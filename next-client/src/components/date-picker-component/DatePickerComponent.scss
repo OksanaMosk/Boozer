@@ -1,0 +1,211 @@
+.cal-container {
+  width: 330px;
+  color: #000;
+    padding: 1rem;
+    border-radius: 2rem;
+    border: 1px solid var(--color-white);
+    outline: none;
+background-color: transparent;
+  box-shadow: 0 25px 50px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.2);
+  animation: float 6s ease-in-out infinite;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+.cal-container:hover {
+    transform: translateY(-8px) scale(1.02);
+}
+
+  &.darkmode {
+    background-color: transparent;
+    color: #fff;
+  }
+.cal-container:focus {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+  .cal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 1rem;
+    height: 3rem;
+
+    .cal-header-title {
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      user-select: none;
+      font-size: 1.4rem;
+  background: linear-gradient(90deg, #30240b, white, #30240b);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+
+      &.rotate svg {
+        transition: transform 0.4s ease-in-out;
+        transform: rotate(180deg);
+      }
+
+      &.rotatereverse svg {
+        transition: all 0.4s ease-in-out;
+        transform: rotate(0deg);
+      }
+    }
+
+    .cal-header-btn {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      margin-top: 7px;
+
+      button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background-color: transparent;
+        border:none;
+        outline: none;
+        cursor: pointer;
+        font-size: 1.5rem;
+        padding: 8px 11px;
+        border-radius: 50%;
+
+        &:hover {
+          background-color: rgba(0, 0, 0, 0.1);
+        }
+      }
+    }
+  }
+
+  .cal-group {
+    display: flex;
+    flex-direction: column;
+    padding: 5px;
+
+    .cal-group-header {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      padding: 5px 0;
+
+      span {
+        text-align: center;
+        font-size: 0.75rem;
+        user-select: none;
+
+        .darkmode & {
+          color: white !important;
+        }
+      }
+    }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+
+      .calendar-cell,
+      .calendar-cell-null {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        margin: 2px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.75rem;
+        font-weight: 400;
+        cursor: pointer;
+        text-decoration: none;
+      }
+
+      .calendar-cell {
+        background-color: transparent;
+         border: none;
+          outline: none;
+
+        &.selected {
+          background: linear-gradient(90deg, #7a5c1e, #d4af37, #f5e6a1, #d4af37, #7a5c1e);
+          color: black;
+          border: none;
+          outline: none;
+
+          &:hover {
+            background-color: slategray !important;
+          }
+        }
+
+        &.today {
+          background: linear-gradient(90deg, #30240b, white, #30240b);
+          color: black !important;
+        }
+
+        &:hover {
+          background: linear-gradient(90deg, #f5e6a1, white, #d4af37);
+          color: black;
+        }
+ &:focus {
+          background: linear-gradient(90deg, #7a5c1e, #d4af37, #f5e6a1, #d4af37, #7a5c1e);
+        }
+
+        .darkmode & {
+          color: white;
+        }
+      }
+
+      .calendar-cell-null {
+        background-color: transparent;
+        border: none;
+        cursor: default;
+      }
+
+      .fade {
+        animation: fade 0.5s ease-in-out;
+      }
+
+      @keyframes fade {
+        0% { opacity: 0; }
+        100% { opacity: 1; }
+      }
+    }
+  }
+
+  .cal-years-group {
+    height: 215px;
+    overflow-y: scroll;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    padding: 0 1rem;
+
+    button {
+      background-color: transparent;
+      border: none;
+      outline: none;
+      height: 40px;
+      cursor: pointer;
+      border-radius: 50%;
+
+      &.selected {
+        background: linear-gradient( #7a5c1e, #ffffff);
+        color: #fff;
+
+        &:hover {
+          background-color:slategray;
+        }
+        &:focus {
+          background: linear-gradient(90deg, #7a5c1e, #d4af37, #f5e6a1, #d4af37, #7a5c1e);
+        }
+      }
+
+      &:hover {
+        background-color:slategray;
+      }
+&:focus {
+        background: linear-gradient(90deg, #7a5c1e, #d4af37, #f5e6a1, #d4af37, #7a5c1e);
+      }
+      .darkmode & {
+        color: white;
+      }
+    }
+  }
+}

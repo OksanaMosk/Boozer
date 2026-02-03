@@ -1,0 +1,146 @@
+:root {
+   --font-playfair: "Playfair Display", serif;
+   --font-imperial: "Imperial Script", cursive;
+    --font-roboto: "Roboto", sans-serif ;
+  --color-disabled: #6b7280;
+  --color-active: #00b8b8;
+  --color-border: #003333;
+  --color-text: #5ff;
+  --color-badgeId: #1e9c9c;
+  --color-noposter: #374151;
+  --color-white: #ffffff;
+  --color-container: #1f2937;
+    --color-black: black;
+
+    --color-bg-dark: #0b0c0e;
+--color-bg-light: #f5f5f5;
+--color-text-main: #ffffff;
+--color-text-muted: #9a9a9a;
+--color-accent: #c7a46a;
+}
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-playfair), serif;
+    width: 100%;
+  font-optical-sizing: auto;
+  font-style: normal;
+  font-variation-settings: "wdth" 100;
+  margin: 0 auto;
+  scroll-behavior: smooth;
+  min-height: 100vh;
+}
+
+ a {
+    text-decoration: none;
+}
+
+
+ input, textarea, select, button {
+ font-family: var(--font-playfair), serif;
+  font-weight: 600;
+  font-style: italic;
+}
+
+html.light body {
+  background:
+    url("/images/light-background11.jpg") no-repeat center center / cover;
+
+
+  .burgerMenu {
+    background:
+            url("/images/light-background1.jpg") no-repeat center center / cover,
+            radial-gradient(circle at 30% 30%, #5ff, #00b8b8 40%, #003333);
+  }
+
+  .search-input,
+  .sort-select{
+    background-color: var(--color-white);
+  }
+
+  .search-button,
+  .search-input,
+  .noResults,
+  .search-input::placeholder {
+    color: var(--color-container);
+  }
+
+  .search-button:focus,
+  .search-button:active,
+  .search-button:hover,
+  .carTitle {
+    color: var(--color-badgeId);
+  }
+
+  .search-input:focus {
+    opacity: 0.7;
+  }
+
+  .sort-label,
+  .search-clearButton {
+    color: var(--color-white);
+  }
+
+  .carItem {
+    box-shadow: none;
+    border-bottom: 1px solid var(--color-active);
+  }
+
+  .loader {
+    fill: var(--color-container);
+  }
+
+  .loader-run {
+    fill: var(--color-active);
+  }
+
+  .auth {
+  background-color:transparent;
+
+  }
+
+  .burgerUserLogoutBtn {
+    color: black;
+  }
+
+  .slideheading{
+    color: var(--color-container);
+  }
+
+  .cell{
+   background:black;
+  }
+
+}
+
+html.dark {
+    body,
+    .burgerMenu {
+       background:
+    url("/images/dark-background.jpg") no-repeat center center / cover;
+
+
+    .registerMessage {
+        color: var(--color-text);
+    }
+
+    .mainTitle {
+        background: linear-gradient(var(--color-active), var(--color-badgeId));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .cell {
+        background: var(--color-active);
+    }
+
+}
+::-webkit-scrollbar {
+  display: none;
+}
+figure {
+    margin: 0;
+    overflow: hidden;
+}

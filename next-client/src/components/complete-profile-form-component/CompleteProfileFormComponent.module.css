@@ -1,0 +1,220 @@
+.centerContainer {
+    display: flex;
+      flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+  position: relative;
+    padding-bottom: 40px;
+     height: 100%;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: transparent;
+    padding: 2.5rem;
+    border-radius: 1.5rem;
+    width: 380px;
+ backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+      box-shadow: 0 0 12px white;
+    animation: float 6s ease-in-out infinite;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 25px 50px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.2);
+}
+@keyframes float {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
+    100% { transform: translateY(0); }
+}
+
+.title {
+    margin: 12px auto;
+       font-size: 2rem;
+    text-align: center;
+    font-weight: 800;
+    text-shadow: 0 0 8px rgba(255,255,255,0.3);
+     background: linear-gradient(90deg, #30240b, white);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+}
+
+.inputGroup,
+.inputDate {
+    position: relative;
+    width: 100%;
+    margin-bottom: 1rem;
+}
+.input,
+.inputDate {
+    width: 100%;
+    padding: 0.5rem 2.5rem 0.5rem 1rem;
+    border-radius: 1.5rem;
+    color: var(--color-white);
+    border: 1px solid var(--color-white);
+    outline: none;
+    background-color: transparent;
+    box-sizing: border-box;
+    height: 40px;
+}
+
+.input:focus {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+.icon {
+    position: absolute;
+ top: 50%;
+  right: 1rem;
+  transform: translateY(-50%);
+    cursor: pointer;
+}
+
+.error {
+     margin: 0;
+    padding: 0;
+   background: linear-gradient(90deg, #7a5c1e, #d4af37, #f5e6a1, #d4af37, #7a5c1e);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+    font-size: 0.6rem;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.inputError {
+    margin: 0;
+    padding: 0;
+    max-height: 40px;
+}
+.checkboxGroup{
+    font-size: 0.6rem;
+
+}
+.checkboxGroup label {
+  display: flex;
+  align-items: center;
+}
+
+.checkboxGroup .checkbox {
+    border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  margin-right: 10px;
+  cursor: pointer;
+    align-items: center;
+    justify-content: center;
+}
+
+.checkboxGroup {
+  display: flex;
+  align-items: center;
+    justify-content: center;
+  padding: 10px;
+}
+
+.checkbox {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.checkboxInput {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.checkboxSpan {
+  width: 20px;
+  height: 20px;
+  background-color: transparent;
+    border: 1px solid #30240b;
+  border-radius: 0.25rem;
+  display: inline-block;
+  margin-right: 10px;
+  transition: background-color 0.3s ease;
+  position: relative;
+}
+
+.checkboxInput:checked + .checkboxSpan {
+  background-color: gold;
+}
+
+.checkboxInput:checked + .checkboxSpan::before {
+  content: '✔';
+  color: #30240b;
+  font-size: 12px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); /* Центруємо символ всередині чекбокса */
+  line-height: 20px;
+}
+
+.button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 0.5rem 1rem;
+    border-radius: 1.5rem;
+    color: #30240b;
+      background: linear-gradient(90deg, #30240b, white, #30240b);
+    cursor: pointer;
+    outline: none;
+    transition: all 0.3s ease-in-out;
+    border: 1px solid rgba(255,255,255,0.5);
+}
+.button:hover {
+   background: linear-gradient(90deg, white, #30240b, white);
+    color: white;
+}
+.bottomContainer{
+    height:100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+.registerText {
+    color:var(--color-white);
+    font-size: 0.875rem;
+    text-align: center;
+}
+.link {
+      background: linear-gradient(90deg, #7a5c1e, #d4af37, #f5e6a1, #d4af37, #7a5c1e);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+    font-size: 1rem;
+    text-decoration: none;
+}
+.link:hover {
+    text-decoration: underline;
+}
+
+.loaderWrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    transform: scale(0.2);
+}
+.calendarSidebar {
+  position: absolute;
+  left: 115%;
+top: -108px;
+  z-index: 100;
+}

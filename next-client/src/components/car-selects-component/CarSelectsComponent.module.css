@@ -1,0 +1,23 @@
+.filters label {
+  font-weight: 500;
+  margin-right: 6px;
+
+}
+.filters{
+    outline: none;
+  display: flex;
+    width: 100%;
+    justify-content: space-between;
+
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 20px;
+  align-items: center;
+}
+.select{
+  padding: 6px;
+  border: 1px solid var(--color-white);
+  font-size: 1rem;
+    border-radius: 2rem;
+    cursor: pointer;
+}

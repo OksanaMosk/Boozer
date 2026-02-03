@@ -1,0 +1,73 @@
+.burgerMenu {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 30vw;
+    height: 100vh;
+    box-shadow: 0 0.625rem 1.25rem rgba(191, 219, 254, 0.5);
+    z-index: 999;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 2rem;
+    gap: 1.5rem;
+    transition: transform 0.3s ease-in-out;
+    animation: slideIn 0.3s ease forwards;
+}
+
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+    }
+    to {
+        transform: translateX(0);
+    }
+}
+.closeBtn {
+    align-self: flex-end;
+    font-size: 2rem;
+    color: var(--color-active);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+.closeBtn:hover {
+    color: var(--color-badgeId);
+}
+.burgerLink {
+    font-size: 1.5rem;
+    font-weight: 500;
+    text-decoration: none;
+    padding: 0.5rem 0;
+    transition: color 0.2s;
+
+}
+.burgerLink:hover {
+    color: var(--color-badgeId);
+}
+
+.burgerUserContainer {
+    padding: 1.5rem;
+    flex-direction: column;
+    gap: 2rem;
+    justify-content: flex-start;
+    align-items: center;
+}
+.burgerUserAvatar {
+    width: 4rem;
+    height:4rem;
+    font-size: 1.5rem;
+}
+.burgerUserInfo {
+    gap:1.2rem;
+}
+.burgerUserWelcome {
+    font-size:1.2rem;
+}
+.burgerUserEmail,
+.burgerUserLogoutBtn{
+    font-size:1.2rem;
+}

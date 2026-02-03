@@ -1,0 +1,263 @@
+.wrapper{
+    margin: 60px auto;
+  font-family: 'Inter', sans-serif;
+  width: 90%;
+  display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    background-color: inherit;
+    padding: 1rem;
+    gap: 1.5rem;
+    border-radius: 1.5rem;
+    box-shadow: 0 0 12px white;
+}
+.form{
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+}
+.subtitle{
+   margin-bottom: 1.5rem;
+}
+.inputSection {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.7rem;
+}
+
+.select{
+  padding: 2px;
+  border: 1px solid var(--color-white);
+  font-size: 0.7rem;
+    border-radius: 2rem;
+    cursor: pointer;
+}
+
+.label,
+.photoLabel{
+   height: 30px;
+  width: 100px;
+    outline: none;
+  border-radius: 2rem;
+ display: flex;
+    justify-content: center;
+    align-items: center;
+  border: 1px solid var(--color-white);
+  font-size: 0.95rem;
+    background-color: var(--color-badgeId);
+}
+.input {
+    padding: 0.5rem 2.5rem 0.5rem 1rem;
+    border-radius: 1.5rem;
+    color: var(--color-white);
+    border: 1px solid var(--color-white);
+    outline: none;
+    background-color: transparent;
+    box-sizing: border-box;
+}
+.input:focus {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+.errorMessage {
+  margin-bottom: 15px;
+  padding: 10px;
+  border-radius: 6px;
+  text-align: center;
+  font-weight: 500;
+     z-index: 1000;
+    color: var(--color-white);
+}
+
+.checkbox {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #555;
+  border-radius: 4px;
+  cursor: pointer;
+  position: relative;
+  background-color: #fff;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.checkbox:checked {
+  background-color: var(--color-border);
+  border-color: #4caf50;
+}
+
+.checkbox:checked::after {
+  content: "✔";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 14px;
+}
+
+.textareaWrapper{
+    display: flex;
+    gap: 1.5rem;
+    flex-direction: column;
+}
+.textarea{
+    min-height: 100px;
+    width: 100%;
+     padding: 1.2rem;
+    border-radius: 1.7rem;
+    color: var(--color-white);
+    border: 1px solid var(--color-white);
+    outline: none;
+    background-color: transparent;
+    box-sizing: border-box;
+    font-size: 1rem;
+    cursor: pointer;
+}
+.textarea:focus {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+.inputSection {
+  margin-bottom: 1.5rem;
+  display: flex;
+}
+
+.topSection{
+    width: 90%;
+    gap: 40px;
+    justify-content: space-between;
+    display: flex;
+       flex-direction: column;
+
+}
+.form {
+    width: 90%;
+}
+.choiceSection{
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.priceSection{
+    gap: 1rem;
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+}
+.deleteButton,
+.submitButton{
+    margin: 1.5rem auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 30%;
+    padding: 1rem;
+    border-radius: 1.5rem;
+    color:var(--color-white);
+    cursor: pointer;
+    outline: none;
+    border: none;
+    transition: all 0.3s ease-in-out;
+      background-color: var(--color-container);
+    box-shadow: 0 0 12px white;
+}
+.deleteButton:hover,
+.deleteButton:focus,
+.submitButton:hover,
+.submitButton:focus {
+    background-color:  var(--color-border);
+    color:  var(--color-white);
+    cursor: pointer;
+}
+.loaderWrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    transform: scale(0.2);
+}
+.photoWrapper {
+    margin: 1.5rem auto 2rem;
+    width: 100%;
+    display: flex;
+    gap: 1.5rem;
+    flex-direction: column;
+    flex-wrap: wrap;
+}
+.deleteButton{
+    border-radius: 50%;
+    font-size: 0.7rem;
+margin: 1.5rem auto;
+}
+.photoLabel{
+    cursor: pointer;
+       padding: 0.4rem;
+    width: 200px;
+}
+.load{
+    display: flex;
+    justify-content: space-between;
+    gap: 0.7rem;
+    cursor: pointer;
+    flex-wrap: wrap;
+}
+
+.photoImage{
+    border-radius: 1rem;
+    width: 140px;
+    height: 100px;
+    box-shadow: 0 0 12px white;
+}
+.photoArray{
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+}
+.deleteButton{
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+@media (min-width: 768px) {
+    .wrapper {
+        max-width: 800px;
+    }
+
+    .select {
+        padding: 6px;
+        border: 1px solid var(--color-white);
+        font-size: 1rem;
+        border-radius: 2rem;
+        cursor: pointer;
+    }
+.select {
+    padding: 6px;
+    font-size: 1rem;
+}
+    .label,
+    .photoLabel {
+        height: 30px;
+        width: 100px;
+        font-size: 0.95rem;
+    }
+    .choiceSection{
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+    .topSection {
+        width: 100%;
+        flex-direction: row;
+    }
+    .inputSection {
+        flex-direction: row;
+    }
+}

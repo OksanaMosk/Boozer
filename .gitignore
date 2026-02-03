@@ -1,17 +1,35 @@
-# Python
+# ===== Python =====
 .venv/
+venv/
+env/
 __pycache__/
-*.pyc
-*.pyo
-*.pyd
+*.py[cod]
 
-# PyCharm
+# ===== IDE =====
 .idea/
+.vscode/
 
-
-# Env
+# ===== Environment =====
 #.env
+#.env.*
+!.env.example
 
-# MySQL / Docker
+# ===== Logs / cache =====
+*.log
+.pytest_cache/
+.mypy_cache/
+
+# ===== MySQL / Docker =====
 mysql/
 docker-compose.override.yml
+
+# ===== OS =====
+.DS_Store
+Thumbs.db
+
+# ===== Node / Next.js =====
+node_modules/
+.next/
+out/
+dist/
+build/
