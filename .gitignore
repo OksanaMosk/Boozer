@@ -1,0 +1,15 @@
+# MySQL
+mysql/mysql.sock
+mysql/ib_buffer_pool
+mysql/binlog.index
+mysql/auto.cnf
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+
+# PyCharm
+.idea/
