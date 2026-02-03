@@ -1,15 +1,17 @@
-# MySQL
-mysql/mysql.sock
-mysql/ib_buffer_pool
-mysql/binlog.index
-mysql/auto.cnf
-
 # Python
+.venv/
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
-.venv/
 
 # PyCharm
 .idea/
+
+
+# Env
+#.env
+
+# MySQL / Docker
+mysql/
+docker-compose.override.yml
