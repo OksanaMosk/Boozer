@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { authService } from "@/lib/services/authService";
 import userService from "@/lib/services/userService";
 import CarListingComponent from "@/components/car-listing-component/CarListingComponent";
 import { LoaderComponent } from "@/components/loader-component/LoaderComponent";
@@ -10,55 +9,30 @@ import ChatComponent from "@/components/chat-component/ChatComponent";
 import { ICar } from "@/models/ICar";
 import { IUser } from "@/models/IUser";
 import styles from "./SellerDashboardComponent.module.css";
+import {useSession} from "next-auth/react";
+import {loadUser} from "@/utils/authUtils";
 
 const SellerDashboardComponent: React.FC = () => {
-    const [user, setUser] = useState<IUser | null>(null);
     const [cars, setCars] = useState<ICar[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+    const {data: session, status} = useSession();
+    const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string>("");
+    const [user, setUser] = useState<IUser | null>(null);
 
-    useEffect(() => {
-        const loadUser = async () => {
-            const token = document.cookie
-                .split("; ")
-                .find((row) => row.startsWith("authToken="))
-                ?.split("=")[1];
+useEffect(() => {
+    (async () => {
+        setLoading(true);
+        try {
+            const userData = await loadUser(status === "authenticated" ? session?.user : undefined);
+            setUser(userData);
+        } catch (err: any) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    })();
+}, [session, status]);
 
-            if (!token) {
-                setError("Please activate your account.");
-                setLoading(false);
-                return;
-            }
-
-            try {
-                const userData = await authService.getCurrentUser(token);
-                setUser(userData);
-            } catch {
-                const refreshToken = document.cookie
-                    .split("; ")
-                    .find((row) => row.startsWith("refreshToken="))
-                    ?.split("=")[1];
-
-                if (!refreshToken) {
-                    setError("Please log in again.");
-                    setLoading(false);
-                    return;
-                }
-
-                try {
-                    const tokens = await authService.refreshToken(refreshToken);
-                    const userData = await authService.getCurrentUser(tokens.access);
-                    setUser(userData);
-                } catch {
-                    setError("Your session has expired. Please log in again.");
-                }
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        loadUser();
-    }, []);
 
     useEffect(() => {
         if (!user?.id) return;

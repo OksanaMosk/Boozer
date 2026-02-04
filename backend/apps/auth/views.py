@@ -195,11 +195,10 @@ class SocialLoginJWTAPIView(APIView):
             return Response({"detail": "Invalid token or no email found"}, status=400)
 
         email = user_data["email"]
-        username = email.split('@')[0]
+
         user, created = get_user_model().objects.get_or_create(
             email=email,
             defaults={
-                'username': username,
                 'is_active': True
             }
         )
@@ -209,6 +208,11 @@ class SocialLoginJWTAPIView(APIView):
             user.save()
 
         profile, profile_created = ProfileModel.objects.get_or_create(user=user)
+        if profile_created or not profile.name:
+            profile.name = user_data.get('given_name', '') or email.split('@')[0]
+        if profile_created or not profile.surname:
+            profile.surname = user_data.get('family_name', '') or email.split('@')[0]
+
         needs_profile = not profile.is_rules_accepted or not profile.birth_date
 
         refresh = RefreshToken.for_user(user)
