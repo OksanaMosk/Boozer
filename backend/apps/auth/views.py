@@ -1,13 +1,12 @@
 import logging
+import os
 
 from django.contrib.auth import authenticate, get_user_model
 from django.shortcuts import redirect
 from django.utils.decorators import method_decorator
-from django.conf import settings
 from rest_framework import status
 from rest_framework.generics import GenericAPIView, get_object_or_404
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.user.models import ProfileModel
@@ -19,9 +18,9 @@ from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
 from apps.auth.serializers import EmailSerializer, PasswordSerializer
 from apps.user.serializers import UserSerializer
 
-from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
-from allauth.socialaccount.helpers import complete_social_login
-from allauth.socialaccount.models import SocialLogin, SocialToken, SocialApp
+
+import requests
+from rest_framework.response import Response
 
 UserModel = get_user_model()
 
@@ -175,71 +174,109 @@ class LoginAPIView(APIView):
 class SocialLoginJWTAPIView(APIView):
     permission_classes = [AllowAny]
 
+    SUPPORTED_PROVIDERS = ['google', 'facebook', 'apple']
+
     def post(self, request):
         provider = request.data.get("provider")
         access_token = request.data.get("access_token")
 
-        if provider != "google":
-            return Response({"detail": "Only google supported"}, status=400)
+        if provider not in self.SUPPORTED_PROVIDERS:
+            return Response({"detail": f"{provider} is not supported"}, status=400)
 
         if not access_token:
             return Response({"detail": "access_token required"}, status=400)
 
+        return self.handle_social_login(provider, access_token)
+
+    def handle_social_login(self, provider, access_token):
+        user_data = self.get_user_data_from_provider(provider, access_token)
+
+        if not user_data or not user_data.get("email"):
+            return Response({"detail": "Invalid token or no email found"}, status=400)
+
+        email = user_data["email"]
+        username = email.split('@')[0]
+        user, created = get_user_model().objects.get_or_create(
+            email=email,
+            defaults={
+                'username': username,
+                'is_active': True
+            }
+        )
+
+        if not created and not user.is_active:
+            user.is_active = True
+            user.save()
+
+        profile, profile_created = ProfileModel.objects.get_or_create(user=user)
+        needs_profile = not profile.is_rules_accepted or not profile.birth_date
+
+        refresh = RefreshToken.for_user(user)
+        response_data = {
+            "access_token": str(refresh.access_token),
+            "refresh_token": str(refresh),
+            "user": {
+                "id": user.id,
+                "email": user.email,
+            }
+        }
+
+        if needs_profile:
+            response_data["user"]["needs_profile"] = True
+
+        return Response(response_data)
+
+    def get_user_data_from_provider(self, provider, access_token):
+
         try:
-            app = SocialApp.objects.get(provider="google", sites__id=settings.SITE_ID)
+            if provider == "google":
+                return self.verify_google_token(access_token)
+            elif provider == "facebook":
+                return self.verify_facebook_token(access_token)
+            elif provider == "apple":
+                return self.verify_apple_token(access_token)
+        except requests.exceptions.RequestException:
+            return None
 
-            # створюємо об'єкт адаптера
-            adapter = GoogleOAuth2Adapter(request)
+    def verify_google_token(self, token):
+        google_url = f"https://www.googleapis.com/oauth2/v3/userinfo?access_token={token}"
+        response = requests.get(google_url, timeout=5)
 
-            # створюємо токен
-            token = SocialToken(token=access_token, app=app)
+        if response.status_code != 200:
+            google_url = f"https://www.googleapis.com/oauth2/v3/tokeninfo?id_token={token}"
+            response = requests.get(google_url, timeout=5)
 
-            # створюємо SocialLogin
-            login = SocialLogin(user=None)
-            login.token = token
-            login.state = SocialLogin.state_from_request(request)
+        if response.status_code == 200:
+            return response.json()
 
-            # Complete login через adapter
-            login = adapter.complete_login(request, app, token, response={})
+        print(f"GOOGLE API ERROR: {response.status_code} - {response.text}")
+        return None
 
-            # Завершуємо соціальний логін
-            complete_social_login(request, login)
+    def verify_facebook_token(self, access_token):
+        fb_app_id = os.getenv('FACEBOOK_CLIENT_ID')
+        fb_app_secret = os.getenv('FACEBOOK_CLIENT_SECRET')
 
-            user = login.user
-            profile = getattr(user, "profile", None)
+        try:
+            debug_url = f"https://graph.facebook.com{access_token}&access_token={fb_app_id}|{fb_app_secret}"
+            debug_response = requests.get(debug_url, timeout=5).json()
 
-            if not profile:
-                profile = ProfileModel.objects.create(user=user)
+            if debug_response.get('data', {}).get('is_valid'):
+                facebook_url = f'https://graph.facebook.com/me?access_token={access_token}&fields=id,email,first_name,last_name'
+                response = requests.get(facebook_url, timeout=5)
+                return response.json()
+        except Exception as e:
+            print(f"Facebook verification error: {e}")
+            return None
+        return None
 
-            if not profile or not profile.is_rules_accepted or not profile.birth_date:
-                refresh = RefreshToken.for_user(user)  # генеруємо токен, навіть якщо профіль не повний
-                return Response({
-                    "access_token": str(refresh.access_token),
-                    "refresh_token": str(refresh),
-                    "user": {
-                        "id": user.id,
-                        "email": user.email,
-                        "needs_profile": True
-                    }
-                })
-
-            refresh = RefreshToken.for_user(user)
-
-            return Response({
-                "access_token": str(refresh.access_token),
-                "refresh_token": str(refresh),
-                "user": {
-                    "id": user.id,
-                    "email": user.email,
-                }
-
-            })
-
-        except SocialApp.DoesNotExist:
-            return Response(
-                {"detail": "SocialApp for google not configured"},
-                status=500
-            )
+    def verify_apple_token(self, access_token):
+        try:
+            apple_url = f"https://appleid.apple.com"
+            # Зауваження: Apple працює через POST з клієнтським секретом.
+            # Цей метод через GET, як у Google, у Apple просто так не спрацює.
+            return None
+        except Exception:
+            return None
 
 
 class CurrentUserAPIView(APIView):

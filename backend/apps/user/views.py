@@ -4,12 +4,14 @@ from django.shortcuts import get_object_or_404
 from rest_framework import filters, status, viewsets
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateAPIView, DestroyAPIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework.response import Response
 from rest_framework.views import APIView
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.exceptions import PermissionDenied
+from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
-
+from .models import UserModel
 from apps.user.models import ProfileModel
+
 from apps.user.serializers import (
     ProfileSerializer,
     UserSerializer,
@@ -23,11 +25,8 @@ from apps.user.services import UserService
 UserModel = get_user_model()
 
 class UserUpdateMixin:
-    """
-    Універсальний міксин для оновлення будь-яких полів користувача.
-    Використовує серіалізатор, переданий у view.
-    """
-    serializer_class = None  # повинен бути визначений у view
+
+    serializer_class = None
 
     def update_instance(self, request, instance):
         serializer = self.serializer_class(
@@ -99,16 +98,22 @@ class ProfileViewSet(viewsets.ModelViewSet):
     serializer_class = ProfileSerializer
     permission_classes = [IsAuthenticated]
 
+    def get_object(self):
+        user_pk = self.kwargs.get('pk')
+        return get_object_or_404(ProfileModel, user__id=user_pk)
+
     def get_queryset(self):
-        if self.request.user.is_staff or self.request.user.is_superuser:
-            user_pk = self.kwargs.get('user_pk')
-            return ProfileModel.objects.filter(user__pk=user_pk) if user_pk else ProfileModel.objects.all()
-        return ProfileModel.objects.filter(user=self.request.user)
+        user = self.request.user
+        if user.is_staff or user.is_superuser:
+            target_user_pk = self.kwargs.get('pk')
+            if target_user_pk:
+                return ProfileModel.objects.filter(user__pk=target_user_pk)
+            return ProfileModel.objects.all()
+        return ProfileModel.objects.filter(user=user)
 
     def _check_social_profile(self, serializer):
-        """Перевірка для соцлогіну: має бути birth_date і is_rules_accepted"""
         user = self.request.user
-        if user.auth_provider != user.AuthProvider.EMAIL:
+        if hasattr(user, 'auth_provider') and str(user.auth_provider).lower() != "email":
             birth_date = serializer.validated_data.get('birth_date')
             is_rules_accepted = serializer.validated_data.get('is_rules_accepted')
             if not birth_date or not is_rules_accepted:
@@ -118,13 +123,11 @@ class ProfileViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         self._check_social_profile(serializer)
-        user_pk = self.kwargs.get('user_pk')
-
-        if user_pk and (self.request.user.is_staff or self.request.user.is_superuser):
-            user = get_object_or_404(UserModel, pk=user_pk)
+        target_user_pk = self.kwargs.get('pk')
+        if target_user_pk and (self.request.user.is_staff or self.request.user.is_superuser):
+            user = get_object_or_404(UserModel, pk=target_user_pk)
         else:
             user = self.request.user
-
         serializer.save(user=user)
 
     def create(self, request, *args, **kwargs):
@@ -138,7 +141,7 @@ class ProfileViewSet(viewsets.ModelViewSet):
         instance = self.get_object()
 
         if instance.user != request.user and not (request.user.is_staff or request.user.is_superuser):
-            raise PermissionDenied("You can only update your own profile.")
+            raise PermissionDenied("You can only update this profile.")
 
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
@@ -148,8 +151,50 @@ class ProfileViewSet(viewsets.ModelViewSet):
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
+
         if instance.user != request.user and not (request.user.is_staff or request.user.is_superuser):
-            from rest_framework.exceptions import PermissionDenied
-            raise PermissionDenied("You can only access your own profile.")
+            raise PermissionDenied("You can only access this profile.")
+
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
+
+
+class UserProfileAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, user_id):
+        try:
+            profile = ProfileModel.objects.get(user__id=user_id)
+            serializer = ProfileSerializer(profile)
+            return Response(serializer.data)
+        except ProfileModel.DoesNotExist:
+            return Response({"detail": "Profile not found."}, status=404)
+
+    def post(self, request, user_id):
+        data = request.data
+        data['user'] = user_id
+        serializer = ProfileSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=201)
+        return Response(serializer.errors, status=400)
+
+    def put(self, request, user_id):
+        try:
+            profile = ProfileModel.objects.get(user__id=user_id)
+            serializer = ProfileSerializer(profile, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors, status=400)
+        except ProfileModel.DoesNotExist:
+            return Response({"detail": "Profile not found."}, status=404)
+
+    def delete(self, request, user_id):
+        try:
+            profile = ProfileModel.objects.get(user__id=user_id)
+            profile.delete()
+            return Response(status=204)
+        except ProfileModel.DoesNotExist:
+            return Response({"detail": "Profile not found."}, status=404)
+

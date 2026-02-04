@@ -723,32 +723,6 @@ argon2 = ["argon2-cffi (>=19.1.0)"]
 bcrypt = ["bcrypt"]
 
 [[package]]
-name = "django-allauth"
-version = "65.14.0"
-description = "Integrated set of Django applications addressing authentication, registration, account management as well as 3rd party (social) account authentication."
-optional = false
-python-versions = ">=3.8"
-groups = ["main"]
-files = [
-    {file = "django_allauth-65.14.0-py3-none-any.whl", hash = "sha256:448f5f7877f95fcbe1657256510fe7822d7871f202521a29e23ef937f3325a97"},
-    {file = "django_allauth-65.14.0.tar.gz", hash = "sha256:5529227aba2b1377d900e9274a3f24496c645e65400fbae3cad5789944bc4d0b"},
-]
-
-[package.dependencies]
-asgiref = ">=3.8.1"
-Django = ">=4.2.16"
-
-[package.extras]
-headless = ["pyjwt[crypto] (>=2.0,<3)"]
-headless-spec = ["PyYAML (>=6,<7)"]
-idp-oidc = ["oauthlib (>=3.3.0,<4)", "pyjwt[crypto] (>=2.0,<3)"]
-mfa = ["fido2 (>=1.1.2,<3)", "qrcode (>=7.0.0,<9)"]
-openid = ["python3-openid (>=3.0.8,<4)"]
-saml = ["python3-saml (>=1.15.0,<2.0.0)"]
-socialaccount = ["oauthlib (>=3.3.0,<4)", "pyjwt[crypto] (>=2.0,<3)", "requests (>=2.0.0,<3)"]
-steam = ["python3-openid (>=3.0.8,<4)"]
-
-[[package]]
 name = "django-celery-beat"
 version = "2.8.1"
 description = "Database-backed Periodic Tasks."
@@ -1762,4 +1736,4 @@ testing = ["coverage[toml]", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.12,<4.0"
-content-hash = "4b8229eba511f9717fb6f339ccae3df7b95d491da43e81e53a6068b7c8d1d285"
+content-hash = "86741102a2ead300819e094506676cb30d3aa486a14bf1df9da1d0985ef9dde9"
