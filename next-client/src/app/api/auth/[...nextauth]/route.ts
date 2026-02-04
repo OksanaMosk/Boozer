@@ -42,6 +42,7 @@ export const authOptions: NextAuthOptions = {
         token.user = {
             id: data.user?.id ? String(data.user.id) : "",
             email: data.user?.email ?? token.email ?? "",
+            token: data.access_token ?? "",
         };
         token.accessToken = data.access_token ?? token.accessToken;
         token.needsProfile = data.needs_profile ?? true;
@@ -53,11 +54,14 @@ export const authOptions: NextAuthOptions = {
 },
 
     async session({ session, token }) {
+      session.accessToken = token.accessToken;
+  session.needsProfile = token.needsProfile;
+
   if (!token.user) {
     console.warn("SESSION CALLBACK — TOKEN USER MISSING", token);
     session.user.id = token.sub ?? ""; // fallback
     session.user.email = token.email ?? "";
-    session.user.token = token.accessToken ?? "";
+     session.user.token = token.accessToken ?? "";
     session.user.needsProfile = token.needsProfile ?? true;
     return session;
   }

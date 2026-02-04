@@ -20,9 +20,9 @@ export default function CompleteProfilePage() {
             try {
                 const {data} = await profileService.getProfile(
                     session.user.id,
-                    session.user.token
+                    session.accessToken!
                 );
-                if (data.birth_date && data.is_rules_accepted) {
+                if (data?.birth_date && data?.is_rules_accepted) {
                     router.push("/");
                 }
             } catch (e) {

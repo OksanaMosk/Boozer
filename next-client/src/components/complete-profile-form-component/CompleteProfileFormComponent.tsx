@@ -58,14 +58,14 @@ export default function CompleteProfileFormComponent() {
             console.log(session!.user.token)
             console.log(session!.user.id)
             console.log("Дані для відправки на сервер:", payload);
-            await profileService.createProfile(
+            await profileService.updateProfile(
                 session!.user.id,
                 payload,
-                session!.user.token
+                session!.accessToken || session!.user.token
             );
 
             console.log("Дані успішно відправлено, редірект на /");
-            router.push("/");
+            router.push("/visitor");
         } catch (err: any) {
             setErrorMsg("Profile save error");
             console.log("Помилка при відправці:", err);

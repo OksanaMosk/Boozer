@@ -33,3 +33,4 @@ node_modules/
 out/
 dist/
 build/
+next-client/.env.local
