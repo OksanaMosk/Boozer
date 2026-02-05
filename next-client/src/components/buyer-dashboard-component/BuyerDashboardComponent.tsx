@@ -1,31 +1,28 @@
 "use client";
 
-import React from "react";
+
 import styles from "./BuyerDashboardComponent.module.css";
-import { IUser } from "@/models/IUser";
+import {useUser} from "@/app/contexts/UserProvider";
+import {LoaderComponent} from "@/components/loader-component/LoaderComponent";
+import React from "react";
 
-interface BuyerDashboardProps {
-    user?: IUser | null;
-}
-
-const BuyerDashboardComponent = ({ user }: BuyerDashboardProps) => {
+const BuyerDashboardComponent = () => {
+    const {user} = useUser();
     if (!user) {
-        return <p>No user data available.</p>;
+       return <div style={{display: "flex", justifyContent: "center", marginTop: 50}}>
+        <LoaderComponent/>
+    </div>;
     }
 
     return (
         <div className={styles.container}>
             <h1 className={styles.header}>BUYER PORTAL</h1>
-            <p className={styles.text}>Welcome, {user.name}!</p>
+            <p className={styles.text}>Welcome, {user.profile?.name || "Guest"}!</p>
             <p className={styles.text}>Email: {user.email}</p>
             <p className={styles.text}>Role: {user.role}</p>
-            <p className={styles.text}>
-                Age: {new Date(user.birth_date).toLocaleDateString()}
-            </p>
+            <p className={styles.text}>Age: {user.profile?.birth_date || "Not specified"}</p>
         </div>
     );
 };
 
 export default BuyerDashboardComponent;
-
-

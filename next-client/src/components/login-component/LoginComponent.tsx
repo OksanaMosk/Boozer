@@ -1,15 +1,13 @@
 "use client";
 
-import React, {useEffect, useState} from "react";
-import { AxiosError } from 'axios';
+import React, { useState} from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { authService } from "@/lib/services/authService";
 import { LoaderComponent } from "@/components/loader-component/LoaderComponent";
 import styles from "./LoginComponent.module.css";
-import SocialButtonsComponent from "@/components/social-buttons/SocialButtonsComponent";
-import {useSession} from "next-auth/react";
-import {useRouter} from "next/navigation";
+import SocialButtonsComponent from "@/components/social-buttons-component/SocialButtonsComponent";
+import { useRouter } from "next/navigation";
 
 const LoginComponent = () => {
     const [email, setEmail] = useState("");
@@ -18,26 +16,32 @@ const LoginComponent = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
 
-
-    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const router = useRouter();
+    const handleSubmit = async (event: React.SyntheticEvent<HTMLFormElement>) => {
         event.preventDefault();
         setLoading(true);
         setErrorMsg("");
 
         try {
-            await authService.login({email, password});
-        } catch (err: unknown) {
-            if (err instanceof AxiosError) {
-                setErrorMsg(err.response?.data?.detail || "An error occurred");
-            } else if (err instanceof Error) {
-                setErrorMsg(err.message);
-            } else {
-                setErrorMsg("An unknown error occurred");
-            }
-        } finally {
-            setLoading(false);
-        }
-    };
+      const user = await authService.login({ email, password });
+      switch (user.role) {
+        case "admin":
+          router.push("/admin");
+          break;
+        case "venue_admin":
+          router.push("/venue");
+          break;
+        default:
+          router.push("/visitor");
+      }
+    } catch (err: unknown) {
+      if (err instanceof Error) setErrorMsg(err.message);
+      else setErrorMsg("Невідома помилка");
+    } finally {
+      setLoading(false);
+    }
+  };
+
 
 
     return (

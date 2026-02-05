@@ -5,7 +5,7 @@ import {GoBackButtonComponent} from "@/components/go-back-button-component/GoBac
 import Link from "next/link";
 
 
-const Page = () => {
+const AdminPage = () => {
   return (
     <div style={{
       fontWeight: 'bolder',
@@ -37,4 +37,4 @@ const Page = () => {
   );
 };
 
-export default Page;
+export default AdminPage;

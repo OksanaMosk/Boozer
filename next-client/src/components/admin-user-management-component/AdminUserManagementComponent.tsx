@@ -1,12 +1,12 @@
 "use client"
 
 import React, { useEffect, useState } from "react";
-import { authService } from "@/lib/services/authService";
 import userService from "@/lib/services/userService";
 import {useRouter} from "next/navigation";
 import {LoaderComponent} from "@/components/loader-component/LoaderComponent";
 import { IUser } from "@/models/IUser";
 import styles from './AdminUserManagementComponent.module.css';
+import {useUser} from "@/app/contexts/UserProvider";
 
 const AdminUserManagementComponent = () => {
     const [users, setUsers] = useState<IUser[]>([]);
@@ -17,17 +17,21 @@ const AdminUserManagementComponent = () => {
     const [sortBy, setSortBy] = useState<string>('id');
     const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
     const router = useRouter();
+ const {user} = useUser();
+ const token = user?.token ?? '';
+
 
     useEffect(() => {
         (async () => {
             try {
                 setLoading(true);
 
-                const token = authService.getRefreshToken();
-                if (!token) {
-                    setError("Please activate your account.");
-                    return;
-                }
+
+                // if (!user) {
+                //     return <div style={{display: "flex", justifyContent: "center", marginTop: 50}}>
+                //         <LoaderComponent/>
+                //     </div>;
+                // }
 
                 const sortableKeys: (keyof IUser)[] = ['id', 'email', 'role', 'is_active'];
                 const keySortBy: keyof IUser | undefined = sortBy && sortableKeys.includes(sortBy as keyof IUser)
@@ -41,7 +45,7 @@ const AdminUserManagementComponent = () => {
                     sort_order: sortOrder
                 };
 
-                const allUsers = await userService.getAll(filters);
+                const allUsers = await userService.getAll(filters, token)
                 setUsers(allUsers);
 
             } catch (err: unknown) {

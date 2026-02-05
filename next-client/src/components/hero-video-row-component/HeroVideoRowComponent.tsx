@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState, useEffect } from "react";
-import styles from "./HeroVideoRow.module.css";
+import styles from "./HeroVideoRowComponent.module.css";
 
 type VideoItem = {
   id: number;
@@ -16,10 +16,10 @@ const videos: VideoItem[] = [
   { id: 4, src: "/videos/video4.webm", poster: "/images/poster4.webp" },
 ];
 
-export default function HeroVideoRow() {
+
+export default function HeroVideoRowComponent() {
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
   const [activeSoundIndex, setActiveSoundIndex] = useState<number | null>(null);
-
   const handleMouseEnter = (index: number) => {
     const video = videoRefs.current[index];
     if (!video) return;
@@ -80,7 +80,9 @@ export default function HeroVideoRow() {
             onMouseLeave={() => handleMouseLeave(index)}
           >
             <video
-              ref={(el) => (videoRefs.current[index] = el)}
+             ref={(el) => {
+            videoRefs.current[index] = el;
+          }}
               className={styles.video}
               loop
               playsInline

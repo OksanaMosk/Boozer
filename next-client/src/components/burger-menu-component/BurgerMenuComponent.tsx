@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { UserInfoComponent } from "@/components/user-info-component/UserInfoComponent";
-import ThemesButton from "@/components/themes-button/ThemesButton";
+import ThemesButtonComponent from "@/components/themes-button-component/ThemesButtonComponent";
 import type { IUser } from "@/models/IUser";
 import type { FC } from "react";
 import styles from "./BurgerMenuComponent.module.css";
@@ -25,6 +25,7 @@ export const BurgerMenuComponent: FC<BurgerMenuProps> = ({
                                                              authenticated,
                                                              user,
                                                              closeMenuAction,
+
                                                          }) => {
     if (!isOpen) return null;
 
@@ -54,7 +55,6 @@ export const BurgerMenuComponent: FC<BurgerMenuProps> = ({
             ) : (
                 user && (
                     <UserInfoComponent
-                        user={user}
                         classNames={{
                             container: styles.burgerUserContainer,
                             avatar: styles.burgerUserAvatar,
@@ -67,7 +67,7 @@ export const BurgerMenuComponent: FC<BurgerMenuProps> = ({
                 )
             )}
 
-            <ThemesButton/>
+            <ThemesButtonComponent/>
         </nav>
     );
 };

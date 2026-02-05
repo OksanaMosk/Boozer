@@ -1,0 +1,164 @@
+import NextAuth from "next-auth";
+import Google from "next-auth/providers/google";
+import Facebook from "next-auth/providers/facebook";
+import Credentials from "next-auth/providers/credentials";
+
+
+export const {handlers, auth, signIn, signOut} = NextAuth({
+    secret: "f2998a4463a56289bc25752c00688094760a92026857187140f7d3d633596721",
+    trustHost: true,
+    session: {
+        strategy: "jwt",
+        maxAge: 7 * 24 * 60 * 60,
+    },
+    cookies: {
+        sessionToken: {
+            name: "authjs.session-token",
+            options: {
+                httpOnly: true,
+                // sameSite: "none",
+                secure: false, // localhost
+                path: "/",
+            },
+        },
+    },
+  providers: [
+    Google({
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    }),
+    Facebook({
+      clientId: process.env.FACEBOOK_CLIENT_ID,
+      clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
+    }),
+    Credentials({
+      name: "Credentials",
+      credentials: {
+        email: { label: "Email", type: "text" },
+        password: { label: "Password", type: "password" },
+      },
+      async authorize(credentials) {
+        if (!credentials?.email || !credentials?.password) return null;
+        try {
+          const res = await fetch("http://127.0.0.1:8888/api/auth/login/", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(credentials),
+          });
+          const data = await res.json();
+            if (res.ok && data.access) {
+                return {
+                    id: String(data.user?.id || data.id || data.user_id),
+                    email: data.user?.email || data.email,
+                    accessToken: data.access,
+                    refreshToken: data.refresh,
+                    role: data.role,
+                    expiresIn: data.expires_in || data.lifetime || 3600,
+                    needsProfile: false,
+                };
+            }
+            return null;
+        } catch (error) {
+            console.error("Login error:", error);
+            return null;
+        }
+      },
+    }),
+  ],
+
+  callbacks: {
+    async jwt({ token, user, account }) {
+         console.log("JWT", { token, user, account});
+      if (account && user) {
+        let accessToken = user.accessToken;
+        let refreshToken = user.refreshToken;
+        let needsProfile = user.needsProfile;
+        let userId = user.id;
+        let expiresIn = user.expiresIn || 3600;
+
+        if (account.provider !== "credentials") {
+          try {
+            const res = await fetch("http://127.0.0.1:8888/api/auth/social_jwt/", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                provider: account.provider,
+                access_token: account.access_token,
+              }),
+            });
+            if (res.ok) {
+              const data = await res.json();
+              accessToken = data.access_token;
+              refreshToken = data.refresh_token;
+              needsProfile = data.needs_profile;
+              userId = String(data.user.id);
+              expiresIn = data.expires_in || data.lifetime || 3600;
+            }
+          } catch (e) {
+            console.error("Social sync error:", e);
+          }
+        }
+
+        return {
+          ...token,
+          id: userId,
+          accessToken,
+          refreshToken,
+          needsProfile,
+          role: user.role,
+          accessTokenExpires: Date.now() + (Number(expiresIn) - 60) * 1000,
+        };
+      }
+
+      if (Date.now() < (token.accessTokenExpires as number)) {
+        return token;
+      }
+
+      try {
+        const response = await fetch("http://127.0.0.1:8888/api/auth/refresh/", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ refresh: token.refreshToken }),
+        });
+          const data = await response.json();
+
+          // if (!response.ok) {
+          //   return { ...token, error: "RefreshAccessTokenError" };
+          // }
+          //
+
+          if (!response.ok) {
+              return {};
+          }
+
+          const newExpiresIn = data.expires_in || data.lifetime || 3600;
+
+        return {
+          ...token,
+          accessToken: data.access,
+          refreshToken: data.refresh ?? token.refreshToken,
+          accessTokenExpires: Date.now() + (Number(newExpiresIn) - 60) * 1000,
+        };
+      } catch (error) {
+        return { ...token, error: "RefreshAccessTokenError" };
+      }
+    },
+
+    async session({ session, token }) {
+      if (token) {
+        session.user.id = token.id as string;
+        session.user.email = token.email as string;
+        session.user.accessToken = token.accessToken as string;
+        session.user.refreshToken = token.refreshToken as string;
+        session.user.needsProfile = Boolean(token.needsProfile);
+        session.user.role = token.role as string;
+        session.user.error = token.error as string | undefined;
+      }
+      return session;
+    },
+
+  },
+
+
+  pages: { signIn: "/login", error: "/auth/error" },
+});

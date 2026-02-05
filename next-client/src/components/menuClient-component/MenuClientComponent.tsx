@@ -1,82 +1,58 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { authService } from "@/lib/services/authService";
+
 import { BurgerMenuComponent } from "@/components/burger-menu-component/BurgerMenuComponent";
 import { UserInfoComponent } from "@/components/user-info-component/UserInfoComponent";
-import ThemesButton from "@/components/themes-button/ThemesButton";
-import type { IUser } from "@/models/IUser";
+import ThemesButtonComponent from "@/components/themes-button-component/ThemesButtonComponent";
 import styles from "./MenuClientComponent.module.css";
+
+import {signOut} from "next-auth/react";
+import {useUser} from "@/app/contexts/UserProvider";
 
 
 export const MenuClientComponent = () => {
-    const [user, setUser] = useState<IUser | null>(null);
-    const [authenticated, setAuthenticated] = useState(false);
-    const [isOpen, setIsOpen] = useState(false);
-    const [theme, setTheme] = useState<"light" | "dark">("dark");
-    const pathname = usePathname();
+  const {user} = useUser()
+  const authenticated = !!user;
+  const [isOpen, setIsOpen] = useState(false);
+  const [theme, setTheme] = useState<"light" | "dark">("dark");
+  const pathname = usePathname();
 
-    const menuItems = [
-        {href: "/", label: "Home"},
-        {href: "/cars", label: "Cars"},
-    ];
-    const isLoginActive = pathname === "/login";
-    const isRegisterActive = pathname === "/register";
-    const from = "/";
+  useEffect(() => {
+  console.log(user, authenticated);
+}, [user]);
 
-    const getCookie = (name: string) => {
-        return document.cookie
-            .split("; ")
-            .find((c) => c.startsWith(name + "="))
-            ?.split("=")[1];
-    };
+  const menuItems = [
+    { href: "/", label: "Home" },
+    { href: "/cars", label: "Cars" },
+  ];
 
-    const logout = () => {
-        document.cookie = "authToken=; path=/; max-age=0";
-        document.cookie = "refreshToken=; path=/; max-age=0";
-        setUser(null);
-        setAuthenticated(false);
-    };
+  const isLoginActive = pathname === "/login";
+  const isRegisterActive = pathname === "/register";
+  const from = "/";
 
-    useEffect(() => {
-        const loadUser = async () => {
-            const authToken = getCookie("authToken");
-            const refreshToken = getCookie("refreshToken");
+    const handleLogout = async () => {
+  try {
+    localStorage.clear();
+    sessionStorage.clear();
 
-            if (!authToken) {
-                logout();
-                return;
-            }
+    await signOut({
+      redirect: true,
+      redirectTo: "/",
+    });
 
-            try {
-                const userData = await authService.getCurrentUser(authToken);
-                setUser(userData);
-                setAuthenticated(true);
-            } catch {
-                if (!refreshToken) {
-                    logout();
-                    return;
-                }
-                try {
-                    const tokens = await authService.refreshToken(refreshToken);
-                    const userData = await authService.getCurrentUser(tokens.access);
-                    setUser(userData);
-                    setAuthenticated(true);
-                } catch {
-                    logout();
-                }
-            }
-        };
+  } catch (error) {
+    console.error("Logout failed:", error);
+    window.location.href = "/login";
+  }
+};
 
-        loadUser();
-    }, []);
+  const handleDark = () => setTheme("dark");
+  const handleLight = () => setTheme("light");
 
-    const handleLogout = () => logout();
-    const handleDark = () => setTheme("dark");
-    const handleLight = () => setTheme("light");
 
     return (
         <div className={styles.header}>
@@ -135,9 +111,7 @@ export const MenuClientComponent = () => {
 
                 <div className={styles.rightBlock}>
                     {authenticated && user ? (
-                        <UserInfoComponent
-                            user={{email: user.email, token: user.token}}
-                        />
+                            <UserInfoComponent onLogoutAction={handleLogout} />
                     ) : (
                         <div className={styles.authLinks}>
                             <Link
@@ -156,7 +130,7 @@ export const MenuClientComponent = () => {
                         </div>
                     )}
 
-                    <ThemesButton/>
+                    <ThemesButtonComponent/>
                 </div>
 
                 <button onClick={() => setIsOpen(true)} className={styles.burger}>

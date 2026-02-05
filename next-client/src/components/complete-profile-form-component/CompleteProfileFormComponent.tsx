@@ -35,45 +35,60 @@ export default function CompleteProfileFormComponent() {
 
 
     const handleSubmit = async (event: React.SyntheticEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        setErrorMsg("");
-        setErrorFields({});
-        const errors: Record<string, string> = {};
-        if (!validateBirthDate(birthDate)) {
-            errors.birthDate = "You must be at least 18 years old.";
-        }
-        if (!isRulesAccepted) {
-            errors.rules = "You must accept the rules";
-        }
-        if (Object.keys(errors).length) {
-            setErrorFields(errors);
+    event.preventDefault();
+    setErrorMsg("");
+    setErrorFields({});
+    const errors: Record<string, string> = {};
+
+    if (!validateBirthDate(birthDate)) {
+        errors.birthDate = "You must be at least 18 years old.";
+    }
+    if (!isRulesAccepted) {
+        errors.rules = "You must accept the rules";
+    }
+    if (Object.keys(errors).length) {
+        setErrorFields(errors);
+        return;
+    }
+
+    if (!session) {
+        setErrorMsg("Session not found.");
+        return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+        const payload = {
+            birth_date: birthDate!.toISOString().split("T")[0],
+            is_rules_accepted: isRulesAccepted,
+        };
+
+        console.log("Дані для відправки на сервер:", payload);
+
+        // Перевірка на наявність `accessToken` та `id`
+        if (!session.user?.id || !session.user?.accessToken) {
+            setErrorMsg("Missing user credentials.");
             return;
         }
-        setIsSubmitting(true);
-        try {
-            const payload = {
-                birth_date: birthDate!.toISOString().split("T")[0],
-                is_rules_accepted: isRulesAccepted,
-            };
-            console.log(session!.user.token)
-            console.log(session!.user.id)
-            console.log("Дані для відправки на сервер:", payload);
-            await profileService.updateProfile(
-                session!.user.id,
-                payload,
-                session!.accessToken || session!.user.token
-            );
 
-            console.log("Дані успішно відправлено, редірект на /");
-            router.push("/visitor");
-        } catch (err: any) {
-            setErrorMsg("Profile save error");
-            console.log("Помилка при відправці:", err);
-        } finally {
-            setIsSubmitting(false);
-            console.log("Відправка завершена, isSubmitting=false");
-        }
-    };
+        await profileService.updateProfile(
+            session.user.id,
+            payload,
+            session.user.accessToken
+        );
+
+        console.log("Дані успішно відправлено, редірект на /");
+        router.push("/dashboard/visitor");
+
+    } catch (err: any) {
+    console.error("Profile save error", err);
+    setErrorMsg(`Profile save error: ${err.message}`);
+    } finally {
+        setIsSubmitting(false);
+        console.log("Відправка завершена, isSubmitting=false");
+    }
+};
 
     return (
         <div className={styles.centerContainer}>

@@ -9,7 +9,7 @@ import { LoaderComponent } from "@/components/loader-component/LoaderComponent";
 import DatePickerComponent from "@/components/date-picker-component/DatePickerComponent";
 import styles from "./RegisterComponent.module.css";
 import IMask from "imask";
-import SocialButtonsComponent from "@/components/social-buttons/SocialButtonsComponent";
+import SocialButtonsComponent from "@/components/social-buttons-component/SocialButtonsComponent";
 import {useSession} from "next-auth/react";
 
 

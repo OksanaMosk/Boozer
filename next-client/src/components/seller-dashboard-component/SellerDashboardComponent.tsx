@@ -4,35 +4,22 @@ import React, { useEffect, useState } from "react";
 import userService from "@/lib/services/userService";
 import CarListingComponent from "@/components/car-listing-component/CarListingComponent";
 import { LoaderComponent } from "@/components/loader-component/LoaderComponent";
-
 import ChatComponent from "@/components/chat-component/ChatComponent";
 import { ICar } from "@/models/ICar";
-import { IUser } from "@/models/IUser";
 import styles from "./SellerDashboardComponent.module.css";
-import {useSession} from "next-auth/react";
-import {loadUser} from "@/utils/authUtils";
+import {useUser} from "@/app/contexts/UserProvider";
 
 const SellerDashboardComponent: React.FC = () => {
     const [cars, setCars] = useState<ICar[]>([]);
-    const {data: session, status} = useSession();
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string>("");
-    const [user, setUser] = useState<IUser | null>(null);
 
-useEffect(() => {
-    (async () => {
-        setLoading(true);
-        try {
-            const userData = await loadUser(status === "authenticated" ? session?.user : undefined);
-            setUser(userData);
-        } catch (err: any) {
-            setError(err.message);
-        } finally {
-            setLoading(false);
-        }
-    })();
-}, [session, status]);
-
+      const {user} = useUser();
+    if (!user) {
+       return <div style={{display: "flex", justifyContent: "center", marginTop: 50}}>
+        <LoaderComponent/>
+    </div>;
+    }
 
     useEffect(() => {
         if (!user?.id) return;
@@ -74,6 +61,20 @@ useEffect(() => {
 
     return (
         <div className={styles.dashboard}>
+              <h1 className={styles.header}>MANAGER DASHBOARD</h1>
+            {user ? (
+                <div className={styles.userInfo}>
+                    <p className={styles.text}>
+                        Welcome, {user.profile?.name} {user.profile?.surname}!
+                    </p>
+                    <p className={styles.text}>Email: {user.email}</p>
+                    <p className={styles.text}>Role: {user.role}</p>
+                    {user.profile.birth_date && <p className={styles.text}>Age: {user.profile.birth_date.toString()}</p>}
+
+                </div>
+            ) : (
+                <p className={styles.text}>No user data available.</p>
+            )}
             <h2>My Car Listings</h2>
             <div className={styles.cardsContainer}>
                 {cars.length > 0 ? (

@@ -1,3 +1,6 @@
+
+
+
 import type {Metadata} from "next";
 import React from "react";
 
@@ -9,11 +12,11 @@ type Props = {
     children: React.ReactNode;
 }
 
-const AdminLayout = ({children}: Props) => {
+const AdminPageLayout = ({children}: Props) => {
     return (
         <>
             {children}
         </>
     );
 }
-export default AdminLayout;
+export default AdminPageLayout;

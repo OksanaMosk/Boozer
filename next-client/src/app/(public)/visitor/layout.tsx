@@ -9,11 +9,11 @@ type Props = {
     children: React.ReactNode;
 }
 
-const VisitorLayout = ({children}: Props) => {
+const VisitorPageLayout = ({children}: Props) => {
     return (
         <>
             {children}
         </>
     );
 }
-export default VisitorLayout;
+export default VisitorPageLayout;

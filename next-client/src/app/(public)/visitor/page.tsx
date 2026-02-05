@@ -1,10 +1,10 @@
 "use client";
 
-import SellerDashboardComponent from "@/components/seller-dashboard-component/SellerDashboardComponent";
 import Link from 'next/link';
 import {GoBackButtonComponent} from "@/components/go-back-button-component/GoBackButtonComponent";
+import BuyerDashboardComponent from "@/components/buyer-dashboard-component/BuyerDashboardComponent";
 
-const VenueAdminPage = () => {
+const VisitorPage = () => {
 
     return (
         <div style={{
@@ -14,6 +14,7 @@ const VenueAdminPage = () => {
             width: '100%'
         }}>
             <GoBackButtonComponent/>
+            <BuyerDashboardComponent/>
             <Link
                 href="/create-car"
                 className="create-car-link"
@@ -32,11 +33,9 @@ const VenueAdminPage = () => {
                 }}
             >Create New Car
             </Link>
-            <SellerDashboardComponent/>
 
         </div>
     );
 };
 
-export default VenueAdminPage;
-
+export default VisitorPage;

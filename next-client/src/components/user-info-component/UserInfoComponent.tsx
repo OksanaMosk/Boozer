@@ -2,9 +2,10 @@
 
 import { IUser } from "@/models/IUser";
 import styles from "./UserInfoComponent.module.css";
+import {useUser} from "@/app/contexts/UserProvider";
 
 type UserInfoProps = {
-    user: IUser | null;
+    onLogoutAction: () => void;
     classNames?: {
         container?: string;
         avatar?: string;
@@ -12,28 +13,34 @@ type UserInfoProps = {
         welcome?: string;
         user?: string;
         logoutBtn?: string;
+
     };
 };
 
-export const UserInfoComponent = ({user, classNames = {}}: UserInfoProps) => {
+
+
+
+export const UserInfoComponent = ({onLogoutAction, classNames = {}}: UserInfoProps) => {
+    const {user}=useUser()
+
     if (!user) return null;
 
-    const handleLogout = () => {
-        if (typeof window !== "undefined") {
-
-            localStorage.clear();
-            sessionStorage.clear();
-
-            document.cookie.split(";").forEach((cookie) => {
-                document.cookie = cookie
-                    .replace(/^ +/, "")
-                    .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
-            });
-
-
-            window.location.href = "/login";
-        }
-    };
+    // const handleLogout = () => {
+    //     if (typeof window !== "undefined") {
+    //
+    //         localStorage.clear();
+    //         sessionStorage.clear();
+    //
+    //         document.cookie.split(";").forEach((cookie) => {
+    //             document.cookie = cookie
+    //                 .replace(/^ +/, "")
+    //                 .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+    //         });
+    //
+    //
+    //         window.location.href = "/login";
+    //     }
+    // };
 
     const avatarLetter = user.email ? user.email[0].toUpperCase() : "?";
 
@@ -48,7 +55,7 @@ export const UserInfoComponent = ({user, classNames = {}}: UserInfoProps) => {
                 <p className={`${styles.user} ${classNames.user ?? ""}`}>{user.email}</p>
 
                 <button
-                    onClick={handleLogout}
+                   onClick={onLogoutAction}
                     className={`${styles.logoutBtn} ${classNames.logoutBtn ?? ""}`}
                 >
                     Sign out

@@ -3,9 +3,9 @@
 import { useTheme } from "next-themes";
 import {useEffect, useState} from "react";
 import Image from "next/image";
-import styles from "./ThemesButton.module.css";
+import styles from "./ThemesButtonComponent.module.css";
 
-const ThemesButton = () => {
+const ThemesButtonComponent = () => {
     const { theme, setTheme } = useTheme();
     const [mounted, setMounted] = useState(false);
 
@@ -37,4 +37,4 @@ const ThemesButton = () => {
     );
 };
 
-export default ThemesButton;
+export default ThemesButtonComponent;

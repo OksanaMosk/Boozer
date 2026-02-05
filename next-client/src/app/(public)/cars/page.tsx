@@ -3,13 +3,13 @@
 import React from 'react';
 import {CarsClientComponent} from "@/components/cars-client-component/CarsClientComponent";
 import {GoBackButtonComponent} from "@/components/go-back-button-component/GoBackButtonComponent";
-import HeroVideoRow from "@/components/hero-video-row/HeroVideoRow";
+import HeroVideoRowComponent from "@/components/hero-video-row-component/HeroVideoRowComponent";
 
 const CarsPage = () => {
   return (
     <div>
         <GoBackButtonComponent/>
-     <HeroVideoRow/>
+     <HeroVideoRowComponent/>
     </div>
   );
 };

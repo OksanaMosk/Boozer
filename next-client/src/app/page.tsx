@@ -6,12 +6,13 @@ import {useSearchParams, useRouter} from "next/navigation";
 import HeroComponent from "@/components/hero-component/HeroComponent";
 import {ScrollTopButtonComponent} from "@/components/scroll-top-button-component/ScrollTopButtonComponent";
 import {LoaderComponent} from "@/components/loader-component/LoaderComponent";
-import HeroVideoRow from "@/components/hero-video-row/HeroVideoRow";
+import HeroVideoRowComponent from "@/components/hero-video-row-component/HeroVideoRowComponent";
 
 function HomePageContent() {
     const searchParams = useSearchParams();
     const router = useRouter();
     const [message, setMessage] = useState<string | null>(searchParams.get("message"));
+
 
     useEffect(() => {
         if (message) {
@@ -23,6 +24,7 @@ function HomePageContent() {
             return () => clearTimeout(timer);
         }
     }, [message, router]);
+
 
     return (
         <div
@@ -40,7 +42,7 @@ function HomePageContent() {
 
             <div>
                 <HeroComponent/>
-                <HeroVideoRow/>
+                <HeroVideoRowComponent/>
                 <ScrollTopButtonComponent/>
             </div>
         </div>

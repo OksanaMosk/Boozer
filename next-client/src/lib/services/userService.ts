@@ -9,8 +9,15 @@ const userService = {
         is_active?: boolean;
         sort_by?: keyof IUser;
         sort_order?: 'asc' | 'desc';
-    }): Promise<IUser[]> => {
-        const response = await apiService.get(urls.users.list);
+    }, token: string): Promise<IUser[]> => {
+
+        const response = await apiService.get(urls.users.list, {
+            headers: token ? {Authorization: `Bearer ${token}`} : {},
+        });
+
+        console.log('Запит на /api/users/:', response);
+        console.log('Заголовки запиту:', token ? {Authorization: `Bearer ${token}`} : {});
+
         const usersArray: IUser[] = Array.isArray(response.data.data) ? response.data.data : [];
         let filtered: IUser[] = usersArray;
 
@@ -46,7 +53,7 @@ const userService = {
                 return 0;
             });
         }
-
+console.log(filtered)
         return filtered;
     },
 

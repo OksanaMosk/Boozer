@@ -6,6 +6,7 @@ import { SessionProvider } from "next-auth/react";
 import { LoaderComponent } from "@/components/loader-component/LoaderComponent";
 import MenuComponent from "@/components/menu-component/MenuComponent";
 import { Playfair_Display, Imperial_Script, Roboto } from "next/font/google";
+import { UserProvider} from "./contexts/UserProvider";
 
 const playfair = Playfair_Display({
   subsets: ["latin", "cyrillic"],
@@ -31,16 +32,19 @@ const roboto = Roboto({
   display: "swap",
 });
 
-export function Providers({ children }: { children: React.ReactNode }) {
+export function Providers({
+  children,} : { children: React.ReactNode; }) {
   return (
     <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
       <SessionProvider>
-        <Suspense fallback={<LoaderComponent />}>
-          <div className={`${playfair.variable} ${imperialScript.variable} ${roboto.variable}`}>
-            <MenuComponent />
-            {children}
-          </div>
-        </Suspense>
+        <UserProvider>
+          <Suspense fallback={<LoaderComponent />}>
+            <div className={`${playfair.variable} ${imperialScript.variable} ${roboto.variable}`}>
+              <MenuComponent />
+              {children}
+            </div>
+          </Suspense>
+        </UserProvider>
       </SessionProvider>
     </ThemeProvider>
   );

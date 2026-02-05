@@ -10,6 +10,7 @@ export default function CompleteProfilePage() {
     const router = useRouter();
     const {data: session, status} = useSession();
     const [loading, setLoading] = useState(true);
+    console.log("SESSION:", session);
 
     useEffect(() => {
         if (status !== "authenticated" || !session?.user?.id) {
@@ -20,10 +21,10 @@ export default function CompleteProfilePage() {
             try {
                 const {data} = await profileService.getProfile(
                     session.user.id,
-                    session.accessToken!
+                    session.user.accessToken!
                 );
                 if (data?.birth_date && data?.is_rules_accepted) {
-                    router.push("/");
+                    // router.push("/");
                 }
             } catch (e) {
                 console.error("Profile check failed:", e);
