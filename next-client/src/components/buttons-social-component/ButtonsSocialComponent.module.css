@@ -32,7 +32,7 @@
 }
 
 .socialButton img {
-  margin-right: 10px;
+  margin-right: 5px;
     width: 16px;
     height: 16px;
 }
@@ -43,4 +43,9 @@
     width: 1.5rem;
     height: 1.5rem;
     transform: scale(0.2);
+}
+.socialButtonItem{
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }

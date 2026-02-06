@@ -10,6 +10,8 @@ import {LoaderComponent} from "@/components/loader-component/LoaderComponent";
 import {useRouter} from "next/navigation";
 import { ICar, ICarPhoto } from "@/models/ICar";
 import styles from "./CarCreateComponent.module.css";
+import {useSession} from "next-auth/react";
+ const { data: session } = useSession();
 
 type Currency = "UAH" | "USD" | "EUR";
 
@@ -126,7 +128,7 @@ const CarCreateComponent = () => {
         setLocalPhotos((prev) => prev.filter((_, i) => i !== index));
     };
 
-    const handleCreateCarWithoutPhotos = async (e: React.FormEvent) => {
+    const handleCreateCarWithoutPhotos = async (e: React.SyntheticEvent) => {
         e.preventDefault();
 
         const requiredFields = [
@@ -144,9 +146,13 @@ const CarCreateComponent = () => {
         setLoadingCar(true);
 
         try {
+              if (!session?.user?.accessToken) {
+        console.error("No access token available!");
+        return;
+      }
             const userId = localStorage.getItem("userId");
 
-            const response = await userService.getUserCars(userId!);
+            const response = await userService.getUserCars(userId!, { accessToken: session.user.accessToken });
             const cars: ICar[] = response.data.cars;
 
             const carStatus = newCar.status || "pending";
@@ -205,7 +211,7 @@ const CarCreateComponent = () => {
         }
     };
 
-    const handleAddPhotos = async (e: React.FormEvent) => {
+    const handleAddPhotos = async (e: React.SyntheticEvent) => {
         e.preventDefault();
         if (!newCar.id) return setMessage("Create a car first.");
         if (localPhotos.length === 0) return setMessage("Add at least one photo.");

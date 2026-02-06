@@ -1,6 +1,8 @@
+import React from "react";
+
 export interface IUser {
 
-  id?: number;
+  id?: string;
   email: string;
   token?: string;
   role: "visitor" | "venue_admin" | "admin";
@@ -12,4 +14,10 @@ export interface IUser {
     is_rules_accepted: boolean;
   };
   is_active?: boolean;
+}
+
+export interface UserContextType {
+  user: IUser | null;
+  loading: boolean;
+  setUser: React.Dispatch<React.SetStateAction<IUser | null>>;
 }

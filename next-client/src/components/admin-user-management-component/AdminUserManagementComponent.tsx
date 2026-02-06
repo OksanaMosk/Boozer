@@ -1,12 +1,12 @@
 "use client"
 
 import React, { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 import userService from "@/lib/services/userService";
 import {useRouter} from "next/navigation";
 import {LoaderComponent} from "@/components/loader-component/LoaderComponent";
 import { IUser } from "@/models/IUser";
 import styles from './AdminUserManagementComponent.module.css';
-import {useUser} from "@/app/contexts/UserProvider";
 
 const AdminUserManagementComponent = () => {
     const [users, setUsers] = useState<IUser[]>([]);
@@ -17,22 +17,18 @@ const AdminUserManagementComponent = () => {
     const [sortBy, setSortBy] = useState<string>('id');
     const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
     const router = useRouter();
- const {user} = useUser();
- const token = user?.token ?? '';
+ const { data: session } = useSession();
 
 
     useEffect(() => {
-        (async () => {
-            try {
-                setLoading(true);
+         (async () => {
+      if (!session?.user?.accessToken) {
+        console.error("No access token available!");
+        return;
+      }
 
-
-                // if (!user) {
-                //     return <div style={{display: "flex", justifyContent: "center", marginTop: 50}}>
-                //         <LoaderComponent/>
-                //     </div>;
-                // }
-
+      try {
+        setLoading(true);
                 const sortableKeys: (keyof IUser)[] = ['id', 'email', 'role', 'is_active'];
                 const keySortBy: keyof IUser | undefined = sortBy && sortableKeys.includes(sortBy as keyof IUser)
                     ? (sortBy as keyof IUser)
@@ -44,8 +40,7 @@ const AdminUserManagementComponent = () => {
                     sort_by: keySortBy,
                     sort_order: sortOrder
                 };
-
-                const allUsers = await userService.getAll(filters, token)
+const allUsers = await userService.getAll(filters, { accessToken: session.user.accessToken });
                 setUsers(allUsers);
 
             } catch (err: unknown) {
@@ -62,7 +57,11 @@ const AdminUserManagementComponent = () => {
 
     const handleToggleActiveUser = async (userId: string, isActive: boolean) => {
         try {
-            await userService.toggleActive(userId, isActive);
+             if (!session?.user?.accessToken) {
+        console.error("No access token available!");
+        return;
+      }
+            await userService.toggleActive(userId, isActive, { accessToken: session.user.accessToken });
             setUsers(prev =>
                 prev.map(u => u.id && String(u.id) === userId ? {...u, is_active: isActive} : u)
             );
@@ -73,7 +72,11 @@ const AdminUserManagementComponent = () => {
 
     const handleChangeRole = async (userId: string, role: "visitor" | "venue_admin" | "admin") => {
         try {
-            await userService.changeRole(userId, role);
+             if (!session?.user?.accessToken) {
+        console.error("No access token available!");
+        return;
+      }
+            await userService.changeRole(userId, role,{ accessToken: session.user.accessToken });
             setUsers(prev => prev.map(u =>
                 u.id !== undefined && String(u.id) === userId ? {...u, role} : u
             ));
@@ -91,7 +94,11 @@ const AdminUserManagementComponent = () => {
         }
 
         try {
-            await userService.delete(String(userId));
+             if (!session?.user?.accessToken) {
+        console.error("No access token available!");
+        return;
+      }
+            await userService.delete(String(userId), { accessToken: session.user.accessToken });
             setUsers(users.filter(user => String(user.id) !== String(userId)));
             alert('User deleted successfully');
         } catch {
@@ -188,7 +195,7 @@ const AdminUserManagementComponent = () => {
                                     <button onClick={() => handleToggleActiveUser(String(user.id), true)}
                                             className={styles.unblockButton}>Unblock</button>
                                 )}
-                                <button onClick={() => handleDeleteUser(user.id)}
+                                <button onClick={() => handleDeleteUser(Number(user.id))}
                                         className={styles.deleteButton}>Delete
                                 </button>
                             </td>

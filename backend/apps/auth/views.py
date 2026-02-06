@@ -16,8 +16,7 @@ from core.services.jwt_service import ActivateToken, JWTService, RecoveryToken, 
 from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
 
 from apps.auth.serializers import EmailSerializer, PasswordSerializer
-from apps.user.serializers import UserSerializer
-
+from apps.user.serializers import UserSerializer, ProfileSerializer
 
 import requests
 from rest_framework.response import Response
@@ -160,13 +159,32 @@ class LoginAPIView(APIView):
         password = request.data.get('password')
         user = authenticate(username=username, password=password)
         if user:
-            role = user.role
+            # user.refresh_from_db()
+            profile = getattr(user, 'profile', None)
+
+            if profile is None:
+                profile_data = {
+                    "name": "Admin",
+                    "surname": "",
+                    "age": None,
+                    "phone": "",
+                    "birth_date": None,
+                    "is_rules_accepted": True
+                }
+            else:
+                profile_data = ProfileSerializer(profile).data
             token = JWTService.create_token(user=user, token_class=AccessToken)
             refresh_token = JWTService.create_token(user=user, token_class=RefreshToken)
             return Response({
                 'access': str(token),
                 'refresh': str(refresh_token),
-                'role': role
+                'role':user.role,
+                'user': {
+                    'id': user.id,
+                    'email': user.email,
+                    'role': user.role,
+                    'profile':profile_data
+                }
             }, status=status.HTTP_200_OK)
         return Response({'detail': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
 
@@ -222,6 +240,15 @@ class SocialLoginJWTAPIView(APIView):
             "user": {
                 "id": user.id,
                 "email": user.email,
+                "role": user.role,
+                "profile": {
+                    "name": profile.name,
+                    "surname": profile.surname,
+                    "age": profile.age,
+                    "phone": profile.phone,
+                    "birth_date": profile.birth_date,
+                    "is_rules_accepted": profile.is_rules_accepted,
+                }
             }
         }
 

@@ -34,7 +34,7 @@ const session = await getSession();
 
     async register(user: IRegisterUser): Promise<IUser> {
         try {
-            const {data} = await apiService.post<IUser>(urls.auth.register, user);
+            const {data} = await apiService().post<IUser>(urls.auth.register, user);
             console.log("Success response:", data);
             return data;
         } catch (error) {
@@ -48,16 +48,13 @@ const session = await getSession();
         }
     },
     getSocketToken() {
-        return apiService.get(urls.auth.socket);
+        return apiService().get(urls.auth.socket);
     },
 
-    async getCurrentUser(token: string | null): Promise<IUser | null> {
+    async getCurrentUser(token: { accessToken: string }): Promise<IUser | null> {
   if (!token) return null;
   try {
-    const { data, status } = await apiService.get(urls.auth.me, {
-      headers: { Authorization: `Bearer ${token}` },
-      validateStatus: (status) => status < 500,
-    });
+    const { data, status } = await apiService(token.accessToken).get(urls.auth.me);
     if (status === 401 || status === 403) {
       console.log('[getCurrentUser] Unauthorized:', status);
       return null;

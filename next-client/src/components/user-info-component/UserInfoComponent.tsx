@@ -1,9 +1,8 @@
 'use client';
 
-import { IUser } from "@/models/IUser";
 import styles from "./UserInfoComponent.module.css";
 import {useUser} from "@/app/contexts/UserProvider";
-
+import { useSession} from "next-auth/react";
 type UserInfoProps = {
     onLogoutAction: () => void;
     classNames?: {
@@ -18,29 +17,15 @@ type UserInfoProps = {
 };
 
 
-
-
 export const UserInfoComponent = ({onLogoutAction, classNames = {}}: UserInfoProps) => {
-    const {user}=useUser()
+    // const {user}=useUser()
 
+    const {data: session} = useSession();
+    const user = session?.user;
+    if (!session?.user) return null;
     if (!user) return null;
-
-    // const handleLogout = () => {
-    //     if (typeof window !== "undefined") {
-    //
-    //         localStorage.clear();
-    //         sessionStorage.clear();
-    //
-    //         document.cookie.split(";").forEach((cookie) => {
-    //             document.cookie = cookie
-    //                 .replace(/^ +/, "")
-    //                 .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
-    //         });
-    //
-    //
-    //         window.location.href = "/login";
-    //     }
-    // };
+    console.log(user);
+    console.log("User Profile:", user?.profile);
 
     const avatarLetter = user.email ? user.email[0].toUpperCase() : "?";
 

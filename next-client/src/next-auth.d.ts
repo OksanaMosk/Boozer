@@ -9,6 +9,15 @@ declare module "next-auth" {
     role?: string;
     needsProfile?: boolean;
     expiresIn?: number;
+     profile?: {
+      name: string;
+      surname: string;
+      age: number;
+      avatarUrl: string | null;
+      phone: string;
+    birth_date: string;
+    is_rules_accepted: boolean;
+    };
   }
 
   interface Session {
@@ -19,6 +28,15 @@ declare module "next-auth" {
       role?: string;
       needsProfile?: boolean;
       error?: string;
+      profile?: {
+        name: string;
+        surname: string;
+        age: number;
+        avatarUrl: string | null;
+        phone: string;
+    birth_date: string;
+    is_rules_accepted: boolean;
+      };
     } & DefaultSession["user"];
   }
 }
@@ -28,9 +46,18 @@ declare module "next-auth/jwt" {
     id: string;
     accessToken?: string;
     refreshToken?: string;
-    role?: string;
+    role?:  "visitor" | "venue_admin" | "admin";
     needsProfile?: boolean;
     accessTokenExpires?: number;
     error?: string;
+    profile?: {
+      name: string;
+      surname: string;
+      age: number;
+      avatarUrl: string | null;
+      phone: string;
+    birth_date: string;
+    is_rules_accepted: boolean;
+    };
   }
 }

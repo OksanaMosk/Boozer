@@ -6,6 +6,7 @@ import {carService} from "@/lib/services/carService";
 import {LoaderComponent} from "@/components/loader-component/LoaderComponent";
 import { ICar } from "@/models/ICar";
 import styles from "./CarManagementComponent.module.css";
+import {useSession} from "next-auth/react";
 
 interface Props {
   userId: string;
@@ -15,26 +16,29 @@ const CarManagementComponent: React.FC<Props> = ({userId}) => {
     const [cars, setCars] = useState<ICar[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const {data: session} = useSession();
 
     useEffect(() => {
-        if (!userId) {
-            setError("User ID is missing");
-            return;
-        }
+        if (!userId || !session?.user?.accessToken) return;
+    const loadCars = async () => {
+        try {
+            setLoading(true);
+            const response = await userService.getUserCars(userId, {
+                accessToken: session?.user?.accessToken
+            });
 
-        (async () => {
-            try {
-                setLoading(true);
-                const response = await userService.getUserCars(userId);
-                const cars = response.data.cars;
-                setCars(cars);
-            } catch {
-                setError("Failed to load cars");
-            } finally {
-                setLoading(false);
-            }
-        })();
-    }, [userId]);
+            const carsData = response.data?.cars || response.data || [];
+            setCars(carsData);
+        } catch (err) {
+            console.error(err);
+            setError("Failed to load cars");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    loadCars();
+}, [userId, session?.user?.accessToken]);
 
 
     const handleStatusChange = async (carId: string, newStatus: string) => {

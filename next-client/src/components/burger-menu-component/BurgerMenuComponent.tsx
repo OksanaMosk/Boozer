@@ -6,6 +6,7 @@ import ThemesButtonComponent from "@/components/themes-button-component/ThemesBu
 import type { IUser } from "@/models/IUser";
 import type { FC } from "react";
 import styles from "./BurgerMenuComponent.module.css";
+import {signOut} from "next-auth/react";
 
 type BurgerMenuProps = {
     isOpen: boolean;
@@ -63,6 +64,7 @@ export const BurgerMenuComponent: FC<BurgerMenuProps> = ({
                             user: styles.burgerUserEmail,
                             logoutBtn: styles.burgerUserLogoutBtn,
                         }}
+                         onLogoutAction={() => signOut()}
                     />
                 )
             )}

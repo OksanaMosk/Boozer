@@ -10,13 +10,18 @@ export default function PostLoginPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    let isMounted = true;
+    useEffect(() => {
+        let isMounted = true;
 
-    const redirectUser = async () => {
-      const session = await getSession();
+        const redirectUser = async () => {
+            console.log("POST LOGIN: start");
+            const session = await getSession();
+            console.log("POST LOGIN: session =", session);
+            console.log("POST LOGIN: user =", session?.user);
+            console.log("POST LOGIN: needsProfile =", session?.user?.needsProfile);
+            console.log("POST LOGIN: role =", session?.user?.role);
 
-      if (!isMounted) return;
+            if (!isMounted) return;
 
       if (!session?.user) {
         router.replace("/login");
@@ -54,6 +59,7 @@ export default function PostLoginPage() {
       </div>
     );
   }
+  console.log("RENDER POST LOGIN PAGE");
 
   return (
     <div style={{ display: "flex", justifyContent: "center", marginTop: "20%" }}>

@@ -9,7 +9,7 @@ import { LoaderComponent } from "@/components/loader-component/LoaderComponent";
 import DatePickerComponent from "@/components/date-picker-component/DatePickerComponent";
 import styles from "./RegisterComponent.module.css";
 import IMask from "imask";
-import SocialButtonsComponent from "@/components/social-buttons-component/SocialButtonsComponent";
+import ButtonsSocialComponent from "@/components/buttons-social-component/ButtonsSocialComponent";
 import {useSession} from "next-auth/react";
 
 
@@ -34,9 +34,9 @@ const RegisterComponent = () => {
 
     useEffect(() => {
         if (session?.user?.needsProfile) {
-            router.push("/auth/complete-profile"); // редірект якщо профіль неповний
+            router.push("/auth/complete-profile");
         } else if (session) {
-            router.push("/"); // або куди звичайно після логіну
+            router.push("/");
         }
     }, [session, router]);
 
@@ -294,7 +294,7 @@ const RegisterComponent = () => {
           <p className={styles.registerText}>
             Already have an account? <a href="/login" className={styles.link}>Sign in</a>
           </p>
-            <SocialButtonsComponent/>
+            <ButtonsSocialComponent/>
         </div>
       </form>
     </div>

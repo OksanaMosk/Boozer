@@ -6,7 +6,7 @@ import Link from "next/link";
 import { authService } from "@/lib/services/authService";
 import { LoaderComponent } from "@/components/loader-component/LoaderComponent";
 import styles from "./LoginComponent.module.css";
-import SocialButtonsComponent from "@/components/social-buttons-component/SocialButtonsComponent";
+import ButtonsSocialComponent from "@/components/buttons-social-component/ButtonsSocialComponent";
 import { useRouter } from "next/navigation";
 
 const LoginComponent = () => {
@@ -117,7 +117,7 @@ const LoginComponent = () => {
                             Sign up
                         </Link>
                     </p>
-                        <SocialButtonsComponent/>
+                        <ButtonsSocialComponent/>
                 </div>
             </form>
         </div>

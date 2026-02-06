@@ -31,42 +31,42 @@ const carService = {
                     : filterCriteria.sort_by;
         }
 
-        const {data} = await apiService.get(urls.cars.list, {params});
+        const {data} = await apiService().get(urls.cars.list, {params});
         return data;
     },
 
     get(id: string) {
-        return apiService.get<ICar>(urls.cars.action(id));
+        return apiService().get<ICar>(urls.cars.action(id));
     },
 
     create(data: ICar) {
-        return apiService.post<ICar>(urls.cars.create, data);
+        return apiService().post<ICar>(urls.cars.create, data);
     },
 
     update(id: string, data: Partial<ICar>) {
-        return apiService.put<ICar>(urls.cars.action(id), data);
+        return apiService().put<ICar>(urls.cars.action(id), data);
     },
 
     delete(id: string) {
-        return apiService.delete(urls.cars.action(id));
+        return apiService().delete(urls.cars.action(id));
     },
 
     addPhoto(carId: string, formData: FormData) {
-        return apiService.post(urls.cars.photos(carId), formData, {
+        return apiService().post(urls.cars.photos(carId), formData, {
             withCredentials: true,
         });
     },
     deletePhoto(photoId: string) {
-        return apiService.delete(urls.cars.deletePhoto(photoId));
+        return apiService().delete(urls.cars.deletePhoto(photoId));
     },
 
     getExchangeRates() {
-        return apiService.get(urls.cars.exchangeRates);
+        return apiService().get(urls.cars.exchangeRates);
     },
 
     getStats(carId: string) {
         const url = urls.cars.stats(carId);
-        return apiService.get(url);
+        return apiService().get(url);
     },
 
     getAveragePriceByRegion: (region: string, model?: string) => {
@@ -79,7 +79,7 @@ const carService = {
 
         const query = params.toString();
         const url = `${urls.cars.averagePriceRegion}?${query}`;
-        return apiService.get(url);
+        return apiService().get(url);
     },
 
     getAveragePriceByCountry: (model?: string) => {
@@ -93,11 +93,11 @@ const carService = {
         const url = query
             ? `${urls.cars.averagePriceCountry}?${query}`
             : urls.cars.averagePriceCountry;
-        return apiService.get(url);
+        return apiService().get(url);
     },
 
     getConstants() {
-        return apiService.get(urls.cars.constants);
+        return apiService().get(urls.cars.constants);
     },
 };
 

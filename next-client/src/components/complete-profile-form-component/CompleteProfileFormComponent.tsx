@@ -79,7 +79,7 @@ export default function CompleteProfileFormComponent() {
         );
 
         console.log("Дані успішно відправлено, редірект на /");
-        router.push("/dashboard/visitor");
+        router.push("/visitor");
 
     } catch (err: any) {
     console.error("Profile save error", err);

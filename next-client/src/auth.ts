@@ -17,7 +17,7 @@ export const {handlers, auth, signIn, signOut} = NextAuth({
             options: {
                 httpOnly: true,
                 // sameSite: "none",
-                secure: false, // localhost
+                secure: false,
                 path: "/",
             },
         },
@@ -54,7 +54,10 @@ export const {handlers, auth, signIn, signOut} = NextAuth({
                     refreshToken: data.refresh,
                     role: data.role,
                     expiresIn: data.expires_in || data.lifetime || 3600,
-                    needsProfile: false,
+                    needsProfile:
+                        !data.user?.profile?.birth_date ||
+                        !data.user?.profile?.is_rules_accepted,
+                    profile: data.user?.profile,
                 };
             }
             return null;
@@ -72,9 +75,13 @@ export const {handlers, auth, signIn, signOut} = NextAuth({
       if (account && user) {
         let accessToken = user.accessToken;
         let refreshToken = user.refreshToken;
-        let needsProfile = user.needsProfile;
+        let needsProfile = token.needsProfile ?? true;
         let userId = user.id;
         let expiresIn = user.expiresIn || 3600;
+        let role = user.role ?? "visitor";
+        if (user.profile) {
+        token.profile = user.profile;
+      }
 
         if (account.provider !== "credentials") {
           try {
@@ -86,13 +93,29 @@ export const {handlers, auth, signIn, signOut} = NextAuth({
                 access_token: account.access_token,
               }),
             });
-            if (res.ok) {
-              const data = await res.json();
-              accessToken = data.access_token;
-              refreshToken = data.refresh_token;
-              needsProfile = data.needs_profile;
-              userId = String(data.user.id);
-              expiresIn = data.expires_in || data.lifetime || 3600;
+              if (res.ok) {
+                  const data = await res.json();
+                  console.log("DATA FROM BACKEND:", data);
+                  const profile = {
+                      name: data.user?.profile?.name || "",
+                      surname: data.user?.profile?.surname || "",
+                      age: data.user?.profile?.age || 0,
+                      avatarUrl: data.user?.profile?.avatarUrl || null,
+                      phone: data.user?.profile?.phone || "",
+                      birth_date: data.user?.profile?.birth_date || "",
+                      is_rules_accepted: data.user?.profile?.is_rules_accepted || false,
+                  };
+                  console.log("DJANGO SOCIAL RESPONSE:", data);
+                  accessToken = data.access_token;
+                refreshToken = data.refresh_token;
+                needsProfile =
+                    (data.needs_profile ?? false) ||
+                    !data.user.profile?.birth_date ||
+                    !data.user.profile?.is_rules_accepted;
+                userId = String(data.user.id);
+                role = data.user.role ?? role;
+                token.profile = profile;
+                expiresIn = data.expires_in || data.lifetime || 3600
             }
           } catch (e) {
             console.error("Social sync error:", e);
@@ -105,7 +128,8 @@ export const {handlers, auth, signIn, signOut} = NextAuth({
           accessToken,
           refreshToken,
           needsProfile,
-          role: user.role,
+          role,
+          profile: token.profile,
           accessTokenExpires: Date.now() + (Number(expiresIn) - 60) * 1000,
         };
       }
@@ -122,14 +146,13 @@ export const {handlers, auth, signIn, signOut} = NextAuth({
         });
           const data = await response.json();
 
-          // if (!response.ok) {
-          //   return { ...token, error: "RefreshAccessTokenError" };
-          // }
-          //
-
           if (!response.ok) {
-              return {};
+            return { ...token, error: "RefreshAccessTokenError" };
           }
+
+          // if (!response.ok) {
+          //     return {};
+          // }
 
           const newExpiresIn = data.expires_in || data.lifetime || 3600;
 
@@ -151,8 +174,9 @@ export const {handlers, auth, signIn, signOut} = NextAuth({
         session.user.accessToken = token.accessToken as string;
         session.user.refreshToken = token.refreshToken as string;
         session.user.needsProfile = Boolean(token.needsProfile);
-        session.user.role = token.role as string;
+        session.user.role = token.role as  "visitor" | "venue_admin" | "admin";
         session.user.error = token.error as string | undefined;
+        session.user.profile = token.profile;
       }
       return session;
     },

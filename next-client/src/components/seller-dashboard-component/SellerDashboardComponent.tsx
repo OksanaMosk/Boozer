@@ -8,18 +8,15 @@ import ChatComponent from "@/components/chat-component/ChatComponent";
 import { ICar } from "@/models/ICar";
 import styles from "./SellerDashboardComponent.module.css";
 import {useUser} from "@/app/contexts/UserProvider";
+import {useSession} from "next-auth/react";
 
 const SellerDashboardComponent: React.FC = () => {
     const [cars, setCars] = useState<ICar[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string>("");
+    const {data: session} = useSession();
+    const {user} = useUser();
 
-      const {user} = useUser();
-    if (!user) {
-       return <div style={{display: "flex", justifyContent: "center", marginTop: 50}}>
-        <LoaderComponent/>
-    </div>;
-    }
 
     useEffect(() => {
         if (!user?.id) return;
@@ -27,8 +24,12 @@ const SellerDashboardComponent: React.FC = () => {
         const loadCars = async () => {
             setLoading(true);
             try {
-                if (!user?.id) return;
-                const response = await userService.getUserCars(String(user.id));
+
+                 if (!session?.user?.accessToken) {
+        console.error("No access token available!");
+        return;
+      }
+                const response = await userService.getUserCars(String(user.id), { accessToken: session.user.accessToken });
                 setCars(response.data.cars);
             } catch {
                 setError("Failed to load cars.");
@@ -56,6 +57,11 @@ const SellerDashboardComponent: React.FC = () => {
                 <LoaderComponent/>
             </div>
         );
+if (!user) {
+        return <div style={{display: "flex", justifyContent: "center", marginTop: 50}}>
+            <LoaderComponent/>
+        </div>;
+    }
 
     if (error) return <p className={styles.errorText}>{error}</p>;
 

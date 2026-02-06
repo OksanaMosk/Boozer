@@ -3,21 +3,19 @@ import {urls} from "../constants/urls";
 import {GetUserCarsResponse} from "@/models/ICar";
 import {IUser} from "@/models/IUser";
 
+
 const userService = {
-    getAll: async (filterCriteria: {
-        role?: string;
-        is_active?: boolean;
-        sort_by?: keyof IUser;
-        sort_order?: 'asc' | 'desc';
-    }, token: string): Promise<IUser[]> => {
-
-        const response = await apiService.get(urls.users.list, {
-            headers: token ? {Authorization: `Bearer ${token}`} : {},
-        });
-
-        console.log('Запит на /api/users/:', response);
-        console.log('Заголовки запиту:', token ? {Authorization: `Bearer ${token}`} : {});
-
+    getAll: async (
+        filterCriteria: {
+            role?: string;
+            is_active?: boolean;
+            sort_by?: keyof IUser;
+            sort_order?: 'asc' | 'desc';
+        },
+        token: { accessToken: string }
+    ): Promise<IUser[]> => {
+        console.log(token.accessToken);
+        const response = await apiService(token.accessToken).get(urls.users.list);
         const usersArray: IUser[] = Array.isArray(response.data.data) ? response.data.data : [];
         let filtered: IUser[] = usersArray;
 
@@ -57,26 +55,26 @@ console.log(filtered)
         return filtered;
     },
 
-    toggleActive: async (userId: string, isActive: boolean) => {
-        const {data} = await apiService.patch(urls.users.active(userId), {
+    toggleActive: async (userId: string, isActive: boolean, token: { accessToken: string }) => {
+        const {data} = await apiService(token.accessToken).patch(urls.users.active(userId), {
             is_active: isActive
         });
         return data;
     },
 
 
-    changeRole: async (userId: string, role: string) => {
-        const {data} = await apiService.patch(urls.users.changeRole(userId), {role});
+    changeRole: async (userId: string, role: string, token: { accessToken: string }) => {
+        const {data} = await apiService(token.accessToken).patch(urls.users.changeRole(userId), {role});
         return data;
     },
 
 
-    delete: async (userId: string) => {
-        const {data} = await apiService.delete(urls.users.delete(userId));
+    delete: async (userId: string, token: { accessToken: string }) => {
+        const {data} = await apiService(token.accessToken).delete(urls.users.delete(userId));
         return data;
     },
-    getUserCars(userId: string) {
-        return apiService.get<GetUserCarsResponse>(urls.users.userCars(userId));
+    getUserCars(userId: string, token: { accessToken: string }) {
+        return apiService(token.accessToken).get<GetUserCarsResponse>(urls.users.userCars(userId));
     },
 };
 

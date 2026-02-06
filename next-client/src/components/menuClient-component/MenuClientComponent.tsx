@@ -23,6 +23,7 @@ export const MenuClientComponent = () => {
 
   useEffect(() => {
   console.log(user, authenticated);
+  console.log("User Profile:", user?.profile);
 }, [user]);
 
   const menuItems = [
