@@ -178,7 +178,6 @@ class LoginAPIView(APIView):
             return Response({
                 'access': str(token),
                 'refresh': str(refresh_token),
-                'role':user.role,
                 'user': {
                     'id': user.id,
                     'email': user.email,

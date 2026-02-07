@@ -63,7 +63,7 @@ export default function PostLoginPage() {
 
   return (
     <div style={{ display: "flex", justifyContent: "center", marginTop: "20%" }}>
-      <p>Redirecting, please wait...</p>
+      <p>Please wait...</p>
     </div>
   );
 }
