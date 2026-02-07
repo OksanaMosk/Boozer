@@ -229,6 +229,7 @@ class SocialLoginJWTAPIView(APIView):
             profile.name = user_data.get('given_name', '') or email.split('@')[0]
         if profile_created or not profile.surname:
             profile.surname = user_data.get('family_name', '') or email.split('@')[0]
+        profile.save()
 
         needs_profile = not profile.is_rules_accepted or not profile.birth_date
 
