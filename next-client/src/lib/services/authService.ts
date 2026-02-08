@@ -9,7 +9,7 @@ interface IRegisterUser {
     email: string;
     password: string;
     profile: IUser["profile"];
-    role?: "visitor" | "venue_admin" | "admin";
+    role?: IUser["role"]
 }
 
 const authService = {
@@ -21,11 +21,11 @@ const authService = {
         });
 
         if (result?.error) {
-            throw new Error("Невірний логін або пароль");
+            throw new Error("🔒 Invalid login or password");
         }
 const session = await getSession();
     if (!session?.user) {
-      throw new Error("Не вдалося отримати сесію користувача");
+      throw new Error("⚠️ Failed to retrieve user session");
     }
 
     return session.user;
