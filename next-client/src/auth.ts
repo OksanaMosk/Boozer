@@ -27,10 +27,16 @@ export const {handlers, auth, signIn, signOut} = NextAuth({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     }),
-    Facebook({
-      clientId: process.env.FACEBOOK_CLIENT_ID,
-      clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
-    }),
+      Facebook({
+          clientId: process.env.FACEBOOK_CLIENT_ID,
+          clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
+          checks: ["state"],
+          authorization: {
+              params: {
+                  scope: "email public_profile",
+              }
+          },
+      }),
     Credentials({
       name: "Credentials",
       credentials: {
