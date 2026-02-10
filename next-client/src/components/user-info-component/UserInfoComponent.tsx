@@ -2,6 +2,7 @@
 
 import styles from "./UserInfoComponent.module.css";
 import { useSession} from "next-auth/react";
+import {useUser} from "@/app/contexts/UserProvider";
 type UserInfoProps = {
     onLogoutAction: () => void;
     classNames?: {
@@ -17,9 +18,7 @@ type UserInfoProps = {
 
 
 export const UserInfoComponent = ({onLogoutAction, classNames = {}}: UserInfoProps) => {
-    const {data: session} = useSession();
-    const user = session?.user;
-    if (!session?.user) return null;
+  const {user} = useUser()
     if (!user) return null;
     console.log(user);
     console.log("User Profile:", user?.profile);

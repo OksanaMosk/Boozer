@@ -16,7 +16,14 @@ urlpatterns = [
     path('', home),
     path('api/auth/', include('apps.auth.urls')),
     path('api/users/', include('apps.user.urls')),
+    path('api/', include('apps.venue.urls')),
+    path('api/menu/', include('apps.menu.urls')),
+    path('api/orders/', include('apps.orders.urls')),
+    path('api/', include('apps.reviews_feedback.urls')),
+    path('api/news/', include('apps.news.urls')),
     # path('api/doc/', schema_view.with_ui('swagger'), name='schema-swagger'),
 ]
 
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

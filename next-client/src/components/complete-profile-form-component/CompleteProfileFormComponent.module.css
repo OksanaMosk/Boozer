@@ -40,8 +40,8 @@
        font-size: 2rem;
     text-align: center;
     font-weight: 800;
-    text-shadow: 0 0 8px rgba(255,255,255,0.3);
-     background: linear-gradient(90deg, #30240b, white);
+    /*text-shadow: 0 0 8px rgba(255,255,255,0.3);*/
+     background: linear-gradient(90deg, #30240b 25%, white, #30240b, white);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;

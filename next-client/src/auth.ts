@@ -91,6 +91,20 @@ export const {handlers, auth, signIn, signOut} = NextAuth({
           token.accessTokenExpires = Date.now() + ((user.expiresIn ?? 3600) - 60) * 1000;
 
           if (account.provider !== "credentials") {
+
+
+              const providerAccessToken =
+  account.access_token ||
+  (typeof account.token === "object" &&
+    account.token !== null &&
+    "access_token" in account.token &&
+    (account.token as any).access_token) ||
+  account.id_token;
+
+    console.log("FACEBOOK ACCOUNT:", account);
+    console.log("PROVIDER TOKEN:", providerAccessToken);
+
+
         try {
           const res = await fetch("http://127.0.0.1:8888/api/auth/social_jwt/", {
             method: "POST",

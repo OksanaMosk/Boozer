@@ -1,8 +1,8 @@
 "use client";
 
 import Link from 'next/link';
-import {GoBackButtonComponent} from "@/components/go-back-button-component/GoBackButtonComponent";
-import BuyerDashboardComponent from "@/components/buyer-dashboard-component/BuyerDashboardComponent";
+import {ButtonGoBackComponent} from "@/components/button-go-back-component/ButtonGoBackComponent";
+import VisitorDashboardComponent from "@/components/visitor-dashboard-component/VisitorDashboardComponent";
 
 const VisitorPage = () => {
 
@@ -13,8 +13,8 @@ const VisitorPage = () => {
             textAlign: 'center',
             width: '100%'
         }}>
-            <GoBackButtonComponent/>
-            <BuyerDashboardComponent/>
+            <ButtonGoBackComponent/>
+            <VisitorDashboardComponent/>
             <Link
                 href="/create-car"
                 className="create-car-link"

@@ -3,7 +3,7 @@ import React from "react";
 import PostLoginPage from "@/app/(public)/post-login/page";
 
 export const metadata: Metadata = {
-    title: "Cars Login",
+    title: "PostLogin",
 };
 
 type Props = {

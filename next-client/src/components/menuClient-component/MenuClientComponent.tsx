@@ -28,7 +28,7 @@ export const MenuClientComponent = () => {
 
   const menuItems = [
     { href: "/", label: "Home" },
-    { href: "/cars", label: "Cars" },
+    { href: "/venues", label: "Cars" },
   ];
 
   const isLoginActive = pathname === "/login";

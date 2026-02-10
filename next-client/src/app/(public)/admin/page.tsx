@@ -1,7 +1,7 @@
 "use client";
 
 import AdminDashboardComponent from "@/components/admin-dashboard-component/AdminDashboardComponent";
-import {GoBackButtonComponent} from "@/components/go-back-button-component/GoBackButtonComponent";
+import {ButtonGoBackComponent} from "@/components/button-go-back-component/ButtonGoBackComponent";
 import Link from "next/link";
 
 
@@ -13,7 +13,7 @@ const AdminPage = () => {
       textAlign: 'center',
       width: '100%'
     }}>
-      <GoBackButtonComponent/>
+      <ButtonGoBackComponent/>
       <AdminDashboardComponent />
          <Link
               href="/create-car"

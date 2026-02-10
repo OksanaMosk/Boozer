@@ -1,10 +1,10 @@
 const paths = {
   auth: "/auth",
-  cars: "/cars",
+  cars: "/venues",
   users: "/users",
-  carPhotos: "/cars/photos",
-  carStats: "/cars/stats",
-  carAveragePrice: "/cars/stats/average",
+  carPhotos: "/venues/photos",
+  carStats: "/venues/stats",
+  carAveragePrice: "/venues/stats/average",
 };
 
 export const urls = {
@@ -21,7 +21,7 @@ export const urls = {
         active: (id: string) => `${paths.users}/${id}/active/`,
         changeRole: (id: string) => `${paths.users}/change-role/${id}/`,
         delete: (id: string) => `${paths.users}/${id}/delete/`,
-        userCars: (userId: string) => `${paths.users}/${userId}/cars/`,
+        userCars: (userId: string) => `${paths.users}/${userId}/venues/`,
     },
     profile: {
         get: (userId: string) => `${paths.users}/${userId}/profile/`,

@@ -1,8 +1,8 @@
 "use client";
 
-import SellerDashboardComponent from "@/components/seller-dashboard-component/SellerDashboardComponent";
+import VenueAdminDashboardComponent from "@/components/venue-admin-dashboard-component/VenueAdminDashboardComponent";
 import Link from 'next/link';
-import {GoBackButtonComponent} from "@/components/go-back-button-component/GoBackButtonComponent";
+import {ButtonGoBackComponent} from "@/components/button-go-back-component/ButtonGoBackComponent";
 
 const VenueAdminPage = () => {
 
@@ -13,7 +13,7 @@ const VenueAdminPage = () => {
             textAlign: 'center',
             width: '100%'
         }}>
-            <GoBackButtonComponent/>
+            <ButtonGoBackComponent/>
             <Link
                 href="/create-car"
                 className="create-car-link"
@@ -32,7 +32,7 @@ const VenueAdminPage = () => {
                 }}
             >Create New Car
             </Link>
-            <SellerDashboardComponent/>
+            <VenueAdminDashboardComponent/>
 
         </div>
     );

@@ -1,12 +1,12 @@
 "use client";
 
 import LoginComponent from "@/components/login-component/LoginComponent";
-import {GoBackButtonComponent} from "@/components/go-back-button-component/GoBackButtonComponent";
+import {ButtonGoBackComponent} from "@/components/button-go-back-component/ButtonGoBackComponent";
 
 const LoginPage = () => {
     return (
         <div>
-            <GoBackButtonComponent/>
+            <ButtonGoBackComponent/>
             <LoginComponent/>
         </div>
     );

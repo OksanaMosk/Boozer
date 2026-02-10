@@ -33,6 +33,8 @@ DEBUG = os.environ.get('DEBUG') == 'True'
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0']
 
+GOOGLE_MAPS_API_KEY = os.environ.get('GOOGLE_MAPS_API_KEY')
+
 AUTH_USER_MODEL ='user.UserModel'
 
 # Application definition
@@ -53,29 +55,20 @@ INSTALLED_APPS = [
     'django_celery_results',
     'django_celery_beat',
 
-    # "allauth",
-    # "allauth.account",
-    # "allauth.socialaccount",
-    #
-    # "allauth.socialaccount.providers.google",
-    # "allauth.socialaccount.providers.facebook",
-    # "allauth.socialaccount.providers.apple",
-
     # my_apps
     'core',
     'apps.auth',
     'apps.user',
+    'apps.venue',
+    'apps.menu',
+    'apps.orders.apps.OrdersConfig',
+    'apps.reviews_feedback',
+    'apps.news',
     'apps.chat',
     'corsheaders',
 ]
 
 SITE_ID = 1
-
-# ACCOUNT_USER_MODEL_USERNAME_FIELD = None
-# ACCOUNT_USERNAME_REQUIRED = False
-# ACCOUNT_EMAIL_REQUIRED = True
-# ACCOUNT_AUTHENTICATION_METHOD = 'email'
-# SOCIALACCOUNT_AUTO_SIGNUP = False
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -84,31 +77,10 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    # 'allauth.account.middleware.AccountMiddleware',
 ]
 AUTHENTICATION_BACKENDS = (
-    "django.contrib.auth.backends.ModelBackend",  # default
-    # "allauth.account.auth_backends.AuthenticationBackend",  # allauth
+    "django.contrib.auth.backends.ModelBackend",
 )
-
-# ACCOUNT_LOGIN_METHODS = {'email'}
-# ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
-# ACCOUNT_EMAIL_VERIFICATION = "optional"
-#
-# SOCIALACCOUNT_PROVIDERS = {
-#     "google": {
-#         "SCOPE": ["email", "profile"],
-#         "AUTH_PARAMS": {"access_type": "online"},
-#     },
-#     "facebook": {
-#         "METHOD": "oauth2",
-#         "SCOPE": ["email", "public_profile"],
-#         "FIELDS": ["email", "first_name", "last_name", "birthday"],
-#     },
-#     'apple': {
-#         'SCOPE': ['name', 'email'],
-#     },
-# }
 
 ROOT_URLCONF = 'configs.urls'
 

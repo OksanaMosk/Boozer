@@ -287,17 +287,38 @@ class SocialLoginJWTAPIView(APIView):
         fb_app_id = os.getenv('FACEBOOK_CLIENT_ID')
         fb_app_secret = os.getenv('FACEBOOK_CLIENT_SECRET')
 
-        try:
-            debug_url = f"https://graph.facebook.com{access_token}&access_token={fb_app_id}|{fb_app_secret}"
-            debug_response = requests.get(debug_url, timeout=5).json()
+        app_token = f"{fb_app_id}|{fb_app_secret}"
 
-            if debug_response.get('data', {}).get('is_valid'):
-                facebook_url = f'https://graph.facebook.com/me?access_token={access_token}&fields=id,email,first_name,last_name'
-                response = requests.get(facebook_url, timeout=5)
-                return response.json()
+        try:
+            debug_url = "https://graph.facebook.com/debug_token"
+            debug_response = requests.get(
+                debug_url,
+                params={
+                    "input_token": access_token,
+                    "access_token": app_token
+                },
+                timeout=5
+            ).json()
+
+            if not debug_response.get("data", {}).get("is_valid"):
+                return None
+
+            user_response = requests.get(
+                "https://graph.facebook.com/me",
+                params={
+                    "fields": "id,email,first_name,last_name",
+                    "access_token": access_token
+                },
+                timeout=5
+            )
+
+            if user_response.status_code == 200:
+                return user_response.json()
+
         except Exception as e:
             print(f"Facebook verification error: {e}")
             return None
+
         return None
 
     def verify_apple_token(self, access_token):

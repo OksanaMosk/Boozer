@@ -19,12 +19,14 @@ export default function CompleteProfilePage() {
         }
         const checkProfile = async () => {
             try {
-                const {data} = await profileService.getProfile(
+                const profile = await profileService.getProfile(
                     session.user.id,
                     session.user.accessToken!
                 );
-                if (data?.birth_date && data?.is_rules_accepted) {
-                    // router.push("/");
+
+                if (!profile) {
+                    setLoading(false);
+                    return;
                 }
             } catch (e) {
                 console.error("Profile check failed:", e);

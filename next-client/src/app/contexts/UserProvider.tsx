@@ -11,35 +11,39 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<IUser | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (status === "loading") return;
-    if (session?.user?.error === "RefreshAccessTokenError") {
-      void signOut({redirectTo: "/login" });
-      return;
-    }
-    if (status === "authenticated" && session?.user) {
-        const mappedUser: IUser = {
-            id: String(session.user.id),
-            email: session.user.email || "",
-            token: session.user.accessToken || "",
-            role: (session.user.role || "visitor") as "visitor" | "venue_admin" | "admin",
-            profile: {
-                name: session.user.profile?.name || session.user.name || "",
-                surname: session.user.profile?.surname || "",
-                phone: session.user.profile?.phone || "",
-                birth_date: session.user.profile?.birth_date || "",
-                is_rules_accepted: session.user.profile?.is_rules_accepted || false,
-            },
-        };
+    useEffect(() => {
+  if (status === "loading") return;
+  if (session?.user?.error === "RefreshAccessTokenError") {
+    void signOut({redirectTo: "/login" });
+    return;
+  }
+  if (status === "authenticated" && session?.user) {
+    const mappedUser: IUser = {
+      id: String(session.user.id),
+      email: session.user.email || "",
+      token: session.user.accessToken || "",
+      role: (session.user.role || "visitor") as "visitor" | "venue_admin" | "admin",
+      profile: {
+        name: session.user.profile?.name || session.user.name || "",
+        surname: session.user.profile?.surname || "",
+        phone: session.user.profile?.phone || "",
+        birth_date: session.user.profile?.birth_date || "",
+        is_rules_accepted: session.user.profile?.is_rules_accepted || false,
+      },
+    };
+    setUser(prevUser => {
+      if (JSON.stringify(prevUser) !== JSON.stringify(mappedUser)) {
+        return mappedUser;
+      }
+      return prevUser;
+    });
+    setLoading(false);
+  } else if (status === "unauthenticated") {
+    setUser(null);
+    setLoading(false);
+  }
+}, [status, session]);
 
-      setUser(mappedUser);
-      setLoading(false);
-    }
-    else if (status === "unauthenticated") {
-      setUser(null);
-      setLoading(false);
-    }
-  }, [status, session]);
 
   const value = useMemo(() => ({
     user,

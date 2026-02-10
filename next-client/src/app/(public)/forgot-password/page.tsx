@@ -1,12 +1,12 @@
 "use client";
 
-import {GoBackButtonComponent} from "@/components/go-back-button-component/GoBackButtonComponent";
+import {ButtonGoBackComponent} from "@/components/button-go-back-component/ButtonGoBackComponent";
 import ForgotPasswordComponent from "@/components/forgot-password-component/ForgotPasswordComponent";
 
 const ForgotPasswordPage = () => {
     return (
         <div>
-            <GoBackButtonComponent/>
+            <ButtonGoBackComponent/>
             <ForgotPasswordComponent/>
         </div>
     );

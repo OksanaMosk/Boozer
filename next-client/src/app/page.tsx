@@ -4,7 +4,7 @@ import React, {Suspense, useEffect, useState} from "react";
 import {useSearchParams, useRouter} from "next/navigation";
 
 import HeroComponent from "@/components/hero-component/HeroComponent";
-import {ScrollTopButtonComponent} from "@/components/scroll-top-button-component/ScrollTopButtonComponent";
+import {ButtonScrollTopComponent} from "@/components/button-scroll-top-component/ButtonScrollTopComponent";
 import {LoaderComponent} from "@/components/loader-component/LoaderComponent";
 import HeroVideoRowComponent from "@/components/hero-video-row-component/HeroVideoRowComponent";
 
@@ -43,7 +43,7 @@ function HomePageContent() {
             <div>
                 <HeroComponent/>
                 <HeroVideoRowComponent/>
-                <ScrollTopButtonComponent/>
+                <ButtonScrollTopComponent/>
             </div>
         </div>
     );
