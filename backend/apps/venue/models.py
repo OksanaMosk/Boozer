@@ -1,19 +1,22 @@
-from datetime import timedelta
 
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.contrib.auth import get_user_model
-from django.db.models import ExpressionWrapper, DateTimeField, F
 
 from apps.menu.models import MenuItem
 from apps.orders.models import OrderModel
-# from django.contrib.postgres.fields import DateTimeRangeField
-# from django.contrib.postgres.indexes import GistIndex
+from django.contrib.postgres.fields import DateTimeRangeField
+from django.contrib.postgres.indexes import GistIndex
 
 from apps.venue.services.venue_service import notify_admin
 from core.services.file_service import upload_venue_photo
 from core.models import BaseModel
 from countries_models import COUNTRIES
+
+from django.contrib.postgres.constraints import ExclusionConstraint
+from django.contrib.postgres.fields.ranges import RangeOperators
+from django.db.models import Q
+
 
 User = get_user_model()
 
@@ -38,7 +41,6 @@ class VenueModel( BaseModel):
 
     name = models.CharField(max_length=50)
     venue_admin = models.ForeignKey(get_user_model(), related_name='venues', on_delete=models.CASCADE)
-    is_main = models.BooleanField(default=False)
 
     country = models.CharField(max_length=50, choices=[(b, b) for b in COUNTRIES], default=COUNTRIES[0][0])
     city = models.CharField(max_length=50, default='')
@@ -48,7 +50,6 @@ class VenueModel( BaseModel):
     phone = models.CharField(max_length=50, blank=True, null=True)
 
     description = models.TextField(blank=True, null=True)
-    photo = models.ImageField(upload_to=upload_venue_photo, blank=True, null=True)
     opening_hours = models.JSONField(blank=True, null=True)
     features = models.JSONField(blank=True, null=True)
 
@@ -68,15 +69,12 @@ class VenueModel( BaseModel):
     monthly_views = models.PositiveIntegerField(default=0)
     edit_attempts = models.PositiveIntegerField(default=0)
     last_exchange_update = models.DateField(null=True, blank=True)
-
-    def add_photo(self, photo_file):
-        if self.photos.count() >= 5:
-            raise ValidationError('Cannot add more than 5 photos per venue.')
-        VenuePhotoModel.objects.create(venue=self, photo=photo_file)
-
-    def get_photos(self):
-        return self.photos.all()
-
+    tags = models.ManyToManyField(
+        TagModel,
+        through='VenueTag',
+        blank=True,
+        related_name='venues'
+    )
 
     def notify_manager(self):
         notify_admin(self)
@@ -89,6 +87,7 @@ class VenuePhotoModel(models.Model):
 
     venue = models.ForeignKey(VenueModel, related_name='photos', on_delete=models.CASCADE)
     photo = models.ImageField(upload_to=upload_venue_photo)
+    is_main = models.BooleanField(default=False)
 
 
 class VenueTag(models.Model):
@@ -98,8 +97,6 @@ class VenueTag(models.Model):
     class Meta:
         db_table = 'venue_tags'
         unique_together = ('venue', 'tag')
-
-VenueModel.tags = models.ManyToManyField(TagModel, through=VenueTag, blank=True)
 
 
 class TableModel(models.Model):
@@ -119,7 +116,6 @@ class TableModel(models.Model):
         return f"Table {self.name} at {self.venue.name}"
 
 class TableBookingModel(models.Model):
-
     order = models.OneToOneField(
         OrderModel,
         on_delete=models.CASCADE,
@@ -132,48 +128,52 @@ class TableBookingModel(models.Model):
         related_name='bookings'
     )
 
-    booking_datetime = models.DateTimeField()
-    duration = models.DurationField(default=timedelta(hours=2))
+    time_range = DateTimeRangeField(
+        null=True,
+        blank=True
+    )
+
+    is_active = models.BooleanField(default=True)
 
     class Meta:
         db_table = 'table_bookings'
         indexes = [
-            models.Index(fields=['table', 'booking_datetime']),
+            GistIndex(fields=['table', 'time_range']),
         ]
+        constraints = [
+            # DB-level constraint для запобігання overlap
+            ExclusionConstraint(
+                name='prevent_overlapping_bookings',
+                expressions=[
+                    ('table', RangeOperators.EQUAL),
+                    ('time_range', RangeOperators.OVERLAPS),
+                ],
+                condition=Q(is_active=True),
+            ),
+        ]
+        ordering = ['time_range']
 
     def clean(self):
+        start_date = self.time_range.lower.date()
+        end_date = self.time_range.upper.date()
 
-        booking_date = self.booking_datetime.date()
+        if not (self.order.start_date <= start_date <= self.order.end_date):
+            raise ValidationError("Booking start must be within order period.")
 
-        if not (self.order.start_date <= booking_date <= self.order.end_date):
-            raise ValidationError("Booking date must be within order period.")
+        if not (self.order.start_date <= end_date <= self.order.end_date):
+            raise ValidationError("Booking end must be within order period.")
 
-        new_start = self.booking_datetime
-        new_end = self.booking_datetime + self.duration
-
-        existing_end_expr = ExpressionWrapper(
-            F('booking_datetime') + F('duration'),
-            output_field=DateTimeField()
-        )
-
-        conflicts = (
-            TableBookingModel.objects
-            .filter(table=self.table)
-            .exclude(id=self.id)
-            .annotate(existing_end=existing_end_expr)
-            .filter(
-                booking_datetime__lt=new_end,
-                existing_end__gt=new_start
-            )
-            .exists()
-        )
-
-        if conflicts:
-            raise ValidationError("This table is already booked for this time.")
+        if self.time_range.lower >= self.time_range.upper:
+            raise ValidationError("Booking start must be before booking end.")
 
     def save(self, *args, **kwargs):
         self.full_clean()
         super().save(*args, **kwargs)
+
+    def __str__(self):
+        start = self.time_range.lower.strftime('%Y-%m-%d %H:%M')
+        end = self.time_range.upper.strftime('%Y-%m-%d %H:%M')
+        return f"Booking for {self.table.name} ({start} → {end})"
 
 
 

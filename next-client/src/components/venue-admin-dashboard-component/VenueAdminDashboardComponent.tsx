@@ -5,7 +5,7 @@ import userService from "@/lib/services/userService";
 import VenueListingComponent from "@/components/venue-listing-component/VenueListingComponent";
 import { LoaderComponent } from "@/components/loader-component/LoaderComponent";
 import ChatComponent from "@/components/chat-component/ChatComponent";
-import { ICar } from "@/models/ICar";
+import { IVenue } from "@/models/IVenue";
 import { IUser } from "@/models/IUser";
 import styles from "./VenueAdminDashboardComponent.module.css";
 import {useUser} from "@/app/contexts/UserProvider";
@@ -13,7 +13,7 @@ import {useUser} from "@/app/contexts/UserProvider";
 const VenueAdminDashboardComponent: React.FC = () => {
     const { user, loading: userLoading } = useUser();
     const [error, setError] = useState<string | null>(null);
-    const [cars, setCars] = useState<ICar[]>([]);
+    const [cars, setCars] = useState<IVenue[]>([]);
 
     useEffect(() => {
    if (!user?.id || !user?.token) return;

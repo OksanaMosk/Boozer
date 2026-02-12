@@ -16,7 +16,6 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 RUN apk add --no-cache \
     gcc \
     musl-dev \
-    mariadb-dev \
     curl
 
 

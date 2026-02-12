@@ -2,11 +2,11 @@
 
 import React from "react";
 import Image from "next/image";
-import {ICar} from "@/models/ICar";
+import {IVenue} from "@/models/IVenue";
 import styles from "./VenueComponent.module.css";
 
 interface Props {
-    car: ICar;
+    car: IVenue;
 }
 
 const VenueComponent: React.FC<Props> = ({car}) => {

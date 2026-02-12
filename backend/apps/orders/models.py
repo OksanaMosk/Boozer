@@ -23,7 +23,8 @@ class OrderModel(BaseModel):
     venue = models.ForeignKey(
         'venue.VenueModel',
         on_delete=models.CASCADE,
-        related_name='orders'
+        related_name='orders',
+        default=1
     )
 
     currency = models.CharField(
@@ -76,7 +77,8 @@ class OrderItemModel(BaseModel):
     order = models.ForeignKey(
         OrderModel,
         on_delete=models.CASCADE,
-        related_name='items'
+        related_name='items',
+        default=1
     )
 
     menu_item = models.ForeignKey(
@@ -111,7 +113,8 @@ class OrderExtraServiceModel(models.Model):
     order = models.ForeignKey(
         OrderModel,
         on_delete=models.CASCADE,
-        related_name='extra_services'
+        related_name='extra_services',
+        default=1
     )
 
     service = models.ForeignKey(

@@ -9,7 +9,8 @@ class MenuModel(BaseModel):
     venue = models.ForeignKey(
         'venue.VenueModel',
         on_delete=models.CASCADE,
-        related_name='menus'
+        related_name='menus',
+        default=1
     )
 
     title = models.CharField(max_length=255)
@@ -24,7 +25,8 @@ class MenuItem(BaseModel):
     menu = models.ForeignKey(
         MenuModel,
         on_delete=models.CASCADE,
-        related_name='menu_items'
+        related_name='menu_items',
+        default=1
         )
 
     name = models.CharField(max_length=255)

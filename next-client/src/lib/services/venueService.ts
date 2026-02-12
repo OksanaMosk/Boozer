@@ -1,13 +1,12 @@
 import {urls, urls as paths} from "../constants/urls";
 import {apiService} from "./apiService";
-import {ICar} from "@/models/ICar";
+import {IVenue} from "@/models/IVenue";
 
 type Token = { accessToken: string };
 
-const carService = {
-    action: (id: string) => `${paths.cars}/${id}/`,
+const venueService = {
+    action: (id: string) => `${paths.venues}/${id}/`,
 
-    // GET-запити для перегляду — токен опційний
     getAll: (filterCriteria: {
         brand?: string;
         model?: string;
@@ -31,31 +30,31 @@ const carService = {
                     ? `-${filterCriteria.sort_by}`
                     : filterCriteria.sort_by;
         }
-        return apiService(token?.accessToken).get(urls.cars.list, { params });
+        return apiService(token?.accessToken).get(urls.venues.list, { params });
     },
 
-    get: (id: string, token?: Token) => apiService(token?.accessToken).get<ICar>(urls.cars.action(id)),
+    get: (id: string, token?: Token) => apiService(token?.accessToken).get<Ivenue>(urls.venues.action(id)),
 
-    create: (data: ICar, token: Token) => apiService(token.accessToken).post<ICar>(urls.cars.create, data),
+    create: (data: Ivenue, token: Token) => apiService(token.accessToken).post<Ivenue>(urls.venues.create, data),
 
-    update: (id: string, data: Partial<ICar>, token: Token) => apiService(token.accessToken).put<ICar>(urls.cars.action(id), data),
+    update: (id: string, data: Partial<Ivenue>, token: Token) => apiService(token.accessToken).put<Ivenue>(urls.venues.action(id), data),
 
-    delete: (id: string, token: Token) => apiService(token.accessToken).delete(urls.cars.action(id)),
+    delete: (id: string, token: Token) => apiService(token.accessToken).delete(urls.venues.action(id)),
 
-    addPhoto: (carId: string, formData: FormData, token: Token) =>
-        apiService(token.accessToken).post(urls.cars.photos(carId), formData, { withCredentials: true }),
+    addPhoto: (venueId: string, formData: FormData, token: Token) =>
+        apiService(token.accessToken).post(urls.venues.photos(venueId), formData, { withCredentials: true }),
 
-    deletePhoto: (photoId: string, token: Token) => apiService(token.accessToken).delete(urls.cars.deletePhoto(photoId)),
+    deletePhoto: (photoId: string, token: Token) => apiService(token.accessToken).delete(urls.venues.deletePhoto(photoId)),
 
-    getExchangeRates: (token?: Token) => apiService(token?.accessToken).get(urls.cars.exchangeRates),
+    getExchangeRates: (token?: Token) => apiService(token?.accessToken).get(urls.venues.exchangeRates),
 
-    getStats: (carId: string, token?: Token) => apiService(token?.accessToken).get(urls.cars.stats(carId)),
+    getStats: (venueId: string, token?: Token) => apiService(token?.accessToken).get(urls.venues.stats(venueId)),
 
     getAveragePriceByRegion: (region: string, model?: string, token?: Token) => {
         const params = new URLSearchParams();
         params.append("region", region);
         if (model) params.append("model", model);
-        const url = `${urls.cars.averagePriceRegion}?${params.toString()}`;
+        const url = `${urls.venues.averagePriceRegion}?${params.toString()}`;
         return apiService(token?.accessToken).get(url);
     },
 
@@ -64,12 +63,12 @@ const carService = {
         if (model) params.append("model", model);
         const query = params.toString();
         const url = query
-            ? `${urls.cars.averagePriceCountry}?${query}`
-            : urls.cars.averagePriceCountry;
+            ? `${urls.venues.averagePriceCountry}?${query}`
+            : urls.venues.averagePriceCountry;
         return apiService(token?.accessToken).get(url);
     },
 
-    getConstants: (token?: Token) => apiService(token?.accessToken).get(urls.cars.constants),
+    getConstants: (token?: Token) => apiService(token?.accessToken).get(urls.venues.constants),
 };
 
-export default carService;
+export default venueService;

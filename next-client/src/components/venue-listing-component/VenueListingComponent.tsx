@@ -3,8 +3,8 @@
 import React, {useState, useEffect} from "react";
 import Link from "next/link";
 import axios from "axios";
-import carService from "@/lib/services/carService";
-import {ICar} from "@/models/ICar";
+import venueService from "@/lib/services/venueService";
+import {IVenue} from "@/models/IVenue";
 import styles from "./VenueListingComponent.module.css";
 import {useUser} from "@/app/contexts/UserProvider";
 
@@ -24,7 +24,7 @@ interface AveragePrice {
 
 
 interface Props {
-    car: ICar;
+    car: IVenue;
     onDelete?: (id: string) => void;
     onStatusChange?: (carId: string, status: string) => void;
 }
@@ -48,9 +48,9 @@ const VenueListingComponent: React.FC<Props> = ({car, onDelete, onStatusChange})
                 setError(null);
 
                 const [statsRes, regionRes, countryRes] = await Promise.all([
-                    carService.getStats(car.id),
-                    carService.getAveragePriceByRegion(car.location, car.model),
-                    carService.getAveragePriceByCountry(car.model),
+                    venueService.getStats(car.id),
+                    venueService.getAveragePriceByRegion(car.location, car.model),
+                    venueService.getAveragePriceByCountry(car.model),
                 ]);
 
                 setStats(statsRes.data);
@@ -73,7 +73,7 @@ const VenueListingComponent: React.FC<Props> = ({car, onDelete, onStatusChange})
 
         try {
             const newStatus = status === "active" ? "inactive" : "active";
-            await carService.update(car.id, {status: newStatus}, {accessToken:user.token});
+            await venueService.update(car.id, {status: newStatus}, {accessToken:user.token});
             setStatus(newStatus);
             onStatusChange?.(car.id, newStatus);
         } catch (err) {
@@ -90,7 +90,7 @@ const VenueListingComponent: React.FC<Props> = ({car, onDelete, onStatusChange})
     const handleDelete = async () => {
         if(!user?.token) return
         try {
-            await carService.delete(car.id, {accessToken:user.token});
+            await venueService.delete(car.id, {accessToken:user.token});
             onDelete?.(car.id);
         } catch {
             alert("Error deleting car");

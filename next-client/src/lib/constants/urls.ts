@@ -1,10 +1,10 @@
 const paths = {
   auth: "/auth",
-  cars: "/venues",
+  venues: "/venues",
   users: "/users",
-  carPhotos: "/venues/photos",
-  carStats: "/venues/stats",
-  carAveragePrice: "/venues/stats/average",
+  venuePhotos: "/venues/photos",
+  venueStats: "/venues/stats",
+  venueAveragePrice: "/venues/stats/average",
 };
 
 export const urls = {
@@ -29,17 +29,17 @@ export const urls = {
         create: (userId: string) => `${paths.users}/${userId}/profile/`,
     },
 
-    cars: {
-        list: `${paths.cars}/`,
-        create: `${paths.cars}/`,
-        action: (id: string) => `${paths.cars}/${id}/`,
-        photos: (carId: string) => `${paths.cars}/${carId}/photos/`,
-        deletePhoto: (photoId: string) => `${paths.carPhotos}/${photoId}/`,
-        stats: (carId: string) => `${paths.cars}/${carId}/stats/`,
-        averagePriceRegion: `${paths.cars}/stats/average/`,
-        averagePriceCountry: `${paths.cars}/stats/average-country/`,
-        exchangeRates: `${paths.cars}/exchange-rates/`,
-        constants: `${paths.cars}/constants/`,
+    venue: {
+        list: `${paths.venues}/`,
+        create: `${paths.venues}/`,
+        action: (id: string) => `${paths.venues}/${id}/`,
+        photos: (carId: string) => `${paths.venues}/${carId}/photos/`,
+        deletePhoto: (photoId: string) => `${paths.venuePhotos}/${photoId}/`,
+        stats: (carId: string) => `${paths.venues}/${carId}/stats/`,
+        averagePriceRegion: `${paths.venues}/stats/average/`,
+        averagePriceCountry: `${paths.venues}/stats/average-country/`,
+        exchangeRates: `${paths.venues}/exchange-rates/`,
+        constants: `${paths.venues}/constants/`,
     },
 };
 

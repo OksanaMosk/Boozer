@@ -12,7 +12,7 @@ services:
       - "8888:8000"
     restart: on-failure
     command: >
-      sh -c "python manage.py wait_db && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+      sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
     depends_on:
       - redis
 
@@ -33,16 +33,6 @@ services:
       - redis
     command: >
       sh -c 'celery -A configs worker -l info'
-
-  db:
-    image: mysql:8
-    env_file:
-      - .env
-    ports:
-      - "3307:3306"
-    volumes:
-      - ./mysql:/var/lib/mysql
-    restart: on-failure
 
   next-client:
     build:

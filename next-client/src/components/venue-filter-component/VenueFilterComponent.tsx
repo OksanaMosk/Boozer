@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from "react";
-import carService from "@/lib/services/carService";
+import venueService from "@/lib/services/venueService";
 import styles from './VenueFilterComponent.module.css';
 
 interface FilterProps {
@@ -25,7 +25,7 @@ const VenueFilterComponent: React.FC<FilterProps> = ({ onFilterChange }) => {
   const [locations, setLocations] = useState<string[]>([]);
 
   useEffect(() => {
-    carService.getConstants()
+    venueService.getConstants()
       .then(({ data }) => {
         setBrands(data.brands);
         setModelsByBrand(data.models_by_brand);

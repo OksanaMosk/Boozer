@@ -3,10 +3,10 @@
 import React, {useEffect, useState, useMemo} from "react";
 import {useRouter} from "next/navigation";
 import axios from "axios";
-import carService from "@/lib/services/carService";
+import venueService from "@/lib/services/venueService";
 import VenueSelectsComponent from "@/components/venue-selects-component/VenueSelectsComponent";
 import {LoaderComponent} from "@/components/loader-component/LoaderComponent";
-import {ICar, ICarPhoto} from "@/models/ICar";
+import {IVenue, ICarPhoto} from "@/models/IVenue";
 import styles from "./VenueEditComponent.module.css";
 import {useUser} from "@/app/contexts/UserProvider";
 
@@ -21,7 +21,7 @@ interface ILocalPhoto {
 
 const VenuesEditComponent = ({carId}: CarEditComponentProps) => {
     const router = useRouter();
-    const [form, setForm] = useState<Partial<ICar> | null>(null);
+    const [form, setForm] = useState<Partial<IVenue> | null>(null);
     const [exchangeRates, setExchangeRates] = useState<{ USD: number; EUR: number } | null>(null);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
@@ -39,11 +39,11 @@ const VenuesEditComponent = ({carId}: CarEditComponentProps) => {
         (async () => {
             try {
                 const [carResponse, ratesResponse] = await Promise.all([
-                    carService.get(carId),
-                    carService.getExchangeRates(),
+                    venueService.get(carId),
+                    venueService.getExchangeRates(),
                 ]);
 
-                const carsData: ICar = carResponse.data;
+                const carsData: IVenue = carResponse.data;
                 setForm(carsData);
                 setLocalPhotos(carsData.photos || []);
                 setExchangeRates(ratesResponse.data);
@@ -128,7 +128,7 @@ const VenuesEditComponent = ({carId}: CarEditComponentProps) => {
                 price_eur: convertedPrices.EUR,
             };
 
-            await carService.update(carId, clean, {accessToken:user.token!});
+            await venueService.update(carId, clean, {accessToken:user.token!});
             setMessage("Car updated successfully!");
             router.push("/venue-admin");
         } catch (err) {
@@ -168,7 +168,7 @@ const VenuesEditComponent = ({carId}: CarEditComponentProps) => {
     const handleDeletePhoto = async (id: string) => {
            if (!user) return;
         try {
-            await carService.deletePhoto(id, {accessToken:user.token!});
+            await venueService.deletePhoto(id, {accessToken:user.token!});
             setLocalPhotos((prev) => prev.filter((p) => p.id !== id));
         } catch {
             setError("Failed to delete photo");
@@ -185,9 +185,9 @@ const VenuesEditComponent = ({carId}: CarEditComponentProps) => {
                 const formData = new FormData();
                 formData.append("photo", p.file);
                 formData.append("car", carId);
-                await carService.addPhoto(carId, formData, {accessToken:user.token!});
+                await venueService.addPhoto(carId, formData, {accessToken:user.token!});
             }
-            const updated = await carService.get(carId);
+            const updated = await venueService.get(carId);
             setLocalPhotos(updated.data.photos);
             setNewFiles([]);
             setMessage("Photos uploaded successfully!");

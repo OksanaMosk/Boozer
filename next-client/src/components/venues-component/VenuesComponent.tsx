@@ -5,11 +5,11 @@ import Link from "next/link";
 import VenueComponent from "@/components/venue-component/VenueComponent";
 import {PaginationComponent} from "@/components/pagination-component/PaginationComponent";
 import {ButtonScrollTopComponent} from "@/components/button-scroll-top-component/ButtonScrollTopComponent";
-import {ICar} from "@/models/ICar";
+import {IVenue} from "@/models/IVenue";
 import styles from "./VenuesComponent.module.css";
 
 interface CarListComponentProps {
-    cars: ICar[];
+    cars: IVenue[];
     totalPages: number;
 }
 

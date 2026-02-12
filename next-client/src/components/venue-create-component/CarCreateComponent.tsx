@@ -4,11 +4,11 @@ import React, { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import axios from "axios";
 import userService from "@/lib/services/userService";
-import carService from "@/lib/services/carService";
+import venueService from "@/lib/services/venueService";
 import VenueSelectsComponent from "@/components/venue-selects-component/VenueSelectsComponent";
 import {LoaderComponent} from "@/components/loader-component/LoaderComponent";
 import {useRouter} from "next/navigation";
-import { ICar, ICarPhoto } from "@/models/ICar";
+import { IVenue, ICarPhoto } from "@/models/IVenue";
 import styles from "./CarCreateComponent.module.css";
 import {useUser} from "@/app/contexts/UserProvider";
 
@@ -20,7 +20,7 @@ interface ILocalPhoto {
 }
 
 const VenuesCreateComponent = () => {
-    const [newCar, setNewCar] = useState<ICar>({
+    const [newCar, setNewCar] = useState<IVenue>({
         id: "",
         brand: "",
         model: "",
@@ -61,7 +61,7 @@ const VenuesCreateComponent = () => {
     useEffect(() => {
         (async () => {
             try {
-                const response = await carService.getExchangeRates();
+                const response = await venueService.getExchangeRates();
                 setExchangeRates(response.data);
             } catch (err) {
                 console.error(err);
@@ -152,11 +152,11 @@ const VenuesCreateComponent = () => {
       }
             const userId = user.id
             const response = await userService.getUserCars(userId!, { accessToken: user.token });
-            const cars: ICar[] = response.data.cars;
+            const cars: IVenue[] = response.data.cars;
 
             const carStatus = newCar.status || "pending";
 
-            const carToSend: ICar = {
+            const carToSend: IVenue = {
                 ...newCar,
                 status: carStatus,
                 year: Number(newCar.year),
@@ -172,7 +172,7 @@ const VenuesCreateComponent = () => {
                     : null,
                 photos: [],
             };
-            const createdCar = await carService.create(carToSend, {accessToken:user.token});
+            const createdCar = await venueService.create(carToSend, {accessToken:user.token});
             setNewCar((prev) => ({...prev, id: createdCar.data.id}));
 
             if (createdCar.data.status === "pending") {
@@ -223,7 +223,7 @@ const VenuesCreateComponent = () => {
                 const formData = new FormData();
                 formData.append("photo", p.file);
                 formData.append("car", newCar.id.toString());
-                await carService.addPhoto(newCar.id, formData, {accessToken:user.token!});
+                await venueService.addPhoto(newCar.id, formData, {accessToken:user.token!});
             }
             setMessage("Photos uploaded successfully!");
             setLocalPhotos([]);

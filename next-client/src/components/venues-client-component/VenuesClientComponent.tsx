@@ -2,10 +2,10 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from "next/navigation";
-import carService from "@/lib/services/carService";
+import venueService from "@/lib/services/venueService";
 import VenuesComponent from "@/components/venues-component/VenuesComponent";
 import VenueFilterComponent from "@/components/venue-filter-component/VenueFilterComponent";
-import { ICar } from "@/models/ICar";
+import { IVenue } from "@/models/IVenue";
 import styles from "./VenuesClientComponent.module.css";
 
 interface CarFilters {
@@ -20,7 +20,7 @@ interface CarFilters {
 
 export const VenuesClientComponent = () => {
     const [filters, setFilters] = useState<CarFilters>({});
-    const [carsData, setCarsData] = useState<ICar[]>([]);
+    const [carsData, setCarsData] = useState<IVenue[]>([]);
     const [totalPagesState, setTotalPagesState] = useState(1);
 
     const searchParams = useSearchParams();
@@ -34,7 +34,7 @@ export const VenuesClientComponent = () => {
     const fetchCars = useCallback(async (page: number, filters: CarFilters) => {
         try {
             const queryParams = buildQueryParams(page, filters);
-            const response = await carService.getAll(queryParams);
+            const response = await venueService.getAll(queryParams);
             const resData = response.data;
             setCarsData(resData.filter((car: { status: string }) => car.status === "active") ?? []);
             setTotalPagesState(resData.total_pages ?? 1);

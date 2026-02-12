@@ -1,6 +1,6 @@
 import {apiService} from "./apiService";
 import {urls} from "../constants/urls";
-import {GetUserCarsResponse} from "@/models/ICar";
+import {GetUserCarsResponse} from "@/models/IVenue";
 import {IUser} from "@/models/IUser";
 
 

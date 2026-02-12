@@ -1,7 +1,5 @@
 from rest_framework import serializers
-from .models import VenueModel, VenuePhotoModel, VenueTag, TableModel, TableBookingModel, TagModel
-from apps.menu.models import MenuModel  # тільки якщо потрібен зв’язок
-from apps.orders.models import OrderModel  # теж опційно
+from .models import VenueModel, VenuePhotoModel, TableModel, TableBookingModel, TagModel
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -12,30 +10,30 @@ class TagSerializer(serializers.ModelSerializer):
 class VenuePhotoSerializer(serializers.ModelSerializer):
     class Meta:
         model = VenuePhotoModel
-        fields = ['id', 'photo']
+        fields = ['id', 'photo', 'is_main', 'venue']
 
-class TableSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = TableModel
-        fields = ['id', 'name', 'capacity', 'x', 'y', 'width', 'height', 'is_active', 'bookings']
 
 class TableBookingSerializer(serializers.ModelSerializer):
     class Meta:
         model = TableBookingModel
-        # fields = ['id', 'order', 'table', 'time_range', 'is_active']
-        fields = ['id', 'order', 'table', 'booking_datetime', 'duration']
+        fields = ['id', 'order', 'table', 'time_range', 'is_active']
+
+class TableSerializer(serializers.ModelSerializer):
+    bookings = TableBookingSerializer(many=True, read_only=True)
+    class Meta:
+        model = TableModel
+        fields = ['id', 'name', 'capacity', 'x', 'y', 'width', 'height', 'is_active', 'bookings']
 
 class VenueSerializer(serializers.ModelSerializer):
-    photos = VenuePhotoSerializer(many=True, read_only=True)
-    tables = TableSerializer(many=True, read_only=True)
+    tags = TagSerializer(many=True, read_only=True)
 
     class Meta:
         model = VenueModel
         fields = [
-            'id', 'name', 'venue_admin', 'is_main', 'country', 'city', 'address',
-            'latitude', 'longitude', 'phone', 'description', 'photo',
+            'id', 'name', 'venue_admin', 'country', 'city', 'address',
+            'latitude', 'longitude', 'phone', 'description',
             'opening_hours', 'features', 'average_check', 'rating', 'reviews_count',
             'status', 'views', 'daily_views', 'weekly_views', 'monthly_views',
             'edit_attempts', 'last_exchange_update',
-            'photos', 'tables' , 'tags'
+            'tags'
         ]

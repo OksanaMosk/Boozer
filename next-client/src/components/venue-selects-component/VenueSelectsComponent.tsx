@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, useEffect } from "react";
-import carService from "@/lib/services/carService";
+import venueService from "@/lib/services/venueService";
 import styles from "./VenueSelectsComponent.module.css";
 
 interface CarSelectsProps {
@@ -27,7 +27,7 @@ const VenueSelectsComponent: React.FC<CarSelectsProps> = ({
     const [modelsByBrand, setModelsByBrand] = useState<Record<string, string[]>>({});
     const [locations, setLocations] = useState<string[]>([]);
     useEffect(() => {
-        carService
+        venueService
             .getConstants()
             .then(({data}) => {
                 setBrands(data.brands);

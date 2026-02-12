@@ -107,15 +107,15 @@ ASGI_APPLICATION = 'configs.asgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.environ.get('MYSQL_DATABASE'),
-        'USER': os.environ.get('MYSQL_USER'),
-        'PASSWORD': os.environ.get('MYSQL_PASSWORD'),
-        'HOST': os.environ.get('MYSQL_HOST'),
-        'PORT': os.environ.get('MYSQL_PORT', 3306),
-        # 'OPTIONS': {
-        #     'sslmode': 'require',
-        # }
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get("PG_DATABASE"),
+        'USER': os.environ.get("PG_USER"),
+        'PASSWORD': os.environ.get("PG_PASSWORD"),
+        'HOST': os.environ.get("PG_HOST"),
+        'PORT': os.environ.get("PG_PORT", "5432"),
+        'OPTIONS': {
+            'sslmode': 'require',
+        }
     }
 }
 

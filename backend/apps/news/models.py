@@ -7,7 +7,12 @@ class NewsModel(BaseModel):
         db_table = 'venue_news'
         ordering = ['-created_at']
 
-    venue = models.ForeignKey( 'venue.VenueModel',on_delete=models.CASCADE, related_name='news')
+    venue = models.ForeignKey(
+        'venue.VenueModel',
+        on_delete=models.CASCADE,
+        related_name='news',
+        default=1
+    )
     title = models.CharField(max_length=255)
     content = models.TextField()
     photo = models.ImageField(upload_to='venue_news/', blank=True, null=True)

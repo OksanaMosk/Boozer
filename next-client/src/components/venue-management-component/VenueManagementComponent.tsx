@@ -2,16 +2,16 @@
 
 import React, { useEffect, useState } from "react";
 import userService from "@/lib/services/userService";
-import carService from "@/lib/services/carService";
+import venueService from "@/lib/services/venueService";
 import {LoaderComponent} from "@/components/loader-component/LoaderComponent";
-import { ICar } from "@/models/ICar";
+import { IVenue } from "@/models/IVenue";
 import styles from "./VenueManagementComponent.module.css";
 import {useUser} from "@/app/contexts/UserProvider";
 
 
 
 const VenueManagementComponent = () => {
-    const [cars, setCars] = useState<ICar[]>([]);
+    const [cars, setCars] = useState<IVenue[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 const { user} = useUser();
@@ -43,7 +43,7 @@ const { user} = useUser();
     const handleStatusChange = async (carId: string, newStatus: string) => {
         if(!user?.token) return;
         try {
-            await carService.update(carId, {status: newStatus}, {accessToken: user.token!});
+            await venueService.update(carId, {status: newStatus}, {accessToken: user.token!});
             setCars(prev =>
                 prev.map(car => (car.id === carId ? {...car, status: newStatus} : car))
             );
@@ -57,7 +57,7 @@ const { user} = useUser();
         if(!user?.token) return;
         try {
 
-            await carService.delete(carId, {accessToken: user.token!});
+            await venueService.delete(carId, {accessToken: user.token!});
             setCars(prev => prev.filter(car => car.id !== carId));
         } catch {
             alert("Error deleting car on server");

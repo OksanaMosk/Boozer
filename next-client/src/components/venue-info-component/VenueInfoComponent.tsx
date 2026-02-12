@@ -3,11 +3,11 @@
 import React from "react";
 import { useState } from "react";
 import ChatComponent from "../chat-component/ChatComponent";
-import { ICar } from "@/models/ICar";
+import { IVenue } from "@/models/IVenue";
 import styles from "./VenueInfoComponent.module.css";
 
 interface CarInfoComponentProps {
-    car: ICar;
+    car: IVenue;
 }
 
 const VenueInfoComponent: React.FC<CarInfoComponentProps> = ({car}) => {
