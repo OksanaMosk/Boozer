@@ -1,74 +1,161 @@
-import {urls, urls as paths} from "../constants/urls";
+import {urls} from "../constants/urls";
 import {apiService} from "./apiService";
-import {IVenue} from "@/models/IVenue";
+import {IVenue, IVenuePhoto, ITableBooking, IMenu, IMenuItem, IOrder, IReview, INews} from "@/models/IVenue";
+import {IUser} from "@/models/IUser";
 
 type Token = { accessToken: string };
 
-const venueService = {
-    action: (id: string) => `${paths.venues}/${id}/`,
+const api = (token?: Token) => apiService(token?.accessToken);
 
-    getAll: (filterCriteria: {
-        brand?: string;
-        model?: string;
-        condition?: string;
-        year?: number;
-        price?: number;
-        location?: string;
-        sort_by?: "year" | "price" | "location";
-        sort_order?: "asc" | "desc";
-    }, token?: Token) => {
-        const params: Record<string, string | number | boolean> = {};
-        if (filterCriteria.brand) params.brand = filterCriteria.brand;
-        if (filterCriteria.model) params.model = filterCriteria.model;
-        if (filterCriteria.condition) params.condition = filterCriteria.condition;
-        if (filterCriteria.year) params.year = filterCriteria.year;
-        if (filterCriteria.price) params.price = filterCriteria.price;
-        if (filterCriteria.location) params.location = filterCriteria.location;
-        if (filterCriteria.sort_by) {
-            params.ordering =
-                filterCriteria.sort_order === "desc"
-                    ? `-${filterCriteria.sort_by}`
-                    : filterCriteria.sort_by;
-        }
-        return apiService(token?.accessToken).get(urls.venues.list, { params });
-    },
+const createService = <T>(baseUrl: string, token?: Token) => ({
+    getAll: () => api(token).get<T[]>(baseUrl),
+    get: (id: string) => api(token).get<T>(`${baseUrl}/${id}/`),
+    create: (data: Partial<T>) => api(token).post<T>(baseUrl, data),
+    update: (id: string, data: Partial<T>) => api(token).put<T>(`${baseUrl}/${id}/`, data),
+    delete: (id: string) => api(token).delete(`${baseUrl}/${id}/`),
+});
 
-    get: (id: string, token?: Token) => apiService(token?.accessToken).get<Ivenue>(urls.venues.action(id)),
+const getByParent = <T>(endpoint: (parentId: string) => string, token?: Token) =>
+    (parentId: string) => api(token).get<T[]>(endpoint(parentId));
 
-    create: (data: Ivenue, token: Token) => apiService(token.accessToken).post<Ivenue>(urls.venues.create, data),
+export interface VenueFilterCriteria {
+    name?: string;
+    country?: string;
+    city?: string;
+    rating_min?: number;
+    rating_max?: number;
+    reviews_count_min?: number;
+    reviews_count_max?: number;
+    tags?: string[];
+    sort_by?: "average_check" | "rating" | "reviews_count" | "views";
+    sort_order?: "asc" | "desc";
+}
 
-    update: (id: string, data: Partial<Ivenue>, token: Token) => apiService(token.accessToken).put<Ivenue>(urls.venues.action(id), data),
-
-    delete: (id: string, token: Token) => apiService(token.accessToken).delete(urls.venues.action(id)),
-
-    addPhoto: (venueId: string, formData: FormData, token: Token) =>
-        apiService(token.accessToken).post(urls.venues.photos(venueId), formData, { withCredentials: true }),
-
-    deletePhoto: (photoId: string, token: Token) => apiService(token.accessToken).delete(urls.venues.deletePhoto(photoId)),
-
-    getExchangeRates: (token?: Token) => apiService(token?.accessToken).get(urls.venues.exchangeRates),
-
-    getStats: (venueId: string, token?: Token) => apiService(token?.accessToken).get(urls.venues.stats(venueId)),
-
-    getAveragePriceByRegion: (region: string, model?: string, token?: Token) => {
-        const params = new URLSearchParams();
-        params.append("region", region);
-        if (model) params.append("model", model);
-        const url = `${urls.venues.averagePriceRegion}?${params.toString()}`;
-        return apiService(token?.accessToken).get(url);
-    },
-
-    getAveragePriceByCountry: (model?: string, token?: Token) => {
-        const params = new URLSearchParams();
-        if (model) params.append("model", model);
-        const query = params.toString();
-        const url = query
-            ? `${urls.venues.averagePriceCountry}?${query}`
-            : urls.venues.averagePriceCountry;
-        return apiService(token?.accessToken).get(url);
-    },
-
-    getConstants: (token?: Token) => apiService(token?.accessToken).get(urls.venues.constants),
+const buildVenueParams = (criteria?: VenueFilterCriteria) => {
+    const params: Record<string, string | number | boolean> = {};
+    if (!criteria) return params;
+    if (criteria.name) params.name = criteria.name;
+    if (criteria.country) params.country = criteria.country;
+    if (criteria.city) params.city = criteria.city;
+    if (criteria.rating_min !== undefined) params.rating_min = criteria.rating_min;
+    if (criteria.rating_max !== undefined) params.rating_max = criteria.rating_max;
+    if (criteria.reviews_count_min !== undefined) params.reviews_count_min = criteria.reviews_count_min;
+    if (criteria.reviews_count_max !== undefined) params.reviews_count_max = criteria.reviews_count_max;
+    if (criteria.tags?.length) params.tags = criteria.tags.join(",");
+    if (criteria.sort_by) {
+        params.ordering = criteria.sort_order === "desc" ? `-${criteria.sort_by}` : criteria.sort_by;
+    }
+    return params;
 };
 
-export default venueService;
+export interface OrderFilterCriteria {
+    status?: string;
+    currency?: string;
+    user?: string;
+    venue?: string;
+    start_date?: string;
+    end_date?: string;
+}
+
+const buildOrderParams = (criteria?: OrderFilterCriteria) => {
+    const params: Record<string, string | number | boolean> = {};
+    if (!criteria) return params;
+    if (criteria.status) params.status = criteria.status;
+    if (criteria.currency) params.currency = criteria.currency;
+    if (criteria.user) params.user = criteria.user;
+    if (criteria.venue) params.venue = criteria.venue;
+    if (criteria.start_date) params.start_date = criteria.start_date;
+    if (criteria.end_date) params.end_date = criteria.end_date;
+    return params;
+};
+
+export interface ReviewFilterCriteria {
+    venue?: string;
+}
+
+const buildReviewParams = (criteria?: ReviewFilterCriteria) => {
+    const params: Record<string, string> = {};
+    if (criteria?.venue) params.venue = criteria.venue;
+    return params;
+};
+
+export interface FavoriteFilterCriteria {
+    venueId?: string;
+}
+
+const buildFavoriteParams = (criteria?: FavoriteFilterCriteria) => {
+    const params: Record<string, string> = {};
+    if (criteria?.venueId) params.venue = criteria.venueId;
+    return params;
+};
+
+const venueServices = {
+    venues: {
+        getAllWithFilter: (filterCriteria?: VenueFilterCriteria, token?: Token) =>
+            api(token).get<IVenue[]>(urls.venues.list, { params: buildVenueParams(filterCriteria) }),
+        ...createService<IVenue>(urls.venues.list),
+        photos: getByParent<IVenuePhoto>(urls.venues.photos),
+        tables: getByParent<ITableBooking>(urls.venues.tables),
+        bookings: getByParent<IOrder>(urls.venues.bookings),
+        menu: getByParent<IMenu>(urls.venues.menu),
+        menuItems: (venueId: string, menuId: string, token?: Token) =>
+            api(token).get<IMenuItem[]>(urls.venues.menuItems(venueId, menuId)),
+        news: getByParent<INews>(urls.venues.news),
+        reviews: {
+            getAllWithFilter: (filterCriteria?: ReviewFilterCriteria, token?: Token) =>
+                api(token).get<IReview[]>(urls.reviews.list, { params: buildReviewParams(filterCriteria) }),
+            ...createService<IReview>(urls.reviews.list),
+            favoritesList: (token?: Token) => api(token).get<IReview[]>(urls.reviews.favoritesList),
+            favoritesDetail: (id: string, token?: Token) => api(token).get<IReview>(urls.reviews.favoritesDetail(id)),
+        },
+        favorites: {
+            getAll: (filterCriteria?: FavoriteFilterCriteria, token?: Token) => {
+                if (!filterCriteria?.venueId) throw new Error("venueId is required for favorites");
+                return api(token).get<IUser[]>(urls.venues.favorites(filterCriteria.venueId), {
+                    params: buildFavoriteParams(filterCriteria),
+                });
+            },
+        },
+        getConstants: (token?: Token) => api(token).get(urls.venues.constants),
+        // orders: {
+        //     getAllWithFilter: (filterCriteria?: OrderFilterCriteria, token?: Token) =>
+        //         api(token).get<IOrder[]>(urls.bookings.list, { params: buildOrderParams(filterCriteria) }),
+        //     ...createService<IOrder>(urls.bookings.list),
+        //     byTable: getByParent<IOrder>(urls.bookings.byTable),
+        //     active: (token?: Token) => api(token).get<IOrder[]>(urls.bookings.active),
+        // },
+    },
+    venuePhotos: {
+        // ...createService<IVenuePhoto>(urls.venuePhotos.list),
+        byVenue: getByParent<IVenuePhoto>(urls.venuePhotos.byVenue),
+        mainForVenue: getByParent<IVenuePhoto>(urls.venuePhotos.mainForVenue),
+        create: (data: FormData, token: Token) =>
+            api(token).post<IVenuePhoto>(urls.venuePhotos.create, data, { withCredentials: true }),
+    },
+    tables: {
+        ...createService<ITableBooking>(urls.tables.list),
+        byVenue: getByParent<ITableBooking>(urls.tables.byVenue),
+        activeByVenue: getByParent<ITableBooking>(urls.tables.activeByVenue),
+        // bookings: getByParent<IOrder>(urls.tables.bookings),
+    },
+    bookings: {
+        ...createService<IOrder>(urls.bookings.list),
+        byTable: getByParent<IOrder>(urls.bookings.byTable),
+        active: (token?: Token) => api(token).get<IOrder[]>(urls.bookings.active),
+    },
+    tags: {
+        ...createService<{ name: string }>(urls.tags.list),
+    },
+    reviews: {
+        ...createService<IReview>(urls.reviews.list),
+        // favoritesList: (token?: Token) => api(token).get<IReview[]>(urls.reviews.favoritesList),
+        // favoritesDetail: (id: string, token?: Token) => api(token).get<IReview>(urls.reviews.favoritesDetail(id)),
+    },
+};
+
+export default venueServices;
+
+
+// const venues = await apiServices.venues.getAll(token);
+// const photos = await apiServices.venuePhotos.byVenue(venueId);
+// const tables = await apiServices.tables.byVenue(venueId);

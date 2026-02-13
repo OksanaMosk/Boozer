@@ -14,3 +14,16 @@ class NewsViewSet(viewsets.ModelViewSet):
     search_fields = ['title', 'content']
     ordering_fields = ['created_at', 'title']
     ordering = ['-created_at']
+
+    def get_queryset(self):
+        venue_pk = self.kwargs.get('venue_pk')
+        if venue_pk:
+            return NewsModel.objects.filter(venue_id=venue_pk)
+        return NewsModel.objects.all()
+
+    def perform_create(self, serializer):
+        venue_pk = self.kwargs.get('venue_pk')
+        if venue_pk:
+            serializer.save(venue_id=venue_pk)
+        else:
+            serializer.save()

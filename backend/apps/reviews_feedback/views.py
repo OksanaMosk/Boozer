@@ -15,8 +15,19 @@ class ReviewViewSet(viewsets.ModelViewSet):
     ordering_fields = ['created_at']
     ordering = ['-created_at']
 
+    def get_queryset(self):
+        queryset = ReviewModel.objects.all()
+        venue_id = self.kwargs.get('venue_pk')
+        if venue_id:
+            queryset = queryset.filter(venue_id=venue_id)
+        user_id = self.kwargs.get('user_pk')
+        if user_id:
+            queryset = queryset.filter(user_id=user_id)
+        return queryset
+
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        venue_id = self.kwargs.get('venue_pk')
+        serializer.save(venue_id=venue_id, user=self.request.user)
 
 
 class FavoriteVenueViewSet(viewsets.ModelViewSet):
@@ -29,6 +40,16 @@ class FavoriteVenueViewSet(viewsets.ModelViewSet):
     ordering_fields = ['added_at']
     ordering = ['-added_at']
 
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+    def get_queryset(self):
+        queryset = FavoriteVenue.objects.all()
+        venue_id = self.kwargs.get('venue_pk')
+        if venue_id:
+            queryset = queryset.filter(venue_id=venue_id)
+        user_id = self.kwargs.get('user_pk')
+        if user_id:
+            queryset = queryset.filter(user_id=user_id)
+        return queryset
 
+    def perform_create(self, serializer):
+        venue_id = self.kwargs.get('venue_pk')
+        serializer.save(venue_id=venue_id, user=self.request.user)

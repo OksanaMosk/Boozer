@@ -11,7 +11,10 @@ from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
 from .models import UserModel
 from apps.user.models import ProfileModel
-
+from apps.reviews_feedback.models import ReviewModel, FavoriteVenue
+from apps.reviews_feedback.serializers import ReviewSerializer, FavoriteVenueSerializer
+from apps.user.permissions import IsAdmin
+from apps.user.services import UserService
 from apps.user.serializers import (
     ProfileSerializer,
     UserSerializer,
@@ -19,8 +22,7 @@ from apps.user.serializers import (
     UserActiveSerializer,
     UserRoleSerializer,
 )
-from apps.user.permissions import IsAdmin
-from apps.user.services import UserService
+
 
 UserModel = get_user_model()
 
@@ -197,4 +199,27 @@ class UserProfileAPIView(APIView):
             return Response(status=204)
         except ProfileModel.DoesNotExist:
             return Response({"detail": "Profile not found."}, status=404)
+
+
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = UserModel.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [IsAdmin]
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter]
+    filterset_fields = ['is_active', 'role']
+    ordering_fields = ['id', 'email', 'role', 'is_active']
+    search_fields = ['email']
+
+    def reviews(self, request, user_pk=None):
+        user = get_object_or_404(UserModel, pk=user_pk)
+        queryset = ReviewModel.objects.filter(user=user)
+        serializer = ReviewSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+    def favorites(self, request, user_pk=None):
+        user = get_object_or_404(UserModel, pk=user_pk)
+        queryset = FavoriteVenue.objects.filter(user=user)
+        serializer = FavoriteVenueSerializer(queryset, many=True)
+        return Response(serializer.data)
+
 

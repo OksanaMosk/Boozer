@@ -25,8 +25,19 @@ class OrderViewSet(viewsets.ModelViewSet):
     ordering_fields = ['start_date', 'end_date', 'total_price']
     ordering = ['-start_date']
 
+
+    def get_queryset(self):
+        venue_id = self.kwargs.get('venue_pk')
+        if venue_id:
+            return OrderModel.objects.filter(venue_id=venue_id)
+        return super().get_queryset()
+
     def perform_create(self, serializer):
-        order = serializer.save(user=self.request.user)
+        venue_id = self.kwargs.get('venue_pk')
+        order = serializer.save(
+            user=self.request.user,
+            venue_id=venue_id if venue_id else serializer.validated_data.get('venue_id')
+        )
         calculate_total(order)
         calculate_order_route(order)
 
@@ -35,4 +46,3 @@ class OrderViewSet(viewsets.ModelViewSet):
         if any(f in serializer.validated_data for f in PRICE_AFFECTING_FIELDS):
             calculate_total(order)
         calculate_order_route(order)
-

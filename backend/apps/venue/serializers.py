@@ -7,16 +7,23 @@ class TagSerializer(serializers.ModelSerializer):
         model = TagModel
         fields = ['id', 'name']
 
+
 class VenuePhotoSerializer(serializers.ModelSerializer):
+    venue = serializers.PrimaryKeyRelatedField(read_only=True)
+
     class Meta:
         model = VenuePhotoModel
         fields = ['id', 'photo', 'is_main', 'venue']
 
 
 class TableBookingSerializer(serializers.ModelSerializer):
+    table = serializers.PrimaryKeyRelatedField(read_only=True)
+
     class Meta:
         model = TableBookingModel
         fields = ['id', 'order', 'table', 'time_range', 'is_active']
+
+
 
 class TableSerializer(serializers.ModelSerializer):
     bookings = TableBookingSerializer(many=True, read_only=True)

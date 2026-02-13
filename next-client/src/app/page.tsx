@@ -36,7 +36,7 @@ function HomePageContent() {
             }}
         >
             {message && (
-                <p style={{color: "#003333", fontWeight: "bolder"}}>{message}</p>
+                <p style={{color: "white", fontWeight: "bolder"}}>{message}</p>
             )}
 
 

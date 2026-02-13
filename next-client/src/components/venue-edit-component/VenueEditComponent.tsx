@@ -6,7 +6,7 @@ import axios from "axios";
 import venueService from "@/lib/services/venueService";
 import VenueSelectsComponent from "@/components/venue-selects-component/VenueSelectsComponent";
 import {LoaderComponent} from "@/components/loader-component/LoaderComponent";
-import {IVenue, ICarPhoto} from "@/models/IVenue";
+import {IVenue, IVenuePhoto} from "@/models/IVenue";
 import styles from "./VenueEditComponent.module.css";
 import {useUser} from "@/app/contexts/UserProvider";
 
@@ -26,7 +26,7 @@ const VenuesEditComponent = ({carId}: CarEditComponentProps) => {
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [loadingPhotos, setLoadingPhotos] = useState(false);
-    const [localPhotos, setLocalPhotos] = useState<ICarPhoto[]>([]);
+    const [localPhotos, setLocalPhotos] = useState<IVenuePhoto[]>([]);
     const [newFiles, setNewFiles] = useState<ILocalPhoto[]>([]);
     const [error, setError] = useState<string | null>(null);
     const [message, setMessage] = useState<string | null>(null);

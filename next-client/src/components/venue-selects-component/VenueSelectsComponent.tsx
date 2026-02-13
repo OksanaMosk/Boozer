@@ -1,61 +1,68 @@
 "use client"
 
 import React, { useState, useEffect } from "react";
-import venueService from "@/lib/services/venueService";
 import styles from "./VenueSelectsComponent.module.css";
+import venueServices from "@/lib/services/venueService";
 
-interface CarSelectsProps {
-    brand: string;
-    model: string;
-    condition: string;
-    fuel_type: string;
-    location: string;
-    setBrand: (brand: string) => void;
-    setModel: (model: string) => void;
-    setCondition: (condition: string) => void;
-    setFuelType: (fuelType: string) => void;
-    setLocation: (location: string) => void;
+interface VenueSelectsProps {
+    city: string;
+    country: string;
+    setCity: (city: string) => void;
+    setCountry: (country: string) => void;
 }
 
-const VenueSelectsComponent: React.FC<CarSelectsProps> = ({
-                                                            brand,
-                                                            model,
-                                                            setBrand,
-                                                            setModel,
-                                                        }) => {
-    const [brands, setBrands] = useState<string[]>([]);
-    const [modelsByBrand, setModelsByBrand] = useState<Record<string, string[]>>({});
-    const [locations, setLocations] = useState<string[]>([]);
+const VenueSelectsComponent: React.FC<VenueSelectsProps> = ({country, city, setCountry, setCity}) => {
+    const [countriesList, setCountriesList] = useState<string[]>([]);
+    const [cityByCountry, setCityByCountry] = useState<Record<string, string[]>>({});
+    const [selectedCountry, setSelectedCountry] = useState(country)
+
     useEffect(() => {
-        venueService
+        venueServices.venues
             .getConstants()
             .then(({data}) => {
-                setBrands(data.brands);
-                setModelsByBrand(data.models_by_brand);
-                setLocations(data.locations);
+                setCountriesList(data.countries);
+                setCityByCountry(data.cities_by_country);
+                console.log(data);
+
+                if (!country && data.countries.length > 0) {
+                    const firstCountry = data.countries[0];
+                    setSelectedCountry(firstCountry);
+                    setCountry(firstCountry);
+
+                    const firstCity = data.cities_by_country[firstCountry]?.[0] || "";
+                    setCity(firstCity);
+                }
             })
-            .catch((err) => console.error("Failed to load car constants", err));
+            .catch((err) => console.error("Failed to load constants", err));
     }, []);
-    const availableModels = brand ? modelsByBrand[brand] || [] : [];
-    const handleBrandChange = (value: string) => {
-        setBrand(value);
-        setModel("");
+    const availableCity = selectedCountry ? cityByCountry[selectedCountry] || [] : [];
+
+    const handleCountryChange = (value: string) => {
+        setSelectedCountry(value);
+        setCountry(value);
+        setCity("");
     };
 
     return (
         <div className={styles.filters}>
-            <select className={styles.select} value={brand} onChange={(e) => handleBrandChange(e.target.value)}>
+            <select
+                className={styles.select}
+                value={selectedCountry}
+                onChange={(e) => handleCountryChange(e.target.value)}>
                 <option value="">Select Country</option>
-                {brands.map((b) => (
+                {(countriesList || []).map((b) => (
                     <option key={b} value={b}>
                         {b}
                     </option>
                 ))}
             </select>
-            {brand && (
-                <select className={styles.select} value={model} onChange={(e) => setModel(e.target.value)}>
-                    <option value="">Select Sity</option>
-                    {availableModels.map((m) => (
+            {selectedCountry && (
+                <select
+                    className={styles.select}
+                    value={city}
+                    onChange={(e) => setCity(e.target.value)}>
+                    <option value="">Select City</option>
+                    {availableCity.map((m) => (
                         <option key={m} value={m}>
                             {m}
                         </option>

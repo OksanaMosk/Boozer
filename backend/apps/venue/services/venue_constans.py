@@ -1,4 +1,4 @@
-from countries_models import COUNTRIES, CITIES_BY_COUNTRY
+from countries_cities import COUNTRIES, CITIES_BY_COUNTRY
 
 
 def get_venue_constants():

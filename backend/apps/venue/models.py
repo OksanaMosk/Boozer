@@ -11,7 +11,7 @@ from django.contrib.postgres.indexes import GistIndex
 from apps.venue.services.venue_service import notify_admin
 from core.services.file_service import upload_venue_photo
 from core.models import BaseModel
-from countries_models import COUNTRIES
+from countries_cities import COUNTRIES
 
 from django.contrib.postgres.constraints import ExclusionConstraint
 from django.contrib.postgres.fields.ranges import RangeOperators

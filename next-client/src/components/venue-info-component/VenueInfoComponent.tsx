@@ -6,18 +6,18 @@ import ChatComponent from "../chat-component/ChatComponent";
 import { IVenue } from "@/models/IVenue";
 import styles from "./VenueInfoComponent.module.css";
 
-interface CarInfoComponentProps {
-    car: IVenue;
+interface venueInfoComponentProps {
+    venue: IVenue;
 }
 
-const VenueInfoComponent: React.FC<CarInfoComponentProps> = ({car}) => {
+const VenueInfoComponent: React.FC<venueInfoComponentProps> = ({venue}) => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const prevPhoto = () => {
         setCurrentIndex((prev) => Math.max(prev - 1, 0));
     };
     const nextPhoto = () => {
         setCurrentIndex((prev) =>
-            Math.min(prev + 1, car.photos.length - 1)
+            Math.min(prev + 1, venue.photos.length - 1)
         );
     };
 
@@ -25,15 +25,15 @@ const VenueInfoComponent: React.FC<CarInfoComponentProps> = ({car}) => {
         <div>
             <div className={styles.container}>
                 <div className={styles.flexRowResponsive}>
-                    {car.photos[0] ? (
+                    {venue.photos[0] ? (
                         // eslint-disable-next-line @next/next/no-img-element
                         <img
-                            src={car.photos[0].photo}
-                            alt={`${car.brand} ${car.model}`}
+                            src={venue.photos[0].photo}
+                            alt={`${venue.brand} ${venue.model}`}
                             width={500}
                             height={400}
                             sizes="(max-width: 600px) 100vw, 500px"
-                            className={styles.carPoster}
+                            className={styles.venuePoster}
                         />
                     ) : (
                         <div className={styles.noPoster}>
@@ -50,24 +50,24 @@ const VenueInfoComponent: React.FC<CarInfoComponentProps> = ({car}) => {
                     )}
                     <div className={styles.content}>
                         <h1 className={styles.title}>
-                            {car.brand} {car.model} (<span className={styles.spanYear}> {car.year}{' '} </span>)
+                            {venue.brand} {venue.model} (<span className={styles.spanYear}> {venue.year}{' '} </span>)
                         </h1>
 
                         <div className={styles.seler}>
-                            <p>{car.condition}</p>
-                            <p>Venue Admin id: {car.venue_admin_id}</p>
+                            <p>{venue.condition}</p>
+                            <p>Venue Admin id: {venue.venue_admin_id}</p>
                         </div>
 
                         <hr className={styles.tagline}></hr>
                         <div className={styles.details}>
                             <div className={styles.top}>
-                                <p><strong>ID:</strong> {car.id}</p>
+                                <p><strong>ID:</strong> {venue.id}</p>
                                 <div>
-                                    <p><strong>Price: {car.price.toLocaleString()} {car.currency}</strong></p>
+                                    <p><strong>Price: {venue.price.toLocaleString()} {venue.currency}</strong></p>
                                 </div>
                             </div>
 
-                            <div className={styles.aboutCar}>
+                            <div className={styles.aboutvenue}>
                                 <div className={styles.about}>
                                     <div className={styles.imageContainer}>
                                         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -79,7 +79,7 @@ const VenueInfoComponent: React.FC<CarInfoComponentProps> = ({car}) => {
                                             className={styles.img}
                                         />
                                         <p className={styles.imgAbout}>Traveled</p>
-                                        <p className={styles.imgText}>{car.mileage.toLocaleString()} km</p>
+                                        <p className={styles.imgText}>{venue.mileage.toLocaleString()} km</p>
                                     </div>
                                     <div className={styles.imageContainer}>
                                         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -91,7 +91,7 @@ const VenueInfoComponent: React.FC<CarInfoComponentProps> = ({car}) => {
                                             className={styles.img}
                                         />
                                         <p className={styles.imgAbout}>Max speed </p>
-                                        <p className={styles.imgText}> {car.max_speed} km/h</p>
+                                        <p className={styles.imgText}> {venue.max_speed} km/h</p>
                                     </div>
                                     <div className={styles.imageContainer}>
                                         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -103,7 +103,7 @@ const VenueInfoComponent: React.FC<CarInfoComponentProps> = ({car}) => {
                                             className={styles.img}
                                         />
                                         <p className={styles.imgAbout}>Seats</p>
-                                        <p className={styles.imgText}> {car.seats_count}</p>
+                                        <p className={styles.imgText}> {venue.seats_count}</p>
                                     </div>
                                 </div>
 
@@ -118,7 +118,7 @@ const VenueInfoComponent: React.FC<CarInfoComponentProps> = ({car}) => {
                                             className={styles.img}
                                         />
                                         <p className={styles.imgAbout}>Engine Volume</p>
-                                        <p className={styles.imgText}> {car.engine_volume.toLocaleString()}</p>
+                                        <p className={styles.imgText}> {venue.engine_volume.toLocaleString()}</p>
                                     </div>
                                     <div className={styles.imageContainer}>
                                         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -130,7 +130,7 @@ const VenueInfoComponent: React.FC<CarInfoComponentProps> = ({car}) => {
                                             className={styles.img}
                                         />
                                         <p className={styles.imgAbout}>AC</p>
-                                        <p className={styles.imgText}> {car.has_air_conditioner ? "Yes" : "No"}</p>
+                                        <p className={styles.imgText}> {venue.has_air_conditioner ? "Yes" : "No"}</p>
                                     </div>
                                     <div className={styles.imageContainer}>
                                         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -142,16 +142,16 @@ const VenueInfoComponent: React.FC<CarInfoComponentProps> = ({car}) => {
                                             className={styles.img}
                                         />
                                         <p className={styles.imgAbout}>Fuel Type</p>
-                                        <p className={styles.imgText}> {car.fuel_type}</p>
+                                        <p className={styles.imgText}> {venue.fuel_type}</p>
                                     </div>
                                 </div>
                             </div>
 
-                            <p><strong>Location:</strong> {car.location}</p>
+                            <p><strong>Location:</strong> {venue.location}</p>
                         </div>
                         <hr className={styles.tagline}></hr>
 
-                        {car.photos?.length > 0 && (
+                        {venue.photos?.length > 0 && (
                             <div className={styles.singleGalleryWrapper}>
                                 <button
                                     className={styles.arrow}
@@ -163,7 +163,7 @@ const VenueInfoComponent: React.FC<CarInfoComponentProps> = ({car}) => {
 
                                 {/* eslint-disable-next-line @next/next/no-img-element */}
                                 <img
-                                    src={car.photos[currentIndex].photo}
+                                    src={venue.photos[currentIndex].photo}
                                     alt={`photo ${currentIndex + 1}`}
                                     className={styles.singleThumbnail}
                                 />
@@ -171,15 +171,15 @@ const VenueInfoComponent: React.FC<CarInfoComponentProps> = ({car}) => {
                                 <button
                                     className={styles.arrow}
                                     onClick={nextPhoto}
-                                    disabled={currentIndex === car.photos.length - 1}
+                                    disabled={currentIndex === venue.photos.length - 1}
                                 >
                                     →
                                 </button>
                             </div>
                         )}
 
-                        {car.description && (
-                            <p className={styles.overview}><strong>Description:</strong> {car.description}</p>
+                        {venue.description && (
+                            <p className={styles.overview}><strong>Description:</strong> {venue.description}</p>
                         )}
                     </div>
                 </div>
@@ -189,10 +189,10 @@ const VenueInfoComponent: React.FC<CarInfoComponentProps> = ({car}) => {
                 <h3 style={{margin: "40px auto", textAlign: "center", width: "fit-content"}}>
                     Chat with Venue Admin
                 </h3>
-                {!car ? (
-                    <p>Loading car info...</p>
-                ) : car.venue_admin_id ? (
-                    <ChatComponent ownerId={String(car.venue_admin_id)}/>
+                {!venue ? (
+                    <p>Loading venue info...</p>
+                ) : venue.venue_admin_id ? (
+                    <ChatComponent ownerId={String(venue.venue_admin_id)}/>
                 ) : (
                     <p>Venue Admin not available</p>
                 )}

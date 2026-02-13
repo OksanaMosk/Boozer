@@ -2,21 +2,20 @@
    --font-playfair: "Playfair Display", serif;
    --font-imperial: "Imperial Script", cursive;
     --font-roboto: "Roboto", sans-serif ;
-  --color-disabled: #6b7280;
+  --color-disabled: #d3b3e0;
   --color-active: #00b8b8;
-  --color-border: #003333;
-  --color-text: #5ff;
-  --color-badgeId: #1e9c9c;
-  --color-noposter: #374151;
+  --color-border: #bf8282;
+  --color-text: #926F34;
+  --color-badgeId: #f5e6a1;
+  --color-noposter: #d4af37;
   --color-white: #ffffff;
   --color-container: #1f2937;
     --color-black: black;
-
-    --color-bg-dark: #0b0c0e;
+    --color-bg-dark: #4d3a1c;
 --color-bg-light: #f5f5f5;
 --color-text-main: #ffffff;
---color-text-muted: #9a9a9a;
---color-accent: #c7a46a;
+--color-text-muted: #4d3a1c;
+--color-accent:#b292c7;
 }
 *, *::before, *::after {
   box-sizing: border-box;
@@ -31,6 +30,7 @@ body {
   margin: 0 auto;
   scroll-behavior: smooth;
   min-height: 100vh;
+    overflow-x: hidden;
 }
 
  a {
@@ -45,102 +45,103 @@ body {
 }
 
 html.light body {
-  background:
-    url("/images/light-background11.jpg") no-repeat center center / cover;
+    background: url("/images/light-background11.jpg") no-repeat center center;
+     background-size: cover;
+  overflow-x: hidden;
+}
 
+html.light body .burgerMenu {
+        background: url("/images/light-background1.jpg") no-repeat center center,
+        radial-gradient(circle at 30% 30%, #5ff, #00b8b8 40%, #d3b3e0);
+     background-size: cover;
+  overflow-x: hidden;
+}
 
-  .burgerMenu {
-    background:
-            url("/images/light-background1.jpg") no-repeat center center / cover,
-            radial-gradient(circle at 30% 30%, #5ff, #00b8b8 40%, #003333);
-  }
+html.light .search-input,
+html.light .sort-select {
+        background-color: var(--color-white);
+    }
 
-  .search-input,
-  .sort-select{
-    background-color: var(--color-white);
-  }
-
-  .search-button,
-  .search-input,
-  .noResults,
-  .search-input::placeholder {
+html.light .search-button,
+html.light .search-input,
+html.light .noResults,
+html.light .search-input::placeholder {
     color: var(--color-container);
-  }
+    }
 
-  .search-button:focus,
-  .search-button:active,
-  .search-button:hover,
-  .carTitle {
+html.light .search-button:focus,
+html.light .search-button:active,
+html.light .search-button:hover,
+html.light .carTitle {
     color: var(--color-badgeId);
-  }
+    }
 
-  .search-input:focus {
+html.light .search-input:focus {
     opacity: 0.7;
-  }
+    }
 
-  .sort-label,
-  .search-clearButton {
+html.light .sort-label,
+html.light .search-clearButton {
     color: var(--color-white);
-  }
+    }
 
-  .carItem {
+html.light .carItem {
     box-shadow: none;
     border-bottom: 1px solid var(--color-active);
-  }
+    }
 
-  .loader {
-    fill: var(--color-container);
-  }
+html.light .loader {
 
-  .loader-run {
-    fill: var(--color-active);
-  }
+    }
 
-  .auth {
-  background-color:transparent;
+html.light .loader-run {
+    fill: var(--color-text-muted);
+    }
 
-  }
+html.light .auth {
+        background-color: transparent;
+    }
 
-  .burgerUserLogoutBtn {
-    color: black;
-  }
+html.light .burgerUserLogoutBtn {
+        color: black;
+    }
 
-  .slideheading{
-    color: var(--color-container);
-  }
+html.light .slideheading {
+        color: var(--color-container);
+    }
 
-  .cell{
-   background:black;
-  }
-
+html.light .cell {
+    /*background: black;*/
 }
 
-html.dark {
-    body,
-    .burgerMenu {
-       background:
-    url("/images/dark-background.jpg") no-repeat center center / cover;
-
-
-    .registerMessage {
-        color: var(--color-text);
-    }
-
-    .mainTitle {
-        background: linear-gradient(var(--color-active), var(--color-badgeId));
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-    }
-
-    .cell {
-        background: var(--color-active);
-    }
-
+html.dark body,
+html.dark .burgerMenu {
+    background: url("/images/dark-background.jpg") no-repeat center center / cover;
 }
-::-webkit-scrollbar {
+html.dark .registerMessage {
+    color: var(--color-text);
+}
+
+html.dark .mainTitle {
+    background: linear-gradient(var(--color-active), var(--color-badgeId));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+html.dark .cell {
+    /*background: var(--color-active);*/
+}
+
+html.dark::-webkit-scrollbar {
   display: none;
 }
-figure {
+html.dark figure {
     margin: 0;
     overflow: hidden;
+}
+html.dark table td {
+    color: var(--color-badgeId);
+}
+html.dark table tbody tr:hover td {
+    color: var(--color-bg-dark);
 }

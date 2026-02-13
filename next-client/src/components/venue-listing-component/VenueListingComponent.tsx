@@ -141,7 +141,7 @@ const VenueListingComponent: React.FC<Props> = ({car, onDelete, onStatusChange})
 
                         <button onClick={handleDelete} className={styles.deleteButton}>Delete</button>
                         {isLocked && (
-                            <p style={{color: "red", marginTop: 4, fontSize: 10}}>
+                            <p style={{color: "#ef4444", marginTop: 4, fontSize: 10}}>
                                 Locked!
                             </p>
                         )}

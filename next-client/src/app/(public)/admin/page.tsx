@@ -16,13 +16,13 @@ const AdminPage = () => {
       <ButtonGoBackComponent/>
       <AdminDashboardComponent />
          <Link
-              href="/create-car"
-              className="create-car-link"
+              href="/create-venue"
+              className="create-venue-link"
               style={{
                   margin: '40px auto',
                   display: 'inline-block',
                   padding: '10px 20px',
-                  backgroundColor: '#003333',
+                  backgroundColor: '#d3b3e0',
                   color: '#fff',
                   textAlign: 'center',
                   textDecoration: 'none',

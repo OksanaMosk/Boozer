@@ -1,6 +1,6 @@
 import {apiService} from "./apiService";
 import {urls} from "../constants/urls";
-import {GetUserCarsResponse} from "@/models/IVenue";
+import {GetUserVenueResponse} from "@/models/IVenue";
 import {IUser} from "@/models/IUser";
 
 
@@ -73,9 +73,12 @@ console.log(filtered)
         const {data} = await apiService(token.accessToken).delete(urls.users.delete(userId));
         return data;
     },
-    getUserCars(userId: string, token: { accessToken: string }) {
-        return apiService(token.accessToken).get<GetUserCarsResponse>(urls.users.userCars(userId));
+    getUserVenues(userId: string, token: { accessToken: string }) {
+        return apiService(token.accessToken).get<GetUserVenueResponse>(urls.users.userVenues(userId));
     },
+
+
+
 };
 
 export default userService

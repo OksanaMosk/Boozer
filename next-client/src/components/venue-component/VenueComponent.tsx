@@ -6,23 +6,23 @@ import {IVenue} from "@/models/IVenue";
 import styles from "./VenueComponent.module.css";
 
 interface Props {
-    car: IVenue;
+    venue: IVenue;
 }
 
-const VenueComponent: React.FC<Props> = ({car}) => {
+const VenueComponent: React.FC<Props> = ({venue}) => {
 
     return (
         <div
-            className={styles.cardWrapper}>
-            <div className={styles.carItem}>
-                {car.photos[0] ? (
+            className={styles.venuedWrapper}>
+            <div className={styles.venueItem}>
+                {venue.photos[0] ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
-                        src={car.photos[0].photo}
-                        alt={`${car.brand} ${car.model}`}
+                        src={venue.photos[0].photo}
+                        alt={`${venue.brand} ${venue.model}`}
                         width={250}
                         height={120}
-                        className={styles.carPoster}
+                        className={styles.venuePoster}
                     />
                 ) : (
                     <div className={styles.noPoster}>
@@ -38,15 +38,15 @@ const VenueComponent: React.FC<Props> = ({car}) => {
                 <div className={styles.right}>
                     <span className={styles.label}>Price:  </span>{" "}
                     <span className={styles.value}>
-              {car.price} <strong>{car.currency}</strong>
+              {venue.price} <strong>{venue.currency}</strong>
             </span>
                 </div>
             </div>
 
-            <div className={styles.carInfoWrapper}>
-                <div className={styles.carInfo}>
-                    <h2 className={styles.carTitle}>
-                        {car.brand} {car.model}{" "} {car.year}
+            <div className={styles.venueInfoWrapper}>
+                <div className={styles.venueInfo}>
+                    <h2 className={styles.venueTitle}>
+                        {venue.brand} {venue.model}{" "} {venue.year}
                     </h2>
 
                     <div className={styles.about}>
@@ -59,7 +59,7 @@ const VenueComponent: React.FC<Props> = ({car}) => {
                                 className={styles.img}
                             />
                             <p className={styles.imgAbout}>Max speed </p>
-                            <p className={styles.value}>{car.max_speed} km/h</p>
+                            <p className={styles.value}>{venue.max_speed} km/h</p>
                         </div>
 
                         <div className={styles.imageContainer}>
@@ -71,7 +71,7 @@ const VenueComponent: React.FC<Props> = ({car}) => {
                                 className={styles.img}
                             />
                             <p className={styles.imgAbout}>Seats</p>
-                            <p className={styles.value}>{car.seats_count}</p>
+                            <p className={styles.value}>{venue.seats_count}</p>
                         </div>
 
                         <div className={styles.imageContainer}>
@@ -83,7 +83,7 @@ const VenueComponent: React.FC<Props> = ({car}) => {
                                 className={styles.img}
                             />
                             <p className={styles.imgAbout}>Engine</p>
-                            <p className={styles.value}>{car.engine_volume} L</p>
+                            <p className={styles.value}>{venue.engine_volume} L</p>
                         </div>
 
                         <div className={styles.imageContainer}>
@@ -95,21 +95,21 @@ const VenueComponent: React.FC<Props> = ({car}) => {
                                 className={styles.img}
                             />
                             <p className={styles.imgAbout}>Fuel Type</p>
-                            <p className={styles.value}>{car.fuel_type}</p>
+                            <p className={styles.value}>{venue.fuel_type}</p>
                         </div>
                     </div>
                     <hr className={styles.tagline}></hr>
                     <div className={styles.footerRow}>
                         <div className={styles.row}>
-                            <span className={styles.value}>{car.location}</span>
+                            <span className={styles.value}>{venue.location}</span>
                         </div>
                         <div className={styles.row}>
                             <span className={styles.label}>Id:  </span>{" "}
-                            <span className={styles.value}> {car.id}</span>
+                            <span className={styles.value}> {venue.id}</span>
                         </div>
                     </div>
                     <div className={styles.row}>
-                        <span className={styles.value}>{car.condition}</span>
+                        <span className={styles.value}>{venue.condition}</span>
                     </div>
                 </div>
             </div>

@@ -1,16 +1,73 @@
 .userManagement {
+    position: relative;
     margin: 60px auto;
     text-align: center;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    font-family: 'Inter', sans-serif;
-    background: radial-gradient(circle at 10% 50%, #5ff, #00b8b8 40%, #003333);
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    border-radius: 2rem;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow:
+        0 0 20px rgba(255, 215, 0, 0.15),
+        0 0 40px rgba(255, 200, 0, 0.08);
+  animation: float 6s ease-in-out infinite;
+    overflow: hidden;
+}
 
-    }
+@keyframes float {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
+    100% { transform: translateY(0); }
+}
+
+.userManagement::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    padding: 3px;
+    border-radius: 2rem;
+    background: linear-gradient(
+        90deg,
+        #f9f295,
+        #ae8625,
+        #faf398,
+        #b88a44
+    );
+
+    -webkit-mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+            mask-composite: exclude;
+
+    pointer-events: none;
+}
+
+.userManagement::after {
+    content: "";
+    position: absolute;
+    inset: -20px;
+    border-radius: 2rem;
+    background: linear-gradient(
+        90deg,
+        #f9f295,
+        #ae8625,
+        #faf398,
+        #b88a44
+    );
+    filter: blur(40px);
+    opacity: 0.25;
+    z-index: -1;
+    animation: glowMove 6s linear infinite;
+}
+
+@keyframes glowMove {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
 
 
 .subtitle {
@@ -30,15 +87,16 @@
     align-items: center;
 }
 .bigSelect{
+       cursor: pointer;
      border-radius: 12px;
     padding: 3px 8px;
     border: 1px solid var(--color-white);
     font-size: 0.7rem;
-    background-color: var(--color-badgeId);
+    background: linear-gradient(90deg, #ae8625, #f7ef8a, #d2ac47, #edc967);
 }
 
 .user {
-    color: var(--color-border);
+    color: var(--color-bg-dark);
 }
 
 .table {
@@ -50,13 +108,18 @@
 }
 
 .table thead tr {
-    background-color: var(--color-active);
-    color: white;
+    background: linear-gradient(90deg, #ae8625, #f7ef8a, #d2ac47, #edc967);
+    color: var(--color-bg-dark);
     text-align: left;
+}
+
+.table thead tr th {
+    background: transparent;
 }
 
 .table th, .table td {
     padding: 0.25rem;
+    text-align: left;
 }
 
 
@@ -69,20 +132,34 @@
 }
 
 .table tr:hover {
-    background-color: var(--color-text);
-    cursor: pointer;
+    background: linear-gradient(90deg, #ae8625, #f7ef8a, #d2ac47, #edc967);
 }
 
+.table tbody tr:hover td:first-child,
+.table thead tr th:first-child  {
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+}
+
+.table tbody tr:hover td:last-child,
+.table thead tr th:last-child {
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+
 .table tbody tr {
-    background-color: var(--color-white);
+       cursor: pointer;
+    background-color: transparent;
     border-radius: 10px;
     box-shadow: 0 0.25rem 0.75rem var(--color-text);
     transition: all 0.2s ease;
 }
 
 .table tbody tr:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 0.25rem 0.75rem var(--color-border);
+    box-shadow: 0 0.25rem 0.75rem var(--color-text);
+    border-radius: 10px;
+
 }
 
 .actions {
@@ -117,16 +194,13 @@
     background-color: var(--color-container);
 }
 
-.actions button:hover {
-    background-color: var(--color-border);
+.actions button:hover,
+.viewCarsButton:hover {
+    background-color: var(--color-text);
 }
 
 .deleteButton {
-    background-color: #ef4444;
-}
-
-.deleteButton:hover {
-    background-color: var(--color-border);
+    background-color: #bf8282;
 }
 
 .select {
@@ -135,10 +209,11 @@
     border: 1px solid var(--color-white);
     font-size: 0.4rem;
     background-color: var(--color-badgeId);
+    color: var(--color-bg-dark);
 }
 
 .viewCarsButton {
-    background-color: var(--color-active);
+    background-color: var(--color-bg-dark);
 }
 
 @media (min-width: 768px) {
@@ -152,6 +227,7 @@
     border: 1px solid var(--color-white);
     font-size: 1rem;
     background-color: var(--color-badgeId);
+    color: var(--color-bg-dark);
 }
 
     .viewCarsButton, .actions button {
@@ -167,9 +243,9 @@
         padding: 6px 6px;
     }
     .select {
-    font-size: 0.75rem;
+        font-size: 0.75rem;
         border-radius: 12px;
-    padding: 4px;
+        padding: 4px;
     }
     .actions {
         justify-content: space-between;

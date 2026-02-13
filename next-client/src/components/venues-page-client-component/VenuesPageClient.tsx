@@ -21,7 +21,7 @@ export default function VenuesPageClient({carId}: CarsPageClientProps) {
 
         (async () => {
             try {
-                const response = await venueService.get(carId);
+                const response = await venueService.get(venueId);
                 setCar(response.data);
             } catch {
                 setError("Failed to fetch car details");
@@ -42,7 +42,7 @@ export default function VenuesPageClient({carId}: CarsPageClientProps) {
     return (
         <div>
             <ButtonGoBackComponent/>
-            <VenueInfoComponent car={car}/>
+            <VenueInfoComponent venue={venue}/>
         </div>
     );
 }
