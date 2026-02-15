@@ -38,7 +38,6 @@ const VenueComponent: React.FC<Props> = ({venue}) => {
                 <div className={styles.right}>
                     <span className={styles.label}>Price:  </span>{" "}
                     <span className={styles.value}>
-              {venue.price} <strong>{venue.currency}</strong>
             </span>
                 </div>
             </div>

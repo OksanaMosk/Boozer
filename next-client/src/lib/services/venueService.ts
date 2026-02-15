@@ -8,11 +8,11 @@ type Token = { accessToken: string };
 const api = (token?: Token) => apiService(token?.accessToken);
 
 const createService = <T>(baseUrl: string, token?: Token) => ({
-    getAll: () => api(token).get<T[]>(baseUrl),
-    get: (id: string) => api(token).get<T>(`${baseUrl}/${id}/`),
-    create: (data: Partial<T>) => api(token).post<T>(baseUrl, data),
-    update: (id: string, data: Partial<T>) => api(token).put<T>(`${baseUrl}/${id}/`, data),
-    delete: (id: string) => api(token).delete(`${baseUrl}/${id}/`),
+    getAll: (token?: Token) => api(token).get<T[]>(baseUrl),
+    get: (id: string, token?: Token) => api(token).get<T>(`${baseUrl}/${id}/`),
+    create: (data: Partial<T>, token?: Token) => api(token).post<T>(baseUrl, data),
+    update: (id: string, data: Partial<T>, token?: Token) => api(token).put<T>(`${baseUrl}/${id}/`, data),
+    delete: (id: string, token?: Token) => api(token).delete(`${baseUrl}/${id}/`),
 });
 
 const getByParent = <T>(endpoint: (parentId: string) => string, token?: Token) =>
@@ -116,7 +116,6 @@ const venueServices = {
                 });
             },
         },
-        getConstants: (token?: Token) => api(token).get(urls.venues.constants),
         // orders: {
         //     getAllWithFilter: (filterCriteria?: OrderFilterCriteria, token?: Token) =>
         //         api(token).get<IOrder[]>(urls.bookings.list, { params: buildOrderParams(filterCriteria) }),
@@ -125,13 +124,28 @@ const venueServices = {
         //     active: (token?: Token) => api(token).get<IOrder[]>(urls.bookings.active),
         // },
     },
-    venuePhotos: {
-        // ...createService<IVenuePhoto>(urls.venuePhotos.list),
-        byVenue: getByParent<IVenuePhoto>(urls.venuePhotos.byVenue),
-        mainForVenue: getByParent<IVenuePhoto>(urls.venuePhotos.mainForVenue),
-        create: (data: FormData, token: Token) =>
-            api(token).post<IVenuePhoto>(urls.venuePhotos.create, data, { withCredentials: true }),
-    },
+    venuePhotos: (token?: Token) => ({
+        list: getByParent<IVenuePhoto>(urls.venues.photos, token),
+        get: (venueId: string, photoId: string) =>
+            api(token).get<IVenuePhoto>(`${urls.venues.photos(venueId)}/${photoId}/`),
+        create: (venueId: string, formData: FormData) =>
+            api(token).post<IVenuePhoto>(urls.venues.photos(venueId), formData, {
+                headers: {"Content-Type": "multipart/form-data"},
+            }),
+        update: (venueId: string, photoId: string, data: Partial<IVenuePhoto>) =>
+            api(token).patch<IVenuePhoto>(`${urls.venues.photos(venueId)}/${photoId}/`, data),
+        delete: (venueId: string, photoId: string) =>
+            api(token).delete(`${urls.venues.photos(venueId)}/${photoId}/`),
+    }),
+
+
+    // venuePhotos: {
+    //     // ...createService<IVenuePhoto>(urls.venuePhotos.list),
+    //     byVenue: getByParent<IVenuePhoto>(urls.venuePhotos.byVenue),
+    //     mainForVenue: getByParent<IVenuePhoto>(urls.venuePhotos.mainForVenue),
+    //     create: (data: FormData, token: Token) =>
+    //         api(token).post<IVenuePhoto>(urls.venuePhotos.create, data, { withCredentials: true }),
+    // },
     tables: {
         ...createService<ITableBooking>(urls.tables.list),
         byVenue: getByParent<ITableBooking>(urls.tables.byVenue),
@@ -151,6 +165,9 @@ const venueServices = {
         // favoritesList: (token?: Token) => api(token).get<IReview[]>(urls.reviews.favoritesList),
         // favoritesDetail: (id: string, token?: Token) => api(token).get<IReview>(urls.reviews.favoritesDetail(id)),
     },
+    constants: {
+        getConstants: (token?: Token) => api(token).get(urls.constants.constantsList),
+    }
 };
 
 export default venueServices;

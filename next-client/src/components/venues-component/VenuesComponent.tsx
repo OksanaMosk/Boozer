@@ -23,7 +23,7 @@ const VenuesComponent: React.FC<CarListComponentProps> = ({cars, totalPages}) =>
                             href={`/venues/${car.id}`}
                             className={styles.link}
                         >
-                            <VenueComponent car={car}/>
+                            {/*<VenueComponent venue={venue}/>*/}
                         </Link>
                     </li>
                 ))}

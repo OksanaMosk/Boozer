@@ -28,7 +28,7 @@ const ButtonsSocialComponent: React.FC = () => {
             <button
                 type="button"
                 onClick={handleSocialSignIn("google")}
-                className={styles.socialButton}
+                className={`${styles.socialButton} ${loading === "google" ? styles.loading : ""}`}
                 disabled={loading === "google"}
             >
                 {loading === "google" ? (
@@ -48,7 +48,7 @@ const ButtonsSocialComponent: React.FC = () => {
             <button
                 type="button"
                 onClick={handleSocialSignIn("facebook")}
-                className={styles.socialButton}
+                className={`${styles.socialButton} ${loading === "facebook" ? styles.loading : ""}`}
                 disabled={loading === "facebook"}
             >
                 {loading === "facebook" ? (

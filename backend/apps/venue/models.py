@@ -8,6 +8,7 @@ from apps.orders.models import OrderModel
 from django.contrib.postgres.fields import DateTimeRangeField
 from django.contrib.postgres.indexes import GistIndex
 
+from apps.venue.services.geocode import geocode_city
 from apps.venue.services.venue_service import notify_admin
 from core.services.file_service import upload_venue_photo
 from core.models import BaseModel
@@ -79,7 +80,14 @@ class VenueModel( BaseModel):
     def notify_manager(self):
         notify_admin(self)
 
+    def save(self, *args, **kwargs):
 
+        if not self.latitude or not self.longitude:
+            lat, lng = geocode_city(self.city, self.country)
+            self.latitude = lat
+            self.longitude = lng
+
+        super().save(*args, **kwargs)
 
 class VenuePhotoModel(models.Model):
     class Meta:
@@ -141,7 +149,6 @@ class TableBookingModel(models.Model):
             GistIndex(fields=['table', 'time_range']),
         ]
         constraints = [
-            # DB-level constraint для запобігання overlap
             ExclusionConstraint(
                 name='prevent_overlapping_bookings',
                 expressions=[
@@ -174,46 +181,3 @@ class TableBookingModel(models.Model):
         start = self.time_range.lower.strftime('%Y-%m-%d %H:%M')
         end = self.time_range.upper.strftime('%Y-%m-%d %H:%M')
         return f"Booking for {self.table.name} ({start} → {end})"
-
-
-
-
-
-
-# class TableBooking(models.Model):
-#     order = models.OneToOneField(OrderModel, on_delete=models.CASCADE, related_name='table_booking')
-#     table = models.ForeignKey(TableModel, on_delete=models.CASCADE, related_name='bookings')
-#     time_range = DateTimeRangeField()
-#     is_active = models.BooleanField(default=True)
-#
-#     class Meta:
-#         db_table = 'table_bookings'
-#         indexes = [
-#             GistIndex(fields=['table', 'time_range']),
-#         ]
-#         ordering = ['time_range']
-#
-#     def clean(self):
-#         # Перевірка, що бронювання всередині періоду замовлення
-#         if not (self.order.start_date <= self.time_range.lower.date() <= self.order.end_date):
-#             raise ValidationError("Booking start must be within order period.")
-#         if not (self.order.start_date <= self.time_range.upper.date() <= self.order.end_date):
-#             raise ValidationError("Booking end must be within order period.")
-#
-#         # Перевірка на перетин з іншими бронюваннями
-#         conflicts = TableBooking.objects.filter(
-#             table=self.table,
-#             time_range__overlap=self.time_range
-#         ).exclude(id=self.id).exists()
-#
-#         if conflicts:
-#             raise ValidationError("This table is already booked for this time.")
-#
-#     def save(self, *args, **kwargs):
-#         self.full_clean()
-#         super().save(*args, **kwargs)
-#
-#     def __str__(self):
-#         start = self.time_range.lower.strftime('%Y-%m-%d %H:%M')
-#         end = self.time_range.upper.strftime('%Y-%m-%d %H:%M')
-#         return f"Booking for {self.table.name} ({start} → {end})"

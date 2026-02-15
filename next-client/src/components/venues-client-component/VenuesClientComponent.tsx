@@ -8,7 +8,7 @@ import VenueFilterComponent from "@/components/venue-filter-component/VenueFilte
 import { IVenue } from "@/models/IVenue";
 import styles from "./VenuesClientComponent.module.css";
 
-interface CarFilters {
+interface venueFilters {
     brand?: string;
     model?: string;
     condition?: string;
@@ -19,50 +19,50 @@ interface CarFilters {
 }
 
 export const VenuesClientComponent = () => {
-    const [filters, setFilters] = useState<CarFilters>({});
-    const [carsData, setCarsData] = useState<IVenue[]>([]);
+    const [filters, setFilters] = useState<venueFilters>({});
+    const [venuesData, setVenuesData] = useState<IVenue[]>([]);
     const [totalPagesState, setTotalPagesState] = useState(1);
 
     const searchParams = useSearchParams();
     const currentPageFromURL = Number(searchParams.get("pg") || "1");
 
-    const buildQueryParams = (page: number, filters: CarFilters) => ({
+    const buildQueryParams = (page: number, filters: venueFilters) => ({
         ...filters,
         page,
     });
 
-    const fetchCars = useCallback(async (page: number, filters: CarFilters) => {
+    const fetchvenues = useCallback(async (page: number, filters: venueFilters) => {
         try {
             const queryParams = buildQueryParams(page, filters);
-            const response = await venueService.getAll(queryParams);
+            const response = await venueService.venues.getAllWithFilter(queryParams);
             const resData = response.data;
-            setCarsData(resData.filter((car: { status: string }) => car.status === "active") ?? []);
+            setVenuesData(resData.filter((venue: { status: string }) => venue.status === "active") ?? []);
             setTotalPagesState(resData.total_pages ?? 1);
         } catch (error) {
             console.error("Error fetching venues:", error);
         }
     }, []);
 
-    const handleFilterChange = (newFilters: CarFilters) => {
+    const handleFilterChange = (newFilters: venueFilters) => {
         setFilters(newFilters);
     };
 
     useEffect(() => {
         (async () => {
-            await fetchCars(currentPageFromURL, filters);
+            await fetchvenues(currentPageFromURL, filters);
         })();
-    }, [currentPageFromURL, filters, fetchCars]);
+    }, [currentPageFromURL, filters, fetchvenues]);
 
     return (
         <div className={styles.wrapper}>
-            <h1>Cars</h1>
+            <h1>venues</h1>
             <VenueFilterComponent
                 onFilterChange={handleFilterChange}
             />
-            <VenuesComponent
-                cars={carsData}
-                totalPages={totalPagesState}
-            />
+            {/*<VenuesComponent*/}
+            {/*    venues={venuesData}*/}
+            {/*    totalPages={totalPagesState}*/}
+            {/*/>*/}
         </div>
     );
 };

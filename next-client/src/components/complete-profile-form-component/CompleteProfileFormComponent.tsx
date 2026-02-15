@@ -33,7 +33,6 @@ export default function CompleteProfileFormComponent() {
         return age >= 18 && age < 150;
     };
 
-
     const handleSubmit = async (event: React.SyntheticEvent<HTMLFormElement>) => {
     event.preventDefault();
     setErrorMsg("");
@@ -50,23 +49,16 @@ export default function CompleteProfileFormComponent() {
         setErrorFields(errors);
         return;
     }
-
     if (!session) {
         setErrorMsg("Session not found.");
         return;
     }
-
     setIsSubmitting(true);
-
     try {
         const payload = {
             birth_date: birthDate!.toISOString().split("T")[0],
             is_rules_accepted: isRulesAccepted,
         };
-
-        console.log("Дані для відправки на сервер:", payload);
-
-        // Перевірка на наявність `accessToken` та `id`
         if (!session.user?.id || !session.user?.accessToken) {
             setErrorMsg("Missing user credentials.");
             return;
@@ -86,7 +78,6 @@ export default function CompleteProfileFormComponent() {
     setErrorMsg(`Profile save error: ${err.message}`);
     } finally {
         setIsSubmitting(false);
-        console.log("Відправка завершена, isSubmitting=false");
     }
 };
 

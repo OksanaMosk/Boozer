@@ -10,6 +10,7 @@ const paths = {
     news: "/news",
     reviews: "/reviews-feedback",
     favorites: "/favorites",
+    constants: "/constants",
 };
 
 export const urls = {
@@ -50,7 +51,7 @@ export const urls = {
         reviews: (venueId: string) => `${paths.venues}/${venueId}/reviews/`,
         favorites: (venueId: string) => `${paths.venues}/${venueId}/favorites/`,
         orders: (venueId: string) => `${paths.venues}/${venueId}/orders/`,
-        constants: `${paths.venues}/constants/`,
+
     },
 
     venuePhotos: {
@@ -100,4 +101,7 @@ export const urls = {
         favoritesList: `${paths.reviews}/favorites/`,
         favoritesDetail: (id: string) => `${paths.reviews}/favorites/${id}/`,
     },
+    constants: {
+        constantsList: `${paths.constants}/`
+}
 };

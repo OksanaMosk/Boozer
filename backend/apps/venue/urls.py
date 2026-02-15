@@ -1,6 +1,7 @@
 from django.urls import path, include
 from rest_framework_nested import routers
-from .views import VenueViewSet, VenuePhotoViewSet, TableViewSet, TableBookingViewSet, venue_constants
+from .views import VenueViewSet, VenuePhotoViewSet, TableViewSet, TableBookingViewSet, venue_constants, \
+    city_coordinates
 from apps.menu.views import MenuViewSet
 from apps.news.views import NewsViewSet
 from apps.reviews_feedback.views import ReviewViewSet, FavoriteVenueViewSet
@@ -24,5 +25,6 @@ urlpatterns = [
     path('', include(router.urls)),
     path('', include(venues_router.urls)),
     path('constants/', venue_constants, name='venue_constants'),
+    path('geocode/', city_coordinates, name='city_coordinates'),
 ]
 

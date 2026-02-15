@@ -1,7 +1,6 @@
 'use client';
 
 import styles from "./UserInfoComponent.module.css";
-import { useSession} from "next-auth/react";
 import {useUser} from "@/app/contexts/UserProvider";
 type UserInfoProps = {
     onLogoutAction: () => void;

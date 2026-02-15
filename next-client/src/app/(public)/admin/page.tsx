@@ -16,7 +16,7 @@ const AdminPage = () => {
       <ButtonGoBackComponent/>
       <AdminDashboardComponent />
          <Link
-              href="/create-venue"
+              href="/venue-admin/create-venue"
               className="create-venue-link"
               style={{
                   margin: '40px auto',

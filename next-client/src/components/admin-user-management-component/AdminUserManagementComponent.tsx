@@ -34,17 +34,17 @@ const AdminUserManagementComponent = () => {
                     ? (sortBy as keyof IUser)
                     : undefined;
 
-                const filters = {
-                    role,
-                    is_active,
-                    sort_by: keySortBy,
-                    sort_order: sortOrder
-                };
-const allUsers = await userService.getAll(filters, { accessToken: session.user.accessToken });
-                setUsers(allUsers);
+          const filters = {
+              role,
+              is_active,
+              sort_by: keySortBy,
+              sort_order: sortOrder
+          };
+          const allUsers = await userService.getAll(filters, {accessToken: session.user.accessToken});
+          setUsers(allUsers);
 
-            } catch (err: unknown) {
-                if (err instanceof Error) {
+      } catch (err: unknown) {
+          if (err instanceof Error) {
                     setError(err.message);
                 } else {
                     setError("Failed to load user data");

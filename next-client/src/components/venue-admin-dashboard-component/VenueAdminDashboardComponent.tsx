@@ -20,11 +20,11 @@ const VenueAdminDashboardComponent: React.FC = () => {
 
         const loadCars = async () => {
             try {
-                const response = await userService.getUserCars(
+                const response = await userService.getUserVenues(
                     String(user.id), { accessToken: user.token! }
                 );
 
-                setCars(response.data.cars);
+                setCars(response.data.venues);
             } catch {
                  setCars([])
                 // setError("Failed to load venues.");

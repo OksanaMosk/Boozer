@@ -207,13 +207,13 @@ const RegisterComponent = () => {
         </div>
 
           <div className={styles.inputGroup}>
-             <input className={styles.input}
-        ref={inputRef}
-        value={phone}
-        onChange={handleChange}
-        type="tel"
-        placeholder="+xx (xxx) xxx-xx-xx"
-      />
+              <input className={styles.input}
+                     ref={inputRef}
+                     value={phone}
+                     onChange={handleChange}
+                     type="tel"
+                     placeholder="+xx (xxx) xxx-xx-xx"
+              />
           </div>
 
           <div className={styles.inputGroup}>

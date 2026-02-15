@@ -21,7 +21,7 @@ export default function VenuesPageClient({carId}: CarsPageClientProps) {
 
         (async () => {
             try {
-                const response = await venueService.get(venueId);
+                const response = await venueService.venues.getAllWithFilter(venueId);
                 setCar(response.data);
             } catch {
                 setError("Failed to fetch car details");

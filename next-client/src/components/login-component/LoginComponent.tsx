@@ -29,7 +29,7 @@ const LoginComponent = () => {
           router.push("/admin");
           break;
         case "venue_admin":
-          router.push("/venue");
+          router.push("/venue-admin");
           break;
         default:
           router.push("/visitor");

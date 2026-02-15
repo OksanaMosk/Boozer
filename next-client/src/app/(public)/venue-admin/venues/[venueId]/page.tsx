@@ -3,7 +3,7 @@ import VenueManagementComponent from "@/components/venue-management-component/Ve
 import {ButtonGoBackComponent} from "@/components/button-go-back-component/ButtonGoBackComponent";
 import VenueAdminDashboardComponent from "@/components/venue-admin-dashboard-component/VenueAdminDashboardComponent";
 
-export default async function Page() {
+export default async function VenueIdPage() {
     return (
         <div
             style={{

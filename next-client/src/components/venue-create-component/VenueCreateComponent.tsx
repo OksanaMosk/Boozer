@@ -1,19 +1,21 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import IMask from "imask";
 
 import { LoaderComponent } from "@/components/loader-component/LoaderComponent";
 import VenueSelectsComponent from "@/components/venue-selects-component/VenueSelectsComponent";
-import { IVenue } from "@/models/IVenue";
-import { useUser } from "@/app/contexts/UserProvider";
-import styles from "./VenueCreateComponent.module.css";
-import venueServices from "@/lib/services/venueService";
 import ThemeVenueMinimalComponent from "@/components/theme-venue-minimal-component/ThemeVenueMinimalComponent";
 import ThemeVenuePartyComponent from "@/components/theme-venue-party-component/ThemeVenuePartyComponent";
+import MapVenueComponent from "@/components/map-venue-component/MapVenueComponent";
 
+import { IVenue } from "@/models/IVenue";
+import { useUser } from "@/app/contexts/UserProvider";
+import venueServices from "@/lib/services/venueService";
 
+import styles from "./VenueCreateComponent.module.css";
 
 interface ILocalPhoto {
   file: File;
@@ -23,14 +25,16 @@ interface ILocalPhoto {
 const VenueCreateComponent = () => {
   const { user } = useUser();
   const router = useRouter();
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
+  const [phone, setPhone] = useState("");
   const [newVenue, setNewVenue] = useState<Partial<IVenue>>({
     name: "",
     country: "",
     city: "",
     address: "",
-    latitude: "0",
-    longitude: "0",
+    latitude: 0,
+    longitude: 0,
     phone: "",
     description: "",
     opening_hours: {},
@@ -55,17 +59,36 @@ const VenueCreateComponent = () => {
   const [loadingVenue, setLoadingVenue] = useState(false);
   const [loadingPhotos, setLoadingPhotos] = useState(false);
 
-  // Стан вибору стилю
   const [selectedStyle, setSelectedStyle] = useState<
     "minimal" | "eco" | "party" | "classic"
   >("minimal");
 
-  // === Функції обробки ===
+  // Маска телефону
+  useEffect(() => {
+    if (inputRef.current) {
+      const maskOptions = { mask: "+{00} (000) 000-00-00" };
+      const mask = IMask(inputRef.current, maskOptions);
+
+      mask.on("accept", () => {
+        setPhone(mask.value);
+      });
+
+      return () => {
+        mask.destroy();
+      };
+    }
+  }, []);
+
+  useEffect(() => {
+    setNewVenue((prev) => ({ ...prev, phone }));
+  }, [phone]);
+
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value, type } = e.target;
     let newValue: any;
+
     if (type === "checkbox" && "checked" in e.target) {
       newValue = e.target.checked;
     } else if (type === "number") {
@@ -74,20 +97,33 @@ const VenueCreateComponent = () => {
       newValue = value;
     }
 
-    setNewVenue((prev) => ({ ...prev, [name]: newValue }));
+    if (name === "phone") {
+      setPhone(newValue);
+    } else {
+      setNewVenue((prev) => ({ ...prev, [name]: newValue }));
+    }
+  };
+
+  const isValidPhone = (phone: string) => {
+    const re = /^\+\d{2} \(\d{3}\) \d{3}-\d{2}-\d{2}$/;
+    return re.test(phone);
   };
 
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
+
     const files = Array.from(e.target.files);
+
     if (localPhotos.length + files.length > 5) {
       setMessage("You can upload up to 5 photos.");
       return;
     }
+
     const newPhotos: ILocalPhoto[] = files.map((file) => ({
       file,
       preview_url: URL.createObjectURL(file),
     }));
+
     setLocalPhotos((prev) => [...prev, ...newPhotos]);
   };
 
@@ -95,9 +131,12 @@ const VenueCreateComponent = () => {
     setLocalPhotos((prev) => prev.filter((_, i) => i !== index));
   };
 
+
+
+
   const handleCreateVenue = async (e: React.SyntheticEvent) => {
     e.preventDefault();
-    if (!user?.token) return setMessage("You must be logged in to create a venue.");
+    setMessage("");
 
     const requiredFields: (keyof IVenue)[] = ["name", "country", "city", "description"];
     for (const field of requiredFields) {
@@ -107,21 +146,36 @@ const VenueCreateComponent = () => {
       }
     }
 
-    setLoadingVenue(true);
-    try {
-      const createdVenue = await venueServices.venues.create(newVenue);
-      setNewVenue((prev) => ({ ...prev, id: createdVenue.data.id }));
+    if (phone && !isValidPhone(phone)) {
+      setMessage("Phone number must be in format +xx (xxx) xxx-xx-xx");
+      return;
+    }
 
-      setMessage("Venue created successfully! You can now upload photos.");
-      setLoadingVenue(false);
+      setLoadingVenue(true);
+      try {
+          if (!user?.token) return setMessage("You must be logged in to create a venue.");
+
+          const venueData = {
+              ...newVenue,
+              venue_admin: user.id
+          };
+
+
+          const createdVenue = await venueServices.venues.create(venueData, {accessToken: user.token});
+          setNewVenue((prev) => ({...prev, id: createdVenue.data.id}));
+
+          setMessage("Venue created successfully! You can now upload photos.");
     } catch (err: any) {
       setMessage(err?.response?.data?.detail || "Error creating venue.");
+    } finally {
       setLoadingVenue(false);
     }
   };
 
   const handleAddPhotos = async (e: React.SyntheticEvent) => {
     e.preventDefault();
+    setMessage("");
+
     if (!user?.token) return;
     if (!newVenue.id) return setMessage("Create the venue first.");
     if (localPhotos.length === 0) return setMessage("Add at least one photo.");
@@ -133,11 +187,12 @@ const VenueCreateComponent = () => {
         formData.append("photo", p.file);
         formData.append("venue", newVenue.id!);
 
-        await venueServices.venuePhotos.create(formData, { accessToken: user.token });
+        await venueServices.venuePhotos({ accessToken: user.token }).create(newVenue.id, formData);
       }
+
       setMessage("Photos uploaded successfully!");
       setLocalPhotos([]);
-      router.push(`/venues/`);
+      router.push(`/venue-admin/venues/${newVenue.id}`);
     } catch {
       setMessage("Error uploading photos.");
     } finally {
@@ -145,26 +200,22 @@ const VenueCreateComponent = () => {
     }
   };
 
-  // === Функція рендеру live preview ===
   const renderPreview = () => {
     switch (selectedStyle) {
       case "minimal":
         return <ThemeVenueMinimalComponent venue={newVenue} photos={localPhotos} />;
       case "party":
         return <ThemeVenuePartyComponent venue={newVenue} photos={localPhotos} />;
-      // case "party":
-      //   return <VenueParty venue={newVenue} photos={localPhotos} />;
-      // case "classic":
-      //   return <VenueClassic venue={newVenue} photos={localPhotos} />;
+      case "eco":
+      case "classic":
+        return <p>Preview not implemented for {selectedStyle} style</p>;
     }
   };
 
-  // === JSX ===
   return (
     <section className={styles.wrapper}>
       <h3 className={styles.subtitle}>Create New Venue</h3>
 
-      {/* Вибір стилю */}
       <div className={styles.styleSelector}>
         <label>Select Style: </label>
         <select
@@ -181,14 +232,24 @@ const VenueCreateComponent = () => {
       </div>
 
       <div className={styles.formPreviewWrapper}>
-        {/* Форма */}
         <form className={styles.form} onSubmit={handleCreateVenue}>
           <VenueSelectsComponent
             country={newVenue.country || ""}
             city={newVenue.city || ""}
-            setCountry={(country) => setNewVenue((p) => ({ ...p, country }))}
-            setCity={(city) => setNewVenue((p) => ({ ...p, city }))}
+            setCountry={(country) => setNewVenue((prev) => ({ ...prev, country }))}
+            setCity={(city) => setNewVenue((prev) => ({ ...prev, city }))}
+            setCoordinates={(lat, lng) =>
+              setNewVenue((prev) => ({ ...prev, latitude: lat, longitude: lng }))
+            }
           />
+
+          {newVenue.latitude && newVenue.longitude && !isNaN(newVenue.latitude) ? (
+            <div className={styles.mapWrapper}>
+              <MapVenueComponent lat={newVenue.latitude} lng={newVenue.longitude} />
+            </div>
+          ) : (
+            <p>Coordinates will appear here after selecting city/country.</p>
+          )}
 
           <div className={styles.textareaWrapper}>
             <div className={styles.inputWrapper}>
@@ -214,14 +275,15 @@ const VenueCreateComponent = () => {
               />
             </div>
 
-            <div className={styles.inputWrapper}>
-              <label className={styles.label}>Phone</label>
+            <div className={styles.inputGroup}>
               <input
-                type="text"
-                name="phone"
-                value={newVenue.phone}
-                onChange={handleInputChange}
                 className={styles.input}
+                ref={inputRef}
+                value={phone}
+                onChange={handleInputChange}
+                type="tel"
+                name="phone"
+                placeholder="+xx (xxx) xxx-xx-xx"
               />
             </div>
 
@@ -242,11 +304,9 @@ const VenueCreateComponent = () => {
           </button>
         </form>
 
-        {/* Live Preview */}
         <div className={styles.livePreview}>{renderPreview()}</div>
       </div>
 
-      {/* Додавання фото */}
       <form onSubmit={handleAddPhotos} className={styles.photoWrapper}>
         <label className={styles.photoLabel}>Upload Photos (Max 5)*</label>
         <input
@@ -267,13 +327,17 @@ const VenueCreateComponent = () => {
                 width={140}
                 height={100}
               />
-              <button type="button" onClick={() => handleDeletePhoto(i)} className={styles.deleteButton}>
+              <button
+                type="button"
+                onClick={() => handleDeletePhoto(i)}
+                className={styles.deleteButton}
+              >
                 Delete
               </button>
             </div>
           ))}
 
-          {newVenue.id && (
+          {newVenue.id && localPhotos.length > 0 && (
             <button type="submit" disabled={loadingPhotos} className={styles.submitButton}>
               {loadingPhotos ? <LoaderComponent /> : "Add Photos"}
             </button>
@@ -285,6 +349,3 @@ const VenueCreateComponent = () => {
 };
 
 export default VenueCreateComponent;
-
-
-

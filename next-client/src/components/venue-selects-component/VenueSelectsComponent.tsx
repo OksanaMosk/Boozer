@@ -1,70 +1,89 @@
-"use client"
+"use client";
 
 import React, { useState, useEffect } from "react";
 import styles from "./VenueSelectsComponent.module.css";
 import venueServices from "@/lib/services/venueService";
+import { fetchCoordinates } from "@/lib/services/geocodeService";
 
 interface VenueSelectsProps {
     city: string;
     country: string;
     setCity: (city: string) => void;
     setCountry: (country: string) => void;
+    setCoordinates: (latitude: number, longitude: number) => void;
 }
 
-const VenueSelectsComponent: React.FC<VenueSelectsProps> = ({country, city, setCountry, setCity}) => {
+const VenueSelectsComponent: React.FC<VenueSelectsProps> = ({
+    country,
+    city,
+    setCountry,
+    setCity,
+    setCoordinates
+}) => {
     const [countriesList, setCountriesList] = useState<string[]>([]);
     const [cityByCountry, setCityByCountry] = useState<Record<string, string[]>>({});
-    const [selectedCountry, setSelectedCountry] = useState(country)
 
+    // 1️⃣ Завантажуємо довідник ОДИН раз
     useEffect(() => {
-        venueServices.venues
+        venueServices.constants
             .getConstants()
-            .then(({data}) => {
+            .then(({ data }) => {
                 setCountriesList(data.countries);
                 setCityByCountry(data.cities_by_country);
-                console.log(data);
-
-                if (!country && data.countries.length > 0) {
-                    const firstCountry = data.countries[0];
-                    setSelectedCountry(firstCountry);
-                    setCountry(firstCountry);
-
-                    const firstCity = data.cities_by_country[firstCountry]?.[0] || "";
-                    setCity(firstCity);
-                }
             })
             .catch((err) => console.error("Failed to load constants", err));
     }, []);
-    const availableCity = selectedCountry ? cityByCountry[selectedCountry] || [] : [];
 
+    const availableCity = country ? cityByCountry[country] || [] : [];
+
+    // 2️⃣ Зміна країни — просто оновлюємо state
     const handleCountryChange = (value: string) => {
-        setSelectedCountry(value);
         setCountry(value);
-        setCity("");
+        setCity(""); // очищаємо місто
+        setCoordinates(0, 0); // очищаємо координати
+    };
+
+    // 3️⃣ Зміна міста — оновлюємо і тригеримо геокодування
+    const handleCityChange = async (value: string) => {
+        setCity(value);
+
+        if (value && country) {
+            try {
+                const coords = await fetchCoordinates(value, country);
+                if (coords) {
+                    setCoordinates(coords.latitude, coords.longitude);
+                }
+            } catch (error) {
+                console.error("Error fetching coordinates:", error);
+            }
+        }
     };
 
     return (
         <div className={styles.filters}>
             <select
                 className={styles.select}
-                value={selectedCountry}
-                onChange={(e) => handleCountryChange(e.target.value)}>
+                value={country}
+                onChange={(e) => handleCountryChange(e.target.value)}
+            >
                 <option value="">Select Country</option>
-                {(countriesList || []).map((b) => (
-                    <option key={b} value={b}>
-                        {b}
+                {countriesList.map((c) => (
+                    <option key={c} value={c}>
+                        {c}
                     </option>
                 ))}
             </select>
-            {selectedCountry && (
+
+            {country && (
                 <select
                     className={styles.select}
                     value={city}
-                    onChange={(e) => setCity(e.target.value)}>
+                    onChange={(e) => handleCityChange(e.target.value)}
+                >
                     <option value="">Select City</option>
-                    {availableCity.map((m) => (
-                        <option key={m} value={m}>
-                            {m}
+                    {availableCity.map((c) => (
+                        <option key={c} value={c}>
+                            {c}
                         </option>
                     ))}
                 </select>

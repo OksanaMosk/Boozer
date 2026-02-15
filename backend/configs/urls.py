@@ -5,6 +5,7 @@ from django.http import HttpResponse
 from django.urls import include, path
 
 
+
 # from drf_yasg import openapi
 # from drf_yasg.views import get_schema_view
 
@@ -16,7 +17,7 @@ urlpatterns = [
     path('', home),
     path('api/auth/', include('apps.auth.urls')),
     path('api/users/', include('apps.user.urls')),
-    path('api/venues/', include('apps.venue.urls')),
+    path('api/', include('apps.venue.urls')),
     path('api/menu/', include('apps.menu.urls')),
     path('api/orders/', include('apps.orders.urls')),
     path('api/reviews-feedback/', include('apps.reviews_feedback.urls')),

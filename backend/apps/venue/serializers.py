@@ -9,12 +9,11 @@ class TagSerializer(serializers.ModelSerializer):
 
 
 class VenuePhotoSerializer(serializers.ModelSerializer):
-    venue = serializers.PrimaryKeyRelatedField(read_only=True)
+    venue = serializers.PrimaryKeyRelatedField(queryset=VenueModel.objects.all())
 
     class Meta:
         model = VenuePhotoModel
         fields = ['id', 'photo', 'is_main', 'venue']
-
 
 class TableBookingSerializer(serializers.ModelSerializer):
     table = serializers.PrimaryKeyRelatedField(read_only=True)

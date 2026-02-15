@@ -10,6 +10,7 @@
     "watch": "next dev"
   },
   "dependencies": {
+    "@react-google-maps/api": "^2.20.8",
     "axios": "^1.13.2",
     "imask": "^7.6.1",
     "next": "16.0.1",
@@ -25,6 +26,7 @@
     "ws": "^8.18.3"
   },
   "devDependencies": {
+    "@types/google.maps": "^3.58.1",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

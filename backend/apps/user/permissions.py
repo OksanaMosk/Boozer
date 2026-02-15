@@ -1,4 +1,4 @@
-from rest_framework.permissions import BasePermission
+from rest_framework.permissions import BasePermission, SAFE_METHODS
 
 from rest_framework import permissions
 
@@ -27,6 +27,38 @@ class IsVenueAdminOrReadOnly(permissions.BasePermission):
             return True
         return getattr(obj, 'venue_admin', None) == request.user
 
+
+class IsAdminOrVenueAdminOrReadOnly(BasePermission):
+    """
+    - GET/HEAD/OPTIONS — усі можуть
+    - POST/PUT/PATCH/DELETE — Admin або VenueAdmin
+    - VenueAdmin може змінювати лише свої веню
+    """
+
+    def has_permission(self, request, view):
+        if request.method in SAFE_METHODS:
+            return True
+
+        user = request.user
+        return bool(
+            user and
+            user.is_authenticated and
+            getattr(user, 'role', '').upper() in ['ADMIN', 'VENUE_ADMIN']
+        )
+
+    def has_object_permission(self, request, view, obj):
+        if request.method in SAFE_METHODS:
+            return True
+
+        user = request.user
+
+        if getattr(user, 'role', None) == 'ADMIN':
+            return True
+
+        if getattr(user, 'role', None) == 'VENUE_ADMIN':
+            return getattr(obj, 'venue_admin', None) == user
+
+        return False
 
 class IsVisitorOrReadOnly(permissions.BasePermission):
     """

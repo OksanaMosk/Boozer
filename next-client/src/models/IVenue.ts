@@ -8,8 +8,8 @@ export interface IVenue {
     city: string;
     address: string;
 
-    latitude?: string;
-    longitude?: string;
+    latitude?: number;
+    longitude?: number;
     phone?: string;
     description?: string;
 
