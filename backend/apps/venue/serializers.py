@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import VenueModel, VenuePhotoModel, TableModel, TableBookingModel, TagModel
+from .models import VenueModel, VenuePhotoModel, TableModel, TableBookingModel, TagModel, VenueTag
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -7,6 +7,11 @@ class TagSerializer(serializers.ModelSerializer):
         model = TagModel
         fields = ['id', 'name']
 
+
+class VenueTagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = VenueTag
+        fields = ['id', 'venue', 'tag']
 
 class VenuePhotoSerializer(serializers.ModelSerializer):
     venue = serializers.PrimaryKeyRelatedField(queryset=VenueModel.objects.all())
@@ -31,15 +36,21 @@ class TableSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'capacity', 'x', 'y', 'width', 'height', 'is_active', 'bookings']
 
 class VenueSerializer(serializers.ModelSerializer):
-    tags = TagSerializer(many=True, read_only=True)
+    tags = serializers.SerializerMethodField()
+    photos = VenuePhotoSerializer(many=True, read_only=True)
+    tables = TableSerializer(many=True, read_only=True)
 
     class Meta:
         model = VenueModel
         fields = [
             'id', 'name', 'venue_admin', 'country', 'city', 'address',
             'latitude', 'longitude', 'phone', 'description',
-            'opening_hours', 'features', 'average_check', 'rating', 'reviews_count',
+            'opening_hours', 'photos', 'tables', 'features', 'average_check', 'rating', 'reviews_count',
             'status', 'views', 'daily_views', 'weekly_views', 'monthly_views',
             'edit_attempts', 'last_exchange_update',
             'tags'
         ]
+
+    def get_tags(self, obj):
+
+        return [{'id': tag.id, 'name': tag.name} for tag in obj.tags.all()]

@@ -11,7 +11,7 @@ type PaginationProps = {
 export const PaginationComponent = ({totalPages}: PaginationProps) => {
     const searchParams = useSearchParams();
     const router = useRouter();
-    const currentPage = Number(searchParams.get("pg") || "1");
+    const currentPage = Number(searchParams.get("page") || "1");
     const [pageRange, setPageRange] = useState<number[]>([]);
 
     const computePageRange = useCallback(() => {
@@ -42,8 +42,8 @@ export const PaginationComponent = ({totalPages}: PaginationProps) => {
 
     const updatePageQuery = (page: number) => {
         const params = new URLSearchParams(searchParams.toString());
-        params.set("pg", page.toString());
-        router.push(`${window.location.pathname}?${params.toString()}`);
+        params.set("page", page.toString());
+        router.push(`?${params.toString()}`);
     };
 
     const handlePageChange = (page: number) => updatePageQuery(page);

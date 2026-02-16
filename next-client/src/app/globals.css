@@ -14,7 +14,7 @@
     --color-bg-dark: #4d3a1c;
 --color-bg-light: #f5f5f5;
 --color-text-main: #ffffff;
---color-text-muted: #4d3a1c;
+--color-text-muted: #21190c;
 --color-accent:#b292c7;
 }
 *, *::before, *::after {
@@ -42,6 +42,15 @@ body {
  font-family: var(--font-playfair), serif;
   font-weight: 600;
   font-style: italic;
+}
+ html.light {
+    --input-color: var(--color-bg-dark);
+     --label-color: var(--color-text-muted);
+}
+
+html.dark {
+  --input-color:var(--color-white);;
+     --label-color: var(--color-white);
 }
 
 html.light body {
@@ -79,6 +88,9 @@ html.light .carTitle {
 html.light .search-input:focus {
     opacity: 0.7;
     }
+html.light .inputCreate{
+     /*color: var(--color-bg-dark) !important;*/
+}
 
 html.light .sort-label,
 html.light .search-clearButton {
@@ -116,7 +128,7 @@ html.light .cell {
 
 html.dark body,
 html.dark .burgerMenu {
-    background: url("/images/dark-background.jpg") no-repeat center center / cover;
+    background: url("/images/dark-background11.jpg") no-repeat center center / cover;
 }
 html.dark .registerMessage {
     color: var(--color-text);

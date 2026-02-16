@@ -6,7 +6,9 @@ import VenueCreateComponent from "@/components/venue-create-component/VenueCreat
 
 const CreateVenuePage = () => {
     return (
-        <div>
+         <div style={{
+            margin: '80px auto',
+        }}>
             <ButtonGoBackComponent/>
             <VenueCreateComponent/>
         </div>

@@ -23,7 +23,6 @@ const VenueSelectsComponent: React.FC<VenueSelectsProps> = ({
     const [countriesList, setCountriesList] = useState<string[]>([]);
     const [cityByCountry, setCityByCountry] = useState<Record<string, string[]>>({});
 
-    // 1️⃣ Завантажуємо довідник ОДИН раз
     useEffect(() => {
         venueServices.constants
             .getConstants()
@@ -36,14 +35,12 @@ const VenueSelectsComponent: React.FC<VenueSelectsProps> = ({
 
     const availableCity = country ? cityByCountry[country] || [] : [];
 
-    // 2️⃣ Зміна країни — просто оновлюємо state
     const handleCountryChange = (value: string) => {
         setCountry(value);
         setCity(""); // очищаємо місто
         setCoordinates(0, 0); // очищаємо координати
     };
 
-    // 3️⃣ Зміна міста — оновлюємо і тригеримо геокодування
     const handleCityChange = async (value: string) => {
         setCity(value);
 
@@ -66,9 +63,11 @@ const VenueSelectsComponent: React.FC<VenueSelectsProps> = ({
                 value={country}
                 onChange={(e) => handleCountryChange(e.target.value)}
             >
-                <option value="">Select Country</option>
+                <option
+                    value="">Select Country</option>
                 {countriesList.map((c) => (
-                    <option key={c} value={c}>
+                    <option
+                        key={c} value={c}>
                         {c}
                     </option>
                 ))}

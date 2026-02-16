@@ -7,10 +7,11 @@ import HeroVideoRowComponent from "@/components/hero-video-row-component/HeroVid
 
 const VenuesPage = () => {
   return (
-    <div>
+    <div style={{
+      textAlign: 'center',
+    }}>
         <ButtonGoBackComponent/>
         <VenuesClientComponent/>
-     <HeroVideoRowComponent/>
     </div>
   );
 };

@@ -2,113 +2,56 @@
 
 import React from "react";
 import Image from "next/image";
-import {IVenue} from "@/models/IVenue";
+import { IVenue } from "@/models/IVenue";
 import styles from "./VenueComponent.module.css";
 
 interface Props {
     venue: IVenue;
 }
 
-const VenueComponent: React.FC<Props> = ({venue}) => {
+const VenueComponent: React.FC<Props> = ({ venue }) => {
+      console.log("Venue photos:", venue.photos);
+    const mainPhoto =
+        venue.photos?.find((p) => p.is_main) || venue.photos?.[0];
 
     return (
-        <div
-            className={styles.venuedWrapper}>
+        <div className={styles.venueWrapper}>
             <div className={styles.venueItem}>
-                {venue.photos[0] ? (
+                {mainPhoto ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
-                        src={venue.photos[0].photo}
-                        alt={`${venue.brand} ${venue.model}`}
-                        width={250}
-                        height={120}
+                        src={mainPhoto.photo}
+                        alt={`${venue.name} ${venue.city}`}
+                        width={280}
+                        height={300}
                         className={styles.venuePoster}
                     />
                 ) : (
                     <div className={styles.noPoster}>
                         <Image
-                            src='/images/noPoster.png'
+                            src="/images/noEye.png"
                             alt="No poster"
                             className={styles.placeholder}
-                            width={250}
-                            height={120}
+                            width={280}
+                            height={300}
                         />
                     </div>
                 )}
-                <div className={styles.right}>
-                    <span className={styles.label}>Price:  </span>{" "}
-                    <span className={styles.value}>
-            </span>
-                </div>
             </div>
-
             <div className={styles.venueInfoWrapper}>
                 <div className={styles.venueInfo}>
                     <h2 className={styles.venueTitle}>
-                        {venue.brand} {venue.model}{" "} {venue.year}
+                        {venue.name} {venue.country} {venue.city}
                     </h2>
-
-                    <div className={styles.about}>
-                        <div className={styles.imageContainer}>
-                            <img
-                                src="/images/speed.png"
-                                alt="speed"
-                                width={24}
-                                height={24}
-                                className={styles.img}
-                            />
-                            <p className={styles.imgAbout}>Max speed </p>
-                            <p className={styles.value}>{venue.max_speed} km/h</p>
+                    <hr className={styles.tagline}/>
+                    <div className={styles.addressWrapper}>
+                        <div className={styles.about}>
+                            <p className={styles.value}>{venue.phone || "-"}</p>
+                            <p className={styles.value}>{venue.address || "-"}</p>
                         </div>
-
-                        <div className={styles.imageContainer}>
-                            <img
-                                src="/images/seat.png"
-                                alt="seat"
-                                width={24}
-                                height={24}
-                                className={styles.img}
-                            />
-                            <p className={styles.imgAbout}>Seats</p>
-                            <p className={styles.value}>{venue.seats_count}</p>
+                        <div className={styles.footerRow}>
+                            <p className={styles.value}>Id: {venue.id}</p>
                         </div>
-
-                        <div className={styles.imageContainer}>
-                            <img
-                                src="/images/engine.png"
-                                alt="Engine Volume"
-                                width={24}
-                                height={24}
-                                className={styles.img}
-                            />
-                            <p className={styles.imgAbout}>Engine</p>
-                            <p className={styles.value}>{venue.engine_volume} L</p>
-                        </div>
-
-                        <div className={styles.imageContainer}>
-                            <img
-                                src="/images/fuel.png"
-                                alt="fuel"
-                                width={24}
-                                height={24}
-                                className={styles.img}
-                            />
-                            <p className={styles.imgAbout}>Fuel Type</p>
-                            <p className={styles.value}>{venue.fuel_type}</p>
-                        </div>
-                    </div>
-                    <hr className={styles.tagline}></hr>
-                    <div className={styles.footerRow}>
-                        <div className={styles.row}>
-                            <span className={styles.value}>{venue.location}</span>
-                        </div>
-                        <div className={styles.row}>
-                            <span className={styles.label}>Id:  </span>{" "}
-                            <span className={styles.value}> {venue.id}</span>
-                        </div>
-                    </div>
-                    <div className={styles.row}>
-                        <span className={styles.value}>{venue.condition}</span>
                     </div>
                 </div>
             </div>
@@ -117,4 +60,5 @@ const VenueComponent: React.FC<Props> = ({venue}) => {
 };
 
 export default VenueComponent;
+
 

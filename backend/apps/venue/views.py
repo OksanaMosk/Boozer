@@ -5,25 +5,29 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
-from .models import VenueModel, TagModel, TableModel, VenuePhotoModel, TableBookingModel
-from .serializers import VenueSerializer, TagSerializer, TableSerializer, VenuePhotoSerializer, TableBookingSerializer
+from .models import VenueModel, TagModel, TableModel, VenuePhotoModel, TableBookingModel, VenueTag
+from .serializers import VenueSerializer, TagSerializer, TableSerializer, VenuePhotoSerializer, TableBookingSerializer, \
+    VenueTagSerializer
 from .services.geocode import geocode_city
 from .services.venue_constans import get_venue_constants
 from ..user.permissions import IsAdmin, IsVenueAdminOrReadOnly, IsAdminOrVenueAdminOrReadOnly
 
 
 class VenueViewSet(viewsets.ModelViewSet):
-    queryset = VenueModel.objects.all()
+    queryset = VenueModel.objects.all().order_by('id')
     serializer_class = VenueSerializer
-
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['country', 'city']
     search_fields = ['name', 'description']
-
     ordering_fields = ['rating', 'average_check', 'reviews_count', 'views']
-    ordering = ['-rating']
+    ordering = [ 'id', '-rating',]
 
     permission_classes = [IsAdminOrVenueAdminOrReadOnly]
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        return qs.order_by('id', '-rating')
+
 
     def perform_create(self, serializer):
         user = self.request.user
@@ -47,6 +51,10 @@ class TagViewSet(viewsets.ModelViewSet):
     permission_classes = [AllowAny]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
 
+class VenueTagViewSet(viewsets.ModelViewSet):
+    queryset = VenueTag.objects.all()
+    serializer_class = VenueTagSerializer
+    permission_classes = [IsAdminOrVenueAdminOrReadOnly]
 
 class TableViewSet(viewsets.ModelViewSet):
     queryset = TableModel.objects.all()

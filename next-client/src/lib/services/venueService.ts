@@ -1,6 +1,6 @@
 import {urls} from "../constants/urls";
 import {apiService} from "./apiService";
-import {IVenue, IVenuePhoto, ITableBooking, IMenu, IMenuItem, IOrder, IReview, INews} from "@/models/IVenue";
+import {IVenue, IVenuePhoto, ITableBooking, IMenu, IMenuItem, IOrder, IReview, INews, IVenueTag} from "@/models/IVenue";
 import {IUser} from "@/models/IUser";
 
 type Token = { accessToken: string };
@@ -31,7 +31,7 @@ export interface VenueFilterCriteria {
     sort_order?: "asc" | "desc";
 }
 
-const buildVenueParams = (criteria?: VenueFilterCriteria) => {
+const buildVenueParams = (criteria?: VenueFilterCriteria & { page?: number }) => {
     const params: Record<string, string | number | boolean> = {};
     if (!criteria) return params;
     if (criteria.name) params.name = criteria.name;
@@ -45,6 +45,7 @@ const buildVenueParams = (criteria?: VenueFilterCriteria) => {
     if (criteria.sort_by) {
         params.ordering = criteria.sort_order === "desc" ? `-${criteria.sort_by}` : criteria.sort_by;
     }
+    if (criteria.page) params.page = criteria.page;
     return params;
 };
 
@@ -88,11 +89,17 @@ const buildFavoriteParams = (criteria?: FavoriteFilterCriteria) => {
     if (criteria?.venueId) params.venue = criteria.venueId;
     return params;
 };
+interface PaginatedVenues {
+  data: IVenue[];
+  total_pages: number;
+  current_page: number;
+}
+
 
 const venueServices = {
     venues: {
         getAllWithFilter: (filterCriteria?: VenueFilterCriteria, token?: Token) =>
-            api(token).get<IVenue[]>(urls.venues.list, { params: buildVenueParams(filterCriteria) }),
+            api(token).get<PaginatedVenues>(urls.venues.list, {params: buildVenueParams(filterCriteria)}),
         ...createService<IVenue>(urls.venues.list),
         photos: getByParent<IVenuePhoto>(urls.venues.photos),
         tables: getByParent<ITableBooking>(urls.venues.tables),
@@ -103,7 +110,7 @@ const venueServices = {
         news: getByParent<INews>(urls.venues.news),
         reviews: {
             getAllWithFilter: (filterCriteria?: ReviewFilterCriteria, token?: Token) =>
-                api(token).get<IReview[]>(urls.reviews.list, { params: buildReviewParams(filterCriteria) }),
+                api(token).get<IReview[]>(urls.reviews.list, {params: buildReviewParams(filterCriteria)}),
             ...createService<IReview>(urls.reviews.list),
             favoritesList: (token?: Token) => api(token).get<IReview[]>(urls.reviews.favoritesList),
             favoritesDetail: (id: string, token?: Token) => api(token).get<IReview>(urls.reviews.favoritesDetail(id)),
@@ -115,6 +122,20 @@ const venueServices = {
                     params: buildFavoriteParams(filterCriteria),
                 });
             },
+        },
+        tags: (venueId: string) => ({
+            ...createService<{ name: string }>(urls.venues.tags.list(venueId)),
+        }),
+
+        venueTags: {
+            create: (venueId: string, data: Partial<IVenueTag>, token?: Token) =>
+                api(token).post<IVenueTag>(`/venues/${venueId}/venue_tags/`, data),
+
+            getAll: (venueId: string, token?: Token) =>
+                api(token).get<IVenueTag[]>(`/venues/${venueId}/venue_tags/`),
+
+            delete: (venueId: string, tagId: string, token?: Token) =>
+                api(token).delete(`/venues/${venueId}/venue_tags/${tagId}/`),
         },
         // orders: {
         //     getAllWithFilter: (filterCriteria?: OrderFilterCriteria, token?: Token) =>
@@ -138,14 +159,6 @@ const venueServices = {
             api(token).delete(`${urls.venues.photos(venueId)}/${photoId}/`),
     }),
 
-
-    // venuePhotos: {
-    //     // ...createService<IVenuePhoto>(urls.venuePhotos.list),
-    //     byVenue: getByParent<IVenuePhoto>(urls.venuePhotos.byVenue),
-    //     mainForVenue: getByParent<IVenuePhoto>(urls.venuePhotos.mainForVenue),
-    //     create: (data: FormData, token: Token) =>
-    //         api(token).post<IVenuePhoto>(urls.venuePhotos.create, data, { withCredentials: true }),
-    // },
     tables: {
         ...createService<ITableBooking>(urls.tables.list),
         byVenue: getByParent<ITableBooking>(urls.tables.byVenue),
@@ -157,14 +170,11 @@ const venueServices = {
         byTable: getByParent<IOrder>(urls.bookings.byTable),
         active: (token?: Token) => api(token).get<IOrder[]>(urls.bookings.active),
     },
-    tags: {
-        ...createService<{ name: string }>(urls.tags.list),
-    },
+
     reviews: {
         ...createService<IReview>(urls.reviews.list),
-        // favoritesList: (token?: Token) => api(token).get<IReview[]>(urls.reviews.favoritesList),
-        // favoritesDetail: (id: string, token?: Token) => api(token).get<IReview>(urls.reviews.favoritesDetail(id)),
     },
+
     constants: {
         getConstants: (token?: Token) => api(token).get(urls.constants.constantsList),
     }

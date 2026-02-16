@@ -8,22 +8,23 @@ import {ButtonScrollTopComponent} from "@/components/button-scroll-top-component
 import {IVenue} from "@/models/IVenue";
 import styles from "./VenuesComponent.module.css";
 
-interface CarListComponentProps {
-    cars: IVenue[];
-    totalPages: number;
+interface VenuesComponentProps {
+  venues: IVenue[];
+  totalPages: number;
 }
 
-const VenuesComponent: React.FC<CarListComponentProps> = ({cars, totalPages}) => {
+
+const VenuesComponent: React.FC<VenuesComponentProps > = ({venues, totalPages}) => {
     return (
         <div className={styles.carsListContainer}>
             <ul className={styles.list}>
-                {cars.map((car) => (
-                    <li key={car.id}>
+                {venues.map((venue) => (
+                    <li key={venue.id}>
                         <Link
-                            href={`/venues/${car.id}`}
+                            href={`/venues/${venue.id}`}
                             className={styles.link}
                         >
-                            {/*<VenueComponent venue={venue}/>*/}
+                            <VenueComponent venue={venue}/>
                         </Link>
                     </li>
                 ))}

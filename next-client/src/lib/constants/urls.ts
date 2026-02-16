@@ -5,7 +5,6 @@ const paths = {
     photos: "/photos",
     tables: "/tables",
     bookings: "/bookings",
-    tags: "/tags",
     menu: "/menu",
     news: "/news",
     reviews: "/reviews-feedback",
@@ -51,6 +50,20 @@ export const urls = {
         reviews: (venueId: string) => `${paths.venues}/${venueId}/reviews/`,
         favorites: (venueId: string) => `${paths.venues}/${venueId}/favorites/`,
         orders: (venueId: string) => `${paths.venues}/${venueId}/orders/`,
+        tags: {
+            list: (venueId: string) => `${paths.venues}/${venueId}/tags/`,
+            detail: (venueId: string, id: string) => `${paths.venues}/${venueId}/tags/${id}/`,
+            create: (venueId: string) => `${paths.venues}/${venueId}/tags/`,
+            update: (venueId: string, id: string) => `${paths.venues}/${venueId}/tags/${id}/`,
+            delete: (venueId: string, id: string) => `${paths.venues}/${venueId}/tags/${id}/`,
+        },
+        venueTags: {
+            list: (venueId: string) => `${paths.venues}/${venueId}/venue_tags/`,
+            detail: (venueId: string, id: string) => `${paths.venues}/${venueId}/venue_tags/${id}/`,
+            create: (venueId: string) => `${paths.venues}/${venueId}/venue_tags/`,
+            update: (venueId: string, id: string) => `${paths.venues}/${venueId}/venue_tags/${id}/`,
+            delete: (venueId: string, id: string) => `${paths.venues}/${venueId}/venue_tags/${id}/`,
+        },
 
     },
 
@@ -82,14 +95,6 @@ export const urls = {
         delete: (id: string) => `${paths.bookings}/${id}/`,
         byTable: (tableId: string) => `${paths.bookings}/?table=${tableId}`,
         active: `${paths.bookings}/?is_active=true`,
-    },
-
-    tags: {
-        list: `${paths.tags}/`,
-        detail: (id: string) => `${paths.tags}/${id}/`,
-        create: `${paths.tags}/`,
-        update: (id: string) => `${paths.tags}/${id}/`,
-        delete: (id: string) => `${paths.tags}/${id}/`,
     },
 
     reviews: {

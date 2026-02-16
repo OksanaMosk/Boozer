@@ -2,7 +2,7 @@ import {IUser} from "@/models/IUser";
 
 export interface IVenue {
     id?: string;
-    venue_admin: string;
+    venue_admin_id: string;
     name: string;
     country: string;
     city: string;
@@ -33,7 +33,7 @@ export interface IVenue {
 
     edit_attempts?: number;
 
-    tags?: IVenueTag[];
+    tags?: ITag[];
     photos?: IVenuePhoto[];
     tables?: ITableBooking[];
     menus?: IMenu[];
@@ -51,9 +51,16 @@ export interface IVenuePhoto {
     is_main?: boolean;
 }
 
-export interface IVenueTag {
-    id: string;
+
+export interface ITag {
+    id?: string;
     name: string;
+
+}
+export interface IVenueTag {
+    id?: string;
+    venue_id: string;
+    tag_id: string;
 }
 
 export interface ITableBooking {
@@ -65,6 +72,7 @@ export interface ITableBooking {
     created_at?: string;
     updated_at?: string;
 }
+
 
 export interface IMenu {
     id?: string;
@@ -135,3 +143,4 @@ export interface INews {
 export interface GetUserVenueResponse {
     venues: IVenue[];
 }
+

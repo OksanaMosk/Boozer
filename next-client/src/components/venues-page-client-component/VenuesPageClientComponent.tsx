@@ -1,0 +1,51 @@
+"use client";
+
+import React, { useState, useEffect } from "react";
+import venueService from "@/lib/services/venueService";
+import VenueInfoComponent from "@/components/venue-info-component/VenueInfoComponent";
+import { ButtonGoBackComponent } from "@/components/button-go-back-component/ButtonGoBackComponent";
+import { LoaderComponent } from "@/components/loader-component/LoaderComponent";
+import { IVenue } from "@/models/IVenue";
+
+interface VenuePageClientProps {
+  venueId: string;
+}
+
+export default function VenuesPageClientComponent({ venueId }: VenuePageClientProps) {
+  const [venue, setVenue] = useState<IVenue | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!venueId) return;
+
+    (async () => {
+      try {
+        const response = await venueService.venues.get(venueId);
+        setVenue(response.data);
+      } catch (err: any) {
+        console.error("Failed to fetch venue details:", err);
+        setError("Failed to fetch venue details");
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, [venueId]);
+
+  if (loading)
+    return (
+      <div style={{ display: "flex", justifyContent: "center", marginTop: 50 }}>
+        <LoaderComponent />
+      </div>
+    );
+
+  if (error) return <div>{error}</div>;
+  if (!venue) return <div>Venue not found</div>;
+
+  return (
+    <div>
+      <ButtonGoBackComponent />
+      <VenueInfoComponent venue={venue} />
+    </div>
+  );
+}

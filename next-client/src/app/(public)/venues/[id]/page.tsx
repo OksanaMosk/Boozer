@@ -1,8 +1,8 @@
-import VenuesPageClient from "@/components/venues-page-client-component/VenuesPageClient";
+import VenuesPageClientComponent from "@/components/venues-page-client-component/VenuesPageClientComponent";
 
 export default async function VenuesPage({ params }: { params: { id: string } }) {
    const resolvedParams = await params;
-   const carId = resolvedParams.id;
+   const venueId = resolvedParams.id;
 
   return (
     <div
@@ -12,7 +12,7 @@ export default async function VenuesPage({ params }: { params: { id: string } })
         width: "100vw",
       }}
     >
-      <VenuesPageClient carId={carId} />
+      <VenuesPageClientComponent venueId={venueId} />
     </div>
   );
 }

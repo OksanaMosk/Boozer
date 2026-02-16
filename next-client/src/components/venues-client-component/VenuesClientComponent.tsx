@@ -2,67 +2,84 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from "next/navigation";
-import venueService from "@/lib/services/venueService";
+import venueService, { VenueFilterCriteria } from "@/lib/services/venueService";
 import VenuesComponent from "@/components/venues-component/VenuesComponent";
 import VenueFilterComponent from "@/components/venue-filter-component/VenueFilterComponent";
 import { IVenue } from "@/models/IVenue";
+import { LoaderComponent } from "@/components/loader-component/LoaderComponent";
 import styles from "./VenuesClientComponent.module.css";
 
-interface venueFilters {
-    brand?: string;
-    model?: string;
-    condition?: string;
-    price_min?: number;
-    price_max?: number;
-    year_min?: number;
-    year_max?: number;
+interface VenueFilters {
+    name?: string;
+    country?: string;
+    city?: string;
+    tags?: string[];
+}
+
+interface VenueQueryParams extends VenueFilterCriteria {
+    page?: number;
 }
 
 export const VenuesClientComponent = () => {
-    const [filters, setFilters] = useState<venueFilters>({});
+    const [filters, setFilters] = useState<VenueFilters>({});
     const [venuesData, setVenuesData] = useState<IVenue[]>([]);
     const [totalPagesState, setTotalPagesState] = useState(1);
+    const [isLoading, setIsLoading] = useState(false);
 
     const searchParams = useSearchParams();
-    const currentPageFromURL = Number(searchParams.get("pg") || "1");
+    const currentPageFromURL = Number(searchParams.get("page") || "1");
 
-    const buildQueryParams = (page: number, filters: venueFilters) => ({
-        ...filters,
-        page,
-    });
-
-    const fetchvenues = useCallback(async (page: number, filters: venueFilters) => {
+    const fetchVenues = useCallback(async (page: number, filters: VenueFilters) => {
+        setIsLoading(true);
+        setVenuesData([]);
         try {
-            const queryParams = buildQueryParams(page, filters);
-            const response = await venueService.venues.getAllWithFilter(queryParams);
+            const response = await venueService.venues.getAllWithFilter({
+                ...filters,
+                page
+            } as VenueQueryParams);
+
             const resData = response.data;
-            setVenuesData(resData.filter((venue: { status: string }) => venue.status === "active") ?? []);
+            console.log("API returned IDs:", resData.data.map(v => v.id));
+
+            setVenuesData(resData.data ?? []);
             setTotalPagesState(resData.total_pages ?? 1);
         } catch (error) {
             console.error("Error fetching venues:", error);
+        } finally {
+            setIsLoading(false);
         }
     }, []);
 
-    const handleFilterChange = (newFilters: venueFilters) => {
-        setFilters(newFilters);
+    const handleFilterChange = (newFilters: VenueFilters) => {
+        const apiFilters: VenueFilterCriteria = {
+            name: newFilters.name,
+            country: newFilters.country,
+            city: newFilters.city,
+            tags: newFilters.tags,
+        };
+        setFilters(apiFilters);
     };
 
     useEffect(() => {
-        (async () => {
-            await fetchvenues(currentPageFromURL, filters);
-        })();
-    }, [currentPageFromURL, filters, fetchvenues]);
+        void fetchVenues(currentPageFromURL, filters);
+    }, [currentPageFromURL, filters, fetchVenues]);
+
+    console.log("Current page from URL:", currentPageFromURL);
 
     return (
         <div className={styles.wrapper}>
-            <h1>venues</h1>
-            <VenueFilterComponent
-                onFilterChange={handleFilterChange}
-            />
-            {/*<VenuesComponent*/}
-            {/*    venues={venuesData}*/}
-            {/*    totalPages={totalPagesState}*/}
-            {/*/>*/}
+            <h1>Venues</h1>
+
+            <VenueFilterComponent onFilterChange={handleFilterChange} />
+
+            {isLoading ? (
+                <LoaderComponent />
+            ) : (
+                <VenuesComponent
+                    venues={venuesData}
+                    totalPages={totalPagesState}
+                />
+            )}
         </div>
     );
 };
