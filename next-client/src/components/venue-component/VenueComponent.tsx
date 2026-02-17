@@ -10,7 +10,7 @@ interface Props {
 }
 
 const VenueComponent: React.FC<Props> = ({ venue }) => {
-      console.log("Venue photos:", venue.photos);
+
     const mainPhoto =
         venue.photos?.find((p) => p.is_main) || venue.photos?.[0];
 

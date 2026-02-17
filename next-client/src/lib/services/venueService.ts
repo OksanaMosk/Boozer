@@ -9,10 +9,10 @@ const api = (token?: Token) => apiService(token?.accessToken);
 
 const createService = <T>(baseUrl: string, token?: Token) => ({
     getAll: (token?: Token) => api(token).get<T[]>(baseUrl),
-    get: (id: string, token?: Token) => api(token).get<T>(`${baseUrl}/${id}/`),
+    get: (id: string, token?: Token) => api(token).get<T>(`${baseUrl}${id}/`),
     create: (data: Partial<T>, token?: Token) => api(token).post<T>(baseUrl, data),
-    update: (id: string, data: Partial<T>, token?: Token) => api(token).put<T>(`${baseUrl}/${id}/`, data),
-    delete: (id: string, token?: Token) => api(token).delete(`${baseUrl}/${id}/`),
+    update: (id: string, data: Partial<T>, token?: Token) => api(token).put<T>(`${baseUrl}${id}/`, data),
+    delete: (id: string, token?: Token) => api(token).delete(`${baseUrl}${id}/`),
 });
 
 const getByParent = <T>(endpoint: (parentId: string) => string, token?: Token) =>

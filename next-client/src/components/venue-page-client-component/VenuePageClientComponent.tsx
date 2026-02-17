@@ -6,12 +6,13 @@ import VenueInfoComponent from "@/components/venue-info-component/VenueInfoCompo
 import { ButtonGoBackComponent } from "@/components/button-go-back-component/ButtonGoBackComponent";
 import { LoaderComponent } from "@/components/loader-component/LoaderComponent";
 import { IVenue } from "@/models/IVenue";
+import {ButtonScrollTopComponent} from "@/components/button-scroll-top-component/ButtonScrollTopComponent";
 
 interface VenuePageClientProps {
   venueId: string;
 }
 
-export default function VenuesPageClientComponent({ venueId }: VenuePageClientProps) {
+export default function VenuePageClientComponent({ venueId }: VenuePageClientProps) {
   const [venue, setVenue] = useState<IVenue | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -23,6 +24,7 @@ export default function VenuesPageClientComponent({ venueId }: VenuePageClientPr
       try {
         const response = await venueService.venues.get(venueId);
         setVenue(response.data);
+        console.log(response.data);
       } catch (err: any) {
         console.error("Failed to fetch venue details:", err);
         setError("Failed to fetch venue details");
@@ -34,7 +36,7 @@ export default function VenuesPageClientComponent({ venueId }: VenuePageClientPr
 
   if (loading)
     return (
-      <div style={{ display: "flex", justifyContent: "center", marginTop: 50 }}>
+      <div style={{ display: "flex", justifyContent: "center", marginTop: 70 }}>
         <LoaderComponent />
       </div>
     );
@@ -42,10 +44,11 @@ export default function VenuesPageClientComponent({ venueId }: VenuePageClientPr
   if (error) return <div>{error}</div>;
   if (!venue) return <div>Venue not found</div>;
 
-  return (
-    <div>
-      <ButtonGoBackComponent />
-      <VenueInfoComponent venue={venue} />
-    </div>
-  );
+    return (
+        <div>
+            <ButtonGoBackComponent/>
+            <VenueInfoComponent venue={venue}/>
+            <ButtonScrollTopComponent/>
+        </div>
+    );
 }

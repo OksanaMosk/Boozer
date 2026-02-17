@@ -257,19 +257,7 @@ const VenueCreateComponent = () => {
         }
     };
 
-    // const renderPreview = () => {
-    //     switch (selectedStyle) {
-    //         case "minimal":
-    //             return <ThemeVenueMinimalComponent venue={newVenue} photos={localPhotos}/>;
-    //         case "party":
-    //             return <ThemeVenuePartyComponent venue={newVenue} photos={localPhotos}/>;
-    //         case "eco":
-    //         case "classic":
-    //             return <p>Preview not implemented for {selectedStyle} style</p>;
-    //         default:
-    //         return null;
-    //     }
-    // };
+
 
     return (
         <section className={styles.wrapper}>
@@ -437,7 +425,32 @@ const VenueCreateComponent = () => {
                     </button>
                 )}
             </form>
-            {/*<div className={styles.styleSelector}>*/}
+        </section>
+    );
+};
+
+export default VenueCreateComponent;
+
+
+
+
+
+// const renderPreview = () => {
+    //     switch (selectedStyle) {
+    //         case "minimal":
+    //             return <ThemeVenueMinimalComponent venue={newVenue} photos={localPhotos}/>;
+    //         case "party":
+    //             return <ThemeVenuePartyComponent venue={newVenue} photos={localPhotos}/>;
+    //         case "eco":
+    //         case "classic":
+    //             return <p>Preview not implemented for {selectedStyle} style</p>;
+    //         default:
+    //         return null;
+    //     }
+    // };
+
+
+ {/*<div className={styles.styleSelector}>*/}
             {/*    <label>Select Style: </label>*/}
             {/*    <select*/}
             {/*        value={selectedStyle}*/}
@@ -453,11 +466,6 @@ const VenueCreateComponent = () => {
             {/*    <div className={styles.livePreview}>{renderPreview()}</div>*/}
             {/*</div>*/}
 
-        </section>
-    );
-};
-
-export default VenueCreateComponent;
 
 
 

@@ -5,6 +5,7 @@ import {useRouter} from "next/navigation";
 import CompleteProfileFormComponent from "@/components/complete-profile-form-component/CompleteProfileFormComponent";
 import profileService from "@/lib/services/profileService";
 import {useSession} from "next-auth/react";
+import {LoaderComponent} from "@/components/loader-component/LoaderComponent";
 
 export default function CompleteProfilePage() {
     const router = useRouter();
@@ -35,10 +36,12 @@ export default function CompleteProfilePage() {
             }
         };
 
-  checkProfile();
+  void checkProfile();
 }, [status, session, router]);
 
-  if (loading) return <p>Завантаження...</p>;
+  if (loading) return <div style={{display: "flex", justifyContent: "center", marginTop:"70px"}}>
+        <LoaderComponent/>
+    </div>;
 
     return (
         <div

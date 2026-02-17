@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useRef, useMemo, useState } from "react";
 import ChatComponent from "../chat-component/ChatComponent";
 import { IVenue } from "@/models/IVenue";
 import styles from "./VenueInfoComponent.module.css";
@@ -10,6 +10,30 @@ interface Props {
 }
 
 const VenueInfoComponent: React.FC<Props> = ({ venue }) => {
+    const footerRef = useRef<HTMLDivElement>(null);
+const [isVisible, setIsVisible] = useState(false);
+
+useEffect(() => {
+  const observer = new IntersectionObserver(
+    ([entry]) => {
+      if (entry.isIntersecting) {
+        setIsVisible(true);
+      }
+    },
+    { threshold: 0.2 }
+  );
+
+  if (footerRef.current) {
+    observer.observe(footerRef.current);
+  }
+
+  return () => {
+    if (footerRef.current) {
+      observer.unobserve(footerRef.current);
+    }
+  };
+}, []);
+
     const photos = venue.photos ?? [];
 
     const mainPhoto = useMemo(() => {
@@ -33,9 +57,8 @@ const VenueInfoComponent: React.FC<Props> = ({ venue }) => {
     return (
         <div>
             <div className={styles.container}>
-                <div className={styles.flexRowResponsive}>
 
-                    {/* MAIN PHOTO */}
+                <div className={styles.mainContainer}>
                     {mainPhoto ? (
                         <img
                             src={mainPhoto.photo}
@@ -57,27 +80,73 @@ const VenueInfoComponent: React.FC<Props> = ({ venue }) => {
                     )}
 
                     <div className={styles.content}>
-                        <h1 className={styles.title}>
-                            {venue.name}
-                        </h1>
+                        <div className={styles.contentHero}>
+                            <h2 className={styles.title}>
+                                Welcome to {venue.name} in {venue.city}
+                            </h2>
 
-                        <p className={styles.location}>
-                            {venue.country}, {venue.city}
-                        </p>
-
-                        <hr className={styles.divider} />
-
-                        <div className={styles.details}>
-                            <p><strong>ID:</strong> {venue.id}</p>
-                            {venue.address && (
-                                <p><strong>Address:</strong> {venue.address}</p>
-                            )}
-                            {venue.phone && (
-                                <p><strong>Phone:</strong> {venue.phone}</p>
+                            {venue.description && (
+                                <p className={styles.overview}>
+                                    {venue.description}
+                                </p>
                             )}
                         </div>
+                        <div>
+                            {photos[1]?.photo ? (
+                                <img
+                                    src={photos[1].photo}
+                                    alt={venue.name}
+                                    width={300}
+                                    height={380}
+                                    className={styles.venuePoster2}
+                                />
+                            ) : (
+                                <img
+                                    src="/images/noPoster.png"
+                                    alt="No poster"
+                                    width={300}
+                                    height={380}
+                                    className={styles.venuePoster2}
+                                />
+                            )}
+                        </div>
+                    </div>
 
-                        {/* GALLERY */}
+                    <div className={styles.contentNews}>
+                        <div>
+                            {photos[2]?.photo ? (
+                                <img
+                                    src={photos[2].photo}
+                                    alt={venue.name}
+                                    width={300}
+                                    height={380}
+                                    className={styles.venuePoster2}
+                                />
+                            ) : (
+                                <img
+                                    src="/images/noPoster.png"
+                                    alt="No poster"
+                                    width={300}
+                                    height={380}
+                                    className={styles.venuePoster2}
+                                />
+                            )}
+                        </div>
+                        <div className={styles.contentHero}>
+                            <h2 className={styles.title}>
+                                What’s New
+                            </h2>
+
+                            {venue.description && (
+                                <p className={styles.overview}>
+                                    {venue.description}
+                                </p>
+                            )}
+                        </div>
+                    </div>
+
+                    <div className={styles.contentGallery}>
+
                         {photos.length > 1 && currentPhoto && (
                             <div className={styles.singleGalleryWrapper}>
                                 <button
@@ -103,32 +172,57 @@ const VenueInfoComponent: React.FC<Props> = ({ venue }) => {
                                 </button>
                             </div>
                         )}
-
-                        {venue.description && (
-                            <>
-                                <hr className={styles.divider} />
-                                <p className={styles.overview}>
-                                    <strong>Description:</strong> {venue.description}
-                                </p>
-                            </>
-                        )}
                     </div>
                 </div>
             </div>
 
-            {/* CHAT */}
-            <div style={{ margin: "40px auto", width: "400px" }}>
-                <h3 style={{ textAlign: "center" }}>
-                    Chat with Venue Admin
-                </h3>
+            <div
+                ref={footerRef}
+                className={`${styles.footerContainer} ${styles.animate} ${
+                    isVisible ? styles.visible : ""
+                }`}
+            >
+                <div className={styles.footerSection}>
+                    <h3 className={styles.footerTitle}>ADDRESS</h3>
+                    <div className={styles.details}>
+                        <p className={styles.location}>
+                            {venue.country}, {venue.city}
+                        </p>
+                        {venue.address && <p>{venue.address}</p>}
+                        {venue.phone && <p>{venue.phone}</p>}
+                    </div>
+                </div>
 
-                {venue.venue_admin_id ? (
-                    <ChatComponent ownerId={String(venue.venue_admin_id)} />
-                ) : (
-                    <p style={{ textAlign: "center" }}>
-                        Venue Admin not available
-                    </p>
-                )}
+                <div className={styles.footerSection}>
+                    <h3 className={styles.footerTitle} >CONTACT US</h3>
+                    <p>ID: {venue.id}</p>
+                    <div style={{margin: "20px auto", maxWidth: "400px"}}>
+                        {venue.id ? (
+                            <ChatComponent ownerId={String(venue.id)}/>
+                        ) : (
+                            <p style={{textAlign: "center"}}>Venue Admin not available</p>
+                        )}
+                    </div>
+
+                </div>
+
+                <div className={styles.footerSection}>
+                    <h3 className={styles.footerTitle}>OPENING HOURS</h3>
+                    <div className={styles.open}>
+                        {venue.opening_hours && Object.keys(venue.opening_hours).length > 0 ? (
+                            <ul className={styles.openList}>
+                                {Object.entries(venue.opening_hours).map(([day, hours]) => (
+                                    <li key={day}>
+                                            {day.charAt(0).toUpperCase() + day.slice(1).toLowerCase()}: {hours.open} - {hours.close}
+                                    </li>
+                                ))}
+                            </ul>
+                        ) : (
+                            <p>No opening hours available</p>
+                        )}
+                       </div>
+                </div>
+
             </div>
         </div>
     );

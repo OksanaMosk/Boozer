@@ -19,6 +19,9 @@
   box-sizing: border-box;
 }
 
+li, ul {
+    list-style: none;
+}
 body {
     font-family: var(--font-playfair), serif;
     width: 100%;

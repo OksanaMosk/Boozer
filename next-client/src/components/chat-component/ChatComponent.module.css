@@ -86,8 +86,8 @@ color: darkgray;
 }
 
 .chatButton{
-    width: 300px;
-    height: 60px;
+    width: 260px;
+    height: 45px;
     border-radius: 2rem;
     text-decoration: none;
     text-align: center;
@@ -96,14 +96,14 @@ color: darkgray;
     justify-content: center;
     align-items: center;
     font-size: 1.2rem;
-    background-color: darkviolet;
-    color: var(--color-border);
-    box-shadow: 0 0.625rem 1.25rem rgba(191, 219, 254, 0.5);
-    transition: transform 1s;
-    border: none;
+   background: linear-gradient(90deg, #30240b, white, #30240b);
+    cursor: pointer;
+    outline: none;
+    transition: all 0.3s ease-in-out;
+    border: 1px solid rgba(255,255,255,0.5);
+    color: var(--color-text-muted);
 }
 .chatButton:hover {
-    background-color: var(--color-border);
-       color: var(--color-white);
-    transform: scale(1.01);
+  background: linear-gradient(90deg, white, #30240b, white);
+    color: var(--color-white);
 }

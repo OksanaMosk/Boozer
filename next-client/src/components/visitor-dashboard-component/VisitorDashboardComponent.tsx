@@ -9,7 +9,7 @@ import React from "react";
 const VisitorDashboardComponent = () => {
     const {user} = useUser();
     if (!user) {
-       return <div style={{display: "flex", justifyContent: "center", marginTop: 50}}>
+       return <div style={{display: "flex", justifyContent: "center", marginTop: 70}}>
         <LoaderComponent/>
     </div>;
     }

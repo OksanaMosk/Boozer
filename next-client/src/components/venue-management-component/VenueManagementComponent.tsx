@@ -78,7 +78,7 @@ const VenueManagementComponent = () => {
 
   if (loading)
     return (
-      <div style={{ display: "flex", justifyContent: "center", marginTop: 50 }}>
+      <div style={{ display: "flex", justifyContent: "center", marginTop: 70 }}>
         <LoaderComponent />
       </div>
     );

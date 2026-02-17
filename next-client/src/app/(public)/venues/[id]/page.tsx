@@ -1,18 +1,18 @@
-import VenuesPageClientComponent from "@/components/venues-page-client-component/VenuesPageClientComponent";
+import VenuePageClientComponent from "@/components/venue-page-client-component/VenuePageClientComponent";
 
-export default async function VenuesPage({ params }: { params: { id: string } }) {
+export default async function VenuePage({ params }: { params: { id: string } }) {
    const resolvedParams = await params;
    const venueId = resolvedParams.id;
 
-  return (
-    <div
-      style={{
-        margin: "40px auto",
-        textAlign: "center",
-        width: "100vw",
-      }}
-    >
-      <VenuesPageClientComponent venueId={venueId} />
-    </div>
-  );
+    return (
+        <div
+            style={{
+                margin: "0 auto",
+                textAlign: "center",
+                width: "100vw",
+            }}
+        >
+            <VenuePageClientComponent venueId={venueId}/>
+        </div>
+    );
 }

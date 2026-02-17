@@ -14,14 +14,8 @@ export default function PostLoginPage() {
         let isMounted = true;
 
         const redirectUser = async () => {
-            console.log("POST LOGIN: start");
             const session = await getSession();
-            console.log("POST LOGIN: session =", session);
-            console.log("POST LOGIN: user =", session?.user);
-            console.log("POST LOGIN: needsProfile =", session?.user?.needsProfile);
-            console.log("POST LOGIN: role =", session?.user?.role);
-
-            if (!isMounted) return;
+                       if (!isMounted) return;
 
       if (!session?.user) {
         router.replace("/login");
@@ -54,12 +48,11 @@ export default function PostLoginPage() {
 
   if (loading) {
     return (
-      <div style={{ display: "flex", justifyContent: "center", marginTop: "20%" }}>
+      <div style={{ display: "flex", justifyContent: "center", marginTop: "70px"}}>
         <LoaderComponent />
       </div>
     );
   }
-  console.log("RENDER POST LOGIN PAGE");
 
   return (
     <div style={{ display: "flex", justifyContent: "center", marginTop: "20%" }}>

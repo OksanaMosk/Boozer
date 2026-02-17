@@ -142,7 +142,7 @@ const VenueEditComponent = ({ venueId }: Props) => {
 
   if (loading || !form)
     return (
-      <div style={{ display: "flex", justifyContent: "center", marginTop: 50 }}>
+      <div style={{ display: "flex", justifyContent: "center", marginTop: 70 }}>
         <LoaderComponent />
       </div>
     );

@@ -69,7 +69,7 @@ function HomePageContent() {
 
 export default function HomePage() {
     return (
-        <Suspense fallback={<div style={{display: "flex", justifyContent: "center", marginTop: 80}}>
+        <Suspense fallback={<div style={{display: "flex", justifyContent: "center", marginTop: 70}}>
             <LoaderComponent/>
         </div>}>
             <HomePageContent/>
