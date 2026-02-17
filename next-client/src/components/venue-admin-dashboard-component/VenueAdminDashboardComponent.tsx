@@ -13,35 +13,35 @@ import {useUser} from "@/app/contexts/UserProvider";
 const VenueAdminDashboardComponent: React.FC = () => {
     const { user, loading: userLoading } = useUser();
     const [error, setError] = useState<string | null>(null);
-    const [cars, setCars] = useState<IVenue[]>([]);
+    const [venues, setVenues] = useState<IVenue[]>([]);
 
     useEffect(() => {
    if (!user?.id || !user?.token) return;
 
-        const loadCars = async () => {
+        const loadVenues = async () => {
             try {
                 const response = await userService.getUserVenues(
                     String(user.id), { accessToken: user.token! }
                 );
 
-                setCars(response.data.venues);
+                setVenues(response.data.venues);
             } catch {
-                 setCars([])
-                // setError("Failed to load venues.");
+                 setVenues([])
+                setError("Failed to load venues.");
             }
         };
 
-        loadCars();
+        loadVenues();
     }, [user?.id, user?.token]);
 
 
-    const handleDelete = (carId: string) => {
-        setCars((prev) => prev.filter((c) => c.id !== carId));
+    const handleDelete = (venueId: string) => {
+        setVenues((prev) => prev.filter((c) => c.id !== venueId));
     };
 
-    const handleStatusChange = (carId: string, status: string) => {
-        setCars((prev) =>
-            prev.map((car) => (car.id === carId ? {...car, status} : car))
+    const handleStatusChange = (venueId: string, status: string) => {
+        setVenues((prev) =>
+            prev.map((venue) => (venue.id === venueId ? {...venue, status} : venue))
         );
     };
 
@@ -62,19 +62,19 @@ const VenueAdminDashboardComponent: React.FC = () => {
 
     return (
         <div className={styles.dashboard}>
-            <h2>My Car Listings</h2>
+            <h2>My Venue Listings</h2>
             <div className={styles.cardsContainer}>
-                {cars.length > 0 ? (
-                    cars.map((car) => (
+                {venues.length > 0 ? (
+                    venues.map((venue) => (
                         <VenueListingComponent
-                            key={car.id}
-                            car={car}
+                            key={venue.id}
+                           venue={venue}
                             onDelete={handleDelete}
                             onStatusChange={handleStatusChange}
                         />
                     ))
                 ) : (
-                    <p>No cars found.</p>
+                    <p>No venues found.</p>
                 )}
             </div>
             {user && (

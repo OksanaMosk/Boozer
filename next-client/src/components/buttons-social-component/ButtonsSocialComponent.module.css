@@ -33,15 +33,21 @@
 
 .socialButton img {
   margin-right: 5px;
-    width: 16px;
-    height: 16px;
+    width: 20px;
+    height: 20px;
+}
+.google{
+    scale: 0.8;
 }
 .loaderWrapper {
+    box-sizing: border-box;
+    height: 45px;
     display: flex;
     justify-content: center;
-    align-items: center;
-    width: 1.5rem;
-    height: 1.5rem;
+    align-items: flex-start;
+    margin: 0;
+    padding: 0;
+     line-height: 1.2;
     transform: scale(0.2);
 }
 .socialButtonItem{

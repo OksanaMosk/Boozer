@@ -42,8 +42,6 @@ const LoginComponent = () => {
     }
   };
 
-
-
     return (
         <div className={styles.centerContainer}>
             <form onSubmit={handleSubmit} className={`auth ${styles.form}`}>

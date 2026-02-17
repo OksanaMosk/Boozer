@@ -16,7 +16,7 @@ export default function ResetPasswordPage() {
     const token = searchParams.get("token");
     const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
         e.preventDefault();
         setMessage("");
 

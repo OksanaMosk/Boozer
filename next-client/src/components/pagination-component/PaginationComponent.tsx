@@ -70,8 +70,7 @@ export const PaginationComponent = ({totalPages}: PaginationProps) => {
                     }`}
                     aria-current={currentPage === page ? "page" : undefined}
                     aria-label={`Page ${page}`}
-                >
-                    <span className={styles.paginationButtonText}>{page}</span>
+                >{page}
                 </button>
             ))}
 

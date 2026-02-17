@@ -22,7 +22,7 @@
 }
 
 .logoLink:hover {
-    color: var(--color-active);
+    color: var(--color-text);
 }
 
 .logo {
@@ -67,7 +67,7 @@
     height: 20px;
     border-radius: 50%;
 
-    border: 1px solid var(--color-active);
+    border: 1px solid var(--color-text);
     cursor: pointer;
 }
 

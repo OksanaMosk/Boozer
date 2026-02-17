@@ -16,7 +16,7 @@ const VenueAdminPage = () => {
             <ButtonGoBackComponent/>
             <Link
                 href="/venue-admin/create-venue"
-                className="create-car-link"
+                className="create-venue-link"
                 style={{
                     margin: '40px auto',
                     display: 'inline-block',
@@ -30,10 +30,9 @@ const VenueAdminPage = () => {
                     fontWeight: '600',
                     transition: 'background-color 0.3s ease',
                 }}
-            >Create New Car
+            >Create New Venue
             </Link>
             <VenueAdminDashboardComponent/>
-
         </div>
     );
 };

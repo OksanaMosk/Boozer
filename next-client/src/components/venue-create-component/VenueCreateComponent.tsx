@@ -4,11 +4,8 @@ import React, {useEffect, useRef, useState} from "react";
 import Image from "next/image";
 import {useRouter} from "next/navigation";
 import IMask from "imask";
-
 import {LoaderComponent} from "@/components/loader-component/LoaderComponent";
 import VenueSelectsComponent from "@/components/venue-selects-component/VenueSelectsComponent";
-import ThemeVenueMinimalComponent from "@/components/theme-venue-minimal-component/ThemeVenueMinimalComponent";
-import ThemeVenuePartyComponent from "@/components/theme-venue-party-component/ThemeVenuePartyComponent";
 import MapVenueComponent from "@/components/map-venue-component/MapVenueComponent";
 
 import {ITag, IVenue} from "@/models/IVenue";
@@ -179,10 +176,6 @@ const VenueCreateComponent = () => {
         const token = user.token;
 
       if (tagsArray.length) {
-    // використовується реальний id закладу
-    // const venueId = newVenue.id!; <-- прибрати!
-
-    // 1️⃣ Створення тегів під конкретний заклад
     const createdTags = await Promise.all(
         tagsArray.map(async (tag) => {
             console.log("Перший запит → створюємо тег для закладу:", venueId);
@@ -264,19 +257,19 @@ const VenueCreateComponent = () => {
         }
     };
 
-    const renderPreview = () => {
-        switch (selectedStyle) {
-            case "minimal":
-                return <ThemeVenueMinimalComponent venue={newVenue} photos={localPhotos}/>;
-            case "party":
-                return <ThemeVenuePartyComponent venue={newVenue} photos={localPhotos}/>;
-            case "eco":
-            case "classic":
-                return <p>Preview not implemented for {selectedStyle} style</p>;
-            default:
-            return null;
-        }
-    };
+    // const renderPreview = () => {
+    //     switch (selectedStyle) {
+    //         case "minimal":
+    //             return <ThemeVenueMinimalComponent venue={newVenue} photos={localPhotos}/>;
+    //         case "party":
+    //             return <ThemeVenuePartyComponent venue={newVenue} photos={localPhotos}/>;
+    //         case "eco":
+    //         case "classic":
+    //             return <p>Preview not implemented for {selectedStyle} style</p>;
+    //         default:
+    //         return null;
+    //     }
+    // };
 
     return (
         <section className={styles.wrapper}>
@@ -444,21 +437,21 @@ const VenueCreateComponent = () => {
                     </button>
                 )}
             </form>
-            <div className={styles.styleSelector}>
-                <label>Select Style: </label>
-                <select
-                    value={selectedStyle}
-                    onChange={(e) =>
-                        setSelectedStyle(e.target.value as "minimal" | "eco" | "party" | "classic")
-                    }
-                >
-                    <option value="minimal">Minimal</option>
-                    <option value="eco">Eco</option>
-                    <option value="party">Party</option>
-                    <option value="classic">Classic</option>
-                </select>
-                <div className={styles.livePreview}>{renderPreview()}</div>
-            </div>
+            {/*<div className={styles.styleSelector}>*/}
+            {/*    <label>Select Style: </label>*/}
+            {/*    <select*/}
+            {/*        value={selectedStyle}*/}
+            {/*        onChange={(e) =>*/}
+            {/*            setSelectedStyle(e.target.value as "minimal" | "eco" | "party" | "classic")*/}
+            {/*        }*/}
+            {/*    >*/}
+            {/*        <option value="minimal">Minimal</option>*/}
+            {/*        <option value="eco">Eco</option>*/}
+            {/*        <option value="party">Party</option>*/}
+            {/*        <option value="classic">Classic</option>*/}
+            {/*    </select>*/}
+            {/*    <div className={styles.livePreview}>{renderPreview()}</div>*/}
+            {/*</div>*/}
 
         </section>
     );

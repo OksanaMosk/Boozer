@@ -2,11 +2,11 @@
   display: flex;
   gap: 12px;
   padding: 16px;
-  background-color: var(--color-badgeId);
-  border-radius: 8px;
+  background-color:transparent;
+  border-radius: 2rem;
   max-width: 900px;
   margin: 0 auto;
-            box-shadow: 0 0 12px white;
+  box-shadow: 0 0 12px white;
 }
 
 .row {
@@ -17,14 +17,16 @@
     color: var(--color-border);
 }
 
-.input, .select {
+.input {
   flex: 1;
   padding: 8px 12px;
   border-radius: 20px;
   font-size: 1rem;
   outline: none;
   transition: border-color 0.2s;
-        color: var(--color-border);
+        color: var(--color-white);
+    background: transparent;
+    border: 1px solid var(--color-white);
 }
 
 .input:focus, .select:focus {
@@ -32,7 +34,26 @@
 }
 
 .select {
-  background-color: var(--color-white);
-  cursor: pointer;
+    padding: 8px 12px;
+    border: 1px solid var(--color-white);
+    font-size: 1rem;
+    border-radius: 2rem;
+    cursor: pointer;
     outline: none;
+    background: linear-gradient(
+        90deg,
+        #f9f295,
+        #ae8625,
+        #faf398,
+        #b88a44
+    );
+    color:  var(--color-text-muted);
+    box-shadow: 0 0 12px white;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    animation: float 6s ease-in-out infinite;
+}
+.select option {
+  background: var(--color-container);
+  color: var(--color-badgeId);
 }

@@ -10,9 +10,9 @@
     transition-timing-function: ease-in-out;
     cursor: pointer;
     outline: none;
-    color: var(--color-active);
+    color: var(--color-text);
     background-color:var(--color-container);
-    border: 1px solid var(--color-active);
+    border: 1px solid var(--color-text);
 }
 
 .button:hover {

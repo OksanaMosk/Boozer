@@ -36,7 +36,7 @@ const ButtonsSocialComponent: React.FC = () => {
                         <LoaderComponent/>
                     </div>) : (
                     <div className={styles.socialButtonItem}>
-                        <img src="/images/eye2.png" alt="Google" width={24} height={24}/>
+                        <img className={styles.google}  src="/images/google.png" alt="Google" width={24} height={24}/>
                         <p>
                             Sign in with Google
                         </p>
@@ -56,7 +56,7 @@ const ButtonsSocialComponent: React.FC = () => {
                         <LoaderComponent/>
                     </div>) :
                     ( <div className={styles.socialButtonItem}>
-                         <img src="/images/eye2.png" alt="Facebook" width={24} height={24}/>
+                         <img src="/images/facebook.png" alt="Facebook" width={24} height={24}/>
                         <p>
                           Sign in with Facebook
                         </p>

@@ -30,7 +30,7 @@
          font-size: 1.8rem;
          font-weight: 600;
          margin-bottom: 20px;
-         color: var(--color-black);
+         color: var(--color-text);
      }
 
      .table {
@@ -40,7 +40,7 @@
      }
 
      .table thead tr {
-         background-color: var(--color-active);
+         background-color: var(--color-text);
          color: white;
          text-align: left;
      }
@@ -112,7 +112,7 @@
      }
 
      .unblockButton {
-         background-color: var(--color-active);
+         background-color: var(--color-text);
          color: var(--color-white);
          border: none;
          border-radius: 4px;

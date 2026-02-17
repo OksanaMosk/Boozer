@@ -164,7 +164,7 @@ const AdminUserManagementComponent = () => {
                     <th>Role</th>
                     <th>Active</th>
                     <th>Actions</th>
-                    <th>Cars</th>
+                    <th>Venues</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -202,9 +202,9 @@ const AdminUserManagementComponent = () => {
                             <td>
                                 <button
                                     onClick={() => router.push(`/venue-admin/${user.id}`)}
-                                    className={styles.viewCarsButton}
+                                    className={styles.viewVenuesButton}
                                 >
-                                    View Cars
+                               Venues
                                 </button>
                             </td>
                         </tr>

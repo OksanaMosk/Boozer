@@ -45,7 +45,7 @@ export interface IVenue {
 
 
 export interface IVenuePhoto {
-    id?: string;
+    id: string;
     venue_id: string;
     photo: string;
     is_main?: boolean;

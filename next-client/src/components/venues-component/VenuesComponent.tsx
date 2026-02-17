@@ -16,7 +16,7 @@ interface VenuesComponentProps {
 
 const VenuesComponent: React.FC<VenuesComponentProps > = ({venues, totalPages}) => {
     return (
-        <div className={styles.carsListContainer}>
+        <div className={styles.venuesListContainer}>
             <ul className={styles.list}>
                 {venues.map((venue) => (
                     <li key={venue.id}>

@@ -28,7 +28,7 @@
 .closeBtn {
     align-self: flex-end;
     font-size: 2rem;
-    color: var(--color-active);
+    color: var(--color-text);
     background: transparent;
     border: none;
     cursor: pointer;

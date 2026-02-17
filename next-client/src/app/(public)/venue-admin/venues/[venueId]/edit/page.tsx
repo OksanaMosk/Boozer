@@ -11,6 +11,6 @@ export default async function EditVenuesPage({
     return (
         <div>
             <ButtonGoBackComponent/>
-            <VenuesEditComponent carId={id}/></div>
+            <VenuesEditComponent venueId={id}/></div>
     )
 }

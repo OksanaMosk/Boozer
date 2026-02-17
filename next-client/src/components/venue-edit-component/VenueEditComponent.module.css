@@ -1,31 +1,48 @@
 .wrapper{
     margin: 60px auto;
-    font-family: 'Inter', sans-serif;
-    width: 90%;
-    display: flex;
+  width: 80%;
+  display: flex;
     flex-direction: column;
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
-    background-color: inherit;
-    padding: 1rem;
+    padding: 0.5rem;
     gap: 1.5rem;
-    border-radius: 1.5rem;
-    box-shadow: 0 0 12px white;
+      color: var(--input-color);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  animation: float 6s ease-in-out infinite;
+    overflow: hidden;
+     background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 2rem;
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.3);
 }
+
+@keyframes float {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0); }
+}
+
 .form{
     display: flex;
     flex-direction: column;
     flex-wrap: wrap;
     gap: 1.5rem;
+
 }
-.subtitle{
-   margin-bottom: 1.5rem;
+.subtitle {
+    font-family: var(--font-imperial),serif;
+    color: var(--color-text);
+
+    font-size: 3rem;
 }
 .inputSection {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.7rem;
+    gap: 1.5rem;
 }
 
 .select{
@@ -34,31 +51,25 @@
   font-size: 0.7rem;
     border-radius: 2rem;
     cursor: pointer;
+    color: var(--input-color);
 }
 
 .label,
 .photoLabel{
-   height: 30px;
-  width: 100px;
-    outline: none;
-  border-radius: 2rem;
- display: flex;
-    justify-content: center;
-    align-items: center;
-  border: 1px solid var(--color-white);
-  font-size: 0.95rem;
-    background-color: var(--color-badgeId);
+    font-size: 0.95rem;
+    color: var(--label-color);
+
 }
-.input {
+.inputCreate {
     padding: 0.5rem 2.5rem 0.5rem 1rem;
-    border-radius: 1.5rem;
-    color: var(--color-white);
+    border-radius: 2rem;
+    color: var(--input-color);
     border: 1px solid var(--color-white);
     outline: none;
     background-color: transparent;
     box-sizing: border-box;
 }
-.input:focus {
+.inputCreate:focus {
     background-color: rgba(255, 255, 255, 0.3);
 }
 .errorMessage {
@@ -67,49 +78,29 @@
   border-radius: 6px;
   text-align: center;
   font-weight: 500;
-     z-index: 1000;
+    z-index: 1000;
     color: var(--color-white);
 }
 
-.checkbox {
-  appearance: none;
-  -webkit-appearance: none;
-  width: 20px;
-  height: 20px;
-  border: 2px solid #555;
-  border-radius: 4px;
-  cursor: pointer;
-  position: relative;
-  background-color: #fff;
-  transition: background-color 0.2s, border-color 0.2s;
+.bottomWrapper {
+    width: 100%;
+  display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+}
+.inputWrapper {
+    width: 80%;
+  display: flex;
+  flex-direction: column;
 }
 
-.checkbox:checked {
-  background-color: var(--color-border);
-  border-color: #4caf50;
-}
-
-.checkbox:checked::after {
-  content: "✔";
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  color: white;
-  font-size: 14px;
-}
-
-.textareaWrapper{
-    display: flex;
-    gap: 1.5rem;
-    flex-direction: column;
-}
 .textarea{
     min-height: 100px;
     width: 100%;
-     padding: 1.2rem;
-    border-radius: 1.7rem;
-    color: var(--color-white);
+    padding: 16px;
+    border-radius: 2rem;
+    color: var(--input-color);
     border: 1px solid var(--color-white);
     outline: none;
     background-color: transparent;
@@ -137,83 +128,88 @@
 .form {
     width: 90%;
 }
-.choiceSection{
-    width: 50%;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}
-.priceSection{
-    gap: 1rem;
-    display: flex;
-    flex-direction: column;
-    width: 50%;
-}
-.deleteButton,
-.submitButton{
+
+.deleteButton {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
     margin: 1.5rem auto;
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 30%;
-    padding: 1rem;
-    border-radius: 1.5rem;
+    font-size: 0.6rem;
     color:var(--color-white);
     cursor: pointer;
     outline: none;
     border: none;
     transition: all 0.3s ease-in-out;
       background-color: var(--color-container);
-    box-shadow: 0 0 12px white;
+     box-shadow: 0 0 12px white;
 }
 .deleteButton:hover,
-.deleteButton:focus,
 .submitButton:hover,
 .submitButton:focus {
-    background-color:  var(--color-border);
+    background: var(--color-text);
     color:  var(--color-white);
-    cursor: pointer;
 }
-.loaderWrapper {
+
+.submitButton {
+    padding: 0;
+    width: 160px;
+    height: 36px;
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 1.5rem;
-    height: 1.5rem;
-    transform: scale(0.2);
+    font-size: 1rem;
+       box-shadow: 0 0 12px white;
+  border: none;
+  border-radius: 26px;
+  cursor: pointer;
+  transition: background 0.2s;
+  background: linear-gradient(
+        90deg,
+        #f9f295,
+        #ae8625,
+        #faf398,
+        #b88a44
+    );
+    color:  var(--color-text-muted);
+}
+
+.submitButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.submitButton:hover:not(:disabled) {
+   background-color:  var(--color-text-muted);
+    color:  var(--color-badgeId);
+}
+
+
+.loaderWrapper {
+    box-sizing: border-box;
+    height: 45px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    margin: 0;
+    padding: 0;
+     line-height: 1.2;
+    transform: scale(0.4);
 }
 .photoWrapper {
-    margin: 1.5rem auto 2rem;
-    width: 100%;
+    margin: 1.5rem auto;
+    width: 90%;
     display: flex;
     gap: 1.5rem;
     flex-direction: column;
     flex-wrap: wrap;
 }
-.photoArray {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 1.5rem;
-    flex-wrap: wrap;
-
-}
-.deleteButton{
-    border-radius: 50%;
-    font-size: 0.7rem;
-margin: 1.5rem auto;
-}
 .photoLabel{
     cursor: pointer;
-       padding: 0.6rem;
+       padding: 0.4rem;
     width: 200px;
-}
-.load{
-    display: flex;
-    justify-content: space-between;
-    gap: 0.7rem;
-    cursor: pointer;
-    flex-wrap: wrap;
 }
 
 .photoImage{
@@ -222,11 +218,94 @@ margin: 1.5rem auto;
     height: 100px;
     box-shadow: 0 0 12px white;
 }
+.coordinatesWrapper {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    gap: 1rem;
+}
+.leftSideWrapper {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+      gap: 1.5rem;
+}
 
-.deleteButton{
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
+.mapWrapper {
+  width: 100%;
+  height: 320px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #f3f3f3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mapPlaceholder {
+  color: #777;
+  font-size: 14px;
+  text-align: center;
+  padding: 20px;
+}
+.inputFile {
+    padding: 8px 10px;
+  font-size: 16px;
+}
+
+.inputFile::file-selector-button {
+     font-family: var(--font-playfair), serif;
+  font-weight: 600;
+  font-style: italic;
+    margin-right: 20px;
+    width: 160px;
+    height: 36px;
+    border-radius: 2rem;
+    border: none;
+    background: linear-gradient(
+        90deg,
+        #f9f295,
+        #ae8625,
+        #faf398,
+        #b88a44
+    );
+    color: var(--color-text-muted);
+    cursor: pointer;
+    box-shadow: 0 0 12px white;
+    transition: transform 0.2s, background 0.3s;
+}
+
+.inputFile::file-selector-button:hover {
+    background:var(--color-text-muted);
+    color: var(--color-badgeId);
+}
+
+.photoContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+    width: 100%;
+  margin-top: 10px;
+    justify-content: space-between;
+
+}
+
+.photoArray {
+display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.loaderWrapper {
+    box-sizing: border-box;
+    height: 45px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    margin: 0;
+    padding: 0;
+     line-height: 1.2;
+    transform: scale(0.4);
 }
 
 @media (min-width: 768px) {
@@ -247,16 +326,8 @@ margin: 1.5rem auto;
 }
     .label,
     .photoLabel {
-        height: 30px;
-        width: 100px;
         font-size: 0.95rem;
     }
-    .choiceSection{
-    width: 50%;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}
     .topSection {
         width: 100%;
         flex-direction: row;
@@ -265,3 +336,96 @@ margin: 1.5rem auto;
         flex-direction: row;
     }
 }
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.styleSelector {
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 500;
+}
+
+.styleSelector select {
+  padding: 5px 10px;
+  font-size: 16px;
+}
+
+.formWrapper {
+  display: flex;
+  gap: 30px;
+    width: 90%;
+}
+
+.form {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.textareaWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.label {
+  font-weight: 500;
+  margin-bottom: 5px;
+}
+
+.inputCreate{
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+}
+
+.textarea {
+  border: 1px solid #ccc;
+  font-size: 16px;
+  min-height: 100px;
+  resize: vertical;
+}
+
+
+.success {
+  color: green;
+  font-weight: 500;
+}
+
+.livePreview {
+  flex: 1;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 15px;
+  max-height: 700px;
+  overflow-y: auto;
+  background-color: #fafafa;
+}
+
+.photoWrapper {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.photoLabel {
+  font-weight: 500;
+}
+
+
+.photoImage {
+  border-radius: 6px;
+  object-fit: cover;
+}
+
+

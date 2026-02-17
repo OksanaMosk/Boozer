@@ -1,94 +1,84 @@
-"use client"
+"use client";
 
-import React from "react";
-import { useState } from "react";
+import React, { useMemo, useState } from "react";
 import ChatComponent from "../chat-component/ChatComponent";
 import { IVenue } from "@/models/IVenue";
 import styles from "./VenueInfoComponent.module.css";
 
-interface venueInfoComponentProps {
+interface Props {
     venue: IVenue;
 }
 
-const VenueInfoComponent: React.FC<venueInfoComponentProps> = ({venue}) => {
-    const [currentIndex, setCurrentIndex] = useState(0);
+const VenueInfoComponent: React.FC<Props> = ({ venue }) => {
+    const photos = venue.photos ?? [];
+
+    const mainPhoto = useMemo(() => {
+        return photos.find(p => p.is_main) || photos[0] || null;
+    }, [photos]);
+
+    const [currentIndex, setCurrentIndex] = useState(
+        mainPhoto ? photos.findIndex(p => p.id === mainPhoto.id) : 0
+    );
+
     const prevPhoto = () => {
-        setCurrentIndex((prev) => Math.max(prev - 1, 0));
+        setCurrentIndex(prev => Math.max(prev - 1, 0));
     };
+
     const nextPhoto = () => {
-        setCurrentIndex((prev) =>
-            Math.min(prev + 1, venue.photos.length - 1)
-        );
+        setCurrentIndex(prev => Math.min(prev + 1, photos.length - 1));
     };
+
+    const currentPhoto = photos[currentIndex];
 
     return (
         <div>
             <div className={styles.container}>
                 <div className={styles.flexRowResponsive}>
-                    {venue.photos ? (
-                        // eslint-disable-next-line @next/next/no-img-element
+
+                    {/* MAIN PHOTO */}
+                    {mainPhoto ? (
                         <img
-                            src={venue.photos[0].photo}
-                            alt={`${venue.name} ${venue.country}`}
+                            src={mainPhoto.photo}
+                            alt={venue.name}
                             width={500}
                             height={400}
-                            sizes="(max-width: 600px) 100vw, 500px"
                             className={styles.venuePoster}
                         />
                     ) : (
                         <div className={styles.noPoster}>
-                            {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img
-                                src='/images/noPoster.png'
+                                src="/images/noPoster.png"
                                 alt="No poster"
-                                className={styles.placeholder}
                                 width={500}
                                 height={400}
-                                sizes="(max-width: 600px) 100vw, 500px"
+                                className={styles.placeholder}
                             />
                         </div>
                     )}
+
                     <div className={styles.content}>
                         <h1 className={styles.title}>
-                            {venue.country} {venue.city} (<span className={styles.spanYear}> </span>)
+                            {venue.name}
                         </h1>
 
-                        <hr className={styles.tagline}></hr>
+                        <p className={styles.location}>
+                            {venue.country}, {venue.city}
+                        </p>
+
+                        <hr className={styles.divider} />
+
                         <div className={styles.details}>
-                            <div className={styles.top}>
-                                <p><strong>ID:</strong> {venue.id}</p>
-                            </div>
-
-                            <div className={styles.aboutvenue}>
-
-                                <div className={styles.about}>
-                                    <div className={styles.imageContainer}>
-                                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                                        <img
-                                            src="/images/engine.png"
-                                            alt="Engine Volume"
-                                            width={24}
-                                            height={24}
-                                            className={styles.img}
-                                        />
-                                        <p className={styles.imgAbout}>Engine Volume</p>
-                                        </div>
-                                    <div className={styles.imageContainer}>
-                                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                                        <img
-                                            src="/images/fuel.png"
-                                            alt="fuel"
-                                            width={24}
-                                            height={24}
-                                            className={styles.img}
-                                        />
-                                    </div>
-                                </div>
-                            </div>
+                            <p><strong>ID:</strong> {venue.id}</p>
+                            {venue.address && (
+                                <p><strong>Address:</strong> {venue.address}</p>
+                            )}
+                            {venue.phone && (
+                                <p><strong>Phone:</strong> {venue.phone}</p>
+                            )}
                         </div>
-                        <hr className={styles.tagline}></hr>
 
-                        {venue.photos && (
+                        {/* GALLERY */}
+                        {photos.length > 1 && currentPhoto && (
                             <div className={styles.singleGalleryWrapper}>
                                 <button
                                     className={styles.arrow}
@@ -98,17 +88,16 @@ const VenueInfoComponent: React.FC<venueInfoComponentProps> = ({venue}) => {
                                     ←
                                 </button>
 
-                                {/* eslint-disable-next-line @next/next/no-img-element */}
                                 <img
-                                    src={venue.photos[currentIndex].photo}
-                                    alt={`photo ${currentIndex + 1}`}
+                                    src={currentPhoto.photo}
+                                    alt={`Photo ${currentIndex + 1}`}
                                     className={styles.singleThumbnail}
                                 />
 
                                 <button
                                     className={styles.arrow}
                                     onClick={nextPhoto}
-                                    disabled={currentIndex === venue.photos.length - 1}
+                                    disabled={currentIndex === photos.length - 1}
                                 >
                                     →
                                 </button>
@@ -116,22 +105,29 @@ const VenueInfoComponent: React.FC<venueInfoComponentProps> = ({venue}) => {
                         )}
 
                         {venue.description && (
-                            <p className={styles.overview}><strong>Description:</strong> {venue.description}</p>
+                            <>
+                                <hr className={styles.divider} />
+                                <p className={styles.overview}>
+                                    <strong>Description:</strong> {venue.description}
+                                </p>
+                            </>
                         )}
                     </div>
                 </div>
-
             </div>
-            <div style={{margin: "40px auto", width: "400px"}}>
-                <h3 style={{margin: "40px auto", textAlign: "center", width: "fit-content"}}>
+
+            {/* CHAT */}
+            <div style={{ margin: "40px auto", width: "400px" }}>
+                <h3 style={{ textAlign: "center" }}>
                     Chat with Venue Admin
                 </h3>
-                {!venue ? (
-                    <p>Loading venue info...</p>
-                ) : venue.venue_admin ? (
-                    <ChatComponent ownerId={String(venue.venue_admin)}/>
+
+                {venue.venue_admin_id ? (
+                    <ChatComponent ownerId={String(venue.venue_admin_id)} />
                 ) : (
-                    <p>Venue Admin not available</p>
+                    <p style={{ textAlign: "center" }}>
+                        Venue Admin not available
+                    </p>
                 )}
             </div>
         </div>
@@ -139,6 +135,3 @@ const VenueInfoComponent: React.FC<venueInfoComponentProps> = ({venue}) => {
 };
 
 export default VenueInfoComponent;
-
-
-

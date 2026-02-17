@@ -73,7 +73,7 @@ export const VenuesClientComponent = () => {
             <VenueFilterComponent onFilterChange={handleFilterChange} />
 
             {isLoading ? (
-                <LoaderComponent />
+                <div className={styles.loaderWrapper}><LoaderComponent/></div>
             ) : (
                 <VenuesComponent
                     venues={venuesData}

@@ -1,8 +1,11 @@
 .wrapper{
-    margin: 0px auto;
+    margin: 0 auto;
     align-items: center;
     display: flex;
     flex-direction: column;
     justify-content: center;
     flex-wrap: nowrap;
+}
+.loaderWrapper{
+    margin: 40px auto;
 }

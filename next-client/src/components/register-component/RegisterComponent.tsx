@@ -11,6 +11,7 @@ import styles from "./RegisterComponent.module.css";
 import IMask from "imask";
 import ButtonsSocialComponent from "@/components/buttons-social-component/ButtonsSocialComponent";
 import {useSession} from "next-auth/react";
+import {AxiosError} from "axios";
 
 
 const RegisterComponent = () => {
@@ -131,21 +132,30 @@ const RegisterComponent = () => {
             });
             router.push("/?message=Please check your email to activate your account");
         } catch (err: unknown) {
-            if (err instanceof Error) {
-                if (err.message.includes("already exists")) {
-                    setErrorMsg("A user with this email already exists.");
-                } else if (err.message.includes("network")) {
-                    setErrorMsg("Network error occurred. Please check your connection.");
-                } else {
-                    setErrorMsg("An unknown error occurred. Please try again.");
-                }
+        if (err instanceof AxiosError) {
+            const status = err.response?.status;
+            const data = err.response?.data;
+
+            if (status === 400) {
+                setErrorMsg("A user with this email already exists. Try logging in.");
+            } else if (status === 401 || status === 403) {
+                setErrorMsg("You are not authorized to perform this action.");
+            }  else if (status !== undefined && status >= 500) {
+                setErrorMsg("Server error occurred. Please try again later.");
             } else {
-                setErrorMsg("An unexpected error occurred.");
+                setErrorMsg("An unknown error occurred. Please try again.");
             }
-        } finally {
-            setIsSubmitting(false);
+            console.error("Register failed:", status, data);
+        } else if (err instanceof Error) {
+
+            setErrorMsg(err.message || "An unexpected error occurred.");
+        } else {
+            setErrorMsg("An unexpected error occurred.");
         }
+    } finally {
+        setIsSubmitting(false);
     }
+};
 
     useEffect(() => {
     if (inputRef.current) {

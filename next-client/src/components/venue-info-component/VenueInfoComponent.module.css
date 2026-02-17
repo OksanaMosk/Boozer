@@ -1,7 +1,7 @@
 .container {
     max-width: 70vw;
     margin: 5rem auto;
-    background-color: var(--color-black);
+    background:transparent;
     color: var(--color-white);
     border-radius: 1.25rem;
     padding: 2rem;
@@ -38,7 +38,7 @@
 
 .posterImage,
 .noPoster,
-.carPoster,
+.venuePoster,
 .placeholder{
     width: 95%;
     padding: 1rem;
@@ -98,7 +98,7 @@
 
 }
 
-.aboutCar {
+.aboutVenue {
    display: flex;
     flex-wrap: wrap;
     justify-content: space-evenly;
@@ -112,7 +112,7 @@
 }
 
 .title {
-    color: var(--color-active);
+    color: var(--color-text);
     font-weight: 700;
     font-size: 1.5rem;
 margin: 0;
@@ -179,7 +179,7 @@ margin: 0;
     }
         .posterImage,
     .noPoster,
-    .carPoster {
+    .venuePoster {
         width: 35vw;
         height: auto;
         border-radius: 2rem;

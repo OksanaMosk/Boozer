@@ -31,7 +31,7 @@ const AdminPage = () => {
                   fontWeight: '600',
                   transition: 'background-color 0.3s ease',
               }}
-          >Create New Car
+          >Create New Venue
           </Link>
     </div>
   );

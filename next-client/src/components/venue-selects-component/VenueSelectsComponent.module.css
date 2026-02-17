@@ -37,6 +37,6 @@ background: linear-gradient(
   animation: float 6s ease-in-out infinite;
 }
 .select option {
-  background: var(--color-text-muted);
+   background: var(--color-container);
   color: var(--color-badgeId);
 }

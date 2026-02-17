@@ -1,4 +1,4 @@
-.carsListContainer {
+.venuesListContainer {
     text-align: center;
     margin: 0 auto;
     display: flex;
@@ -30,26 +30,26 @@ padding: 0;
 
 .noResults{
     text-align: center;
-    color: var(--color-active);
+    color: var(--color-text);
     padding-top: 3rem;
     font-size: 3rem;
 }
 
 @media (min-width: 768px) {
-    .carsListContainer {
+    .venuesListContainer {
         width: 90%;
 
     }
 }
 
 @media (min-width: 1280px) {
-    .carsListContainer {
+    .venuesListContainer {
         width: 100%;
     }
 }
 
 @media (min-width: 1536px) {
-    .carsListContainer {
+    .venuesListContainer {
         gap: 48px;
         width: 90%;
         max-width: 1536px;

@@ -6,17 +6,18 @@
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
-    background-color: inherit;
     padding: 0.5rem;
     gap: 1.5rem;
-    border-radius: 1.5rem;
-    box-shadow: 0 0 12px white;
       color: var(--input-color);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
   animation: float 6s ease-in-out infinite;
     overflow: hidden;
-
+     background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 2rem;
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.3);
 }
 
 @keyframes float {
@@ -35,7 +36,6 @@
 .subtitle {
     font-family: var(--font-imperial),serif;
     color: var(--color-text);
-
     font-size: 3rem;
 }
 .inputSection {
@@ -187,12 +187,15 @@
 
 
 .loaderWrapper {
+    box-sizing: border-box;
+    height: 45px;
     display: flex;
     justify-content: center;
-    align-items: center;
-    width: 1.5rem;
-    height: 1.5rem;
-    transform: scale(0.2);
+    align-items: flex-start;
+    margin: 0;
+    padding: 0;
+     line-height: 1.2;
+    transform: scale(0.4);
 }
 .photoWrapper {
     margin: 1.5rem auto;
@@ -293,12 +296,15 @@ display: flex;
     align-items: center;
 }
 .loaderWrapper {
+    box-sizing: border-box;
+    height: 45px;
     display: flex;
     justify-content: center;
-    align-items: center;
-    width: 1.5rem;
-    height: 1.5rem;
-    transform: scale(0.2);
+    align-items: flex-start;
+    margin: 0;
+    padding: 0;
+     line-height: 1.2;
+    transform: scale(0.4);
 }
 
 @media (min-width: 768px) {
