@@ -92,7 +92,7 @@
     padding: 3px 8px;
     border: 1px solid var(--color-white);
     font-size: 0.7rem;
-    background: linear-gradient(90deg, #ae8625, #f7ef8a, #d2ac47, #edc967);
+    background: var(--color-background);
 }
 
 .user {
@@ -108,7 +108,7 @@
 }
 
 .table thead tr {
-    background: linear-gradient(90deg, #ae8625, #f7ef8a, #d2ac47, #edc967);
+    background: var(--color-background);
     color: var(--color-bg-dark);
     text-align: left;
 }
@@ -132,7 +132,7 @@
 }
 
 .table tr:hover {
-    background: linear-gradient(90deg, #ae8625, #f7ef8a, #d2ac47, #edc967);
+    background: var(--color-background);
 }
 
 .table tbody tr:hover td:first-child,

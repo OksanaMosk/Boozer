@@ -12,6 +12,7 @@
     --color-bg-dark: #4d3a1c;
 --color-bg-light: #f5f5f5;
 --color-text-muted: #21190c;
+    --color-background:linear-gradient(90deg, #ae8625, #f7ef8a, #d2ac47, #edc967)
 }
 
 *, *::before, *::after {

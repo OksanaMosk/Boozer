@@ -22,17 +22,16 @@ const ThemesButtonComponent = () => {
             className={styles.theme}
         >
             <Image
-                src={theme === "light" ? "/images/light.png" : "/images/dark.png"}
+                src={theme === "light" ? "/images/darkButton.png" : "/images/lightButton.png"}
                 alt={theme === "light" ? "Dark Theme" : "Light Theme"}
-                width={50}
-                height={50}
+                width={30}
+                height={30}
                 className={
                     theme === "light"
                         ? styles.themeImageLight
                         : styles.themeImageDark
                 }
             />
-
         </button>
     );
 };

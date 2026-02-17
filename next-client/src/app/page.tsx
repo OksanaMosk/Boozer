@@ -15,15 +15,21 @@ function HomePageContent() {
 
 
     useEffect(() => {
-        if (message) {
+        const msg = searchParams.get("message");
+        if (msg) {
+            setMessage(msg);
+            window.scrollTo({
+                top: 0,
+                behavior: "auto",
+            });
             const timer = setTimeout(() => {
                 setMessage(null);
                 router.replace("/", {scroll: false});
-            }, 5000);
+            }, 7000);
 
             return () => clearTimeout(timer);
         }
-    }, [message, router]);
+    }, [searchParams, router]);
 
 
     return (
@@ -36,7 +42,19 @@ function HomePageContent() {
             }}
         >
             {message && (
-                <p style={{color: "white", fontWeight: "bolder"}}>{message}</p>
+                <p
+  style={{
+    position: "fixed",
+      height: "100px",
+    top: 80,
+    left: "50%",
+    transform: "translateX(-50%)",
+    color: "white",
+    fontWeight: "bolder",
+    zIndex: 1100,
+      width: "100vw",
+  }}
+>{message}</p>
             )}
 
 
@@ -51,7 +69,7 @@ function HomePageContent() {
 
 export default function HomePage() {
     return (
-        <Suspense fallback={<div style={{display: "flex", justifyContent: "center", marginTop: 50}}>
+        <Suspense fallback={<div style={{display: "flex", justifyContent: "center", marginTop: 80}}>
             <LoaderComponent/>
         </div>}>
             <HomePageContent/>
