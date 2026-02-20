@@ -144,6 +144,34 @@ useEffect(() => {
                             )}
                         </div>
                     </div>
+                    <div className={styles.contentNews}>
+                        <div className={styles.contentHero}>
+                            <h2 className={styles.titleMenu}>
+                                Our Menu
+                            </h2>
+
+                        </div>
+                        <div>
+                            {photos[3]?.photo ? (
+                                <img
+                                    src={photos[3].photo}
+                                    alt={venue.name}
+                                    width={300}
+                                    height={380}
+                                    className={styles.venuePoster2}
+                                />
+                            ) : (
+                                <img
+                                    src="/images/noPoster.png"
+                                    alt="No poster"
+                                    width={300}
+                                    height={380}
+                                    className={styles.venuePoster2}
+                                />
+                            )}
+                        </div>
+                    </div>
+
 
                     <div className={styles.contentGallery}>
 

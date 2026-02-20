@@ -1,7 +1,7 @@
 from django.core.mail import send_mail
 
 
-def get_user_venue(user, user_id):
+def get_user_venues(user, user_id):
     from apps.venue.models import VenueModel
     if user.role in ['admin']:
         return VenueModel.objects.filter(venue_admin__id=user_id)

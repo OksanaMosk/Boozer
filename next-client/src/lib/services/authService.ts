@@ -23,13 +23,13 @@ const authService = {
         if (result?.error) {
             throw new Error("🔒 Invalid login or password");
         }
-const session = await getSession();
-    if (!session?.user) {
-      throw new Error("⚠️ Failed to retrieve user session");
-    }
+        const session = await getSession();
+        if (!session?.user) {
+            throw new Error("⚠️ Failed to retrieve user session");
+        }
 
-    return session.user;
-  },
+        return session.user;
+    },
 
 
     async register(user: IRegisterUser): Promise<IUser> {
@@ -51,25 +51,25 @@ const session = await getSession();
         return apiService().get(urls.auth.socket);
     },
 
-    async getCurrentUser(token: { accessToken: string }): Promise<IUser | null> {
-  if (!token) return null;
-  try {
-    const { data, status } = await apiService(token.accessToken).get(urls.auth.me);
-    if (status === 401 || status === 403) {
-      console.log('[getCurrentUser] Unauthorized:', status);
-      return null;
-    }
-
-    if (typeof window !== "undefined" && data.id) {
-      localStorage.setItem("userId", data.id.toString());
-    }
-    return data;
-  } catch (error) {
-    console.log('[getCurrentUser] Error:', error);
-    return null;
-  }
-
-}
+    // async getCurrentUser(token: { accessToken: string }): Promise<IUser | null> {
+    //     if (!token) return null;
+    //     try {
+    //         const {data, status} = await apiService(token.accessToken).get(urls.auth.me);
+    //         if (status === 401 || status === 403) {
+    //             console.log('[getCurrentUser] Unauthorized:', status);
+    //             return null;
+    //         }
+    //
+    //         if (typeof window !== "undefined" && data.id) {
+    //             localStorage.setItem("userId", data.id.toString());
+    //         }
+    //         return data;
+    //     } catch (error) {
+    //         console.log('[getCurrentUser] Error:', error);
+    //         return null;
+    //     }
+    //
+    // }
 
 }
 

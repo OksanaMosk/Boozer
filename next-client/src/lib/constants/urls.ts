@@ -10,6 +10,7 @@ const paths = {
     reviews: "/reviews-feedback",
     favorites: "/favorites",
     constants: "/constants",
+    venuesStats: "/venues/stats",
 };
 
 export const urls = {
@@ -28,6 +29,7 @@ export const urls = {
         delete: (id: string) => `${paths.users}/${id}/delete/`,
         reviews: (userId: string) => `${paths.users}/${userId}/reviews/`,
         favorites: (userId: string) => `${paths.users}/${userId}/favorites/`,
+        userVenues: (userId: string) => `${paths.users}/${userId}/venues/`,
     },
     profile: {
         get: (userId: string) => `${paths.users}/${userId}/profile/`,
@@ -50,6 +52,7 @@ export const urls = {
         reviews: (venueId: string) => `${paths.venues}/${venueId}/reviews/`,
         favorites: (venueId: string) => `${paths.venues}/${venueId}/favorites/`,
         orders: (venueId: string) => `${paths.venues}/${venueId}/orders/`,
+        stats: (venueId: string) => `${paths.venues}/${venueId}/stats/`,
         tags: {
             list: (venueId: string) => `${paths.venues}/${venueId}/tags/`,
             detail: (venueId: string, id: string) => `${paths.venues}/${venueId}/tags/${id}/`,

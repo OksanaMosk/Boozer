@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import Image from "next/image";
 import { IVenue } from "@/models/IVenue";
 import styles from "./VenueComponent.module.css";
 
@@ -28,7 +27,7 @@ const VenueComponent: React.FC<Props> = ({ venue }) => {
                     />
                 ) : (
                     <div className={styles.noPoster}>
-                        <Image
+                        <img
                             src="/images/noEye.png"
                             alt="No poster"
                             className={styles.placeholder}

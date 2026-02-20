@@ -7,32 +7,24 @@ export interface IVenue {
     country: string;
     city: string;
     address: string;
-
     latitude?: number;
     longitude?: number;
     phone?: string;
     description?: string;
-
     opening_hours?: Record<string, any>;
     features?: Record<string, any>;
-
     average_check?: number;
     rating?: number;
     reviews_count?: number;
-
     status?: string;
-
     views?: number;
     daily_views?: number;
     weekly_views?: number;
     monthly_views?: number;
-
     created_at?: string;
     updated_at?: string;
     last_exchange_update?: string | null;
-
     edit_attempts?: number;
-
     tags?: ITag[];
     photos?: IVenuePhoto[];
     tables?: ITableBooking[];
@@ -43,6 +35,9 @@ export interface IVenue {
     news?: INews[];
 }
 
+export interface IVenueWithId extends Omit<IVenue, "id"> {
+  id: string;
+}
 
 export interface IVenuePhoto {
     id: string;
@@ -140,7 +135,7 @@ export interface INews {
     updated_at?: string;
 }
 
-export interface GetUserVenueResponse {
+export interface GetUserVenuesResponse {
     venues: IVenue[];
 }
 

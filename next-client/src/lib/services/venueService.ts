@@ -11,7 +11,7 @@ const createService = <T>(baseUrl: string, token?: Token) => ({
     getAll: (token?: Token) => api(token).get<T[]>(baseUrl),
     get: (id: string, token?: Token) => api(token).get<T>(`${baseUrl}${id}/`),
     create: (data: Partial<T>, token?: Token) => api(token).post<T>(baseUrl, data),
-    update: (id: string, data: Partial<T>, token?: Token) => api(token).put<T>(`${baseUrl}${id}/`, data),
+    update: (id: string, data: Partial<T>, token?: Token) => api(token).patch<T>(`${baseUrl}${id}/`, data),
     delete: (id: string, token?: Token) => api(token).delete(`${baseUrl}${id}/`),
 });
 
@@ -154,9 +154,9 @@ const venueServices = {
                 headers: {"Content-Type": "multipart/form-data"},
             }),
         update: (venueId: string, photoId: string, data: Partial<IVenuePhoto>) =>
-            api(token).patch<IVenuePhoto>(`${urls.venues.photos(venueId)}/${photoId}/`, data),
+            api(token).patch<IVenuePhoto>(`${urls.venues.photos(venueId)}${photoId}/`, data),
         delete: (venueId: string, photoId: string) =>
-            api(token).delete(`${urls.venues.photos(venueId)}/${photoId}/`),
+            api(token).delete(`${urls.venues.photos(venueId)}${photoId}/`),
     }),
 
     tables: {
@@ -177,7 +177,10 @@ const venueServices = {
 
     constants: {
         getConstants: (token?: Token) => api(token).get(urls.constants.constantsList),
-    }
+    },
+    stats: {
+       getStats: (venueId: string, token?: Token) => api(token).get (urls.venues.stats(venueId)),
+    },
 };
 
 export default venueServices;

@@ -1,6 +1,6 @@
 import {apiService} from "./apiService";
 import {urls} from "../constants/urls";
-import {GetUserVenueResponse} from "@/models/IVenue";
+import {GetUserVenuesResponse} from "@/models/IVenue";
 import {IUser} from "@/models/IUser";
 
 
@@ -74,7 +74,7 @@ console.log(filtered)
         return data;
     },
     getUserVenues(userId: string, token: { accessToken: string }) {
-        return apiService(token.accessToken).get<GetUserVenueResponse>(urls.users.userVenues(userId));
+        return apiService(token.accessToken).get<GetUserVenuesResponse>(urls.users.userVenues(userId));
     },
 
 

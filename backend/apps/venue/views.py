@@ -4,13 +4,15 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from .models import VenueModel, TagModel, TableModel, VenuePhotoModel, TableBookingModel, VenueTag
 from .serializers import VenueSerializer, TagSerializer, TableSerializer, VenuePhotoSerializer, TableBookingSerializer, \
     VenueTagSerializer
 from .services.geocode import geocode_city
 from .services.venue_constans import get_venue_constants
-from ..user.permissions import IsAdmin, IsVenueAdminOrReadOnly, IsAdminOrVenueAdminOrReadOnly
+from .services.venue_service import get_user_venues
+from ..user.permissions import IsAdminOrVenueAdminOrReadOnly
 
 
 class VenueViewSet(viewsets.ModelViewSet):
@@ -41,7 +43,7 @@ class VenueViewSet(viewsets.ModelViewSet):
 class VenuePhotoViewSet(viewsets.ModelViewSet):
     queryset = VenuePhotoModel.objects.all()
     serializer_class = VenuePhotoSerializer
-    permission_classes = [IsAdmin | IsVenueAdminOrReadOnly]
+    permission_classes = [IsAdminOrVenueAdminOrReadOnly]
     filterset_fields = ['venue', 'is_main']
 
 
@@ -59,16 +61,32 @@ class VenueTagViewSet(viewsets.ModelViewSet):
 class TableViewSet(viewsets.ModelViewSet):
     queryset = TableModel.objects.all()
     serializer_class = TableSerializer
-    permission_classes = [IsAdmin | IsVenueAdminOrReadOnly]
+    permission_classes = [IsAdminOrVenueAdminOrReadOnly]
     filterset_fields = ['venue', 'is_active']
-
 
 
 class TableBookingViewSet(viewsets.ModelViewSet):
     queryset = TableBookingModel.objects.all()
     serializer_class = TableBookingSerializer
-    permission_classes = [IsAdmin | IsVenueAdminOrReadOnly]
+    permission_classes = [IsAdminOrVenueAdminOrReadOnly]
     filterset_fields = ['table', 'order', 'is_active']
+
+
+class VenueUserListView(APIView):
+    """
+    get:
+        Retrieve a list of venues belonging to the authenticated user.
+        Only accessible to logged-in users.
+    """
+
+    permission_classes = [IsAdminOrVenueAdminOrReadOnly]
+
+    def get(self, request, user_id):
+        venues = get_user_venues(request.user, user_id)
+        serializer = VenueSerializer(venues, many=True)
+        return Response({'venues': serializer.data})
+
+
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
@@ -82,6 +100,9 @@ def venue_constants(request):
         return Response({'detail': str(e)}, status=status.HTTP_400_BAD_REQUEST)
     except KeyError as e:
         return Response({'detail': f'Missing key: {e}'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
 
 
 @api_view(['GET'])

@@ -1,126 +1,227 @@
- .dashboard {
-     text-align: center;
-     margin: 20px auto;
-     display: flex;
-     flex-direction: column;
-     justify-content: center;
-     align-items: center;
-     width: 100%;
- }
- .cardsContainer{
-     display: flex;
-     justify-content: center;
-     flex-direction: column;
-     margin: 0 auto;
-     text-align: center;
- }
+.dashboard {
+    position: relative;
+    margin: 60px auto;
+    padding: 40px 20px;
+    width: 90%;
+    max-width: 1200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-radius: 2rem;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow:
+        0 0 20px rgba(255, 215, 0, 0.15),
+        0 0 40px rgba(255, 200, 0, 0.08);
+    animation: float 6s ease-in-out infinite;
+    overflow: hidden;
+}
 
-     .userManagement {
-         margin: 60px auto;
-         text-align: center;
-         padding: 20px;
-         font-family: 'Inter', sans-serif;
-         background: radial-gradient(circle at 10% 50%, #5ff, #00b8b8 40%, #b292c7);
-         border-radius: 12px;
-         box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-         max-width: 1200px;
-     }
+@keyframes float {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
+    100% { transform: translateY(0); }
+}
 
-     .subtitle {
-         font-size: 1.8rem;
-         font-weight: 600;
-         margin-bottom: 20px;
-         color: var(--color-text);
-     }
+.dashboard::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    padding: 3px;
+    border-radius: 2rem;
+    background: linear-gradient(
+        90deg,
+        #f9f295,
+        #ae8625,
+        #faf398,
+        #b88a44
+    );
+    -webkit-mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+            mask-composite: exclude;
+    pointer-events: none;
+}
 
-     .table {
-         width: 100%;
-         border-collapse: separate;
-         border-spacing: 0 8px;
-     }
+.dashboard::after {
+    content: "";
+    position: absolute;
+    inset: -20px;
+    border-radius: 2rem;
+    background: linear-gradient(
+        90deg,
+        #f9f295,
+        #ae8625,
+        #faf398,
+        #b88a44
+    );
+    filter: blur(40px);
+    opacity: 0.25;
+    z-index: -1;
+    animation: glowMove 6s linear infinite;
+}
 
-     .table thead tr {
-         background-color: var(--color-text);
-         color: white;
-         text-align: left;
-     }
+@keyframes glowMove {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
 
-     .table th, .table td {
-         padding: 12px 16px;
-     }
+.dashboard h2 {
+    font-size: 1.6rem;
+    font-weight: 600;
+    margin-bottom: 30px;
+    color: var(--color-text);
+}
 
-     .table tr:hover {
-         background-color: var(--color-text);
-         cursor: pointer;
-     }
+/* ================= TABLE ================= */
 
-     .table tbody tr {
-         background-color: var(--color-white);
-         border-radius: 10px;
-         box-shadow: 0 0.25rem 0.75rem var(--color-text);
-         transition: all 0.2s ease;
-     }
+.table {
+    margin: 0 auto;
+    font-size: 0.4rem;
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 8px;
+}
 
-     .table tbody tr:hover {
-         transform: translateY(-2px);
-         box-shadow: 0 0.25rem 0.75rem var(--color-border);
-     }
+.table thead tr {
+    background: var(--color-background);
+    color: var(--color-bg-dark);
+    text-align: left;
+}
 
-     .actions {
-         display: flex;
-         justify-content: flex-end;
-         gap: 6px;
-         flex-wrap: wrap;
-     }
+.table th,
+.table td {
+    padding: 0.25rem;
+    text-align: left;
+}
 
-     .statusActive {
-         color: var(--color-container);
-     }
+.table th:last-child {
+    text-align: end;
+}
 
-     .actions button {
-         color: var(--color-white);
-         border: none;
-         border-radius: 20px;
-         cursor: pointer;
-         font-size: 0.85rem;
-         font-weight: 500;
-         transition: all 0.2s ease;
-         justify-content: center;
-         align-items: center;
-         width: 80px;
-         height: 30px;
-     }
+.table tr {
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
 
-     .actions button:hover {
-         background-color: var(--color-border);
-     }
+.table tr:hover {
+    background: var(--color-background);
+}
 
-     .deleteButton {
-         background-color: #ef4444;
-     }
+.table tbody tr {
+        height:auto;
+    cursor: pointer;
+    background-color: transparent;
+    border-radius: 10px;
+    box-shadow: 0 0.25rem 0.75rem var(--color-text);
+    transition: all 0.2s ease;
+}
 
-     .deleteButton:hover {
-         background-color: var(--color-border);
-     }
+.table tbody tr:hover {
+    box-shadow: 0 0.25rem 0.75rem var(--color-text);
+}
 
-     .blockButton {
-         background-color: #9c8611;
-         color: white;
-         border: none;
-         display: flex;
-         border-radius: 4px;
-     }
+.table tbody tr:hover td:first-child {
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+}
 
-     .unblockButton {
-         background-color: var(--color-text);
-         color: var(--color-white);
-         border: none;
-         border-radius: 4px;
-         justify-content: center;
-         align-items: center;
-         width: 80px;
-         height: 30px;
-     }
-     .errorText{
-         color: var(--color-border);
-     }
+.table tbody tr:hover td:last-child {
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+.actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.button,
+.editButton,
+.deleteButton {
+    color: var(--color-white);
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.4rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    width: 70px;
+    height: 30px;
+}
+
+.button {
+    background-color: var(--color-container);
+}
+
+.button:hover,
+.editButton:hover {
+    background-color: var(--color-text);
+}
+
+.editButton {
+    background-color: var(--color-bg-dark);
+}
+
+.deleteButton {
+    background-color: #bf8282;
+}
+
+.deleteButton:hover {
+    background-color: #a94444;
+}
+
+.statusActive {
+    color: var(--color-container);
+}
+
+.statusInactive {
+    color: #bf8282;
+}
+
+.errorText {
+    margin-top: 80px;
+    text-align: center;
+    font-size: 2rem;
+    color: var(--input-color);
+}
+
+@media (min-width: 768px) {
+    .table {
+        font-size: 0.75rem;
+    }
+
+    .table th,
+    .table td {
+        padding: 6px 6px;
+    }
+
+    .button,
+    .editButton,
+    .deleteButton {
+
+        width: 80px;
+        font-size: 0.75rem;
+    }
+}
+
+@media (min-width: 1200px) {
+    .table {
+        font-size: 0.9rem;
+    }
+
+    .table th,
+    .table td {
+        padding: 10px 12px;
+    }
+
+    .button,
+    .editButton,
+    .deleteButton {
+        width: 90px;
+        font-size: 0.8rem;
+    }
+}

@@ -51,14 +51,34 @@ class IsAdminOrVenueAdminOrReadOnly(BasePermission):
             return True
 
         user = request.user
+        role = getattr(user, 'role', '').upper()
 
-        if getattr(user, 'role', None) == 'ADMIN':
+        if role == 'ADMIN':
             return True
 
-        if getattr(user, 'role', None) == 'VENUE_ADMIN':
-            return getattr(obj, 'venue_admin', None) == user
+        if role == 'VENUE_ADMIN':
+
+            if hasattr(obj, 'venue_admin'):
+                return obj.venue_admin == user
+
+            if hasattr(obj, 'venue'):
+                return getattr(obj.venue, 'venue_admin', None) == user
 
         return False
+
+    # def has_object_permission(self, request, view, obj):
+    #     if request.method in SAFE_METHODS:
+    #         return True
+    #
+    #     user = request.user
+    #
+    #     if getattr(user, 'role', None) == 'ADMIN':
+    #         return True
+    #
+    #     if getattr(user, 'role', None) == 'VENUE_ADMIN':
+    #         return getattr(obj, 'venue_admin', None) == user
+    #
+    #     return False
 
 class IsVisitorOrReadOnly(permissions.BasePermission):
     """

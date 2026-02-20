@@ -4,6 +4,7 @@ from apps.user.views import ProfileViewSet, UserListCreateAPIView, UpdateUserAct
 from apps.reviews_feedback.views import ReviewViewSet, FavoriteVenueViewSet
 from django.urls import path, include
 
+from apps.venue.views import VenueUserListView
 
 user_router = routers.DefaultRouter()
 user_router.register(r'users', UserViewSet, basename='user')
@@ -26,7 +27,7 @@ urlpatterns = [
     path('change-role/<int:user_id>/', UpdateUserRoleAPIView.as_view(), name='change_user_role'),
     path('<int:pk>/update/', UpdateUserAPIView.as_view(), name='user_update'),
     path('<int:pk>/delete/', DeleteUserAPIView.as_view(), name='user_delete'),
-
+    path('<int:user_id>/venues/', VenueUserListView.as_view(), name='user_venues_list'),
     # підключення роутерів DRF
     path('', include(user_router.urls)),
     path('', include(user_reviews_router.urls)),

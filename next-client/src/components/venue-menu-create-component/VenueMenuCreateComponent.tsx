@@ -1,13 +1,21 @@
 "use client";
 
-import React, {useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
+import Image from "next/image";
 import {useRouter} from "next/navigation";
-import {IVenue, ITag} from "@/models/IVenue";
+import IMask from "imask";
+import {LoaderComponent} from "@/components/loader-component/LoaderComponent";
+import VenueSelectsComponent from "@/components/venue-selects-component/VenueSelectsComponent";
+import MapVenueComponent from "@/components/map-venue-component/MapVenueComponent";
+
+import {IMenu, ITag, IVenue} from "@/models/IVenue";
 import {useUser} from "@/app/contexts/UserProvider";
 import venueServices from "@/lib/services/venueService";
-import {VenueForm} from "@/components/venue_form_component/VenueFormComponent";
-import {VenuePhotosComponent} from "@/components/venue-photos-component/VenuePhotosComponent";
-import styles from "@/components/venue_form_component/VenueFormComponent.module.css";
+
+import styles from "./VenueMenuCreateComponent.module.css";
+import {
+    OpeningHoursFormComponent
+} from "@/components/opening-hours-form-component/OpeningHoursFormComponent";
 
 interface ILocalPhoto {
     file: File;
@@ -15,140 +23,115 @@ interface ILocalPhoto {
     is_main?: boolean;
 }
 
-const VenueCreateComponent = () => {
+const VenueMenuCreateComponent = () => {
     const {user} = useUser();
     const router = useRouter();
-
+    const inputRef = useRef<HTMLInputElement | null>(null);
+    const [phone, setPhone] = useState("");
     const [tagsInput, setTagsInput] = useState("");
-    const [newVenue, setNewVenue] = useState<Partial<IVenue>>({
+    const [newVenueMenu, setNewVenueMenu] = useState<Partial<IMenu>>({
         name: "",
-        country: "",
-        city: "",
-        address: "",
-        latitude: 0,
-        longitude: 0,
-        phone: "",
-        description: "",
-        opening_hours: {},
-        features: {},
-        average_check: 0,
-        rating: 0,
-        reviews_count: 0,
-        status: "pending",
-        views: 0,
-        daily_views: 0,
-        weekly_views: 0,
-        monthly_views: 0,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-        last_exchange_update: null,
-        tags: [],
         photos: [],
     });
-
+    const [localPhotos, setLocalPhotos] = useState<ILocalPhoto[]>([]);
     const [message, setMessage] = useState("");
-    const [loadingVenue, setLoadingVenue] = useState(false);
-    const [loadingPhotos, setLoadingPhotos] = useState(false);
-    const [newFiles, setNewFiles] = useState<ILocalPhoto[]>([]);
 
-    const handleCreateVenue = async (e: React.SyntheticEvent) => {
-        e.preventDefault();
-        setMessage("");
-        const requiredFields: (keyof IVenue)[] = ["name", "country", "city", "description"];
-        for (const field of requiredFields) {
-            if (!newVenue[field]) {
-                setMessage(`Field "${field}" is required.`);
-                return;
-            }
+    const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (!e.target.files) return;
+
+        const files = Array.from(e.target.files);
+
+        if (localPhotos.length + files.length > 7) {
+            setMessage("You can upload up to 7 photos.");
+            return;
         }
-        const tagsArray = tagsInput
-            .split(",")
-            .map(name => ({name: name.trim()}))
-            .filter(t => t.name !== "");
 
-        const venueData = {
-            ...newVenue,
-            venue_admin: user?.id,
-            opening_hours: newVenue.opening_hours,
-            tags: tagsArray,
-        };
+        const newPhotos: ILocalPhoto[] = files.map((file) => ({
+            file,
+            preview_url: URL.createObjectURL(file),
+            is_main: false,
+        }));
 
-        setLoadingVenue(true);
-
-        try {
-            if (!user?.token) {
-                setMessage("You must be logged in to create a venue.");
-                return;
-            }
-
-            const createdVenue = await venueServices.venues.create(venueData, {accessToken: user.token});
-            const venueId = createdVenue.data.id;
-            setNewVenue(prev => ({...prev, id: venueId}));
-            const token = user.token;
-
-            if (tagsArray.length) {
-                const createdTags = await Promise.all(
-                    tagsArray.map(async (tag) => {
-                        try {
-                            console.log(`Спроба створити тег: "${tag.name}"`);
-                            const res = await venueServices.venues.tags(venueId!).create(
-                                {name: tag.name},
-                                {accessToken: token}
-                            );
-                            console.log(`Тег створено:`, res.data);
-                            return res.data;
-                        } catch (err: any) {
-                            console.log(`Помилка створення тегу "${tag.name}":`, err);
-                            const msg =
-                                err.response?.data?.name?.[0] ||
-                                err.response?.data?.detail ||
-                                err.message || '';
-
-                            if (msg.includes("already exists")) {
-                                console.log(`Тег "${tag.name}" вже існує. Пропускаємо створення.`);
-                                return {name: tag.name, id: null};
-                            }
-                            throw err;
-                        }
-                    })
-                );
-
-                console.log("Всі теги підготовлені для прив:", createdTags);
-                await Promise.all(
-                    createdTags.map(async (tagResp: ITag) => {
-                        if (!tagResp.id) {
-                            console.log(`Тег "${tagResp.name}" без id, пропускаємо прив'язку`);
-                            return;
-                        }
-
-                        try {
-                            console.log(`Прив'язка тегу "${tagResp.name}" до venue ${venueId}`);
-                            await venueServices.venues.venueTags.create(
-                                venueId!,
-                                {
-                                    venue: venueId,
-                                    tag: tagResp.id
-                                },
-                                {accessToken: token}
-                            );
-                            console.log(`Тег "${tagResp.name}" усп прив`);
-                        } catch (err: any) {
-                            console.log(`Помилка прив'язки тегу "${tagResp.name}":`, err.response?.data);
-                            if (!err.response?.data?.some((e: string) => e.includes("already exists"))) {
-                                throw err;
-                            }
-                        }
-                    })
-                );
-                console.log("Всі теги оброблені.");
-            }
-            setMessage("Venue created successfully! You can now upload photos.");
-        } catch (err: any) {
-            setMessage(err?.response?.data?.detail || "Error creating venue.");
-        } finally {
-            setLoadingVenue(false);
-        }
+        setLocalPhotos((prev) => [...prev, ...newPhotos]);
     };
+
+    const handleDeletePhoto = (index: number) => {
+        setLocalPhotos((prev) => prev.filter((_, i) => i !== index));
+    };
+
+
+   const handleCreateVenue = async (e: React.SyntheticEvent) => {
+    e.preventDefault();
+    setMessage("");
+
+    const requiredFields: (keyof IVenue)[] = ["name", "country", "city", "description"];
+    for (const field of requiredFields) {
+        if (!newVenue[field]) {
+            setMessage(`Field "${field}" is required.`);
+            return;
+        }
+    }
+
+    if (phone && !isValidPhone(phone)) {
+        setMessage("Phone number must be in format +xx (xxx) xxx-xx-xx");
+        return;
+    }
+
+    const venueData = {
+        ...newVenue,
+
+    };
+
+    try {
+        if (!user?.token) {
+            setMessage("You must be logged in to create a venue.");
+            return;
+        }
+
+        const createdVenue = await venueServices.venues.create(venueData, { accessToken: user.token });
+
+        const venueId = createdVenue.data.id;
+        setNewVenue(prev => ({ ...prev, id: venueId }));
+        const token = user.token;
+
+            try {
+                return venueServices.venues.tags(venueId!).create({ name: tag.name }, { accessToken: token });
+            } catch (err: any) {
+                if (err.response?.data?.name?.[0]?.includes("already exists")) {
+                    console.log(`Tag "${tag.name}" вже існує, пропускаємо створення`);
+                    return {data: {id: tag.id || null, name: tag.name}};
+                }
+                throw err;
+            }
+
+        })
+    );
+
+    await Promise.all(
+        createdTags.map(async (tagResp: { data: ITag }) => {
+            console.log("Другий запит → прив'язуємо тег до закладу:", venueId);
+            console.log("URL:", `/venues/${venueId}/venue_tags/`);
+            console.log("Метод: POST");
+            console.log("Body:", { tag_id: tagResp.data.id });
+            console.log("Access Token:", token);
+            if (!tagResp.data.id) return;
+            return venueServices.venues.venueTags.create(
+                venueId!,
+                 { venue: venueId, tag: tagResp.data.id },
+                { accessToken: token }
+            );
+        })
+    );
+}
+
+        setMessage("Venue created successfully! You can now upload photos.");
+
+    } catch (err: any) {
+        setMessage(err?.response?.data?.detail || "Error creating venue.");
+    } finally {
+        setLoadingVenue(false);
+    }
+};
 
     const handleAddPhotos = async (e: React.SyntheticEvent) => {
         e.preventDefault();
@@ -156,13 +139,13 @@ const VenueCreateComponent = () => {
 
         if (!user?.token) return;
         if (!newVenue.id) return setMessage("Create the venue first.");
-        if (newFiles.length === 0) return setMessage("Add at least one photo.");
+        if (localPhotos.length === 0) return setMessage("Add at least one photo.");
 
         setLoadingPhotos(true);
         try {
-            const photosToUpload = newFiles.map((p, i) => ({
+            const photosToUpload = localPhotos.map((p, i) => ({
                 ...p,
-                is_main: p.is_main ?? i === 0,
+                is_main: p.is_main ?? i === 0
             }));
 
             for (const p of photosToUpload) {
@@ -170,10 +153,12 @@ const VenueCreateComponent = () => {
                 formData.append("photo", p.file);
                 formData.append("venue", newVenue.id!);
                 formData.append("is_main", p.is_main ? "true" : "false");
+
                 await venueServices.venuePhotos({accessToken: user.token}).create(newVenue.id, formData);
             }
+
             setMessage("Photos uploaded successfully!");
-            setNewFiles([]);
+            setLocalPhotos([]);
             router.push(`/venue-admin/venues/${newVenue.id}`);
         } catch {
             setMessage("Error uploading photos.");
@@ -182,31 +167,179 @@ const VenueCreateComponent = () => {
         }
     };
 
+
+
     return (
-        <div className={styles.wrap}>
-            <VenueForm
-                mode="create"
-                form={newVenue}
-                setForm={setNewVenue}
-                onSubmit={handleCreateVenue}
-                saving={loadingVenue}
-                message={message}
-                tagsInput={tagsInput}
-                setTagsInput={setTagsInput}
-            />
-            <VenuePhotosComponent
-                existingPhotos={[]}
-                newFiles={newFiles}
-                setNewFiles={setNewFiles}
-                onAddPhotos={handleAddPhotos}
-                loading={loadingPhotos}
-            />
-        </div>
+        <section className={styles.wrapper}>
+            <h3 className={styles.subtitle}>Create New Venue</h3>
+
+            <div className={styles.formWrapper}>
+                <form className={styles.form} onSubmit={handleCreateVenue}>
+                    <div className={styles.coordinatesWrapper}>
+                        <div className={styles.leftSideWrapper}>
+                            <VenueSelectsComponent
+                                country={newVenue.country || ""}
+                                city={newVenue.city || ""}
+                                setCountry={(country) => setNewVenue((prev) => ({...prev, country}))}
+                                setCity={(city) => setNewVenue((prev) => ({...prev, city}))}
+                                setCoordinates={(lat, lng) =>
+                                    setNewVenue((prev) => ({...prev, latitude: lat, longitude: lng}))
+                                }
+                            />
+                            <div className={styles.inputWrapper}>
+                                <label className={styles.label}>Venue Name *</label>
+                                <input
+                                    type="text"
+                                    name="name"
+                                    value={newVenue.name}
+                                    onChange={handleInputChange}
+                                    required
+                                    className={styles.inputCreate}
+                                />
+                            </div>
+                            <div className={styles.inputWrapper}>
+                                <label className={styles.label}>Tags (comma-separated)</label>
+                                <input
+                                    type="text"
+                                    value={tagsInput}
+                                    onChange={(e) => setTagsInput(e.target.value)}
+                                    placeholder="Enter tags, comma-separated"
+                                    className={styles.inputCreate}
+                                />
+                            </div>
+
+
+
+                            <div className={styles.inputWrapper}>
+                                <label className={styles.label}>Address *</label>
+                                <input
+                                    type="text"
+                                    name="address"
+                                    value={newVenue.address}
+                                    onChange={handleInputChange}
+                                    className={styles.inputCreate}
+                                />
+                            </div>
+
+                            <div className={styles.inputWrapper}>
+                                <label className={styles.label}>Phone *</label>
+                                <input
+                                    className={styles.inputCreate}
+                                    ref={inputRef}
+                                    value={phone}
+                                    onChange={handleInputChange}
+                                    type="tel"
+                                    name="phone"
+                                    placeholder="+xx (xxx) xxx-xx-xx"
+                                />
+                            </div>
+
+                            <div className={styles.inputWrapper}>
+                                <div className={styles.inputWrapper}>
+                                    <OpeningHoursFormComponent
+                                        newVenue={newVenue}
+                                        setNewVenue={setNewVenue}
+                                    />
+                                </div>
+                            </div>
+
+
+                        </div>
+
+                        <div className={styles.mapWrapper}>
+                            {newVenue.latitude &&
+                            newVenue.longitude &&
+                            !isNaN(newVenue.latitude) ? (
+                                <MapVenueComponent
+                                    lat={newVenue.latitude}
+                                    lng={newVenue.longitude}
+                                />
+                            ) : (
+                                <div className={styles.mapPlaceholder}>
+                                    Coordinates will appear here after selecting city/country.
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    <div className={styles.bottomWrapper}>
+
+                        <div className={styles.inputWrapper}>
+                            <label className={styles.label}>Description *</label>
+                            <textarea
+                                name="description"
+                                value={newVenue.description}
+                                onChange={handleInputChange}
+                                required
+                                className={styles.textarea}
+                            />
+                        </div>
+                        <button type="submit" disabled={loadingVenue} className={styles.submitButton}>
+                            {loadingVenue ? <div className={`authButton ${styles.loaderWrapper}`}><LoaderComponent/>
+                            </div> : "Save Venue"}
+                        </button>
+                    </div>
+                    {message && <p className={styles.success}>{message}</p>}
+                </form>
+            </div>
+            <form onSubmit={handleAddPhotos} className={styles.photoWrapper}>
+                <label className={styles.label}>Upload Photos (Max 7)</label>
+                <input
+                    type="file"
+                    multiple
+                    onChange={handlePhotoChange}
+                    disabled={loadingPhotos || localPhotos.length >= 7}
+                    className={styles.inputFile}
+                />
+
+                <div className={styles.photoContainer}>
+                    {localPhotos.map((photo, i) => (
+                        <div className={styles.photoArray} key={i}>
+                            <Image
+                                className={styles.photoImage}
+                                src={photo.preview_url}
+                                alt=""
+                                width={140}
+                                height={100}
+                            />
+                            <div>
+                                <label>
+                                    <input
+                                        type="radio"
+                                        name="mainPhoto"
+                                        checked={photo.is_main || false}
+                                        onChange={() => {
+                                            setLocalPhotos(prev =>
+                                                prev.map((p, index) => ({...p, is_main: index === i}))
+                                            );
+                                        }}
+                                    />
+                                    Main
+                                </label>
+                            </div>
+                            <button
+                                type="button"
+                                onClick={() => handleDeletePhoto(i)}
+                                className={styles.deleteButton}
+                            >
+                                Delete
+                            </button>
+                        </div>
+                    ))}
+
+                </div>
+                {newVenue.id && localPhotos.length > 0 && (
+                    <button type="submit" disabled={loadingPhotos} className={styles.submitButton}>
+                        {loadingPhotos ? <div className={`authButton ${styles.loaderWrapper}`}><LoaderComponent/>
+                        </div> : "Add Photos"}
+                    </button>
+                )}
+            </form>
+        </section>
     );
 };
 
-export default VenueCreateComponent;
-
+export default VenueMenuCreateComponent;
 
 
 

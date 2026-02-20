@@ -8,6 +8,7 @@ import { IVenue } from "@/models/IVenue";
 import styles from "./VenueManagementComponent.module.css";
 import { useUser } from "@/app/contexts/UserProvider";
 
+
 const VenueManagementComponent = () => {
   const [venues, setVenues] = useState<IVenue[]>([]);
   const [loading, setLoading] = useState(true);
@@ -16,12 +17,12 @@ const VenueManagementComponent = () => {
   const { user } = useUser();
 
   useEffect(() => {
-    if (!user?.id || !user?.token) return;
+
 
     const loadVenues = async () => {
       try {
+          if (!user?.id || !user?.token) return;
         setLoading(true);
-
         const response = await userService.getUserVenues(user.id, {
           accessToken: user.token,
         });
@@ -43,7 +44,7 @@ const VenueManagementComponent = () => {
     if (!user?.token) return;
 
     try {
-      await venueService.update(
+      await venueService.venues.update(
         venueId,
         { status: newStatus },
         { accessToken: user.token }
@@ -64,7 +65,7 @@ const VenueManagementComponent = () => {
     if (!user?.token) return;
 
     try {
-      await venueService.delete(venueId, {
+      await venueService.venues.delete(venueId, {
         accessToken: user.token,
       });
 
@@ -124,7 +125,7 @@ const VenueManagementComponent = () => {
                   <select
                     value={venue.status}
                     onChange={(e) =>
-                      handleStatusChange(venue.id, e.target.value)
+                      handleStatusChange(venue.id!, e.target.value)
                     }
                   >
                     <option value="active">Active</option>
@@ -133,7 +134,7 @@ const VenueManagementComponent = () => {
                   </select>
 
                   <button
-                    onClick={() => handleDelete(venue.id)}
+                    onClick={() => handleDelete(venue.id!)}
                     className={styles.deleteButton}
                   >
                     Delete

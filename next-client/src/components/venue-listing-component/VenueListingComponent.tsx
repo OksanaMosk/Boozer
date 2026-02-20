@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import axios from "axios";
 import venueService from "@/lib/services/venueService";
-import { IVenue } from "@/models/IVenue";
+import {IVenueWithId} from "@/models/IVenue";
 import { useUser } from "@/app/contexts/UserProvider";
 import styles from "./VenueListingComponent.module.css";
 
@@ -16,7 +16,7 @@ interface VenueStats {
 }
 
 interface Props {
-  venue: IVenue;
+  venue: IVenueWithId;
   onDelete?: (id: string) => void;
   onStatusChange?: (venueId: string, status: string) => void;
 }
@@ -27,11 +27,8 @@ const VenueListingComponent: React.FC<Props> = ({
   onStatusChange,
 }) => {
   const { user } = useUser();
-
   const [status, setStatus] = useState<string>(venue.status || "");
   const [stats, setStats] = useState<VenueStats | null>(null);
-  const [error, setError] = useState<string | null>(null);
-
   const isLocked = (venue.edit_attempts ?? 0) >= 3;
 
   useEffect(() => {
@@ -39,16 +36,10 @@ const VenueListingComponent: React.FC<Props> = ({
 
     (async () => {
       try {
-        setError(null);
-
-        const [statsRes] = await Promise.all([
-          venueService.getStats(venue.id),
-        ]);
-
+        const statsRes = await venueService.stats.getStats(venue.id);
         setStats(statsRes.data);
-
       } catch {
-        setError("Error loading stats and prices");
+        console.log("Error loading stats and prices");
       }
     })();
   }, [venue.id, venue.city, user]);
@@ -97,29 +88,43 @@ const VenueListingComponent: React.FC<Props> = ({
     }
   };
 
+
+
+    const mainPhoto = venue.photos?.find((p) => p.is_main) || venue.photos?.[0];
+
+
   return (
-    <div className={styles.wrapper}>
-      {error && <p className={styles.error}>{error}</p>}
+   <>
+       <tr key={venue.id} className={styles.tableRow}>
+           <td className={styles.tableRowTitle}>{venue.id}</td>
+           <td className={styles.tableRowTitle}>{venue.name}</td>
+           <td className={styles.photo}>
+         {mainPhoto ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                        src={mainPhoto.photo}
+                        alt={`${venue.name} ${venue.city}`}
+                        width={280}
+                        height={300}
+                        className={styles.venuePoster}
+                    />
+                ) : (
+                    <div className={styles.noPoster}>
+                        <img
+                            src="/images/noEye.png"
+                            alt="No poster"
+                            className={styles.placeholder}
+                            width={280}
+                            height={300}
+                        />
+                    </div>
+                )}
 
-      <table className={styles.table}>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>City</th>
-            <th>Country</th>
-            <th>Status</th>
-            <th>Actions</th>
-            <th>Stats</th>
-          </tr>
-        </thead>
+           </td>
+           <td>{venue.city}</td>
+           <td>{venue.country}</td>
 
-        <tbody>
-          <tr key={venue.id} className={styles.tableRow}>
-            <td>{venue.name}</td>
-            <td>{venue.city}</td>
-            <td>{venue.country}</td>
-
-            <td
+           <td
               className={
                 status === "active"
                   ? styles.statusActive
@@ -129,58 +134,79 @@ const VenueListingComponent: React.FC<Props> = ({
               {status}
             </td>
 
-            <td className={styles.actions}>
-              <button
-                className={styles.button}
-                onClick={handleStatusChange}
-                disabled={isLocked}
-              >
-                {status === "active" ? "Deactivate" : "Activate"}
-              </button>
+            <td className={styles.a}>
+               <div className={styles.actions}>
+                    <button
+                        className={styles.button}
+                        onClick={handleStatusChange}
+                        disabled={isLocked}
+                    >
+                        {status === "active" ? "Deactivate" : "Activate"}
+                    </button>
+                    <Link href={isLocked ? "#" : `/venue-admin/venues/${venue.id}/edit/`}>
+                        <button
+                            className={styles.editButton}
+                            disabled={isLocked}
+                        >
+                            Edit
+                        </button>
+                    </Link>
 
-              <Link href={isLocked ? "#" : `/venues/edit/${venue.id}`}>
-                <button
-                  className={styles.editButton}
-                  disabled={isLocked}
-                >
-                  Edit
-                </button>
-              </Link>
+                    <button
+                        onClick={handleDelete}
+                        className={styles.deleteButton}
+                    >
+                        Delete
+                    </button>
 
-              <button
-                onClick={handleDelete}
-                className={styles.deleteButton}
-              >
-                Delete
-              </button>
-
-              {isLocked && (
-                <p style={{ color: "#ef4444", marginTop: 4, fontSize: 10 }}>
-                  Locked!
-                </p>
-              )}
+                    {isLocked && (
+                        <p style={{color: "#ef4444", marginTop: 4, fontSize: 10}}>
+                            Locked!
+                        </p>
+                    )}
+               </div>
             </td>
+
+                <td className={styles.a}>
+        <div className={styles.actions}>
+
+          <Link href={`/venue-admin/venues/${venue.id}/menu/`} className={styles.buttonLink}>
+            Menu
+          </Link>
+          <Link href={`/venue-admin/venues/${venue.id}/news/`} className={styles.buttonLink}>
+            News
+          </Link>
+          <Link href={`/venue-admin/venues/${venue.id}/features/`} className={styles.buttonLink}>
+            Features
+          </Link>
+          <Link href={`/venue-admin/venues/${venue.id}/tables/`} className={styles.buttonLink}>
+            Tables
+          </Link>
+          <Link href={`/venue-admin/venues/${venue.id}/orders/`} className={styles.buttonLink}>
+            Orders
+          </Link>
+        </div>
+      </td>
+
 
             <td>
-              {user ? (
-                stats ? (
-                  <>
-                    <p>Views: {stats.total_views}</p>
-                    <p>Daily: {stats.daily_views}</p>
-                    <p>Weekly: {stats.weekly_views}</p>
-                    <p>Monthly: {stats.monthly_views}</p>
-                  </>
-                ) : (
-                  <p>Loading stats...</p>
-                )
-              ) : (
-                <p>Premium required</p>
-              )}
+              {/*{user ? (*/}
+              {/*  stats ? (*/}
+              {/*    <>*/}
+              {/*      <p>Views: {stats.total_views}</p>*/}
+              {/*      <p>Daily: {stats.daily_views}</p>*/}
+              {/*      <p>Weekly: {stats.weekly_views}</p>*/}
+              {/*      <p>Monthly: {stats.monthly_views}</p>*/}
+              {/*    </>*/}
+              {/*  ) : (*/}
+              {/*    <p>Loading stats...</p>*/}
+              {/*  )*/}
+              {/*) : (*/}
+              {/*  <p>Premium required</p>*/}
+              {/*)}*/}
             </td>
           </tr>
-        </tbody>
-      </table>
-    </div>
+    </>
   );
 };
 

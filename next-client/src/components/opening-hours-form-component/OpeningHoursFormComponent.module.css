@@ -12,8 +12,8 @@
 
 .dayLabel {
     width: 50px;
-    font-weight: 600;
-    color: #333;
+   font-size: 0.8rem;
+    color: var(--input-color);
 }
 
 .timeInput {
