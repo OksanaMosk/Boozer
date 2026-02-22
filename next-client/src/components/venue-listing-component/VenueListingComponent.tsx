@@ -7,6 +7,7 @@ import venueService from "@/lib/services/venueService";
 import {IVenueWithId} from "@/models/IVenue";
 import { useUser } from "@/app/contexts/UserProvider";
 import styles from "./VenueListingComponent.module.css";
+import {useRouter} from "next/navigation";
 
 interface VenueStats {
   total_views: number;
@@ -16,177 +17,211 @@ interface VenueStats {
 }
 
 interface Props {
-  venue: IVenueWithId;
-  onDelete?: (id: string) => void;
-  onStatusChange?: (venueId: string, status: string) => void;
+    venue: IVenueWithId;
+    onDelete?: (id: string) => void;
+    onStatusChange?: (venueId: string, status: string) => void;
 }
 
 const VenueListingComponent: React.FC<Props> = ({
-  venue,
-  onDelete,
-  onStatusChange,
-}) => {
-  const { user } = useUser();
-  const [status, setStatus] = useState<string>(venue.status || "");
-  const [stats, setStats] = useState<VenueStats | null>(null);
-  const isLocked = (venue.edit_attempts ?? 0) >= 3;
+                                                    venue,
+                                                    onDelete,
+                                                    onStatusChange,
+                                                }) => {
+    const {user} = useUser();
+    const [status, setStatus] = useState<string>(venue.status || "");
+    const [stats, setStats] = useState<VenueStats | null>(null);
+    const isLocked = (venue.edit_attempts ?? 0) >= 3;
+    const router = useRouter();
 
-  useEffect(() => {
-    if (!user) return;
+    useEffect(() => {
+        if (!user) return;
 
-    (async () => {
-      try {
-        const statsRes = await venueService.stats.getStats(venue.id);
-        setStats(statsRes.data);
-      } catch {
-        console.log("Error loading stats and prices");
-      }
-    })();
-  }, [venue.id, venue.city, user]);
+        (async () => {
+            try {
+                const statsRes = await venueService.stats.getStats(venue.id);
+                setStats(statsRes.data);
+            } catch {
+                console.log("Error loading stats and prices");
+            }
+        })();
+    }, [venue.id, venue.city, user]);
 
-  const handleStatusChange = async () => {
-    if (status === "pending") {
-      alert("You cannot change status while venue is pending review.");
-      return;
-    }
+    const handleStatusChange = async () => {
+        if (status === "pending") {
+            alert("You cannot change status while venue is pending review.");
+            return;
+        }
 
-    if (!user?.token) return;
+        if (!user?.token) return;
 
-    try {
-      const newStatus = status === "active" ? "inactive" : "active";
+        try {
+            const newStatus = status === "active" ? "inactive" : "active";
 
-      await venueService.venues.update(
-        venue.id,
-        { status: newStatus },
-        { accessToken: user.token }
-      );
+            await venueService.venues.update(
+                venue.id,
+                {status: newStatus},
+                {accessToken: user.token}
+            );
 
-      setStatus(newStatus);
-      onStatusChange?.(venue.id, newStatus);
-    } catch (err) {
-      if (axios.isAxiosError(err)) {
-        console.error("BACKEND ERROR:", err.response?.data);
-      } else {
-        console.error("UNKNOWN ERROR:", err);
-      }
+            setStatus(newStatus);
+            onStatusChange?.(venue.id, newStatus);
+        } catch (err) {
+            if (axios.isAxiosError(err)) {
+                console.error("BACKEND ERROR:", err.response?.data);
+            } else {
+                console.error("UNKNOWN ERROR:", err);
+            }
 
-      alert("Error updating status");
-    }
-  };
+            alert("Error updating status");
+        }
+    };
 
-  const handleDelete = async () => {
-    if (!user?.token) return;
+    const handleDelete = async () => {
+        if (!user?.token) return;
 
-    try {
-      await venueService.venues.delete(venue.id, {
-        accessToken: user.token,
-      });
+        try {
+            await venueService.venues.delete(venue.id, {
+                accessToken: user.token,
+            });
 
-      onDelete?.(venue.id);
-    } catch {
-      alert("Error deleting venue");
-    }
-  };
-
-
-
-    const mainPhoto = venue.photos?.find((p) => p.is_main) || venue.photos?.[0];
+            onDelete?.(venue.id);
+        } catch {
+            alert("Error deleting venue");
+        }
+    };
 
 
-  return (
-   <>
-       <tr key={venue.id} className={styles.tableRow}>
-           <td className={styles.tableRowTitle}>{venue.id}</td>
-           <td className={styles.tableRowTitle}>{venue.name}</td>
-           <td className={styles.photo}>
-         {mainPhoto ? (
-                    // eslint-disable-next-line @next/next/no-img-element
+    const photos = venue.photos ?? [];
+    const mainPhoto = photos.find(p => p.is_main) || photos[0] || null;
+
+    const getPhotoUrl = (photo: string) => {
+        if (!photo) return '/images/noPoster.png';
+        return photo.startsWith('http') ? photo : `http://localhost:8888${photo}`;
+    };
+
+
+    const goToInfo = () => {
+        if (!isLocked) {
+            router.push(`/venues/${venue.id}`);
+        }
+    };
+
+    return (
+        <>
+            <tr
+                key={venue.id}
+                className={styles.tableRow}
+                onClick={goToInfo}
+            >
+                <td className={styles.tableRowTitle}>{venue.id}</td>
+                <td className={styles.tableRowTitle}>{venue.name}</td>
+                <td className={styles.tableRowTitle}>
                     <img
-                        src={mainPhoto.photo}
+                        src={getPhotoUrl(mainPhoto.photo)}
                         alt={`${venue.name} ${venue.city}`}
                         width={280}
                         height={300}
                         className={styles.venuePoster}
                     />
-                ) : (
-                    <div className={styles.noPoster}>
-                        <img
-                            src="/images/noEye.png"
-                            alt="No poster"
-                            className={styles.placeholder}
-                            width={280}
-                            height={300}
-                        />
-                    </div>
-                )}
+                </td>
+                <td>{venue.city}</td>
+                <td>{venue.country}</td>
 
-           </td>
-           <td>{venue.city}</td>
-           <td>{venue.country}</td>
-
-           <td
-              className={
-                status === "active"
-                  ? styles.statusActive
-                  : styles.statusInactive
-              }
-            >
-              {status}
-            </td>
-
-            <td className={styles.a}>
-               <div className={styles.actions}>
-                    <button
-                        className={styles.button}
-                        onClick={handleStatusChange}
-                        disabled={isLocked}
-                    >
-                        {status === "active" ? "Deactivate" : "Activate"}
-                    </button>
-                    <Link href={isLocked ? "#" : `/venue-admin/venues/${venue.id}/edit/`}>
-                        <button
-                            className={styles.editButton}
-                            disabled={isLocked}
-                        >
-                            Edit
-                        </button>
-                    </Link>
-
-                    <button
-                        onClick={handleDelete}
-                        className={styles.deleteButton}
-                    >
-                        Delete
-                    </button>
-
-                    {isLocked && (
-                        <p style={{color: "#ef4444", marginTop: 4, fontSize: 10}}>
-                            Locked!
-                        </p>
-                    )}
-               </div>
-            </td>
+                <td
+                    className={
+                        status === "active"
+                            ? styles.statusActive
+                            : styles.statusInactive
+                    }
+                >
+                    {status}
+                </td>
 
                 <td className={styles.a}>
-        <div className={styles.actions}>
+                    <div className={styles.actions}>
+                        <button
 
-          <Link href={`/venue-admin/venues/${venue.id}/menu/`} className={styles.buttonLink}>
-            Menu
-          </Link>
-          <Link href={`/venue-admin/venues/${venue.id}/news/`} className={styles.buttonLink}>
-            News
-          </Link>
-          <Link href={`/venue-admin/venues/${venue.id}/features/`} className={styles.buttonLink}>
-            Features
-          </Link>
-          <Link href={`/venue-admin/venues/${venue.id}/tables/`} className={styles.buttonLink}>
-            Tables
-          </Link>
-          <Link href={`/venue-admin/venues/${venue.id}/orders/`} className={styles.buttonLink}>
-            Orders
-          </Link>
-        </div>
-      </td>
+                            className={styles.button}
+                            onClick={async (e) => {
+                                e.stopPropagation();
+                                try {
+                                    await handleStatusChange();
+                                } catch (error) {
+                                    console.error(error);
+                                }
+                            }}
+                            disabled={isLocked}
+                        >
+                            {status === "active" ? "Deactivate" : "Activate"}
+                        </button>
+                        <Link href={isLocked ? "#" : `/venue-admin/venues/${venue.id}/edit/`}>
+                            <button
+                                className={styles.editButton}
+                                disabled={isLocked}
+                                onClick={(e) => e.stopPropagation()}
+                            >
+                                Edit
+                            </button>
+                        </Link>
+
+                        <button
+                            onClick={async (e) => {
+                                e.stopPropagation();
+                                await handleDelete();
+                            }}
+                            className={styles.deleteButton}
+                        >
+                            Delete
+                        </button>
+
+                        {isLocked && (
+                            <p style={{color: "#ef4444", marginTop: 4, fontSize: 10}}>
+                                Locked!
+                            </p>
+                        )}
+                    </div>
+                </td>
+
+                <td className={styles.a}>
+                    <div className={styles.actions}>
+
+                        <Link
+                            href={`/venue-admin/venues/${venue.id}/menu/`}
+                            className={styles.buttonLink}
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            Menu
+                        </Link>
+                        <Link
+                            href={`/venue-admin/venues/${venue.id}/news/`}
+                            className={styles.buttonLink}
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            News
+                        </Link>
+                        <Link
+                            href={`/venue-admin/venues/${venue.id}/features/`}
+                            className={styles.buttonLink}
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            Features
+                        </Link>
+                        <Link
+                            href={`/venue-admin/venues/${venue.id}/tables/`}
+                            className={styles.buttonLink}
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            Tables
+                        </Link>
+                        <Link
+                            href={`/venue-admin/venues/${venue.id}/orders/`}
+                            className={styles.buttonLink}
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            Orders
+                        </Link>
+                    </div>
+                </td>
 
 
             <td>

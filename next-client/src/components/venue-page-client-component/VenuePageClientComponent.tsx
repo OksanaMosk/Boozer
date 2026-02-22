@@ -24,9 +24,9 @@ export default function VenuePageClientComponent({ venueId }: VenuePageClientPro
       try {
         const response = await venueService.venues.get(venueId);
         setVenue(response.data);
-        console.log(response.data);
+        // console.log(response.data);
       } catch (err: any) {
-        console.error("Failed to fetch venue details:", err);
+        // console.error("Failed to fetch venue details:", err);
         setError("Failed to fetch venue details");
       } finally {
         setLoading(false);

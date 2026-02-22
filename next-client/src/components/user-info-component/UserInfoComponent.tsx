@@ -19,8 +19,8 @@ type UserInfoProps = {
 export const UserInfoComponent = ({onLogoutAction, classNames = {}}: UserInfoProps) => {
   const {user} = useUser()
     if (!user) return null;
-    console.log(user);
-    console.log("User Profile:", user?.profile);
+    // console.log(user);
+    // console.log("User Profile:", user?.profile);
 
     const avatarLetter = user.email ? user.email[0].toUpperCase() : "?";
 

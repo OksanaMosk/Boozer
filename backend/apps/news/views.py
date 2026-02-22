@@ -2,12 +2,13 @@ from rest_framework import viewsets, filters
 from django_filters.rest_framework import DjangoFilterBackend
 from .models import NewsModel
 from .serializers import NewsSerializer
-from ..user.permissions import IsAdmin, IsVenueAdminOrReadOnly
+from ..user.permissions import IsAdmin, IsVenueAdminOrReadOnly, IsAdminOrVenueAdminOrReadOnly
+
 
 class NewsViewSet(viewsets.ModelViewSet):
     queryset = NewsModel.objects.all()
     serializer_class = NewsSerializer
-    permission_classes = [IsAdmin | IsVenueAdminOrReadOnly]
+    permission_classes = [IsAdminOrVenueAdminOrReadOnly]
 
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['venue']

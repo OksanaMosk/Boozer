@@ -14,7 +14,7 @@ const userService = {
         },
         token: { accessToken: string }
     ): Promise<IUser[]> => {
-        console.log(token.accessToken);
+        // console.log(token.accessToken);
         const response = await apiService(token.accessToken).get(urls.users.list);
         const usersArray: IUser[] = Array.isArray(response.data.data) ? response.data.data : [];
         let filtered: IUser[] = usersArray;
@@ -51,7 +51,7 @@ const userService = {
                 return 0;
             });
         }
-console.log(filtered)
+// console.log(filtered)
         return filtered;
     },
 

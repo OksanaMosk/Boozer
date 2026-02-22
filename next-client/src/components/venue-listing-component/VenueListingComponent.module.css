@@ -21,7 +21,7 @@
     flex-direction: column;
     justify-content:center;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.2rem;
     flex-wrap: wrap;
 
 }
@@ -66,6 +66,12 @@
     display: flex;
    justify-content: center;
     align-items: center;
+}
+.venuePoster{
+    width: 200px;
+    height: 120px;
+    border-radius: 1rem;
+    object-fit: cover;
 }
 
 @media (min-width: 768px) {

@@ -22,8 +22,8 @@ export const MenuClientComponent = () => {
   const pathname = usePathname();
 
   useEffect(() => {
-  console.log(user, authenticated);
-  console.log("User Profile:", user?.profile);
+  // console.log(user, authenticated);
+  // console.log("User Profile:", user?.profile);
 }, [user]);
 
   const menuItems = [

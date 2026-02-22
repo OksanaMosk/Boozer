@@ -59,12 +59,14 @@ const VenueAdminDashboardComponent: React.FC = () => {
     if (error) return <p className={styles.errorText}>{error}</p>;
 
     return (
-        <><h2>My Venue Listings</h2>
+
+        <><h2 className={styles.subtitle} >My Venue Listings</h2>
             <div className={styles.dashboard}>
 
                 <table className={styles.table}>
                     <thead>
-                    <tr><th>Id</th>
+                    <tr>
+                        <th>Id</th>
                         <th>Name</th>
                         <th>Main Photo</th>
                         <th>City</th>
@@ -88,7 +90,7 @@ const VenueAdminDashboardComponent: React.FC = () => {
                         ))
                     ) : (
                         <tr>
-                            <td colSpan={6}>No venues found.</td>
+                            <td colSpan={9}>No venues found.</td>
                         </tr>
                     )}
                     </tbody>

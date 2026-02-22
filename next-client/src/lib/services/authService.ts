@@ -35,7 +35,7 @@ const authService = {
     async register(user: IRegisterUser): Promise<IUser> {
         try {
             const {data} = await apiService().post<IUser>(urls.auth.register, user);
-            console.log("Success response:", data);
+            // console.log("Success response:", data);
             return data;
         } catch (error) {
             if (error instanceof AxiosError) {
@@ -50,27 +50,6 @@ const authService = {
     getSocketToken() {
         return apiService().get(urls.auth.socket);
     },
-
-    // async getCurrentUser(token: { accessToken: string }): Promise<IUser | null> {
-    //     if (!token) return null;
-    //     try {
-    //         const {data, status} = await apiService(token.accessToken).get(urls.auth.me);
-    //         if (status === 401 || status === 403) {
-    //             console.log('[getCurrentUser] Unauthorized:', status);
-    //             return null;
-    //         }
-    //
-    //         if (typeof window !== "undefined" && data.id) {
-    //             localStorage.setItem("userId", data.id.toString());
-    //         }
-    //         return data;
-    //     } catch (error) {
-    //         console.log('[getCurrentUser] Error:', error);
-    //         return null;
-    //     }
-    //
-    // }
-
 }
 
 export {authService};

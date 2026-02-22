@@ -71,32 +71,27 @@
 .inputCreate:focus {
     background-color: rgba(255, 255, 255, 0.3);
 }
-.error {
-    margin: 0;
-    padding: 0;
-    background: linear-gradient(90deg, #7a5c1e, #d4af37, #f5e6a1, #d4af37, #7a5c1e);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    color: transparent;
-    font-size: 0.6rem;
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.errorMessage {
+  margin-bottom: 15px;
+  padding: 10px;
+  border-radius: 6px;
+  text-align: center;
+  font-weight: 500;
+    z-index: 1000;
+    color: var(--color-white);
 }
 
 .bottomWrapper {
     width: 100%;
-    display: flex;
+  display: flex;
     flex-wrap: wrap;
     align-items: flex-end;
     justify-content: space-between;
 }
 .inputWrapper {
     width: 80%;
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
 
 .textarea{
@@ -117,8 +112,8 @@
 }
 
 .inputSection {
-    margin-bottom: 1.5rem;
-    display: flex;
+  margin-bottom: 1.5rem;
+  display: flex;
 }
 
 .topSection{
@@ -165,12 +160,12 @@
     justify-content: center;
     align-items: center;
     font-size: 1rem;
-    box-shadow: 0 0 12px white;
-    border: none;
-    border-radius: 26px;
-    cursor: pointer;
-    transition: background 0.2s;
-    background: linear-gradient(
+       box-shadow: 0 0 12px white;
+  border: none;
+  border-radius: 26px;
+  cursor: pointer;
+  transition: background 0.2s;
+  background: linear-gradient(
         90deg,
         #f9f295,
         #ae8625,
@@ -323,10 +318,6 @@ display: flex;
         font-size: 1rem;
         border-radius: 2rem;
         cursor: pointer;
-    }
-.select {
-    padding: 6px;
-    font-size: 1rem;
 }
     .label,
     .photoLabel {

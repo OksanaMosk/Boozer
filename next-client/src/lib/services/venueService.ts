@@ -1,14 +1,25 @@
 import {urls} from "../constants/urls";
 import {apiService} from "./apiService";
-import {IVenue, IVenuePhoto, ITableBooking, IMenu, IMenuItem, IOrder, IReview, INews, IVenueTag} from "@/models/IVenue";
+import {
+    IVenue,
+    IVenuePhoto,
+    ITableBooking,
+    IMenu,
+    IMenuItem,
+    IOrder,
+    IReview,
+    INews,
+    IVenueTag,
+    PaginatedResponse
+} from "@/models/IVenue";
 import {IUser} from "@/models/IUser";
 
 type Token = { accessToken: string };
 
 const api = (token?: Token) => apiService(token?.accessToken);
 
-const createService = <T>(baseUrl: string, token?: Token) => ({
-    getAll: (token?: Token) => api(token).get<T[]>(baseUrl),
+const createService = <T>(baseUrl: string) => ({
+    getAll: (token?: Token) => api(token).get<PaginatedResponse<T>>(baseUrl),
     get: (id: string, token?: Token) => api(token).get<T>(`${baseUrl}${id}/`),
     create: (data: Partial<T>, token?: Token) => api(token).post<T>(baseUrl, data),
     update: (id: string, data: Partial<T>, token?: Token) => api(token).patch<T>(`${baseUrl}${id}/`, data),
@@ -16,7 +27,7 @@ const createService = <T>(baseUrl: string, token?: Token) => ({
 });
 
 const getByParent = <T>(endpoint: (parentId: string) => string, token?: Token) =>
-    (parentId: string) => api(token).get<T[]>(endpoint(parentId));
+    (parentId: string) => api(token).get<T>(endpoint(parentId));
 
 export interface VenueFilterCriteria {
     name?: string;
@@ -89,24 +100,38 @@ const buildFavoriteParams = (criteria?: FavoriteFilterCriteria) => {
     if (criteria?.venueId) params.venue = criteria.venueId;
     return params;
 };
-interface PaginatedVenues {
-  data: IVenue[];
-  total_pages: number;
-  current_page: number;
-}
 
 
 const venueServices = {
     venues: {
         getAllWithFilter: (filterCriteria?: VenueFilterCriteria, token?: Token) =>
-            api(token).get<PaginatedVenues>(urls.venues.list, {params: buildVenueParams(filterCriteria)}),
+            api(token).get<PaginatedResponse<IVenue>>(urls.venues.list, {params: buildVenueParams(filterCriteria)}),
         ...createService<IVenue>(urls.venues.list),
         photos: getByParent<IVenuePhoto>(urls.venues.photos),
         tables: getByParent<ITableBooking>(urls.venues.tables),
         bookings: getByParent<IOrder>(urls.venues.bookings),
-        menu: getByParent<IMenu>(urls.venues.menu),
-        menuItems: (venueId: string, menuId: string, token?: Token) =>
-            api(token).get<IMenuItem[]>(urls.venues.menuItems(venueId, menuId)),
+
+        menu: (token?: Token) => (venueId: string) => ({
+            getAll: () => getByParent<PaginatedResponse<IMenu>>(urls.venues.menu, token)(venueId),
+            get: (menuId: string) =>
+                api(token).get<IMenu>(`${urls.venues.menu(venueId)}${menuId}/`),
+            create: (data: Partial<IMenu>) =>
+                api(token).post<IMenu>(urls.venues.menu(venueId), data),
+            update: (menuId: string, data: Partial<IMenu>) =>
+                api(token).patch<IMenu>(`${urls.venues.menu(venueId)}${menuId}/`, data),
+            delete: (menuId: string) =>
+                api(token).delete(`${urls.venues.menu(venueId)}${menuId}/`),
+        }),
+
+        menuItems: (token?: Token) => (venueId: string, menuId: string) => ({
+            getAll: () => api(token).get<IMenuItem[]>(urls.venues.menuItems(venueId, menuId)),
+            create: (data: Partial<IMenuItem>) =>
+                api(token).post<IMenuItem>(urls.venues.menuItems(venueId, menuId), data),
+            update: (menuItemId: string, data: Partial<IMenuItem>) =>
+                api(token).patch<IMenuItem>(`${urls.venues.menuItems(venueId, menuId)}${menuItemId}/`, data),
+            delete: (menuItemId: string) =>
+                api(token).delete(`${urls.venues.menuItems(venueId, menuId)}${menuItemId}/`),
+        }),
         news: getByParent<INews>(urls.venues.news),
         reviews: {
             getAllWithFilter: (filterCriteria?: ReviewFilterCriteria, token?: Token) =>
@@ -127,16 +152,30 @@ const venueServices = {
             ...createService<{ name: string }>(urls.venues.tags.list(venueId)),
         }),
 
-        venueTags: {
-            create: (venueId: string, data: Partial<IVenueTag>, token?: Token) =>
-                api(token).post<IVenueTag>(`/venues/${venueId}/venue_tags/`, data),
+        venueTags: (token?: Token) =>
+            (venueId: string) => ({
+                getAll: () => getByParent<IVenueTag>(urls.venues.venueTags.list, token)(venueId),
+                create: (data: Partial<IVenueTag>) =>
+                    api(token).post<IVenueTag>(urls.venues.venueTags.create(venueId), data),
+                get: (tagId: string) =>
+                    api(token).get<IVenueTag>(urls.venues.venueTags.detail(venueId, tagId)),
+                update: (tagId: string, data: Partial<IVenueTag>) =>
+                    api(token).patch<IVenueTag>(urls.venues.venueTags.update(venueId, tagId), data),
+                delete: (tagId: string) =>
+                    api(token).delete(urls.venues.venueTags.delete(venueId, tagId)),
+            }),
 
-            getAll: (venueId: string, token?: Token) =>
-                api(token).get<IVenueTag[]>(`/venues/${venueId}/venue_tags/`),
+        // venueTags: {
+        //     create: (venueId: string, data: Partial<IVenueTag>, token?: Token) =>
+        //         api(token).post<IVenueTag>(`/venues/${venueId}/venue_tags/`, data),
+        //
+        //     getAll: (venueId: string, token?: Token) =>
+        //         api(token).get<IVenueTag[]>(`/venues/${venueId}/venue_tags/`),
+        //
+        //     delete: (venueId: string, tagId: string, token?: Token) =>
+        //         api(token).delete(`/venues/${venueId}/venue_tags/${tagId}/`),
+        // },
 
-            delete: (venueId: string, tagId: string, token?: Token) =>
-                api(token).delete(`/venues/${venueId}/venue_tags/${tagId}/`),
-        },
         // orders: {
         //     getAllWithFilter: (filterCriteria?: OrderFilterCriteria, token?: Token) =>
         //         api(token).get<IOrder[]>(urls.bookings.list, { params: buildOrderParams(filterCriteria) }),

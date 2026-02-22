@@ -11,7 +11,7 @@ export default function CompleteProfilePage() {
     const router = useRouter();
     const {data: session, status} = useSession();
     const [loading, setLoading] = useState(true);
-    console.log("SESSION:", session);
+    // console.log("SESSION:", session);
 
     useEffect(() => {
         if (status !== "authenticated" || !session?.user?.id) {

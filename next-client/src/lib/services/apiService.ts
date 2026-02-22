@@ -1,36 +1,3 @@
-// import axios from "axios";
-// import { signIn } from "next-auth/react";
-//
-// const baseURL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
-//
-// const apiService = (accessToken?: string) => {
-//   const instance = axios.create({
-//     baseURL
-//   });
-//
-//   if (accessToken) {
-//     instance.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
-//   }
-//
-//   instance.interceptors.response.use(
-//     (response) => response,
-//     (error) => {
-//       if (error.response?.status === 401) {
-//         console.warn("401 Unauthorized — redirecting to login");
-//        void signIn("credentials", { redirect: true, redirectTo: "/login" });
-//       }
-//       return Promise.reject(error);
-//     }
-//   );
-//
-//   return instance;
-// };
-//
-// export { apiService };
-
-
-
-
 
 import axios from "axios";
 
@@ -43,6 +10,24 @@ const apiService = (accessToken?: string) => {
   if (accessToken) {
     instance.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
   }
+
+
+  instance.interceptors.response.use(
+  r => r,
+  e => {
+    if (e.response?.status === 401) {
+        document.cookie = "authjs.session-token=; Max-Age=0; path=/";
+        document.cookie = "refresh-token=; Max-Age=0; path=/";
+        console.log(document.cookie);
+        // alert(document.cookie);
+      window.location.href = "/login";
+    }
+    return Promise.reject(e);
+  }
+);
+
+
+
   return instance;
 };
 export { apiService };

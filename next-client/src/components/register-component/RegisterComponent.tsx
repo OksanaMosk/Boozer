@@ -66,16 +66,16 @@ const RegisterComponent = () => {
 
 
     const handleSubmit = async (event: React.SyntheticEvent<HTMLFormElement>) => {
-        console.log('Form submitted with values:', {
-            email,
-            name,
-            surname,
-            phone,
-            birthDate,
-            password,
-            confirmPassword,
-            isRulesAccepted
-        });
+        // console.log('Form submitted with values:', {
+        //     email,
+        //     name,
+        //     surname,
+        //     phone,
+        //     birthDate,
+        //     password,
+        //     confirmPassword,
+        //     isRulesAccepted
+        // });
 
         event.preventDefault();
         setErrorMsg("");
@@ -106,7 +106,7 @@ const RegisterComponent = () => {
 
         if (Object.keys(errors).length > 0) {
             setErrorFields(errors);
-            console.log("Errors:", errors);
+            // console.log("Errors:", errors);
             return;
         }
 

@@ -1,8 +1,6 @@
 import React from "react";
-import VenueManagementComponent from "@/components/venue-management-component/VenueManagementComponent";
-import {ButtonGoBackComponent} from "@/components/button-go-back-component/ButtonGoBackComponent";
-import VenueAdminDashboardComponent from "@/components/venue-admin-dashboard-component/VenueAdminDashboardComponent";
 
+import {ButtonGoBackComponent} from "@/components/button-go-back-component/ButtonGoBackComponent";
 export default async function MenuPage() {
     return (
         <div

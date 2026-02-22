@@ -77,7 +77,7 @@ export const {handlers, auth, signIn, signOut} = NextAuth({
 
   callbacks: {
   async jwt({ token, user, account }: { token: JWT; user?: User;   account?: Account | null; }) {
-    console.log("JWT", { token, user, account });
+    // console.log("JWT", { token, user, account });
 
       if (user && account) {
           token.id = user.id;
@@ -101,8 +101,8 @@ export const {handlers, auth, signIn, signOut} = NextAuth({
     (account.token as any).access_token) ||
   account.id_token;
 
-    console.log("FACEBOOK ACCOUNT:", account);
-    console.log("PROVIDER TOKEN:", providerAccessToken);
+    // console.log("FACEBOOK ACCOUNT:", account);
+    // console.log("PROVIDER TOKEN:", providerAccessToken);
 
 
         try {
@@ -117,7 +117,7 @@ export const {handlers, auth, signIn, signOut} = NextAuth({
 
           if (res.ok) {
             const data = await res.json();
-            console.log("DATA FROM BACKEND:", data);
+            // console.log("DATA FROM BACKEND:", data);
 
             token.profile = {
               name: data.user?.profile?.name || "",

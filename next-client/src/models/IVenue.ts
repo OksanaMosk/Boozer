@@ -48,7 +48,7 @@ export interface IVenuePhoto {
 
 
 export interface ITag {
-    id?: string;
+    id?: string |null;
     name: string;
 
 }
@@ -70,20 +70,21 @@ export interface ITableBooking {
 
 
 export interface IMenu {
-    id?: string;
+    id?: string | null;
     venue_id: string;
-    name: string;
+    title: string;
     items?: IMenuItem[];
     created_at?: string;
     updated_at?: string;
 }
 
 export interface IMenuItem {
-    id?: string;
+    id?: string | null;
     menu_id: string;
     name: string;
     description?: string;
     price: number;
+    currency:string;
     created_at?: string;
     updated_at?: string;
 }
@@ -138,4 +139,10 @@ export interface INews {
 export interface GetUserVenuesResponse {
     venues: IVenue[];
 }
-
+export interface PaginatedResponse<T> {
+  total_items: number;
+  total_pages: number;
+  prev: boolean;
+  next: boolean;
+  data: T[];
+}
