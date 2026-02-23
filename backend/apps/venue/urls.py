@@ -2,7 +2,7 @@ from django.urls import path, include
 from rest_framework_nested import routers
 from .views import VenueViewSet, VenuePhotoViewSet, TableViewSet, TableBookingViewSet, venue_constants, \
     city_coordinates, TagViewSet, VenueTagViewSet
-from apps.menu.views import MenuViewSet
+from apps.menu.views import MenuViewSet, MenuItemViewSet
 from apps.news.views import NewsViewSet
 from apps.reviews_feedback.views import ReviewViewSet, FavoriteVenueViewSet
 from apps.orders.views import OrderViewSet
@@ -23,9 +23,19 @@ venues_router.register(r'reviews', ReviewViewSet, basename='venue-reviews')
 venues_router.register(r'favorites', FavoriteVenueViewSet, basename='venue-favorites')
 venues_router.register(r'orders', OrderViewSet, basename='venue-orders')
 
+
+menus_router = routers.NestedDefaultRouter(
+    venues_router,
+    r'menu',
+    lookup='menu'
+)
+menus_router.register(r'items', MenuItemViewSet, basename='venue-menu-items')
+
+
 urlpatterns = [
     path('', include(router.urls)),
     path('', include(venues_router.urls)),
+    path('', include(menus_router.urls)),
     path('constants/', venue_constants, name='venue_constants'),
     path('geocode/', city_coordinates, name='city_coordinates'),
 ]

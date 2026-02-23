@@ -13,11 +13,13 @@ const VenueAdminDashboardComponent: React.FC = () => {
     const { user, loading: userLoading } = useUser();
     const [error, setError] = useState<string | null>(null);
     const [venues, setVenues] = useState<IVenueWithId[]>([]);
+    const [venuesLoading, setVenuesLoading] = useState(true);
 
     useEffect(() => {
-   if (!user?.id || !user?.token) return;
+        if (!user?.id || !user?.token) return;
         const loadVenues = async () => {
             try {
+                setVenuesLoading(true);
                 const response = await userService.getUserVenues(
                     String(user.id), {accessToken: user.token!}
                 );
@@ -30,6 +32,9 @@ const VenueAdminDashboardComponent: React.FC = () => {
             } catch {
                 setVenues([])
                 setError("Failed to load venues.");
+            }
+            finally {
+                setVenuesLoading(false)
             }
         };
 
@@ -79,7 +84,15 @@ const VenueAdminDashboardComponent: React.FC = () => {
                     </thead>
 
                     <tbody>
-                    {venues.length > 0 ? (
+                    {venuesLoading ? (
+                        <tr>
+                            <td colSpan={9}>
+                                <div className={styles.loaderWrapper}>
+                                    <LoaderComponent/>
+                                </div>
+                            </td>
+                        </tr>
+                    ) : venues.length > 0 ? (
                         venues.map((venue) => (
                             <VenueListingComponent
                                 key={venue.id}

@@ -74,8 +74,6 @@ export interface IMenu {
     venue_id: string;
     title: string;
     items?: IMenuItem[];
-    created_at?: string;
-    updated_at?: string;
 }
 
 export interface IMenuItem {
@@ -85,8 +83,8 @@ export interface IMenuItem {
     description?: string;
     price: number;
     currency:string;
-    created_at?: string;
-    updated_at?: string;
+    position: number;
+    photo_menu_item:string;
 }
 
 

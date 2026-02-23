@@ -1,19 +1,20 @@
 import type {Metadata} from "next";
 import React from "react";
+import MenuItemsPage from "@/app/(public)/venue-admin/venues/[id]/menu/[menuId]/page";
 
 export const metadata: Metadata = {
-    title: "News Venue ID | Boozer",
+    title: "Menu Id Venue ID | Boozer",
 };
 
 type Props = {
     children: React.ReactNode;
 }
 
-const NewsLayout = ({children}: Props) => {
+const MenuItemsLayout = ({children}: Props) => {
     return (
         <>
             {children}
         </>
     );
 }
-export default NewsLayout;
+export default MenuItemsLayout;

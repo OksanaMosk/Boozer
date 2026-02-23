@@ -123,15 +123,17 @@ const venueServices = {
                 api(token).delete(`${urls.venues.menu(venueId)}${menuId}/`),
         }),
 
-        menuItems: (token?: Token) => (venueId: string, menuId: string) => ({
-            getAll: () => api(token).get<IMenuItem[]>(urls.venues.menuItems(venueId, menuId)),
-            create: (data: Partial<IMenuItem>) =>
-                api(token).post<IMenuItem>(urls.venues.menuItems(venueId, menuId), data),
-            update: (menuItemId: string, data: Partial<IMenuItem>) =>
-                api(token).patch<IMenuItem>(`${urls.venues.menuItems(venueId, menuId)}${menuItemId}/`, data),
-            delete: (menuItemId: string) =>
-                api(token).delete(`${urls.venues.menuItems(venueId, menuId)}${menuItemId}/`),
+        menuItems: (token?: Token) => (venueId: string) => (menuId: string) => ({
+            getAll: () =>
+                getByParent<IMenuItem>((id: string) => urls.venues.menuItems(venueId, id), token)(menuId),
+            create: (data: Partial<IMenuItem>) => api(token).post<IMenuItem>(urls.venues.menuItems(venueId, menuId), data),
+            update: (menuItemId: string, data: Partial<IMenuItem>) => api(token).patch<IMenuItem>(`${urls.venues.menuItems(venueId, menuId)}${menuItemId}/`, data),
+            delete: (menuItemId: string) => api(token).delete(`${urls.venues.menuItems(venueId, menuId)}${menuItemId}/`),
+            reorder: (data: { id: string; position: number }[]) =>
+                api(token).patch(`${urls.venues.menuItems(venueId, menuId)}reorder/`, data),
+
         }),
+
         news: getByParent<INews>(urls.venues.news),
         reviews: {
             getAllWithFilter: (filterCriteria?: ReviewFilterCriteria, token?: Token) =>

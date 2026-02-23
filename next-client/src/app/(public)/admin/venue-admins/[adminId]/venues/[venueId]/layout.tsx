@@ -2,7 +2,7 @@ import type {Metadata} from "next";
 import React from "react";
 
 export const metadata: Metadata = {
-    title: "Venue Admin Venue ID| Boozer",
+    title: "Venue Admin Venue ID | Boozer",
 };
 
 type Props = {

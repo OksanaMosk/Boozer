@@ -10,9 +10,10 @@ interface MenuItemProps {
         currency: string;
         preview?: string | null;
     };
+      onDelete: () => void | Promise<void>;
 }
 
-const SortableMenuItem = ({ item }:MenuItemProps) => {
+const SortableMenuItem = ({ item , onDelete }:MenuItemProps) => {
     const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: item.id });
     const style = { transform: CSS.Transform.toString(transform), transition };
 
@@ -22,7 +23,12 @@ const SortableMenuItem = ({ item }:MenuItemProps) => {
                 <strong>{item.name}</strong>
                 <p>{item.price} {item.currency}</p>
             </div>
-            {item.preview && <img src={item.preview} width={100} height={70} alt="" className={styles.photoImage} />}
+            {item.preview && <img src={item.preview} width={100} height={70} alt="" className={styles.photoImage}/>}
+
+            <div>
+                <span>{item.name}</span>
+                <button onClick={onDelete}>Delete</button>
+            </div>
         </div>
     );
 };

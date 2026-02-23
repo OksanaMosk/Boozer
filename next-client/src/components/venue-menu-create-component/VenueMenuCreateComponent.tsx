@@ -9,7 +9,8 @@ import {IMenu} from "@/models/IVenue";
 
 interface VenueMenuCreateComponentProps {
     venueId: string | number;
-    onMenuCreated: (menuId: string | number) => void;
+    onMenuCreated: (menu: IMenu) => void;
+
 }
 const VenueMenuCreateComponent: React.FC<VenueMenuCreateComponentProps> = ({ venueId, onMenuCreated }) => {
     const [menu, setMenu] = useState<IMenu>({ venue_id: String(venueId), title: "" });
@@ -38,8 +39,10 @@ const VenueMenuCreateComponent: React.FC<VenueMenuCreateComponentProps> = ({ ven
                 setMessage("Menu was not created. Please try again.");
                 return;
             }
-            setMenu(prev => ({ ...prev, id: menuId }));
-            onMenuCreated(menuId);
+            setMenu(prev => ({...prev, id: menuId}));
+            const newMenu = {...menu, id: menuId}; // беремо title, venue_id та id
+            onMenuCreated(newMenu);
+            setMenu({ venue_id: String(venueId), title: "" });
         } catch (err: any) {
             setMessage(err?.response?.data?.detail || "Error creating menu.");
         } finally {
@@ -49,7 +52,11 @@ const VenueMenuCreateComponent: React.FC<VenueMenuCreateComponentProps> = ({ ven
 
     return (
         <form className={styles.form} onSubmit={handleSubmit}>
+            {message && <p className={styles.error}>{message}</p>}
             <div className={styles.inputWrapper}>
+                <h5 className={styles.subtitle}>
+                    Add new Menu
+                </h5>
                 <label className={styles.label}>Menu Title *</label>
                 <input
                     type="text"
@@ -63,11 +70,9 @@ const VenueMenuCreateComponent: React.FC<VenueMenuCreateComponentProps> = ({ ven
 
             <div className={styles.bottomWrapper}>
                 <button type="submit" disabled={loadingMenu} className={styles.submitButton}>
-                    {loadingMenu ? <LoaderComponent /> : "Save Menu"}
+                    {loadingMenu ? <div className={styles.loaderWrapper}><LoaderComponent/></div> : "Save Menu"}
                 </button>
             </div>
-
-            {message && <p className={styles.error}>{message}</p>}
         </form>
     );
 };

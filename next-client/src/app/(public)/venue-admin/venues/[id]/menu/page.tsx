@@ -12,8 +12,6 @@ export default async function MenuPage({ params }: { params: Promise<{ id: strin
   const response = await venueServices.venues.menu()(id).getAll();
 
   const menus: IMenu[] = response.data.data;
-
-  console.log("API Response:", response.data);
   console.log("menus:", menus);
 
   return (
