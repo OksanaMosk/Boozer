@@ -1,3 +1,4 @@
+from django.db import transaction
 from rest_framework import viewsets, filters
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.decorators import action
@@ -32,10 +33,10 @@ class MenuItemViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAdminOrVenueAdminOrReadOnly]
 
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    filterset_fields = ['menu', 'description', 'position']
+    filterset_fields = ['menu', 'description', 'position', 'category']
     search_fields = ['name', 'description']
-    ordering_fields = ['name', 'price', 'position']
-    ordering = ['position', 'id']
+    ordering_fields = ['name', 'price', 'position', 'category']
+    ordering = ['category', 'position', 'id']
 
     def get_queryset(self):
         venue_pk = self.kwargs.get('venue_pk')
@@ -61,10 +62,16 @@ class MenuItemViewSet(viewsets.ModelViewSet):
         if not isinstance(request.data, list):
             return Response({"error": "List expected"}, status=400)
 
-        for item in request.data:
-            MenuItem.objects.filter(
-                id=item['id'],
-                menu__id=menu_pk,
-                menu__venue__id=venue_pk
-            ).update(position=item['position'])
+        with transaction.atomic():
+            for item in request.data:
+                update_data = {"position": item['position']}
+                if "category" in item:
+                    update_data["category"] = item["category"]
+
+                MenuItem.objects.filter(
+                    id=item['id'],
+                    menu__id=menu_pk,
+                    menu__venue__id=venue_pk
+                ).update(**update_data)
+
         return Response({"status": "ok"})

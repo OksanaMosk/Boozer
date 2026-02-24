@@ -64,6 +64,9 @@ class IsAdminOrVenueAdminOrReadOnly(BasePermission):
             if hasattr(obj, 'venue'):
                 return getattr(obj.venue, 'venue_admin', None) == user
 
+            if hasattr(obj, 'menu') and hasattr(obj.menu, 'venue'):
+                return getattr(obj.menu.venue, 'venue_admin', None) == user
+
         return False
 
     # def has_object_permission(self, request, view, obj):
