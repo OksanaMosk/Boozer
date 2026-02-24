@@ -209,7 +209,7 @@ const handleDelete = async (menuItemId: string | number) => {
                 <DragOverlay>{activeItem && <SortableMenuItem item={activeItem} onDelete={()=>{}} isOverlay />}</DragOverlay>
             </DndContext>
 
-            <h4 className={styles.subTitle}>Add Menu Item</h4>
+            <h4 className={styles.titleForm}>Add Menu Item</h4>
             <MenuItemForm
                 venueId={venueId}
                 menuId={menuId}

@@ -190,6 +190,7 @@
     flex-wrap: wrap;
     gap: 3rem;
 }
+.titleForm,
 .subTitle{
     padding-left: 30px;
     font-weight: 700;
@@ -202,3 +203,7 @@
     width: 80vw;
     align-items: flex-start;
 }
+.titleForm {
+    justify-content: center;
+}
+

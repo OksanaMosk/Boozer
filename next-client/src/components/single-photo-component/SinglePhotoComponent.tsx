@@ -47,17 +47,17 @@ export const SinglePhotoComponent = ({
     return (
         <div className={styles.photoUploadWrapper}>
             {label && <p className={styles.label}>{label}</p>}
-            <div className={styles.photoPreview}>
-                {preview ? <img src={preview} alt="Uploaded" width={140} height={100}/> : <p>No photo</p>}
+            <div>
+                {preview ? <img src={preview} alt="Uploaded" width={140} height={100}  className={styles.photoPreview}/> : <p>No photo</p>}
             </div>
             <input type="file" onChange={handleFileChange} className={styles.inputFile}/>
             <button
                 type="button"
                 disabled={loading || !file}
-                className={styles.uploadButton}
+                className={styles.button}
                 onClick={handleUpload}
             >
-                {loading ? <LoaderComponent/> : "Upload"}
+                {loading ? <div className={`authButton ${styles.loaderWrapper}`}><LoaderComponent/> </div>: "Upload"}
             </button>
 
             {message && <p className={styles.errorMessage}>{message}</p>}

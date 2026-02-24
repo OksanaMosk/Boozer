@@ -1,0 +1,84 @@
+.photoUploadWrapper{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.inputFile {
+    text-align: center;
+    margin: 10px auto;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+}
+
+.inputFile::file-selector-button {
+     font-family: var(--font-playfair), serif;
+    font-weight: 600;
+    font-style: italic;
+    margin-right: 50px;
+    width: 160px;
+    height: 45px;
+    border-radius: 2rem;
+    border: none;
+    background: linear-gradient(
+        90deg,
+        #f9f295,
+        #ae8625,
+        #faf398,
+        #b88a44
+    );
+    color: var(--color-text-muted);
+    cursor: pointer;
+    box-shadow: 0 0 12px white;
+    transition: transform 0.2s, background 0.3s;
+}
+
+.inputFile::file-selector-button:hover {
+    background:var(--color-text-muted);
+    color: var(--color-badgeId);
+}
+.loaderWrapper {
+    box-sizing: border-box;
+    height: 45px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    margin: 0;
+    padding: 0;
+     line-height: 1.2;
+    transform: scale(0.2);
+}
+
+.label{
+    cursor: pointer;
+    padding: 0.4rem;
+    width: 200px;
+}
+
+.photoPreview {
+    width: 220px;
+    height: 220px;
+    box-shadow: 0 0 12px white;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.button {
+    font-size: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 160px;
+    height: 45px;
+    padding: 0.5rem 1rem;
+    border-radius: 1.5rem;
+    color: #30240b;
+    background: linear-gradient(90deg, #30240b, white, #30240b);
+    cursor: pointer;
+    outline: none;
+    transition: all 0.3s ease-in-out;
+    border: 1px solid rgba(255,255,255,0.5);
+}
+.button:hover {
+   background: linear-gradient(90deg, white, #30240b, white);
+    color: white;
+}
