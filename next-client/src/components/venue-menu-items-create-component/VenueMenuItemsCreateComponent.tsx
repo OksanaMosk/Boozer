@@ -177,7 +177,14 @@ const handleDelete = async (menuItemId: string | number) => {
 
     return (
         <div className={styles.itemsWrapper}>
-            <h3 className={styles.subtitle}>Menu List</h3>
+             <div className={styles.wrapperTitle}>
+            <h4 className={styles.bigText}>
+                Menu
+            </h4>
+            <div className={styles.smallText}>
+               list
+            </div>
+        </div>
             <div className={styles.selectCurrency}>
                 <label>Currency:</label>
                 <select value={globalCurrency} onChange={(e)=>setGlobalCurrency(e.target.value)} className={styles.select}>
@@ -187,9 +194,10 @@ const handleDelete = async (menuItemId: string | number) => {
 
             <DndContext collisionDetection={closestCorners} sensors={sensors} onDragStart={e=>setActiveId(e.active.id)} onDragEnd={handleDragEnd}>
                 {CATEGORY_OPTIONS.map(category => (
-                    <DroppableCategory key={category} id={`category-${category}`}>
+                    <DroppableCategory key={category} id={`category-${category}`} >
+                        <h5 className={styles.subTitle}>{category.charAt(0).toUpperCase()+category.slice(1)}</h5>
                         <div className={styles.categoryGroup}>
-                            <h5>{category.charAt(0).toUpperCase()+category.slice(1)}</h5>
+
                             <SortableContext items={(groupedItems[category] || []).map(i=>i.id)} strategy={verticalListSortingStrategy}>
                                 {groupedItems[category]?.map(item => (
                                     <SortableMenuItem key={item.id} item={item} onDelete={()=>handleDelete(item.id)}/>
@@ -201,7 +209,7 @@ const handleDelete = async (menuItemId: string | number) => {
                 <DragOverlay>{activeItem && <SortableMenuItem item={activeItem} onDelete={()=>{}} isOverlay />}</DragOverlay>
             </DndContext>
 
-            <h4 className={styles.subtitle}>Add Menu Item</h4>
+            <h4 className={styles.subTitle}>Add Menu Item</h4>
             <MenuItemForm
                 venueId={venueId}
                 menuId={menuId}

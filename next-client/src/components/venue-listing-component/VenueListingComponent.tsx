@@ -95,7 +95,7 @@ const VenueListingComponent: React.FC<Props> = ({
     const mainPhoto = photos.find(p => p.is_main) || photos[0] || null;
 
     const getPhotoUrl = (photo: string) => {
-        if (!photo) return '/images/noPoster.png';
+        if (!photo) return '/images/noPosterVenue.webp';
         return photo.startsWith('http') ? photo : `http://localhost:8888${photo}`;
     };
 
@@ -117,7 +117,7 @@ const VenueListingComponent: React.FC<Props> = ({
                 <td className={styles.tableRowTitle}>{venue.name}</td>
                 <td className={styles.tableRowTitle}>
                     <img
-                        src={getPhotoUrl(mainPhoto.photo)}
+                        src={getPhotoUrl(mainPhoto?.photo)}
                         alt={`${venue.name} ${venue.city}`}
                         width={280}
                         height={300}

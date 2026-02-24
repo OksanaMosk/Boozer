@@ -28,7 +28,7 @@ const VenueComponent: React.FC<Props> = ({ venue }) => {
                 ) : (
                     <div className={styles.noPoster}>
                         <img
-                            src="/images/noEye.png"
+                            src="/images/noPosterVenue.webp"
                             alt="No poster"
                             className={styles.placeholder}
                             width={280}

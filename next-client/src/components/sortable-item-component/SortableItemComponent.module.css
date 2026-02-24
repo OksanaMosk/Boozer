@@ -1,29 +1,96 @@
-
-.photoArray {
-display: flex;
-    justify-content: center;
-    align-items: center;
-}
-.loaderWrapper {
-    box-sizing: border-box;
-    height: 45px;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
+.item {
     margin: 0;
-    padding: 0;
-     line-height: 1.2;
-    transform: scale(0.4);
-}
-.photoImage{
-    width: 140px;
-    height: 100px;
-    box-shadow: 0 0 12px white;
-  border-radius: 6px;
-  object-fit: cover;
-}
-.itemsArray {
+    padding: 0 0 0.5rem 0;
+    width: 250px;
+    height: 440px;
+    box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    width: 70vw;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.2rem;
+    border-radius: 50% 50% 0 0  ;
+    background: var(--menu-color);
+    color: var(--color-text);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border-width: 0 1px 1px 1px;
+    border-style: solid;
+    border-color: var(--color-disabled);
+}
+
+.overlayItem {
+  cursor: grabbing;
+}
+
+.plate {
+  position: relative;
+  width: 250px;
+  height: 250px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at 50% 45%,
+      #3a3a3a 0%,
+      #1f1f1f 55%,
+      #111 100%
+  );
+  box-shadow:
+    0 40px 70px rgba(0, 0, 0, 0.7),
+    0 15px 25px rgba(0, 0, 0, 0.5);
+}
+.plate::before {
+  content: "";
+  position: absolute;
+  inset: 20px;
+  border-radius: 50%;
+  box-shadow:
+    inset 0 18px 30px rgba(0, 0, 0, 0.6),
+    inset 0 -10px 20px rgba(255, 255, 255, 0.08);
+}
+
+.photoImage {
+  width: 190px;
+  height: 190px;
+  border-radius: 50%;
+  object-fit: cover;
+  position: relative;
+  z-index: 2;
+  box-shadow: inset 0 6px 15px rgba(0,0,0,0.35);
+}
+.deleteButton {
+     flex-direction: column;
+    align-items: center;
+    color: var(--color-white);
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    width: 70px;
+    height: 30px;
+    background-color:var(--color-border);
+}
+.deleteButton:hover {
+    background-color: #a94444;
+}
+.itemDetail {
+    height: 140px;
+    font-family: var(--font-imperial),serif;
+    display: flex;
+    flex-direction: column;
+align-items: center;
+    gap: 0.5rem;
+}
+.title {
+    font-size: 2rem;
+}
+.about {
+    margin: 0;
+    font-size: 1rem;
+}
+.price {
+    margin: 0;
+    font-size: 1rem;
 }

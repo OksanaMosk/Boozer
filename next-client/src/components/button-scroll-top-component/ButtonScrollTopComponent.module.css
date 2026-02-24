@@ -17,6 +17,6 @@
 
 .scrollToTopBtn:hover {
     color: var(--color-container);
-    background-color: var(--color-badgeId);
+    background-color: var(--color-text);
     border: none;
 }

@@ -70,7 +70,7 @@ useEffect(() => {
                     ) : (
                         <div className={styles.noPoster}>
                             <img
-                                src="/images/noPoster.png"
+                                src="/images/noPosterVenue.webp"
                                 alt="No poster"
                                 width={500}
                                 height={400}
@@ -102,7 +102,7 @@ useEffect(() => {
                                 />
                             ) : (
                                 <img
-                                    src="/images/noPoster.png"
+                                    src="/images/noPosterVenue.webp"
                                     alt="No poster"
                                     width={300}
                                     height={380}
@@ -124,7 +124,7 @@ useEffect(() => {
                                 />
                             ) : (
                                 <img
-                                    src="/images/noPoster.png"
+                                    src="/images/noPosterVenue.webp"
                                     alt="No poster"
                                     width={300}
                                     height={380}
@@ -162,7 +162,7 @@ useEffect(() => {
                                 />
                             ) : (
                                 <img
-                                    src="/images/noPoster.png"
+                                    src="/images/noPosterVenue.webp"
                                     alt="No poster"
                                     width={300}
                                     height={380}

@@ -76,7 +76,6 @@ const MenuItemForm: React.FC<MenuItemFormProps> = ({venueId, menuId, globalCurre
             formData.append("price", menuItem.price.toString());
             formData.append("currency", globalCurrency);
             formData.append("category", menuItem.category);
-            // if (menuItem.photo) formData.append("photo_menu_item", menuItem.photo);
 
             const res = await venueServices.venues.menuItems({accessToken: user.token})(venueId)(menuId)
                 .create(formData as any);

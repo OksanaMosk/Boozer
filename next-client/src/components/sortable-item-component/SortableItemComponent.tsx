@@ -19,30 +19,32 @@ interface MenuItemProps {
 const SortableMenuItem = ({ item, onDelete, isOverlay }: MenuItemProps) => {
 const getPhotoUrl = (preview?: string | null, photo_menu_item?: string) => {
   const photo = preview || photo_menu_item;
-  if (!photo) return "/images/noPoster.png";
+  if (!photo) return "/images/noPosterMenu.webp";
   return photo.startsWith("http") ? photo : `http://localhost:8888${photo}`;
 };
+
+
+
 
 const photoUrl = getPhotoUrl(item.preview, item.photo_menu_item);
 
   if (isOverlay) {
     return (
-      <div className={`${styles.itemsArray} ${styles.overlay}`}>
-        <div>
-          <strong>{item.name}</strong>
-          <p>{item.price} {item.currency}</p>
-          <p>{item.description}</p>
-        </div>
-
-          {(item.preview || item.photo_menu_item) && (
-              <img
-                  src={photoUrl}
+      <div className={`${styles.item} ${styles.sortableOverlay} ${styles.overlayItem}`}>
+              <div className={styles.plate}>
+                 <img src={photoUrl || "/images/noPosterMenu.webp"}
                   width={100}
                   height={70}
                   alt={item.name}
                   className={styles.photoImage}
               />
-          )}
+              </div>
+        <div className={styles.itemDetail}>
+          <strong className={styles.title}>{item.name}</strong>
+            <p className={styles.about}>{item.description}</p>
+          <p className={styles.price}>{item.price}  -  {item.currency}</p>
+
+        </div>
       </div>
     );
   }
@@ -66,27 +68,24 @@ const photoUrl = getPhotoUrl(item.preview, item.photo_menu_item);
       style={style}
       {...attributes}
       {...listeners}
-      className={styles.photoArray}
+      className={styles.item}
     >
-      <div>
-        <strong>{item.name}</strong>
-        <p>{item.price} {item.currency}</p>
-          <p>{item.description}</p>
+            <div className={styles.plate}>
+                    <img src={photoUrl || "/images/noPosterMenu.webp"}
+                    alt={item.name}
+                    className={styles.photoImage}
+                />
+            </div>
+      <div className={styles.itemDetail}>
+        <strong className={styles.title}>{item.name}</strong>
+          <p className={styles.about}>{item.description}</p>
+          <p className={styles.price}>{item.price}  -  {item.currency}</p>
       </div>
-
-        {(item.preview || item.photo_menu_item) && (
-            <img
-                src={photoUrl}
-                width={100}
-                height={70}
-                alt={item.name}
-                className={styles.photoImage}
-            />
-        )}
-
-        <div>
-        <button onClick={onDelete}>Delete</button>
-      </div>
+            <button
+                onClick={onDelete}
+                className={styles.deleteButton}
+            >Delete
+            </button>
     </div>
   );
 };
