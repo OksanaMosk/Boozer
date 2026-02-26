@@ -1,66 +1,83 @@
-"use client";
-
 import React, { useEffect, useState } from "react";
-import { Stage, Layer, Text } from "react-konva";
+import { Stage, Layer } from "react-konva";
 import Table from "./Table";
 import { ITable } from "@/models/IVenue";
 import venueServices from "@/lib/services/venueService";
-import { useUser } from "@/app/contexts/UserProvider";
 import { AxiosResponse } from "axios";
+import { Image as KonvaImage } from "react-konva";
 
-interface TableMapUserProps {
+interface TableMapClientProps {
   venueId: string;
-  token?: string;
 }
 
-const TableMapUser: React.FC<TableMapUserProps> = ({ venueId, token }) => {
+const TableMapClient: React.FC<TableMapClientProps> = ({ venueId }) => {
   const [tables, setTables] = useState<ITable[]>([]);
-  const { user } = useUser();
-  const accessToken = token || user?.token;
-
-  const getTableService = () => {
-    if (!accessToken) return null;
-    return venueServices.venues.tables({ accessToken })(venueId);
-  };
+  const [background, setBackground] = useState<HTMLImageElement | null>(null);
+  const [stageSize, setStageSize] = useState({ width: 0, height: 0 });
 
   useEffect(() => {
-    const service = getTableService();
-    if (!service) return;
-    service
+    const updateSize = () => {
+      setStageSize({
+        width: window.innerWidth * 0.7,
+        height: window.innerHeight * 0.7,
+      });
+    };
+
+    updateSize();
+    window.addEventListener("resize", updateSize);
+    return () => window.removeEventListener("resize", updateSize);
+  }, []);
+
+  // Завантаження таблиць
+  useEffect(() => {
+    venueServices.venues.tables({ accessToken: "" })(venueId)
       .getAll()
       .then((res: AxiosResponse) => {
-          setTables(res.data)
+        setTables(Array.isArray(res.data.data) ? res.data.data : []);
       })
-      .catch((err) => console.error("Error load tables", err));
-  }, [venueId, accessToken]);
+      .catch(console.error);
+  }, [venueId]);
 
-  const handleTableClick = (table: ITable) => {
-    alert(`Ви обрали ${table.name}`);
-    // Тут можна додати логіку бронювання
-  };
+  // Завантаження фону (якщо фон зберігається в бекенді)
+  useEffect(() => {
+    venueServices.venues.layout({ accessToken: "" })(venueId)
+      .getBackground()
+      .then((url: string) => {
+        const img = new Image();
+        img.src = url;
+        img.onload = () => setBackground(img);
+      })
+      .catch(console.error);
+  }, [venueId]);
+
+  if (stageSize.width === 0 || stageSize.height === 0) return <div>Завантаження...</div>;
 
   return (
-    <Stage width={800} height={600}>
+    <Stage width={stageSize.width} height={stageSize.height} style={{ border: "1px solid #ccc" }}>
       <Layer>
-        {tables.map((table) => (
-          <React.Fragment key={table.id}>
-            <Table
-              table={table}
-              onDragEnd={() => {}}
-              // Відключаємо draggable для користувача
-            />
-            <Text
-              x={table.x - table.width / 2}
-              y={table.y - table.height / 2 - 15}
-              text={table.name}
-              fontSize={14}
-              fill="black"
-            />
-          </React.Fragment>
+        {background && (
+          <KonvaImage
+            image={background}
+            width={stageSize.width}
+            height={stageSize.height}
+          />
+        )}
+
+        {tables.map((table, idx) => (
+          <Table
+            key={table.id ?? idx}
+            table={{
+              ...table,
+              x: table.x * stageSize.width,
+              y: table.y * stageSize.height,
+            }}
+            draggable={false}
+            onClick={() => console.log("Клієнт вибрав стіл", table.id)}
+          />
         ))}
       </Layer>
     </Stage>
   );
 };
 
-export default TableMapUser;
+export default TableMapClient;

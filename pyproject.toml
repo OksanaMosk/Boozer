@@ -25,6 +25,8 @@ requests = "^2.32.5"
 drf-nested-routers = "^0.95.0"
 better-profanity = "^0.7.0"
 psycopg = {extras = ["binary"], version = "^3.3.2"}
+django-storages = "^1.14.6"
+boto3 = "^1.42.57"
 
 [tool.poetry.dev-dependencies]
 isort = ">=7.0.0,<8.0.0"

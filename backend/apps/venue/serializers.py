@@ -45,6 +45,7 @@ class VenueSerializer(serializers.ModelSerializer):
     tags = serializers.SerializerMethodField()
     photos = VenuePhotoSerializer(many=True, read_only=True)
     tables = TableSerializer(many=True, read_only=True)
+    background_tables = serializers.ImageField(required=False, allow_null=True)
 
     class Meta:
         model = VenueModel
@@ -54,7 +55,7 @@ class VenueSerializer(serializers.ModelSerializer):
             'opening_hours', 'photos', 'tables', 'features', 'average_check', 'rating', 'reviews_count',
             'status', 'views', 'daily_views', 'weekly_views', 'monthly_views',
             'edit_attempts', 'last_exchange_update',
-            'tags'
+            'tags',"background_tables"
         ]
 
     def get_tags(self, obj):

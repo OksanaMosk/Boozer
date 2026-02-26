@@ -33,6 +33,7 @@ export interface IVenue {
     reviews?: IReview[];
     favorite_by?: IUser[];
     news?: INews[];
+    background_tables?: string;
 }
 
 export interface IVenueWithId extends Omit<IVenue, "id"> {

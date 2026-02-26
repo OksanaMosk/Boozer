@@ -49,7 +49,7 @@ class VenueModel( BaseModel):
     latitude = models.FloatField(null=True, blank=True)
     longitude = models.FloatField(null=True, blank=True)
     phone = models.CharField(max_length=50, blank=True, null=True)
-
+    background_tables = models.ImageField(upload_to='venues/background_tables/', null=True, blank=True)
     description = models.TextField(blank=True, null=True)
     opening_hours = models.JSONField(blank=True, null=True)
     features = models.JSONField(blank=True, null=True)

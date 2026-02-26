@@ -66,6 +66,7 @@ INSTALLED_APPS = [
     'apps.news',
     'apps.chat',
     'corsheaders',
+    'storages',
 ]
 
 SITE_ID = 1
@@ -118,6 +119,17 @@ DATABASES = {
         }
     }
 }
+# ----------------------------
+# Supabase Storage (S3)
+# ----------------------------
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+AWS_ACCESS_KEY_ID = os.environ.get("SUPABASE_SERVICE_KEY")
+AWS_SECRET_ACCESS_KEY = os.environ.get("SUPABASE_SECRET_KEY")
+AWS_STORAGE_BUCKET_NAME = os.environ.get("SUPABASE_BUCKET_NAME")
+AWS_S3_ENDPOINT_URL = os.environ.get("SUPABASE_STORAGE_URL")
+AWS_S3_REGION_NAME = os.environ.get("SUPABASE_REGION", "us-east-1")
+AWS_QUERYSTRING_AUTH = False
 
 
 # Password validation

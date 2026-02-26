@@ -120,6 +120,32 @@ const venueServices = {
                 api(token).delete(`${urls.venues.tables(venueId)}${tableId}/`)
         }),
 // venueServices.venues.bookings(token)(venueId)(tableId).getAll()
+        background: (token?: Token) => (venueId: string) => ({
+            getBackground: () =>
+                api(token).get<{ url: string }>(
+                    `${urls.venues.list}${venueId}/tables_layout/get_background/`
+                ),
+            uploadBackground: (url: string) => {
+                return api(token).post<{ url: string }>(
+                    `${urls.venues.list}${venueId}/tables_layout/upload_background/`,
+                    {url}
+                );
+            },
+        }),
+//         background: (token?: Token) => (venueId: string) => ({
+//             getBackground: () =>
+//                 api(token).get<{ url: string }>(`${urls.venues.list}${venueId}/tables_layout/get_background/`),
+//
+//             uploadBackground: (file: File) => {
+//                 const formData = new FormData();
+//                 formData.append('background', file);
+//                 return api(token).post<{ url: string }>(
+//                     `${urls.venues.list}${venueId}/tables_layout/upload_background/`,
+//                     formData,
+//                     {headers: {"Content-Type": "multipart/form-data"}}
+//                 );
+//             },
+//         }),
 
         bookings: (token?: Token) => (venueId: string) => (tableId: string) => ({
             getAll: () => api(token).get<PaginatedResponse<IOrder[]>>(urls.venues.bookings(venueId, tableId)),

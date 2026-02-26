@@ -62,7 +62,7 @@ class VenueTagViewSet(viewsets.ModelViewSet):
 class TableViewSet(viewsets.ModelViewSet):
     queryset = TableModel.objects.all()
     serializer_class = TableSerializer
-    permission_classes = [IsVisitorOrReadOnly]
+    permission_classes = [IsAdminOrVenueAdminOrReadOnly]
     filterset_fields = ['venue', 'is_active']
     filter_backends = [DjangoFilterBackend]
 
@@ -96,6 +96,32 @@ class TableViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(tables, many=True)
         return Response(serializer.data)
 
+class TablesLayoutViewSet(viewsets.ViewSet):
+    permission_classes = [IsAdminOrVenueAdminOrReadOnly]
+
+    @action(detail=False, methods=['get'], url_path='get_background')
+    def get_background(self, request, venue_pk=None):
+        if not venue_pk:
+            return Response({"error": "venue_pk is required"}, status=400)
+        try:
+            venue = VenueModel.objects.get(pk=venue_pk)
+        except VenueModel.DoesNotExist:
+            return Response({"error": "Venue not found"}, status=404)
+        return Response({"url": venue.background_tables.url if venue.background_tables else ""})
+
+    @action(detail=False, methods=['post'], url_path='upload_background')
+    def upload_background(self, request, venue_pk=None):
+        if not venue_pk:
+            return Response({"error": "venue_pk is required"}, status=400)
+        try:
+            venue = VenueModel.objects.get(pk=venue_pk)
+        except VenueModel.DoesNotExist:
+            return Response({"error": "Venue not found"}, status=404)
+
+        file = request.FILES.get('background')
+        if file:
+            venue.background_tables.save(file.name, file, save=True)
+        return Response({"url": venue.background_tables.url if venue.background_tables else ""})
 
 class TableBookingViewSet(viewsets.ModelViewSet):
     queryset = TableBookingModel.objects.all()
