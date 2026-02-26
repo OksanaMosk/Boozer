@@ -21,7 +21,7 @@ const ThemesButtonComponent = () => {
             onClick={() => setTheme(theme === "light" ? "dark" : "light")}
             className={styles.theme}
         >
-            <Image
+            <img
                 src={theme === "light" ? "/images/darkButton.png" : "/images/lightButton.png"}
                 alt={theme === "light" ? "Dark Theme" : "Light Theme"}
                 width={30}

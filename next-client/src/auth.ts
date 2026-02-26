@@ -93,17 +93,15 @@ export const {handlers, auth, signIn, signOut} = NextAuth({
           if (account.provider !== "credentials") {
 
 
-              const providerAccessToken =
-  account.access_token ||
-  (typeof account.token === "object" &&
-    account.token !== null &&
-    "access_token" in account.token &&
-    (account.token as any).access_token) ||
-  account.id_token;
-
-    // console.log("FACEBOOK ACCOUNT:", account);
-    // console.log("PROVIDER TOKEN:", providerAccessToken);
-
+  //             const providerAccessToken =
+  // account.access_token ||
+  // (typeof account.token === "object" &&
+  //   account.token !== null &&
+  //   "access_token" in account.token &&
+  //   (account.token as any).access_token) ||
+  // account.id_token;
+  //
+  //
 
         try {
           const res = await fetch("http://127.0.0.1:8888/api/auth/social_jwt/", {
@@ -178,7 +176,19 @@ export const {handlers, auth, signIn, signOut} = NextAuth({
 
 
     async session({ session, token }: { session: Session; token: JWT } ) {
-      if (token) {
+
+      if (token.error === "RefreshAccessTokenError") {
+
+          session.user.id = "";
+          session.user.email = "";
+          session.user.accessToken = undefined;
+          session.user.refreshToken = undefined;
+          session.user.role = "visitor";
+          session.user.needsProfile = false;
+          session.user.profile = undefined;
+          session.user.error = token.error;
+
+      } else  if (token) {
         session.user.id = token.id;
         session.user.email = token.email;
         session.user.accessToken = token.accessToken;

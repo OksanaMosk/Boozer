@@ -21,19 +21,25 @@ class VenuePhotoSerializer(serializers.ModelSerializer):
         fields = ['id', 'photo', 'is_main', 'venue']
 
 class TableBookingSerializer(serializers.ModelSerializer):
-    table = serializers.PrimaryKeyRelatedField(read_only=True)
+    table = serializers.PrimaryKeyRelatedField(queryset=TableModel.objects.filter(is_active=True))
 
     class Meta:
         model = TableBookingModel
         fields = ['id', 'order', 'table', 'time_range', 'is_active']
+        read_only_fields = ['id']
 
+    def validate(self, data):
+        instance = TableBookingModel(**data)
+        instance.clean()
+        return data
 
 
 class TableSerializer(serializers.ModelSerializer):
     bookings = TableBookingSerializer(many=True, read_only=True)
     class Meta:
         model = TableModel
-        fields = ['id', 'name', 'capacity', 'x', 'y', 'width', 'height', 'is_active', 'bookings']
+        fields = ['id', 'capacity', 'x', 'y', 'width', 'height', 'is_active', 'bookings']
+
 
 class VenueSerializer(serializers.ModelSerializer):
     tags = serializers.SerializerMethodField()

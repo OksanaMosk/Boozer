@@ -27,7 +27,7 @@ export interface IVenue {
     edit_attempts?: number;
     tags?: ITag[];
     photos?: IVenuePhoto[];
-    tables?: ITableBooking[];
+    tables?: ITable[];
     menus?: IMenu[];
     orders?: IOrder[];
     reviews?: IReview[];
@@ -58,16 +58,26 @@ export interface IVenueTag {
     tag_id: string;
 }
 
-export interface ITableBooking {
-    id?: string;
-    venue_id: string;
-    table: string;
-    time_range: string;
-    is_active: boolean;
-    created_at?: string;
-    updated_at?: string;
+export interface ITable {
+    id?: string | number;
+    venue_id?: string | number;
+    capacity?: number;
+    x: number;
+    y: number ;
+    width: number;
+    height:number;
+    is_active?: boolean;
 }
 
+export interface ITableBooking {
+    id?: string;
+    table_id: string;
+    venue_id: string;
+    user_id?: string;
+    time_range: string;
+    status?: "pending" | "confirmed" | "canceled";
+    is_active?: boolean;
+}
 
 export interface IMenu {
     id?: string | null;

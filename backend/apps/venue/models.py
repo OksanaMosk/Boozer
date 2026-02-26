@@ -109,10 +109,9 @@ class VenueTag(models.Model):
 
 class TableModel(models.Model):
     class Meta:
-        unique_together = ('venue', 'name')
+        db_table = 'tables'
 
     venue = models.ForeignKey(VenueModel, on_delete=models.CASCADE, related_name='tables')
-    name = models.CharField(max_length=50)
     capacity = models.PositiveIntegerField()
     x = models.FloatField(null=True, blank=True)
     y = models.FloatField(null=True, blank=True)
@@ -121,13 +120,14 @@ class TableModel(models.Model):
     is_active = models.BooleanField(default=True)
 
     def __str__(self):
-        return f"Table {self.name} at {self.venue.name}"
+        return f"Table {self.capacity} at {self.venue.name}"
+
 
 class TableBookingModel(models.Model):
-    order = models.OneToOneField(
+    order = models.ForeignKey(
         OrderModel,
         on_delete=models.CASCADE,
-        related_name='table_booking'
+        related_name='table_bookings'
     )
 
     table = models.ForeignKey(
@@ -135,19 +135,12 @@ class TableBookingModel(models.Model):
         on_delete=models.CASCADE,
         related_name='bookings'
     )
-
-    time_range = DateTimeRangeField(
-        null=True,
-        blank=True
-    )
-
+    time_range = DateTimeRangeField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
 
     class Meta:
         db_table = 'table_bookings'
-        indexes = [
-            GistIndex(fields=['table', 'time_range']),
-        ]
+        indexes = [GistIndex(fields=['table', 'time_range'])]
         constraints = [
             ExclusionConstraint(
                 name='prevent_overlapping_bookings',
@@ -160,24 +153,30 @@ class TableBookingModel(models.Model):
         ]
         ordering = ['time_range']
 
+    @property
+    def user(self):
+        return self.order.user
+
     def clean(self):
-        start_date = self.time_range.lower.date()
-        end_date = self.time_range.upper.date()
+        if self.table.venue_id != self.order.venue_id:
+            raise ValidationError("Table and order must belong to same venue.")
 
-        if not (self.order.start_date <= start_date <= self.order.end_date):
-            raise ValidationError("Booking start must be within order period.")
+        start = self.time_range.lower
+        end = self.time_range.upper
 
-        if not (self.order.start_date <= end_date <= self.order.end_date):
-            raise ValidationError("Booking end must be within order period.")
-
-        if self.time_range.lower >= self.time_range.upper:
+        if start >= end:
             raise ValidationError("Booking start must be before booking end.")
 
-    def save(self, *args, **kwargs):
-        self.full_clean()
-        super().save(*args, **kwargs)
+        if not (self.order.start_date <= start.date() <= self.order.end_date):
+            raise ValidationError("Booking start must be within order period.")
 
-    def __str__(self):
-        start = self.time_range.lower.strftime('%Y-%m-%d %H:%M')
-        end = self.time_range.upper.strftime('%Y-%m-%d %H:%M')
-        return f"Booking for {self.table.name} ({start} → {end})"
+        if not (self.order.start_date <= end.date() <= self.order.end_date):
+            raise ValidationError("Booking end must be within order period.")
+
+        existing_capacity = sum(
+            b.table.capacity
+            for b in self.order.table_bookings.exclude(pk=self.pk)
+        )
+        total_capacity = existing_capacity + self.table.capacity
+        if total_capacity < self.order.guests_count:
+            raise ValidationError("Not enough seats assigned for this order.")

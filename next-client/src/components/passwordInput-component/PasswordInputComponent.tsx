@@ -26,7 +26,7 @@ export const PasswordInput = ({
                 onChange={(e) => onChangeAction(e.target.value)}
             />
             <div className={styles.icon} onClick={() => setShow(!show)}>
-                <Image
+                <img
                     src={show ? "/images/eye2.png" : "/images/noEye2.png"}
                     alt="Toggle password visibility"
                     width={20}

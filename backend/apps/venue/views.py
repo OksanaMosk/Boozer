@@ -1,7 +1,8 @@
 from django.core.exceptions import PermissionDenied
-from rest_framework import viewsets, filters, status
+from django.utils.dateparse import parse_datetime
+from rest_framework import viewsets, filters, status, permissions, serializers
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, action
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -12,7 +13,7 @@ from .serializers import VenueSerializer, TagSerializer, TableSerializer, VenueP
 from .services.geocode import geocode_city
 from .services.venue_constans import get_venue_constants
 from .services.venue_service import get_user_venues
-from ..user.permissions import IsAdminOrVenueAdminOrReadOnly
+from ..user.permissions import IsAdminOrVenueAdminOrReadOnly, IsVisitorOrReadOnly
 
 
 class VenueViewSet(viewsets.ModelViewSet):
@@ -61,16 +62,59 @@ class VenueTagViewSet(viewsets.ModelViewSet):
 class TableViewSet(viewsets.ModelViewSet):
     queryset = TableModel.objects.all()
     serializer_class = TableSerializer
-    permission_classes = [IsAdminOrVenueAdminOrReadOnly]
+    permission_classes = [IsVisitorOrReadOnly]
     filterset_fields = ['venue', 'is_active']
+    filter_backends = [DjangoFilterBackend]
+
+    def perform_create(self, serializer):
+        venue_pk = self.kwargs.get('venue_pk')
+        if not venue_pk:
+            raise serializers.ValidationError({"venue": "venue_pk is required in URL"})
+        serializer.save(venue_id=venue_pk)
+
+    @action(detail=False, methods=['get'], permission_classes=[permissions.AllowAny])
+    def available(self, request, venue_pk=None):
+        if not venue_pk:
+            return Response({"error": "venue_pk is required in URL"}, status=400)
+
+        start = request.query_params.get('start')
+        end = request.query_params.get('end')
+        if not start or not end:
+            return Response({"error": "start and end are required"}, status=400)
+
+        start_dt = parse_datetime(start)
+        end_dt = parse_datetime(end)
+
+        tables = TableModel.objects.filter(
+            venue_id=venue_pk,
+            is_active=True
+        ).exclude(
+            bookings__time_range__overlap=(start_dt, end_dt),
+            bookings__is_active=True
+        )
+
+        serializer = self.get_serializer(tables, many=True)
+        return Response(serializer.data)
 
 
 class TableBookingViewSet(viewsets.ModelViewSet):
     queryset = TableBookingModel.objects.all()
     serializer_class = TableBookingSerializer
-    permission_classes = [IsAdminOrVenueAdminOrReadOnly]
+    permission_classes = [IsVisitorOrReadOnly]
     filterset_fields = ['table', 'order', 'is_active']
 
+    def perform_create(self, serializer):
+        order = serializer.validated_data['order']
+        if order.user != self.request.user:
+            raise PermissionError("Cannot book tables for another user's order")
+        serializer.save()
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        venue_pk = self.kwargs.get('venue_pk')
+        if venue_pk:
+            qs = qs.filter(table__venue_id=venue_pk)
+        return qs
 
 class VenueUserListView(APIView):
     """

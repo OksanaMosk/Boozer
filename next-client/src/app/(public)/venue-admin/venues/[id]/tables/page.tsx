@@ -1,9 +1,11 @@
 import React from "react";
 
 import {ButtonGoBackComponent} from "@/components/button-go-back-component/ButtonGoBackComponent";
-import VenueAdminDashboardComponent from "@/components/venue-admin-dashboard-component/VenueAdminDashboardComponent";
+import TableMapAdmin from "@/components/table-map-admin-component/TableMapAdmin";
 
-export default async function TablesPage() {
+export default async function TablesPage({ params }: { params: Promise<{ id: string }> }) {
+  const {id} = await params
+
     return (
         <div
             style={{
@@ -12,7 +14,7 @@ export default async function TablesPage() {
                 textAlign: "center"
             }}
         >
-
+            <TableMapAdmin venueId={id}/>;
             <ButtonGoBackComponent/>
         </div>
     );

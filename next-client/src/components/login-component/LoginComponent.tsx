@@ -60,7 +60,7 @@ const LoginComponent = () => {
                         onChange={(e) => setEmail(e.target.value)}
                     />
                     <div className={styles.icon}>
-                        <Image
+                        <img
                             src="/images/user3.png"
                             alt="User icon"
                             width={24}
@@ -84,7 +84,7 @@ const LoginComponent = () => {
                         className={styles.icon}
                         onClick={() => setShowPassword(!showPassword)}
                     >
-                        <Image
+                        <img
                             src={showPassword ? "/images/eye2.png" : "/images/noEye2.png"}
                             alt="Toggle password visibility"
                             width={20}

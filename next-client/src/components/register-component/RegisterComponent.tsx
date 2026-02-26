@@ -189,7 +189,7 @@ const RegisterComponent = () => {
             onChange={(e) => setEmail(e.target.value)}
           />
           <div className={styles.icon}>
-            <Image src="/images/user3.png" alt="user icon" width={24} height={24} className={styles.img}/>
+            <img src="/images/user3.png" alt="user icon" width={24} height={24} className={styles.img}/>
           </div>
           {errorFields.email && <p className={styles.error}>{errorFields.email}</p>}
         </div>
@@ -251,7 +251,7 @@ const RegisterComponent = () => {
                       readOnly={false}
                   />
                   <div onClick={() => setIsCalendarOpen(!isCalendarOpen)} className={styles.icon}>
-                      <Image src="/images/calendar.png" alt="calendar icon" width={20} height={20}
+                      <img src="/images/calendar.png" alt="calendar icon" width={20} height={20}
                              className={styles.img}/>
                   </div>
 

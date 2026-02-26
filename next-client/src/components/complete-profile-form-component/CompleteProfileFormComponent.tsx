@@ -110,7 +110,7 @@ export default function CompleteProfileFormComponent() {
                             readOnly={false}
                         />
                         <div onClick={() => setIsCalendarOpen(!isCalendarOpen)} className={styles.icon}>
-                            <Image src="/images/calendar.png" alt="calendar icon" width={20} height={20}
+                            <img src="/images/calendar.png" alt="calendar icon" width={20} height={20}
                                    className={styles.img}/>
                         </div>
 

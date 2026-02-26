@@ -16,7 +16,6 @@ venues_router.register(r'photos', VenuePhotoViewSet, basename='venue-photos')
 venues_router.register(r'tags', TagViewSet, basename='tags')
 venues_router.register(r'venue_tags', VenueTagViewSet, basename='venue-tags')
 venues_router.register(r'tables', TableViewSet, basename='venue-tables')
-venues_router.register(r'table_booking', TableBookingViewSet, basename='venue-table-booking')
 venues_router.register(r'menu', MenuViewSet, basename='venue-menu')
 venues_router.register(r'news', NewsViewSet, basename='venue-news')
 venues_router.register(r'reviews', ReviewViewSet, basename='venue-reviews')
@@ -29,13 +28,20 @@ menus_router = routers.NestedDefaultRouter(
     r'menu',
     lookup='menu'
 )
+tables_router = routers.NestedDefaultRouter(
+    venues_router,
+    r'tables',
+    lookup='table'
+)
 menus_router.register(r'items', MenuItemViewSet, basename='venue-menu-items')
 
+tables_router.register(r'bookings', TableBookingViewSet, basename='table-bookings')
 
 urlpatterns = [
     path('', include(router.urls)),
     path('', include(venues_router.urls)),
     path('', include(menus_router.urls)),
+    path('', include(tables_router.urls)),
     path('constants/', venue_constants, name='venue_constants'),
     path('geocode/', city_coordinates, name='city_coordinates'),
 ]

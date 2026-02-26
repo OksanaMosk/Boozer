@@ -19,14 +19,16 @@ export const MenuClientComponent = () => {
   const authenticated = !!user;
   const [isOpen, setIsOpen] = useState(false);
   const [theme, setTheme] = useState<"light" | "dark">("dark");
-  const pathname = usePathname();
+    const pathname = usePathname();
 
-  useEffect(() => {
-}, [user]);
+    useEffect(() => {
+        if (!user) {
+        }
+    }, [user]);
 
-  const menuItems = [
-    { href: "/", label: "Home" },
-    { href: "/venues", label: "Venues" },
+    const menuItems = [
+        {href: "/", label: "Home"},
+        {href: "/venues", label: "Venues" },
   ];
 
   const isLoginActive = pathname === "/login";
@@ -57,14 +59,14 @@ export const MenuClientComponent = () => {
         <div className={styles.header}>
             <nav className={styles.navbar}>
                 <Link href="/" className={styles.logoLink}>
-                    <Image
+                    <img
                         src="/favicon/android-chrome-512x512.png"
                         alt="logo"
                         width={80}
                         height={80}
                         className={styles.logoImage}
                           loading="eager"
-                        priority={true}
+                        // priority={true}
                          style={{ objectFit: "contain" }}
                     />
                     <div className={styles.logo}>
