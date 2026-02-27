@@ -61,7 +61,7 @@ export interface IVenueTag {
 
 export interface ITable {
     id?: string | number;
-    venue_id?: string | number;
+    venue?: string | number;
     capacity?: number;
     x: number;
     y: number ;

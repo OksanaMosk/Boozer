@@ -46,12 +46,12 @@ const VenueEditComponent = ({ venueId }: Props) => {
         })();
     }, [venueId]);
 
-    const handleInputChange = (
-        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-    ) => {
-        const {name, value} = e.target;
-        setForm(prev => prev ? {...prev, [name]: value} : prev);
-    };
+    // const handleInputChange = (
+    //     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    // ) => {
+    //     const {name, value} = e.target;
+    //     setForm(prev => prev ? {...prev, [name]: value} : prev);
+    // };
 
     const handleSubmit = async (e: React.SyntheticEvent) => {
         e.preventDefault();
@@ -74,16 +74,16 @@ const VenueEditComponent = ({ venueId }: Props) => {
         }
     };
 
-    const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (!e.target.files) return;
-        const files = Array.from(e.target.files);
-        const previews = files.map((f) => ({
-            file: f,
-            preview_url: URL.createObjectURL(f),
-        }));
-
-        setNewFiles((prev) => [...prev, ...previews]);
-    };
+    // const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    //     if (!e.target.files) return;
+    //     const files = Array.from(e.target.files);
+    //     const previews = files.map((f) => ({
+    //         file: f,
+    //         preview_url: URL.createObjectURL(f),
+    //     }));
+    //
+    //     setNewFiles((prev) => [...prev, ...previews]);
+    // };
 
     const handleDeleteExistingPhoto = async (id: string) => {
         if (!user?.token) return;
@@ -156,177 +156,6 @@ const VenueEditComponent = ({ venueId }: Props) => {
                 loading={loadingPhotos}
             />
         </>
-
-
-
-        // <section className={styles.wrapper}>
-        //     <h3 className={styles.subtitle}>Edit Venue {venueId}</h3>
-        //
-        //     <div className={styles.formWrapper}>
-        //         <form className={styles.form} onSubmit={handleSubmit}>
-        //             <div className={styles.coordinatesWrapper}>
-        //                 <div className={styles.leftSideWrapper}>
-        //                     <VenueSelectsComponent
-        //                         country={form.country || ""}
-        //                         city={form.city || ""}
-        //                         setCountry={(country) =>
-        //                             setForm((prev) => ({...prev!, country}))
-        //                         }
-        //                         setCity={(city) =>
-        //                             setForm((prev) => ({...prev!, city}))
-        //                         }
-        //                         setCoordinates={(lat, lng) =>
-        //                             setForm((prev) => ({
-        //                                 ...prev!,
-        //                                 latitude: lat,
-        //                                 longitude: lng,
-        //                             }))
-        //                         }
-        //                     />
-        //
-        //                     <div className={styles.inputWrapper}>
-        //                         <label className={styles.label}>Venue Name *</label>
-        //                         <input
-        //                             name="name"
-        //                             value={form.name}
-        //                             onChange={handleInputChange}
-        //                             className={styles.inputCreate}
-        //                         />
-        //                     </div>
-        //
-        //                     <div className={styles.inputWrapper}>
-        //                         <label className={styles.label}>Address *</label>
-        //                         <input
-        //                             name="address"
-        //                             value={form.address}
-        //                             onChange={handleInputChange}
-        //                             className={styles.inputCreate}
-        //                         />
-        //                     </div>
-        //
-        //                     <div className={styles.inputWrapper}>
-        //                         <label className={styles.label}>Phone</label>
-        //                         <input
-        //                             name="phone"
-        //                             value={form.phone}
-        //                             onChange={handleInputChange}
-        //                             className={styles.inputCreate}
-        //                         />
-        //                     </div>
-        //                     {form && (
-        //                         <OpeningHoursFormComponent
-        //                             newVenue={form}
-        //                             setNewVenue={setForm}
-        //                         />
-        //                     )}
-        //                 </div>
-        //             </div>
-        //
-        //
-        //
-        //
-        //             <div className={styles.bottomWrapper}>
-        //                 <div className={styles.inputWrapper}>
-        //                     <label className={styles.label}>Description *</label>
-        //                     <textarea
-        //                         name="description"
-        //                         value={form.description}
-        //                         onChange={handleInputChange}
-        //                         className={styles.textarea}
-        //                     />
-        //                 </div>
-        //
-        //                 {error && <p className={styles.error}>{error}</p>}
-        //                 {message && <p className={styles.success}>{message}</p>}
-        //
-        //                 <button
-        //                     type="submit"
-        //                     disabled={saving}
-        //                     className={styles.submitButton}
-        //                 >
-        //                     {saving ? (
-        //                         <div className={`authButton ${styles.loaderWrapper}`}>
-        //                             <LoaderComponent/>
-        //                         </div>
-        //                     ) : (
-        //                         "Save Changes"
-        //                     )}
-        //                 </button>
-        //             </div>
-        //         </form>
-        //     </div>
-        //
-        //     {/* Photos */}
-        //
-        //     <form onSubmit={handleAddPhotos} className={styles.photoWrapper}>
-        //         <label className={styles.label}>Upload Photos</label>
-        //         <input
-        //             type="file"
-        //             multiple
-        //             onChange={handlePhotoChange}
-        //             disabled={loadingPhotos}
-        //             className={styles.inputFile}
-        //         />
-        //
-        //         <div className={styles.photoContainer}>
-        //             {existingPhotos.map((p) => (
-        //                 <div className={styles.photoArray} key={p.id}>
-        //                     <img
-        //                         src={p.photo}
-        //                         alt=""
-        //                         width={140}
-        //                         height={100}
-        //                         className={styles.photoImage}
-        //                     />
-        //                     <button
-        //                         type="button"
-        //                         onClick={() => handleDeleteExistingPhoto(p.id)}
-        //                         className={styles.deleteButton}
-        //                     >
-        //                         Delete
-        //                     </button>
-        //                 </div>
-        //             ))}
-        //
-        //             {newFiles.map((file, i) => (
-        //                 <div className={styles.photoArray} key={i}>
-        //                     <img
-        //                         src={file.preview_url}
-        //                         alt=""
-        //                         width={140}
-        //                         height={100}
-        //                         className={styles.photoImage}
-        //                     />
-        //                     <button
-        //                         type="button"
-        //                         onClick={() =>
-        //                             setNewFiles((prev) => prev.filter((_, idx) => idx !== i))
-        //                         }
-        //                         className={styles.deleteButton}
-        //                     >
-        //                         Delete
-        //                     </button>
-        //                 </div>
-        //             ))}
-        //         </div>
-        //
-        //         {newFiles.length > 0 && (
-        //             <button
-        //                 type="submit"
-        //                 disabled={loadingPhotos}
-        //                 className={styles.submitButton}
-        //             >
-        //                 {loadingPhotos ? (
-        //                     <div className={`authButton ${styles.loaderWrapper}`}>
-        //                         <LoaderComponent/>
-        //                     </div>
-        //                 ) : (
-        //                     "Add Photos"
-        //                 )}
-        //             </button>
-        //         )}
-        //     </form>
-        // </section>
     );
 };
 

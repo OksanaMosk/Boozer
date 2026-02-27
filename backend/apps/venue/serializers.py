@@ -38,7 +38,7 @@ class TableSerializer(serializers.ModelSerializer):
     bookings = TableBookingSerializer(many=True, read_only=True)
     class Meta:
         model = TableModel
-        fields = ['id', 'capacity', 'x', 'y', 'width', 'height', 'is_active', 'bookings']
+        fields = ['id', 'capacity', 'x', 'y', 'width', 'height', 'is_active', 'bookings', 'venue']
 
 
 class VenueSerializer(serializers.ModelSerializer):
@@ -59,5 +59,4 @@ class VenueSerializer(serializers.ModelSerializer):
         ]
 
     def get_tags(self, obj):
-
         return [{'id': tag.id, 'name': tag.name} for tag in obj.tags.all()]

@@ -66,6 +66,12 @@ class TableViewSet(viewsets.ModelViewSet):
     filterset_fields = ['venue', 'is_active']
     filter_backends = [DjangoFilterBackend]
 
+    def get_queryset(self):
+        venue_pk = self.kwargs.get('venue_pk')
+        if venue_pk:
+            return TableModel.objects.filter(venue_id=venue_pk)
+        return TableModel.objects.none()
+
     def perform_create(self, serializer):
         venue_pk = self.kwargs.get('venue_pk')
         if not venue_pk:

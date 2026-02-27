@@ -14,7 +14,7 @@ export default async function TablesPage({ params }: { params: Promise<{ id: str
                 textAlign: "center"
             }}
         >
-            <TableMapAdmin venueId={id}/>;
+            <TableMapAdmin venueId={id}/>
             <ButtonGoBackComponent/>
         </div>
     );

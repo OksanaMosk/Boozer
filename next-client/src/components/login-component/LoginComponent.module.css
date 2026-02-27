@@ -83,11 +83,7 @@
 
 .error {
     padding: 0;
-  /*   background: linear-gradient(90deg, #7a5c1e, #d4af37, #f5e6a1, #d4af37, #7a5c1e);*/
-  /*-webkit-background-clip: text;*/
-  /*-webkit-text-fill-color: transparent;*/
-  /*background-clip: text;*/
-  color: white;
+    color: white;
     font-size: 1rem;
 }
 
