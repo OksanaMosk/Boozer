@@ -92,17 +92,29 @@ const TableMapAdmin: React.FC<TableMapAdminProps> = ({ venueId, token }) => {
   };
 
   const uploadToSupabase = async (file: File) => {
-    if (!supabase) return null;
-    const bucketName = process.env.NEXT_PUBLIC_SUPABASE_BUCKET_NAME!;
-    const fileName = `bg_tables_${Date.now()}.jpg`;
-    const { error: uploadError } = await supabase.storage.from(bucketName).upload(fileName, file, { cacheControl: "3600", upsert: true });
-    if (uploadError) {
-      console.error("Error uploading to Supabase:", uploadError);
-      return null;
-    }
-    const { data } = supabase.storage.from(bucketName).getPublicUrl(fileName);
-    return data.publicUrl;
-  };
+  if (!supabase) return null;
+
+  const bucketName = process.env.NEXT_PUBLIC_SUPABASE_BUCKET_NAME!;
+  const filePath = `venues/${venueId}/background_tables.jpg`; // ← стабільний шлях
+
+  const { error } = await supabase.storage
+    .from(bucketName)
+    .upload(filePath, file, {
+      cacheControl: "3600",
+      upsert: true, // ← перезаписує файл
+    });
+
+  if (error) {
+    console.error("Error uploading to Supabase:", error);
+    return null;
+  }
+
+  const { data } = supabase.storage
+    .from(bucketName)
+    .getPublicUrl(filePath);
+
+  return `${data.publicUrl}?t=${Date.now()}`;
+};
 
   // --- Додати стіл ---
   const addTable = () => {
@@ -133,21 +145,23 @@ const TableMapAdmin: React.FC<TableMapAdminProps> = ({ venueId, token }) => {
   if (!tableService) return;
 
   try {
-    let publicUrl: string | null = null;
-    if (backgroundFile) {
-      publicUrl = await uploadToSupabase(backgroundFile);
-      if (!publicUrl) return  new Error("Не вдалося завантажити фон у Supabase");
-
-      const layoutService = getLayoutService();
-      if (!layoutService) return  new Error("Layout service не доступний");
-
-      await layoutService.uploadBackground(publicUrl);
-    }
-
+    // 1️⃣ Завантажуємо новий фон якщо є
+      if (backgroundFile) {
+          const publicUrl = await uploadToSupabase(backgroundFile);
+          if (!publicUrl) return;
+          const layoutService = getLayoutService();
+          if (!layoutService) return new Error("Layout service недоступний");
+          await layoutService.uploadBackground(publicUrl);
+      }
+// "https://xyz.supabase.co/storage/v1/object/public/bucket/bg_tables_12345.jpg
+    // 2️⃣ Зберігаємо столи
     const responses = await Promise.all(
       tables.map(table => {
         if (typeof table.id === "string" && table.id.startsWith("temp-")) {
-          return tableService.create({ ...table, venue_id: Number(venueId) });
+          return tableService.create({
+            ...table,
+            venue_id: Number(venueId),
+          });
         } else {
           return tableService.update(String(table.id), table);
         }
@@ -155,8 +169,10 @@ const TableMapAdmin: React.FC<TableMapAdminProps> = ({ venueId, token }) => {
     );
 
     setTables(responses.map(res => res.data));
-    setBackgroundFile(null); // скидаємо локальний файл
-    console.log("Фон і розстановка столів збережені і доступні глобально!");
+    setBackgroundFile(null);
+
+    console.log("Фон і столи збережені");
+
   } catch (err) {
     console.error("Помилка при збереженні:", err);
   }

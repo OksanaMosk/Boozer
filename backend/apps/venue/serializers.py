@@ -45,7 +45,7 @@ class VenueSerializer(serializers.ModelSerializer):
     tags = serializers.SerializerMethodField()
     photos = VenuePhotoSerializer(many=True, read_only=True)
     tables = TableSerializer(many=True, read_only=True)
-    background_tables = serializers.ImageField(required=False, allow_null=True)
+    background_tables = serializers.URLField(required=False, allow_null=True)
 
     class Meta:
         model = VenueModel

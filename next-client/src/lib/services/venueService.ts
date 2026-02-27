@@ -131,6 +131,7 @@ const venueServices = {
                     {url}
                 );
             },
+
         }),
 //         background: (token?: Token) => (venueId: string) => ({
 //             getBackground: () =>

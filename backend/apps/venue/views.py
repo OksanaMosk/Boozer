@@ -107,7 +107,8 @@ class TablesLayoutViewSet(viewsets.ViewSet):
             venue = VenueModel.objects.get(pk=venue_pk)
         except VenueModel.DoesNotExist:
             return Response({"error": "Venue not found"}, status=404)
-        return Response({"url": venue.background_tables.url if venue.background_tables else ""})
+        return Response({"url": venue.background_tables or ""})
+
 
     @action(detail=False, methods=['post'], url_path='upload_background')
     def upload_background(self, request, venue_pk=None):
@@ -118,10 +119,13 @@ class TablesLayoutViewSet(viewsets.ViewSet):
         except VenueModel.DoesNotExist:
             return Response({"error": "Venue not found"}, status=404)
 
-        file = request.FILES.get('background')
-        if file:
-            venue.background_tables.save(file.name, file, save=True)
-        return Response({"url": venue.background_tables.url if venue.background_tables else ""})
+        url = request.data.get("url")
+        if not url:
+            return Response({"error": "URL is required"}, status=400)
+
+        venue.background_tables = url
+        venue.save()
+        return Response({"url": venue.background_tables})
 
 class TableBookingViewSet(viewsets.ModelViewSet):
     queryset = TableBookingModel.objects.all()
