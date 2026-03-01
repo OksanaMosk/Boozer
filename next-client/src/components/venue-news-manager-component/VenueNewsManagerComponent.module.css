@@ -1,0 +1,110 @@
+.itemsWrapper{
+    font-family: var(--font-playfair),sans-serif;
+     width: 80vw;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+}
+.wrapperTitle {
+    margin: 0;
+    position: relative;
+    display: inline-block;
+}
+
+.bigText {
+    margin: 0;
+    font-family: Sans,sans-serif;
+    color:var(--title-color);
+    font-size: 14rem;
+    font-style: italic;
+    font-weight: 700;
+    position: relative;
+    z-index: 1;
+    text-shadow:
+    2px 2px 0 #000,
+    4px 4px 6px rgba(0,0,0,0.5);
+}
+
+.smallText {
+    font-family: var(--font-imperial),sans-serif;
+    position: absolute;
+    top: 70%;
+    right:15%;
+    transform: translateY(-50%);
+    font-size: 16rem;
+    font-weight: 500;
+    z-index: 2;
+    color: var(--title-primary-color);
+    letter-spacing: 10px;
+}
+.categoryGroup {
+    margin: 0.5rem 0;
+    padding: 0;
+    height: auto;
+    min-height:500px ;
+    width: 80vw;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 3rem;
+}
+.actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.button,
+.editButton,
+.deleteButton {
+    color: var(--color-white);
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.4rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    width: 70px;
+    height: 30px;
+}
+
+.button {
+    background-color: var(--color-container);
+}
+
+.button:hover,
+.editButton:hover {
+    background-color: var(--color-text);
+}
+
+.editButton {
+    background-color: var(--color-bg-dark);
+}
+
+.deleteButton {
+    background-color: #bf8282;
+}
+
+.deleteButton:hover {
+    background-color: #a94444;
+}
+.titleForm,
+.subTitle{
+    padding-left: 30px;
+    font-weight: 700;
+    font-size: 4rem;
+    color: var(--color-text);
+    margin: 0.5rem 0;
+    font-family: var(--font-imperial),serif;
+    letter-spacing: 3px;
+    display: flex;
+    width: 80vw;
+    align-items: flex-start;
+}
+.titleForm {
+    margin: 60px auto;
+    justify-content: center;
+}

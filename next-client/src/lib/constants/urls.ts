@@ -49,6 +49,7 @@ export const urls = {
         menu: (venueId: string) => `${paths.venues}/${venueId}/menu/`,
         menuItems: (venueId: string, menuId: string) => `${paths.venues}/${venueId}/menu/${menuId}/items/`,
         news: (venueId: string) => `${paths.venues}/${venueId}/news/`,
+        newsImages: (venueId: string, newsId: string) => `${paths.venues}/${venueId}/news/${newsId}/images/`,
         reviews: (venueId: string) => `${paths.venues}/${venueId}/reviews/`,
         favorites: (venueId: string) => `${paths.venues}/${venueId}/favorites/`,
         orders: (venueId: string) => `${paths.venues}/${venueId}/orders/`,

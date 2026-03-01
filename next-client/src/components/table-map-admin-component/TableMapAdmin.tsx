@@ -218,8 +218,8 @@ const TableMapAdmin: React.FC<TableMapAdminProps> = ({ venueId, token }) => {
             <div className={styles.controls}>
                 <div className={styles.photoWrapper} >
                     <label htmlFor="background-upload" className={styles.inputFile}>
-                    Choose Hall
-                </label>
+                        Choose Hall
+                    </label>
                     <input
                         id="background-upload"
                         type="file"

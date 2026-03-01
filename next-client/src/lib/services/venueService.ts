@@ -10,7 +10,8 @@ import {
     IReview,
     INews,
     IVenueTag,
-    PaginatedResponse, ITable
+    PaginatedResponse, ITable,
+    INewsPhoto
 } from "@/models/IVenue";
 import {IUser} from "@/models/IUser";
 
@@ -133,20 +134,6 @@ const venueServices = {
             },
 
         }),
-//         background: (token?: Token) => (venueId: string) => ({
-//             getBackground: () =>
-//                 api(token).get<{ url: string }>(`${urls.venues.list}${venueId}/tables_layout/get_background/`),
-//
-//             uploadBackground: (file: File) => {
-//                 const formData = new FormData();
-//                 formData.append('background', file);
-//                 return api(token).post<{ url: string }>(
-//                     `${urls.venues.list}${venueId}/tables_layout/upload_background/`,
-//                     formData,
-//                     {headers: {"Content-Type": "multipart/form-data"}}
-//                 );
-//             },
-//         }),
 
         bookings: (token?: Token) => (venueId: string) => (tableId: string) => ({
             getAll: () => api(token).get<PaginatedResponse<IOrder[]>>(urls.venues.bookings(venueId, tableId)),
@@ -155,7 +142,6 @@ const venueServices = {
             update: (bookingId: string, data: Partial<IOrder>) => api(token).patch<IOrder>(`${urls.venues.bookings(venueId, tableId)}${bookingId}/`, data),
             delete: (bookingId: string) => api(token).delete(`${urls.venues.bookings(venueId, tableId)}${bookingId}/`),
         }),
-
 
         menu: (token?: Token) => (venueId: string) => ({
             getAll: () => getByParent<PaginatedResponse<IMenu>>(urls.venues.menu, token)(venueId),
@@ -180,7 +166,19 @@ const venueServices = {
 
         }),
 
-        news: getByParent<INews>(urls.venues.news),
+        news: (token?: Token) => (venueId: string) => ({
+            getAll: () => getByParent<PaginatedResponse<INews>>((id: string) => urls.venues.news(id), token)(venueId),
+            get: (newsId: string) => api(token).get<INews>(`${urls.venues.news(venueId)}${newsId}/`),
+            create: (data: Partial<INews>) => api(token).post<INews>(urls.venues.news(venueId), data),
+            update: (newsId: string, data: Partial<INews>) => api(token).patch<INews>(`${urls.venues.news(venueId)}${newsId}/`, data),
+            delete: (newsId: string) => api(token).delete(`${urls.venues.news(venueId)}${newsId}/`),
+            images: (newsId: string) => ({
+                getAll: () => getByParent<INewsPhoto>((id: string) => urls.venues.newsImages(venueId, id), token)(newsId), get: (imageId: string) => api(token).get<INewsPhoto>(`${urls.venues.newsImages(venueId, newsId)}${imageId}/`),
+                create: (formData: FormData) => api(token).post<INewsPhoto>(urls.venues.newsImages(venueId, newsId), formData, { headers: { "Content-Type": "multipart/form-data" } }),
+                update: (imageId: string, data: Partial<INewsPhoto>) => api(token).patch<INewsPhoto>(`${urls.venues.newsImages(venueId, newsId)}${imageId}/`, data),
+                delete: (imageId: string) => api(token).delete(`${urls.venues.newsImages(venueId, newsId)}${imageId}/`),
+            }),
+        }),
         reviews: {
             getAllWithFilter: (filterCriteria?: ReviewFilterCriteria, token?: Token) =>
                 api(token).get<IReview[]>(urls.reviews.list, {params: buildReviewParams(filterCriteria)}),
@@ -247,12 +245,6 @@ const venueServices = {
             api(token).delete(`${urls.venues.photos(venueId)}${photoId}/`),
     }),
 
-    // tables: {
-    //     ...createService<ITableBooking>(urls.tables.list),
-    //     byVenue: getByParent<ITableBooking>(urls.tables.byVenue),
-    //     activeByVenue: getByParent<ITableBooking>(urls.tables.activeByVenue),
-    //     // bookings: getByParent<IOrder>(urls.tables.bookings),
-    // },
     // bookings: {
     //     ...createService<IOrder>(urls.bookings.list),
     //     byTable: getByParent<IOrder>(urls.bookings.byTable),
@@ -272,8 +264,3 @@ const venueServices = {
 };
 
 export default venueServices;
-
-
-// const venues = await apiServices.venues.getAll(token);
-// const photos = await apiServices.venuePhotos.byVenue(venueId);
-// const tables = await apiServices.tables.byVenue(venueId);

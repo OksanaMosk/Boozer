@@ -1,6 +1,6 @@
 "use client";
 import React, {useState, ChangeEvent, SyntheticEvent} from "react";
-import styles from "./SinglePhotoComponent.module.css";
+import styles from "./PhotoSingleUploadComponent.module.css";
 import {LoaderComponent} from "@/components/loader-component/LoaderComponent";
 
 interface SinglePhotoProps {
@@ -10,7 +10,7 @@ interface SinglePhotoProps {
     label?: string;
 }
 
-export const SinglePhotoComponent = ({
+export const PhotoSingleUploadComponent = ({
                                          initialPhotoUrl,
                                          onUpload,
                                          onChange,

@@ -1,5 +1,6 @@
 import {IUser} from "@/models/IUser";
 
+
 export interface IVenue {
     id?: string;
     venue_admin_id: string;
@@ -138,9 +139,26 @@ export interface IReviewPhoto {
 
 export interface INews {
     id?: string;
-    venue_id: string;
+    venue: string;
     title: string;
     content: string;
+    images?:INewsPhoto[];
+    is_pinned: boolean;
+    end_date?: string | null;
+    created_at?: string;
+    updated_at?: string;
+    status:NewsStatus;
+    type:NewsType;
+}
+
+export type NewsType = "general" | "promotion" | "event";
+export type NewsStatus = "active" | "pending";
+
+export interface INewsPhoto {
+    id?: string;
+    news_id: string;
+    image: string;
+    is_cover?: boolean;
     created_at?: string;
     updated_at?: string;
 }

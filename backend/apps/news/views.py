@@ -1,30 +1,57 @@
 from rest_framework import viewsets, filters
 from django_filters.rest_framework import DjangoFilterBackend
-from .models import NewsModel
-from .serializers import NewsSerializer
-from ..user.permissions import IsAdmin, IsVenueAdminOrReadOnly, IsAdminOrVenueAdminOrReadOnly
+from .models import NewsModel, NewsImageModel
+from .serializers import NewsSerializer, NewsImageSerializer
+from ..user.permissions import IsAdminOrVenueAdminOrReadOnly
 
 
 class NewsViewSet(viewsets.ModelViewSet):
-    queryset = NewsModel.objects.all()
     serializer_class = NewsSerializer
     permission_classes = [IsAdminOrVenueAdminOrReadOnly]
-
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    filterset_fields = ['venue']
+    filterset_fields = ['venue', 'status']
     search_fields = ['title', 'content']
-    ordering_fields = ['created_at', 'title']
-    ordering = ['-created_at']
+    ordering_fields = ['is_pinned', 'created_at', 'title']
+    ordering = ['-is_pinned', '-created_at']
 
     def get_queryset(self):
         venue_pk = self.kwargs.get('venue_pk')
+        qs = NewsModel.objects.all()
         if venue_pk:
-            return NewsModel.objects.filter(venue_id=venue_pk)
-        return NewsModel.objects.all()
+            qs = qs.filter(venue_id=venue_pk)
+        user = self.request.user
+
+        if not user.is_superuser and not getattr(user, 'is_venue_admin', False):
+            qs = qs.filter(status='active')
+
+        return qs
 
     def perform_create(self, serializer):
         venue_pk = self.kwargs.get('venue_pk')
+        news_type = serializer.validated_data.get('type')
+        status = 'active' if news_type == 'general' else 'pending'
+
         if venue_pk:
-            serializer.save(venue_id=venue_pk)
+            serializer.save(venue_id=venue_pk, status=status)
         else:
-            serializer.save()
+            serializer.save(status=status)
+
+    def get_permissions(self):
+        return [perm() for perm in self.permission_classes]
+
+
+
+class NewsImageViewSet(viewsets.ModelViewSet):
+    serializer_class = NewsImageSerializer
+    permission_classes = [IsAdminOrVenueAdminOrReadOnly]
+
+    def get_queryset(self):
+        news_pk = self.kwargs.get('news_pk')
+        qs = NewsImageModel.objects.all()
+        if news_pk:
+            qs = qs.filter(news_id=news_pk)
+        return qs
+
+    def perform_create(self, serializer):
+        news_pk = self.kwargs.get('news_pk')
+        serializer.save(news_id=news_pk)

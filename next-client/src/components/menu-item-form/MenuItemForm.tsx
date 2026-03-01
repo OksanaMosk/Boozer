@@ -5,7 +5,7 @@ import {LoaderComponent} from "@/components/loader-component/LoaderComponent";
 import styles from "./MenuItemForm.module.css"
 import venueServices from "@/lib/services/venueService";
 import {useUser} from "@/app/contexts/UserProvider";
-import {SinglePhotoComponent} from "@/components/single-photo-component/SinglePhotoComponent";
+import {PhotoSingleUploadComponent} from "@/components/photo-single-upload-component/PhotoSingleUploadComponent";
 
 interface NewMenuItem {
     name: string;
@@ -117,7 +117,7 @@ const MenuItemForm: React.FC<MenuItemFormProps> = ({venueId, menuId, globalCurre
                         </div> : "Add Menu Item"}
                     </button>
                 ) : (
-                    <SinglePhotoComponent
+                    <PhotoSingleUploadComponent
                         initialPhotoUrl={createdItem.preview || ""}
                         label="Upload Menu Item Photo"
                         onUpload={async (file: File) => {

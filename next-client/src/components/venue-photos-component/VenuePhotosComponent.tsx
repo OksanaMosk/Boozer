@@ -1,7 +1,8 @@
+"use client";
+
 import React from "react";
 import styles from "./VenuePhotosComponent.module.css";
 import {LoaderComponent} from "@/components/loader-component/LoaderComponent";
-
 
 interface ILocalPhoto {
     file: File;
@@ -23,7 +24,6 @@ interface VenuePhotosProps {
     loading: boolean;
 }
 
-
 export const VenuePhotosComponent = ({
     existingPhotos = [],
     newFiles,
@@ -32,26 +32,49 @@ export const VenuePhotosComponent = ({
     onDeleteExisting,
     loading,
 }: VenuePhotosProps) => {
+
     const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (!e.target.files) return;
 
-        const files = Array.from(e.target.files).map((file, i) => ({
+        const selectedFiles = Array.from(e.target.files);
+        const MAX_LIMIT = 7;
+        const currentTotal = existingPhotos.length + newFiles.length;
+        if (currentTotal + selectedFiles.length > MAX_LIMIT) {
+            alert(`You can only have up to ${MAX_LIMIT} photos. You already have ${currentTotal}.`);
+            e.target.value = "";
+            return;
+        }
+        const mappedFiles = selectedFiles.map((file, i) => ({
             file,
             preview_url: URL.createObjectURL(file),
-            is_main: newFiles.length === 0 && i === 0,
+            is_main: currentTotal === 0 && i === 0,
         }));
 
-        setNewFiles((prev) => [...prev, ...files]);
+        setNewFiles((prev) => [...prev, ...mappedFiles]);
+        e.target.value = "";
+    };
+
+    const removeNewFile = (index: number) => {
+        setNewFiles((prev) => {
+            const fileToRemove = prev[index];
+            if (fileToRemove) {
+                URL.revokeObjectURL(fileToRemove.preview_url);
+            }
+            return prev.filter((_, idx) => idx !== index);
+        });
     };
 
     return (
         <form onSubmit={onAddPhotos} className={styles.photoWrapper}>
-            <label className={styles.label}>Upload Photos (Max 7)</label>
+            <label className={styles.label}>
+                Upload Photos (Total: {existingPhotos.length + newFiles.length} / 7)
+            </label>
 
             <input
                 type="file"
                 multiple
-                disabled={loading}
+                accept="image/*"
+                disabled={loading || (existingPhotos.length + newFiles.length >= 7)}
                 className={styles.inputFile}
                 onChange={handlePhotoChange}
             />
@@ -61,32 +84,27 @@ export const VenuePhotosComponent = ({
                     <div className={styles.photoArray} key={p.id}>
                         <img
                             src={p.photo}
-                            alt=""
-                            width={140}
-                            height={100}
+                            alt="Existing"
                             className={styles.photoImage}
                         />
-
                         <button
                             type="button"
                             onClick={() => onDeleteExisting?.(p.id)}
                             className={styles.deleteButton}
+                            disabled={loading}
                         >
                             Delete
                         </button>
                     </div>
                 ))}
-
                 {newFiles.map((file, i) => (
-                    <div className={styles.photoArray} key={i}>
+                    <div className={styles.photoArray} key={`new-${i}`}>
                         <img
                             src={file.preview_url}
-                            alt=""
-                            width={140}
-                            height={100}
+                            alt="Preview"
                             className={styles.photoImage}
                         />
-                        <label>
+                        <label className={styles.mainLabel}>
                             <input
                                 type="radio"
                                 name="mainPhoto"
@@ -101,12 +119,9 @@ export const VenuePhotosComponent = ({
                         </label>
                         <button
                             type="button"
-                            onClick={() =>
-                                setNewFiles((prev) =>
-                                    prev.filter((_, idx) => idx !== i)
-                                )
-                            }
+                            onClick={() => removeNewFile(i)}
                             className={styles.deleteButton}
+                            disabled={loading}
                         >
                             Delete
                         </button>
@@ -121,14 +136,151 @@ export const VenuePhotosComponent = ({
                     className={styles.submitButton}
                 >
                     {loading ? (
-                        <div className={`authButton ${styles.loaderWrapper}`}>
+                        <div className={styles.loaderWrapper}>
                             <LoaderComponent />
                         </div>
                     ) : (
-                        "Add Photos"
+                        `Add ${newFiles.length} Photo${newFiles.length > 1 ? 's' : ''}`
                     )}
                 </button>
             )}
         </form>
     );
 };
+
+
+
+// import React from "react";
+// import styles from "./VenuePhotosComponent.module.css";
+// import {LoaderComponent} from "@/components/loader-component/LoaderComponent";
+//
+//
+// interface ILocalPhoto {
+//     file: File;
+//     preview_url: string;
+//     is_main?: boolean;
+// }
+//
+// interface IVenuePhoto {
+//     id: string;
+//     photo: string;
+// }
+//
+// interface VenuePhotosProps {
+//     existingPhotos?: IVenuePhoto[];
+//     newFiles: ILocalPhoto[];
+//     setNewFiles: React.Dispatch<React.SetStateAction<ILocalPhoto[]>>;
+//     onAddPhotos: (e: React.SyntheticEvent) => void;
+//     onDeleteExisting?: (id: string) => void;
+//     loading: boolean;
+// }
+//
+//
+// export const VenuePhotosComponent = ({
+//     existingPhotos = [],
+//     newFiles,
+//     setNewFiles,
+//     onAddPhotos,
+//     onDeleteExisting,
+//     loading,
+// }: VenuePhotosProps) => {
+//     const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+//         if (!e.target.files) return;
+//
+//         const files = Array.from(e.target.files).map((file, i) => ({
+//             file,
+//             preview_url: URL.createObjectURL(file),
+//             is_main: newFiles.length === 0 && i === 0,
+//         }));
+//
+//         setNewFiles((prev) => [...prev, ...files]);
+//     };
+//
+//     return (
+//         <form onSubmit={onAddPhotos} className={styles.photoWrapper}>
+//             <label className={styles.label}>Upload Photos (Max 7)</label>
+//
+//             <input
+//                 type="file"
+//                 multiple
+//                 disabled={loading}
+//                 className={styles.inputFile}
+//                 onChange={handlePhotoChange}
+//             />
+//
+//             <div className={styles.photoContainer}>
+//                 {existingPhotos.map((p) => (
+//                     <div className={styles.photoArray} key={p.id}>
+//                         <img
+//                             src={p.photo}
+//                             alt=""
+//                             width={140}
+//                             height={100}
+//                             className={styles.photoImage}
+//                         />
+//
+//                         <button
+//                             type="button"
+//                             onClick={() => onDeleteExisting?.(p.id)}
+//                             className={styles.deleteButton}
+//                         >
+//                             Delete
+//                         </button>
+//                     </div>
+//                 ))}
+//
+//                 {newFiles.map((file, i) => (
+//                     <div className={styles.photoArray} key={i}>
+//                         <img
+//                             src={file.preview_url}
+//                             alt=""
+//                             width={140}
+//                             height={100}
+//                             className={styles.photoImage}
+//                         />
+//                         <label>
+//                             <input
+//                                 type="radio"
+//                                 name="mainPhoto"
+//                                 checked={file.is_main || false}
+//                                 onChange={() => {
+//                                     setNewFiles((prev) =>
+//                                         prev.map((p, index) => ({...p, is_main: index === i}))
+//                                     );
+//                                 }}
+//                             />
+//                             Main
+//                         </label>
+//                         <button
+//                             type="button"
+//                             onClick={() =>
+//                                 setNewFiles((prev) =>
+//                                     prev.filter((_, idx) => idx !== i)
+//                                 )
+//                             }
+//                             className={styles.deleteButton}
+//                         >
+//                             Delete
+//                         </button>
+//                     </div>
+//                 ))}
+//             </div>
+//
+//             {newFiles.length > 0 && (
+//                 <button
+//                     type="submit"
+//                     disabled={loading}
+//                     className={styles.submitButton}
+//                 >
+//                     {loading ? (
+//                         <div className={`authButton ${styles.loaderWrapper}`}>
+//                             <LoaderComponent />
+//                         </div>
+//                     ) : (
+//                         "Add Photos"
+//                     )}
+//                 </button>
+//             )}
+//         </form>
+//     );
+// };

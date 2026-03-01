@@ -193,11 +193,11 @@ const VenueListingComponent: React.FC<Props> = ({
                             Menu
                         </Link>
                         <Link
-                            href={`/venue-admin/venues/${venue.id}/news/`}
+                            href={`/venue-admin/venues/${venue.id}/tables/`}
                             className={styles.buttonLink}
                             onClick={(e) => e.stopPropagation()}
                         >
-                            News
+                            Tables
                         </Link>
                         <Link
                             href={`/venue-admin/venues/${venue.id}/features/`}
@@ -207,18 +207,25 @@ const VenueListingComponent: React.FC<Props> = ({
                             Features
                         </Link>
                         <Link
-                            href={`/venue-admin/venues/${venue.id}/tables/`}
-                            className={styles.buttonLink}
-                            onClick={(e) => e.stopPropagation()}
-                        >
-                            Tables
-                        </Link>
-                        <Link
                             href={`/venue-admin/venues/${venue.id}/orders/`}
                             className={styles.buttonLink}
                             onClick={(e) => e.stopPropagation()}
                         >
                             Orders
+                        </Link>
+                        <Link
+                            href={`/venue-admin/venues/${venue.id}/news/`}
+                            className={styles.buttonLink}
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            News
+                        </Link>
+                        <Link
+                            href={`/venue-admin/venues/${venue.id}/reviews/`}
+                            className={styles.buttonLink}
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            Reviews
                         </Link>
                     </div>
                 </td>

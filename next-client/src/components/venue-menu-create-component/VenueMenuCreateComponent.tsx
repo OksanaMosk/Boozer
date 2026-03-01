@@ -40,7 +40,7 @@ const VenueMenuCreateComponent: React.FC<VenueMenuCreateComponentProps> = ({ ven
                 return;
             }
             setMenu(prev => ({...prev, id: menuId}));
-            const newMenu = {...menu, id: menuId}; // беремо title, venue_id та id
+            const newMenu = {...menu, id: menuId};
             onMenuCreated(newMenu);
             setMenu({ venue_id: String(venueId), title: "" });
         } catch (err: any) {

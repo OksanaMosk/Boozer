@@ -37,10 +37,7 @@ export const VenuesClientComponent = () => {
                 ...filters,
                 page
             } as VenueQueryParams);
-
             const resData = response.data;
-            // console.log("API returned IDs:", resData.data.map(v => v.id));
-
             setVenuesData(resData.data ?? []);
             setTotalPagesState(resData.total_pages ?? 1);
         } catch (error) {
@@ -63,8 +60,6 @@ export const VenuesClientComponent = () => {
     useEffect(() => {
         void fetchVenues(currentPageFromURL, filters);
     }, [currentPageFromURL, filters, fetchVenues]);
-
-    // console.log("Current page from URL:", currentPageFromURL);
 
     return (
         <div className={styles.wrapper}>

@@ -69,8 +69,6 @@ export default function CompleteProfileFormComponent() {
             payload,
             session.user.accessToken
         );
-
-        // console.log("Дані успішно відправлено, редірект на /");
         router.push("/visitor");
 
     } catch (err: any) {
