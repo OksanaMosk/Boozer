@@ -67,6 +67,9 @@ class IsAdminOrVenueAdminOrReadOnly(BasePermission):
             if hasattr(obj, 'menu') and hasattr(obj.menu, 'venue'):
                 return getattr(obj.menu.venue, 'venue_admin', None) == user
 
+            if hasattr(obj, 'news') and hasattr(obj.news, 'venue'):
+                return getattr(obj.news.venue, 'venue_admin', None) == user
+
         return False
 
 

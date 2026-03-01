@@ -53,16 +53,10 @@ export const NewItemForm: React.FC<NewNewsFormProps> = ({ venueId, onCreate }) =
     const [isCalendarOpen, setIsCalendarOpen] = useState(false);
     const [loading, setLoading] = useState(false);
     const [createdNews, setCreatedNews] = useState<News | null>(null);
-    const [dateValue, setDateValue] = useState<string | null>(newsItem.end_date);
+    const [dateValue, setDateValue] = useState<string | null>(newsItem.end_date ?? null);
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     tomorrow.setHours(0, 0, 0, 0);
-
-
-    const today = new Date();
-    const currentYear = today.getFullYear();
-    const isValidYear = (year: number) => year >= currentYear
-
     const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const {name, value, type} = e.target;
         let val: string | boolean = value;
@@ -75,25 +69,23 @@ export const NewItemForm: React.FC<NewNewsFormProps> = ({ venueId, onCreate }) =
   const handleAddNews = async (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!user?.token) return;
-
     setLoading(true);
-
     try {
         const formData = new FormData();
         formData.append("title", newsItem.title);
         formData.append("content", newsItem.content);
         formData.append("type", newsItem.type);
         formData.append("is_pinned", newsItem.is_pinned ? "true" : "false");
-
         if (newsItem.end_date) {
-          formData.append("end_date", newsItem.end_date.toISOString());
+            const dateObject = new Date(newsItem.end_date ?? "");
+            if (!isNaN(dateObject.getTime())) {
+                formData.append("end_date", dateObject.toISOString());
+            }
         }
-
         const res = await venueServices
             .venues
             .news({ accessToken: user.token })(venueId)
             .create(formData as any);
-
         const newNews: News = {
             ...res.data,
             id: String(res.data.id),
@@ -107,7 +99,6 @@ export const NewItemForm: React.FC<NewNewsFormProps> = ({ venueId, onCreate }) =
             preview: newsItem.preview,
             end_date: res.data.end_date ?? null,
         };
-
         setCreatedNews(newNews);
         onCreate(newNews);
     } catch (err) {
@@ -117,7 +108,6 @@ export const NewItemForm: React.FC<NewNewsFormProps> = ({ venueId, onCreate }) =
         setLoading(false);
     }
 };
-
     const handleUploadComplete = (uploadedPhotos: string[]) => {
         if (!createdNews) return;
         setCreatedNews((prev) =>
@@ -134,11 +124,8 @@ export const NewItemForm: React.FC<NewNewsFormProps> = ({ venueId, onCreate }) =
             photos: [],
             preview: null,
         });
-
             setCreatedNews(null);
     };
-
-
     return (
         <form className={styles.wrapper} onSubmit={handleAddNews}>
             <div className={styles.form}>
@@ -208,34 +195,45 @@ export const NewItemForm: React.FC<NewNewsFormProps> = ({ venueId, onCreate }) =
                             <img src="/images/calendar.png" alt="calendar icon" width={20} height={20}
                                    className={styles.img}/>
                         </div>
-
                         {isCalendarOpen && (
                             <div className={styles.calendarSidebar}>
                                 <DatePickerComponent
-                                    dateValue={dateValue}
-                                    setDateValue={(isoDate: string) => {
-                                        setDateValue(isoDate);
-                                        setNewsItem(prev => ({...prev, end_date: isoDate}));
+                                    dateValue={dateValue ? new Date(dateValue) : null}
+                                    setDateValue={(value: any) => {
+                                        const newDate = typeof value === 'function'
+                                            ? value(dateValue ? new Date(dateValue) : null)
+                                            : value;
+
+                                        if (newDate && newDate < tomorrow) {
+                                            alert("Please select a future date!");
+                                            return;
+                                        }
+                                        if (newDate) {
+                                            const isoString = newDate.toISOString();
+                                            setDateValue(isoString);
+                                            setNewsItem(prev => ({...prev, end_date: isoString}));
+                                        } else {
+                                            setDateValue(null);
+                                            setNewsItem(prev => ({...prev, end_date: null}));
+                                        }
                                         setIsCalendarOpen(false);
                                     }}
-                                    filterDate={(date: Date) => isValidYear(date.getFullYear())}
-                                    minDate={tomorrow}
-                                    yearRange={[2026, new Date().getFullYear()]}
-
+                                    yearRange={[2026, 2030]}
                                 />
                             </div>
                         )}
                     </div>
-                </div>
+                 </div>
                 {createdNews && (
                     <PhotoMultipleUploadComponent
                         venueId={venueId}
                         newsId={createdNews.id.toString()}
                         maxFiles={7}
                         existingPhotos={
-                            createdNews.photos?.map((url) => ({
-                                preview_url: url,
-                                is_cover: false
+                            createdNews.photos?.map((photo: any) => ({
+                                id: photo.id,
+                                url: photo.image || photo.url || photo,
+                                is_cover: photo.is_cover || false
                             })) || []
                         }
                         onUploadComplete={handleUploadComplete}

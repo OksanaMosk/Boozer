@@ -56,8 +56,6 @@ function HomePageContent() {
   }}
 >{message}</p>
             )}
-
-
             <div>
                 <HeroComponent/>
                 <HeroVideoRowComponent/>

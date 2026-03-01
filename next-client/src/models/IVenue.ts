@@ -138,11 +138,11 @@ export interface IReviewPhoto {
 
 
 export interface INews {
-    id?: string;
-    venue: string;
+    id?: number |string;
+    venue?: string;
     title: string;
     content: string;
-    images?:INewsPhoto[];
+    images?:INewsPhoto[] | [];
     is_pinned: boolean;
     end_date?: string | null;
     created_at?: string;

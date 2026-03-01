@@ -9,14 +9,14 @@ class NewsViewSet(viewsets.ModelViewSet):
     serializer_class = NewsSerializer
     permission_classes = [IsAdminOrVenueAdminOrReadOnly]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    filterset_fields = ['venue', 'status']
+    filterset_fields = ['venue', 'status', 'type']
     search_fields = ['title', 'content']
     ordering_fields = ['is_pinned', 'created_at', 'title']
-    ordering = ['-is_pinned', '-created_at']
+    ordering = ['-created_at', '-is_pinned']
 
     def get_queryset(self):
         venue_pk = self.kwargs.get('venue_pk')
-        qs = NewsModel.objects.all()
+        qs = NewsModel.objects.all().prefetch_related('images')
         if venue_pk:
             qs = qs.filter(venue_id=venue_pk)
         user = self.request.user

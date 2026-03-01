@@ -11,7 +11,7 @@ export default async function NewsPage({ params }: { params: Promise<{ id: strin
         <div
             style={{
                 fontWeight: "bolder",
-                margin: "40px auto",
+                margin: "0 auto",
                 textAlign: "center"
             }}
         >

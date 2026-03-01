@@ -1,0 +1,134 @@
+.buttonGroup {
+    margin-top: 20px;
+    display: flex;
+    gap: 1rem;
+}
+
+.editButton,
+.deleteButton {
+    color: var(--color-white);
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    width: 70px;
+    height: 30px;
+}
+
+.editButton:hover {
+    background-color: var(--color-text);
+}
+
+.editButton {
+    background-color: var(--color-bg-dark);
+}
+
+.deleteButton {
+    background-color: #bf8282;
+}
+
+.deleteButton:hover {
+    background-color: #a94444;
+}
+.subTitleEdit,
+.subTitle{
+    font-weight: 700;
+    font-size: 4rem;
+    color: var(--color-text);
+    font-family: var(--font-imperial),serif;
+    letter-spacing: 4px;
+    width: 50%;
+    display: flex;
+    justify-content:flex-start;
+    align-items: flex-start;
+     margin: 0;
+    padding: 0;
+}
+
+.newsCard {
+    overflow: hidden;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    width: 90%;
+    height: 320px;
+    border-radius: 15px;
+    border: 3px solid var(--color-text);
+    text-align: center;
+    margin: 0 auto;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    gap: 0.5rem;
+}
+.newsCard.editMode {
+    height: auto;
+}
+
+.top {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+.topStatus {
+    padding-top: 20px;
+    color: var(--title-primary-color);
+    font-size: 1rem;
+    gap: 8px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+.topP {
+    margin: 0;
+    padding: 0;
+}
+
+.coverImage {
+    border-radius: 8px;
+    width: 266px;
+    height: 120px;
+    object-fit: cover;
+}
+
+.cardInfo {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items:flex-start;
+    gap: 0.5rem;
+}
+.date {
+    display: flex;
+    flex-direction: column;
+     align-items: flex-start;
+    justify-content: flex-start;
+    margin: 0;
+    font-size: 0.6rem;
+    color: var(--title-primary-color);
+}
+.bottom {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+.contentTextEdit,
+.contentText {
+    padding: 0;
+    margin: 0;
+    text-align: left;
+    font-size: 1rem;
+}
+
+.photoWrapper {
+    width: 100%;
+    z-index: 8;
+}
+.contentTextEdit,
+.subTitleEdit {
+    padding-left: 5px;
+}

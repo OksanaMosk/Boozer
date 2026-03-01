@@ -167,7 +167,7 @@ const venueServices = {
         }),
 
         news: (token?: Token) => (venueId: string) => ({
-            getAll: () => getByParent<PaginatedResponse<INews>>((id: string) => urls.venues.news(id), token)(venueId),
+            getAll: (params?: any) => api(token).get<PaginatedResponse<INews>>(urls.venues.news(venueId), {params}),
             get: (newsId: string) => api(token).get<INews>(`${urls.venues.news(venueId)}${newsId}/`),
             create: (data: Partial<INews>) => api(token).post<INews>(urls.venues.news(venueId), data),
             update: (newsId: string, data: Partial<INews>) => api(token).patch<INews>(`${urls.venues.news(venueId)}${newsId}/`, data),

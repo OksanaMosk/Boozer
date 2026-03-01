@@ -1,0 +1,28 @@
+
+.contentGallery {
+    width: 360px;
+    margin-bottom: 8rem;
+}
+.singleGalleryWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+    width: 100%;
+}
+
+.singleThumbnail {
+  width: 300px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.arrow {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--input-color);
+  transition: 0.2s;
+}

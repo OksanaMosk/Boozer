@@ -37,9 +37,13 @@ export function Providers({
   return (
     <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
       <SessionProvider>
-        <UserProvider>
-          <Suspense fallback={<LoaderComponent />}>
-            <div className={`${playfair.variable} ${imperialScript.variable} ${roboto.variable}`}>
+          <UserProvider>
+              <Suspense fallback={
+                  <div style={{marginTop: '20px'}}>
+                      <LoaderComponent/>
+                  </div>
+              }>
+                  <div className={`${playfair.variable} ${imperialScript.variable} ${roboto.variable}`}>
               <MenuComponent />
               {children}
             </div>
