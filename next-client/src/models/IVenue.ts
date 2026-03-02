@@ -86,6 +86,8 @@ export interface IMenu {
     venue_id: string;
     title: string;
     items?: IMenuItem[];
+    is_published?:boolean;
+
 }
 
 export interface IMenuItem {

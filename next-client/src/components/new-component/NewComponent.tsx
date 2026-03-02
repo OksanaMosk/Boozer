@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import styles from "./VenueNewComponent.module.css";
+import styles from "./NewComponent.module.css";
 import { NewsGallery } from "@/components/news-gallery-compopnent/NewsGalleryComponent";
 import venueServices from "@/lib/services/venueService";
 import { useUser } from "@/app/contexts/UserProvider";
@@ -16,7 +16,7 @@ interface VenueNewComponentProps {
     onUpdate: (updatedNews: any) => void;
 }
 
-export const VenueNewComponent = ({ news, venueId, onDelete, onUpdate }: VenueNewComponentProps) => {
+export const NewComponent = ({ news, venueId, onDelete, onUpdate }: VenueNewComponentProps) => {
     const { user } = useUser();
     const [editMode, setEditMode] = useState(false);
     const [editNews, setEditNews] = useState(news);

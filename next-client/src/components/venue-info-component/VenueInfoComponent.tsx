@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useMemo, useState } from "react";
 import ChatComponent from "../chat-component/ChatComponent";
 import { IVenue } from "@/models/IVenue";
 import styles from "./VenueInfoComponent.module.css";
+import Link from "next/link";
 
 interface Props {
     venue: IVenue;
@@ -146,10 +147,14 @@ useEffect(() => {
                     </div>
                     <div className={styles.contentNews}>
                         <div className={styles.contentHero}>
-                            <h2 className={styles.titleMenu}>
-                                Our Menu
-                            </h2>
-
+                            {venue.id && (
+                                <Link
+                                    href={`/venues/${venue.id}/menu/`}
+                                    className={styles.titleMenu}
+                                >
+                                    Our Menu
+                                </Link>
+                            )}
                         </div>
                         <div>
                             {photos[3]?.photo ? (

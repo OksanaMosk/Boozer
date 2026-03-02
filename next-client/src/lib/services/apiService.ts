@@ -32,9 +32,7 @@ const apiService = (accessToken?: string) => {
 };
 export { apiService };
 
-
-
-
+// export const dynamic = "force-dynamic"; на сторінку якшо шо
 
 
 

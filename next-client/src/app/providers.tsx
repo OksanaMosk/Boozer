@@ -4,7 +4,7 @@ import React, { Suspense } from "react";
 import { ThemeProvider } from "next-themes";
 import { SessionProvider } from "next-auth/react";
 import { LoaderComponent } from "@/components/loader-component/LoaderComponent";
-import MenuComponent from "@/components/menu-component/MenuComponent";
+import HeaderComponent from "@/components/header-component/HeaderComponent";
 import { Playfair_Display, Imperial_Script, Roboto } from "next/font/google";
 import { UserProvider} from "./contexts/UserProvider";
 
@@ -44,7 +44,7 @@ export function Providers({
                   </div>
               }>
                   <div className={`${playfair.variable} ${imperialScript.variable} ${roboto.variable}`}>
-              <MenuComponent />
+              <HeaderComponent />
               {children}
             </div>
           </Suspense>

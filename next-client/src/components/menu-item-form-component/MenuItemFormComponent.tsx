@@ -2,7 +2,7 @@
 
 import React, {ChangeEvent, SyntheticEvent, useEffect, useState} from "react";
 import {LoaderComponent} from "@/components/loader-component/LoaderComponent";
-import styles from "./MenuItemForm.module.css"
+import styles from "./MenuItemFormComponent.module.css"
 import venueServices from "@/lib/services/venueService";
 import {useUser} from "@/app/contexts/UserProvider";
 import {PhotoSingleUploadComponent} from "@/components/photo-single-upload-component/PhotoSingleUploadComponent";
@@ -38,7 +38,7 @@ interface MenuItemFormProps {
 
 const CATEGORY_OPTIONS = ["main", "dessert", "drink", "salad", "soup"];
 
-const MenuItemForm: React.FC<MenuItemFormProps> = ({venueId, menuId, globalCurrency, onCreate}) => {
+const MenuItemFormComponent: React.FC<MenuItemFormProps> = ({venueId, menuId, globalCurrency, onCreate}) => {
     const {user} = useUser();
     const [menuItem, setMenuItem] = useState<NewMenuItem>({
         name: "",
@@ -152,4 +152,4 @@ const MenuItemForm: React.FC<MenuItemFormProps> = ({venueId, menuId, globalCurre
     );
 };
 
-export default MenuItemForm;
+export default MenuItemFormComponent;

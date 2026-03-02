@@ -8,6 +8,8 @@ from .serializers import MenuSerializer, MenuItemSerializer
 from ..user.permissions import IsAdminOrVenueAdminOrReadOnly
 from django.shortcuts import get_object_or_404
 
+from ..venue.models import VenueModel
+
 
 class MenuViewSet(viewsets.ModelViewSet):
     queryset = MenuModel.objects.all()
@@ -15,14 +17,31 @@ class MenuViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAdminOrVenueAdminOrReadOnly]
 
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    filterset_fields = ['venue', 'title']
+    filterset_fields = ['venue', 'title', 'is_published']
     search_fields = ['title', 'description']
     ordering_fields = ['title']
     ordering = ['id']
 
     def get_queryset(self):
         venue_id = self.kwargs.get('venue_pk')
-        return MenuModel.objects.filter(venue_id=venue_id)
+        user = self.request.user
+
+        if not user.is_authenticated:
+            return MenuModel.objects.filter(venue_id=venue_id, is_published=True)
+
+        role = getattr(user, 'role', '').upper()
+
+        if user.is_superuser or role == 'ADMIN':
+            return MenuModel.objects.filter(venue_id=venue_id)
+
+        if role == 'VENUE_ADMIN':
+
+            is_owner = VenueModel.objects.filter(id=venue_id, venue_admin=user).exists()
+
+            if is_owner:
+                return MenuModel.objects.filter(venue_id=venue_id)
+
+        return MenuModel.objects.filter(venue_id=venue_id, is_published=True)
 
     def perform_create(self, serializer):
         venue_id = self.kwargs.get('venue_pk')

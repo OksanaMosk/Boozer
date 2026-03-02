@@ -1,6 +1,6 @@
 import React from "react";
 import {ButtonGoBackComponent} from "@/components/button-go-back-component/ButtonGoBackComponent";
-import VenueNewsManagerComponent from "@/components/venue-news-manager-component/VenueNewsManagerComponent";
+import NewsManagerComponent from "@/components/news-manager-component/NewsManagerComponent";
 import {ButtonScrollTopComponent} from "@/components/button-scroll-top-component/ButtonScrollTopComponent";
 
 
@@ -16,7 +16,7 @@ export default async function NewsPage({ params }: { params: Promise<{ id: strin
             }}
         >
             <ButtonGoBackComponent/>
-            <VenueNewsManagerComponent venueId={id}/>
+            <NewsManagerComponent venueId={id}/>
             <ButtonScrollTopComponent/>
         </div>
     );

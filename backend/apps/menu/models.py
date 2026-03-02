@@ -9,11 +9,11 @@ class MenuModel(BaseModel):
     venue = models.ForeignKey(
         'venue.VenueModel',
         on_delete=models.CASCADE,
-        related_name='menus',
-        default=1
+        related_name='menus'
     )
 
     title = models.CharField(max_length=255)
+    is_published = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.title} ({self.venue.name})"
@@ -25,8 +25,7 @@ class MenuItem(BaseModel):
     menu = models.ForeignKey(
         MenuModel,
         on_delete=models.CASCADE,
-        related_name='menu_items',
-        default=1
+        related_name='menu_items'
         )
 
     name = models.CharField(max_length=255)
@@ -34,9 +33,9 @@ class MenuItem(BaseModel):
 
     price = models.DecimalField(max_digits=10, decimal_places=2)
     CURRENCY_CHOICES = [
-        ("UAH", "Гривня"),
-        ("USD", "Долар"),
-        ("EUR", "Євро"),
+        ("UAH", "Hryvnia"),
+        ("USD", "US Dollar"),
+        ("EUR", "Euro"),
     ]
     currency = models.CharField(
         max_length=3,

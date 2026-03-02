@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, ChangeEvent } from "react";
-import styles from "./NewItemForm.module.css";
+import styles from "./NewItemFormComponent.module.css";
 import { LoaderComponent } from "@/components/loader-component/LoaderComponent";
 import { useUser } from "@/app/contexts/UserProvider";
 import venueServices from "@/lib/services/venueService";
@@ -39,7 +39,7 @@ interface NewNewsFormProps {
 
 const NEWS_TYPE_OPTIONS = ["general", "promotion", "event"] as const;
 
-export const NewItemForm: React.FC<NewNewsFormProps> = ({ venueId, onCreate }) => {
+export const NewItemFormComponent: React.FC<NewNewsFormProps> = ({ venueId, onCreate }) => {
   const { user } = useUser();
   const [newsItem, setNewsItem] = useState<NewNews>({
     title: "",

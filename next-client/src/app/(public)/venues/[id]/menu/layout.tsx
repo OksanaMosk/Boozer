@@ -1,20 +1,19 @@
 import type {Metadata} from "next";
 import React from "react";
 
-
 export const metadata: Metadata = {
-    title: "Menu Id Venue ID | Boozer",
+    title: "Menu Venue ID | Boozer",
 };
 
 type Props = {
     children: React.ReactNode;
 }
 
-const MenuItemsLayout = ({children}: Props) => {
+const MenuLayout = ({children}: Props) => {
     return (
         <>
             {children}
         </>
     );
 }
-export default MenuItemsLayout;
+export default MenuLayout;

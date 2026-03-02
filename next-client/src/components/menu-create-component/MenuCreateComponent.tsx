@@ -1,7 +1,7 @@
 "use client"
 
 import React, {useState, ChangeEvent, SyntheticEvent} from "react";
-import styles from "./VenueMenuCreateComponent.module.css";
+import styles from "./MenuCreateComponent.module.css";
 import { LoaderComponent } from "@/components/loader-component/LoaderComponent";
 import venueServices from "@/lib/services/venueService";
 import {useUser} from "@/app/contexts/UserProvider";
@@ -12,7 +12,7 @@ interface VenueMenuCreateComponentProps {
     onMenuCreated: (menu: IMenu) => void;
 
 }
-const VenueMenuCreateComponent: React.FC<VenueMenuCreateComponentProps> = ({ venueId, onMenuCreated }) => {
+const MenuCreateComponent: React.FC<VenueMenuCreateComponentProps> = ({ venueId, onMenuCreated }) => {
     const [menu, setMenu] = useState<IMenu>({ venue_id: String(venueId), title: "" });
     const [loadingMenu, setLoadingMenu] = useState(false);
     const { user } = useUser();
@@ -77,4 +77,4 @@ const VenueMenuCreateComponent: React.FC<VenueMenuCreateComponentProps> = ({ ven
     );
 };
 
-export default VenueMenuCreateComponent;
+export default MenuCreateComponent;

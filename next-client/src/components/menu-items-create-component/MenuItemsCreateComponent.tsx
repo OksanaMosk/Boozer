@@ -15,10 +15,10 @@ import SortableMenuItem from "@/components/sortable-item-component/SortableItemC
 import venueServices from "@/lib/services/venueService";
 import {useUser} from "@/app/contexts/UserProvider";
 import {arrayMove} from "@dnd-kit/sortable";
-import styles from "./VenueMenuItemsCreateComponent.module.css";
+import styles from "./MenuItemsCreateComponent.module.css";
 import {AxiosResponse} from "axios";
 import DroppableCategory from "../droppable-category/DroppableCategory";
-import MenuItemForm from "@/components/menu-item-form/MenuItemForm";
+import MenuItemFormComponent from "@/components/menu-item-form-component/MenuItemFormComponent";
 
 const CATEGORY_OPTIONS = ["main", "dessert", "drink", "salad", "soup"];
 const CURRENCY_OPTIONS = ["UAH", "USD", "EUR"];
@@ -41,7 +41,7 @@ interface VenueMenuItemsCreateComponentProps {
     menuId: string;
 }
 
-const VenueMenuItemsCreateComponent: React.FC<VenueMenuItemsCreateComponentProps> = ({venueId, menuId}) => {
+const MenuItemsCreateComponent: React.FC<VenueMenuItemsCreateComponentProps> = ({venueId, menuId}) => {
     const {user} = useUser();
     const [items, setItems] = useState<MenuItem[]>([]);
     const [globalCurrency, setGlobalCurrency] = useState("UAH");
@@ -210,7 +210,7 @@ const handleDelete = async (menuItemId: string | number) => {
             </DndContext>
 
             <h4 className={styles.titleForm}>Add Menu Item</h4>
-            <MenuItemForm
+            <MenuItemFormComponent
                 venueId={venueId}
                 menuId={menuId}
                 globalCurrency={globalCurrency}
@@ -220,5 +220,5 @@ const handleDelete = async (menuItemId: string | number) => {
     );
 };
 
-export default VenueMenuItemsCreateComponent;
+export default MenuItemsCreateComponent;
 

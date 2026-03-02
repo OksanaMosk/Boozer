@@ -8,13 +8,13 @@ import { usePathname } from "next/navigation";
 import { BurgerMenuComponent } from "@/components/burger-menu-component/BurgerMenuComponent";
 import { UserInfoComponent } from "@/components/user-info-component/UserInfoComponent";
 import ThemesButtonComponent from "@/components/themes-button-component/ThemesButtonComponent";
-import styles from "./MenuClientComponent.module.css";
+import styles from "./HeaderClientComponent.module.css";
 
 import {signOut} from "next-auth/react";
 import {useUser} from "@/app/contexts/UserProvider";
 
 
-export const MenuClientComponent = () => {
+export const HeaderClientComponent = () => {
   const {user} = useUser()
   const authenticated = !!user;
   const [isOpen, setIsOpen] = useState(false);

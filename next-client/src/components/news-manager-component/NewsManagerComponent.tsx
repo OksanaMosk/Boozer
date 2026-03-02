@@ -3,11 +3,11 @@
 import React, { useState, useEffect } from "react";
 import venueServices from "@/lib/services/venueService";
 import { useUser } from "@/app/contexts/UserProvider";
-import styles from "./VenueNewsManagerComponent.module.css";
-import { NewItemForm } from "@/components/new-item-form/NewItemForm";
+import styles from "./NewsManagerComponent.module.css";
+import { NewItemFormComponent } from "@/components/new-item-form-component/NewItemFormComponent";
 import { INewsPhoto} from "@/models/IVenue";
 import {PaginationNewsComponent} from "@/components/pagination-news-component/PaginationNewsComponent";
-import {VenueNewComponent} from "@/components/venue-new-component/VenueNewComponent";
+import {NewComponent} from "@/components/new-component/NewComponent";
 import {LoaderComponent} from "@/components/loader-component/LoaderComponent";
 
 interface NewsItem {
@@ -28,7 +28,7 @@ interface VenueNewsManagerProps {
     venueId: string;
 }
 
-const VenueNewsManagerComponent: React.FC<VenueNewsManagerProps> = ({ venueId }) => {
+const NewsManagerComponent: React.FC<VenueNewsManagerProps> = ({ venueId }) => {
     const { user } = useUser();
     const [newsGeneral, setNewsGeneral] = useState<NewsItem[]>([]);
     const [newsPromotion, setNewsPromotion] = useState<NewsItem[]>([]);
@@ -117,7 +117,7 @@ useEffect(() => {
                 </div>
                 <div className={styles.newsSection}>
                    {config.items.map((news) => (
-                        <VenueNewComponent
+                        <NewComponent
                             key={news.id}
                             news={news}
                             venueId={venueId}
@@ -167,11 +167,11 @@ useEffect(() => {
             <div className={styles.wrapper}>
                 {renderNews(activeTab)}
                 <h4 className={styles.titleForm}>Add News</h4>
-                <NewItemForm venueId={venueId} onCreate={handleCreateNews} />
+                <NewItemFormComponent venueId={venueId} onCreate={handleCreateNews} />
             </div>
         </div>
     );
 };
 
-export default VenueNewsManagerComponent;
+export default NewsManagerComponent;
 
