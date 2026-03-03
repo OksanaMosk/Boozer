@@ -11,7 +11,7 @@ import {
     INews,
     IVenueTag,
     PaginatedResponse, ITable,
-    INewsPhoto
+    INewsPhoto, ITravelLogistics, ITravelEstimate
 } from "@/models/IVenue";
 import {IUser} from "@/models/IUser";
 
@@ -179,6 +179,15 @@ const venueServices = {
                 delete: (imageId: string) => api(token).delete(`${urls.venues.newsImages(venueId, newsId)}${imageId}/`),
             }),
         }),
+        travelLogistics: (token?: Token) => (venueId: string) => ({
+                getAll: () => api(token).get<ITravelLogistics[]>(urls.venues.travelLogistics(venueId)),
+                updatePrices: (data: { step_type: string; price_per_km: number }[]) => api(token).post<ITravelLogistics[]>(`${urls.venues.travelLogistics(venueId)}update-prices/`, data),
+                calculate: (lat: number, lng: number) => api(token).get<ITravelEstimate>(`${urls.venues.travelLogistics(venueId)}calculate/`, {params: {lat, lng}}),
+                get: (id: string) => api(token).get<ITravelLogistics>(`${urls.venues.travelLogistics(venueId)}${id}/`),
+                create: (data: Partial<ITravelLogistics>) => api(token).post<ITravelLogistics>(urls.venues.travelLogistics(venueId), data),
+                update: (id: string, data: Partial<ITravelLogistics>) => api(token).patch<ITravelLogistics>(`${urls.venues.travelLogistics(venueId)}${id}/`, data),
+                delete: (id: string) => api(token).delete(`${urls.venues.travelLogistics(venueId)}${id}/`),
+            }),
         reviews: {
             getAllWithFilter: (filterCriteria?: ReviewFilterCriteria, token?: Token) =>
                 api(token).get<IReview[]>(urls.reviews.list, {params: buildReviewParams(filterCriteria)}),

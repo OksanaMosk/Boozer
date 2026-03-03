@@ -1,10 +1,5 @@
 import React from "react";
-// import { ButtonGoBackComponent } from "@/components/button-go-back-component/ButtonGoBackComponent";
-// import { ButtonScrollTopComponent } from "@/components/button-scroll-top-component/ButtonScrollTopComponent";
-// import { IMenuItem} from "@/models/IVenue";
-// import venueServices from "@/lib/services/venueService";
-import MenuItemsCreateComponent
-    from "@/components/menu-items-create-component/MenuItemsCreateComponent";
+import MenuItemsCreateComponent from "@/components/menu-items-create-component/MenuItemsCreateComponent";
 import {ButtonScrollTopComponent} from "@/components/button-scroll-top-component/ButtonScrollTopComponent";
 import {ButtonGoBackComponent} from "@/components/button-go-back-component/ButtonGoBackComponent";
 

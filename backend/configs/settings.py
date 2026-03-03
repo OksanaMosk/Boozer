@@ -64,6 +64,7 @@ INSTALLED_APPS = [
     'apps.orders.apps.OrdersConfig',
     'apps.reviews_feedback',
     'apps.news',
+    'apps.travel_logistics',
     'apps.chat',
     'corsheaders',
     'storages',

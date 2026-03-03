@@ -101,6 +101,64 @@ export interface IMenuItem {
     photo_menu_item:string;
 }
 
+export interface INews {
+    id?: number |string;
+    venue?: string;
+    title: string;
+    content: string;
+    images?:INewsPhoto[] | [];
+    is_pinned: boolean;
+    end_date?: string | null;
+    created_at?: string;
+    updated_at?: string;
+    status:NewsStatus;
+    type:NewsType;
+}
+
+export type NewsType = "general" | "promotion" | "event";
+export type NewsStatus = "active" | "pending";
+
+export interface INewsPhoto {
+    id?: string;
+    news_id: string;
+    image: string;
+    is_cover?: boolean;
+    created_at?: string;
+    updated_at?: string;
+}
+
+
+export interface ITravelLogistics {
+    id?: string;
+    venue: string;
+    step_type: "to_airport" | "flight" | "from_airport";
+    price_per_km: number;
+    created_at?: string;
+    updated_at?: string;
+}
+
+export interface IAirport {
+    id: string;
+    name: string;
+    iata_code: string;
+    city: string;
+    country: string;
+    latitude: number;
+    longitude: number;
+}
+
+export interface ITravelSegment {
+    step: string;
+    km: number;
+    cost: number;
+}
+
+export interface ITravelEstimate {
+    start_airport: string;
+    end_airport: string;
+    segments: ITravelSegment[];
+    total_price: number;
+}
 
 export interface IOrder {
     id?: string;
@@ -137,34 +195,6 @@ export interface IReviewPhoto {
     review_id: string;
     photo: string;
 }
-
-
-export interface INews {
-    id?: number |string;
-    venue?: string;
-    title: string;
-    content: string;
-    images?:INewsPhoto[] | [];
-    is_pinned: boolean;
-    end_date?: string | null;
-    created_at?: string;
-    updated_at?: string;
-    status:NewsStatus;
-    type:NewsType;
-}
-
-export type NewsType = "general" | "promotion" | "event";
-export type NewsStatus = "active" | "pending";
-
-export interface INewsPhoto {
-    id?: string;
-    news_id: string;
-    image: string;
-    is_cover?: boolean;
-    created_at?: string;
-    updated_at?: string;
-}
-
 export interface GetUserVenuesResponse {
     venues: IVenue[];
 }

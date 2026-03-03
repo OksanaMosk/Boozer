@@ -960,6 +960,20 @@ Django = ">=4.2"
 djangorestframework = ">=3.15.0"
 
 [[package]]
+name = "googlemaps"
+version = "4.10.0"
+description = "Python client library for Google Maps Platform"
+optional = false
+python-versions = ">=3.5"
+groups = ["main"]
+files = [
+    {file = "googlemaps-4.10.0.tar.gz", hash = "sha256:3055fcbb1aa262a9159b589b5e6af762b10e80634ae11c59495bd44867e47d88"},
+]
+
+[package.dependencies]
+requests = ">=2.20.0,<3.0"
+
+[[package]]
 name = "hyperlink"
 version = "21.0.0"
 description = "A featureful, immutable, and correct URL for Python."
@@ -1915,4 +1929,4 @@ testing = ["coverage[toml]", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.12,<4.0"
-content-hash = "a8ee00b9132955b6e2a9548825f1abb475ccb98dff5e619b5fc03ddac8da9080"
+content-hash = "433ca681dde412cab1b8ca02881fb47770b732157bec0a12438710740d0ad070"
