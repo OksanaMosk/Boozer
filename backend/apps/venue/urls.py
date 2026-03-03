@@ -6,7 +6,7 @@ from apps.menu.views import MenuViewSet, MenuItemViewSet
 from apps.news.views import NewsViewSet, NewsImageViewSet
 from apps.reviews_feedback.views import ReviewViewSet, FavoriteVenueViewSet
 from apps.orders.views import OrderViewSet
-from ..travel_logistics.views import TravelLogisticsViewSet
+from ..travel_logistics.views import TravelLogisticsViewSet, ExtraServiceViewSet
 
 router = routers.DefaultRouter()
 router.register(r'venues', VenueViewSet, basename='venue')
@@ -21,6 +21,7 @@ venues_router.register(r'menu', MenuViewSet, basename='venue-menu')
 venues_router.register(r'news', NewsViewSet, basename='venue-news')
 venues_router.register(r'reviews', ReviewViewSet, basename='venue-reviews')
 venues_router.register(r'travel_logistics', TravelLogisticsViewSet, basename='venue-travel-logistics')
+venues_router.register(r'extra_services', ExtraServiceViewSet, basename='venue-extra-services')
 venues_router.register(r'favorites', FavoriteVenueViewSet, basename='venue-favorites')
 venues_router.register(r'orders', OrderViewSet, basename='venue-orders')
 venues_router.register(r'tables_layout', TablesLayoutViewSet, basename='venue-tables-layout')

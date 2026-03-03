@@ -7,11 +7,11 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import VenueModel, TagModel, TableModel, VenuePhotoModel, TableBookingModel, VenueTag
+from .models import VenueModel, TagModel, TableModel, VenuePhotoModel, TableBookingModel, VenueTagModel
 from .serializers import VenueSerializer, TagSerializer, TableSerializer, VenuePhotoSerializer, TableBookingSerializer, \
     VenueTagSerializer
 from .services.geocode import geocode_city
-from .services.venue_constans import get_venue_constants
+from .services.venue_constants_service import get_venue_constants
 from .services.venue_service import get_user_venues
 from ..user.permissions import IsAdminOrVenueAdminOrReadOnly, IsVisitorOrReadOnly
 
@@ -55,7 +55,7 @@ class TagViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
 
 class VenueTagViewSet(viewsets.ModelViewSet):
-    queryset = VenueTag.objects.all()
+    queryset = VenueTagModel.objects.all()
     serializer_class = VenueTagSerializer
     permission_classes = [IsAdminOrVenueAdminOrReadOnly]
 

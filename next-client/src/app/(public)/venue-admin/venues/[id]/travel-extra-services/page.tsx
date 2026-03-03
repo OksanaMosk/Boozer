@@ -1,9 +1,10 @@
 import React from "react";
 
 import {ButtonGoBackComponent} from "@/components/button-go-back-component/ButtonGoBackComponent";
-import VenueAdminDashboardComponent from "@/components/venue-admin-dashboard-component/VenueAdminDashboardComponent";
+import TravelLogisticsFormComponent from "@/components/travel-logistics-form-component/TravelLogisticsFormComponent";
 
-export default async function ServicesPage() {
+export default async function TravelExtraServicesPage ({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
     return (
         <div
             style={{
@@ -12,7 +13,7 @@ export default async function ServicesPage() {
                 textAlign: "center"
             }}
         >
-
+            <TravelLogisticsFormComponent venueId={id}/>
             <ButtonGoBackComponent/>
         </div>
     );

@@ -43,7 +43,7 @@ export default function PostLoginPage() {
       if (isMounted) setLoading(false);
     });
 
-    return () => { isMounted = false }; // cleanup
+    return () => { isMounted = false };
   }, [router]);
 
   if (loading) {

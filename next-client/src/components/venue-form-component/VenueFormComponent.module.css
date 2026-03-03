@@ -408,5 +408,35 @@ display: flex;
 .photoLabel {
   font-weight: 500;
 }
-
-
+.selectCurrency {
+    color: var(--color-text);
+    width: 25%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 1rem;
+}
+.select {
+     color: var(--color-text);
+     padding: 2px;
+    width: 80px;
+    font-size: 0.8rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--color-text);
+    cursor: pointer;
+    outline: none;
+    background: linear-gradient(
+        90deg,
+        #f9f295,
+        #ae8625,
+        #faf398,
+        #b88a44
+    );
+}
+.select option {
+    outline: none;
+    background: var(--title-color);
+    color: var(--color-badgeId);
+    border: none;
+}

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import VenueModel, VenuePhotoModel, TableModel, TableBookingModel, TagModel, VenueTag
+from .models import VenueModel, VenuePhotoModel, TableModel, TableBookingModel, TagModel, VenueTagModel
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -10,7 +10,7 @@ class TagSerializer(serializers.ModelSerializer):
 
 class VenueTagSerializer(serializers.ModelSerializer):
     class Meta:
-        model = VenueTag
+        model = VenueTagModel
         fields = ['id', 'venue', 'tag']
 
 class VenuePhotoSerializer(serializers.ModelSerializer):
@@ -26,7 +26,7 @@ class TableBookingSerializer(serializers.ModelSerializer):
     class Meta:
         model = TableBookingModel
         fields = ['id', 'order', 'table', 'time_range', 'is_active']
-        read_only_fields = ['id']
+        read_only_fields = ['id', 'order']
 
     def validate(self, data):
         instance = TableBookingModel(**data)
@@ -52,7 +52,7 @@ class VenueSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'name', 'venue_admin', 'country', 'city', 'address',
             'latitude', 'longitude', 'phone', 'description',
-            'opening_hours', 'photos', 'tables', 'features', 'average_check', 'rating', 'reviews_count',
+            'opening_hours', 'photos', 'tables', 'features', 'average_check',  'currency', 'rating', 'reviews_count',
             'status', 'views', 'daily_views', 'weekly_views', 'monthly_views',
             'edit_attempts', 'last_exchange_update',
             'tags',"background_tables"

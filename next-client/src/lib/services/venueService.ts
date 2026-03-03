@@ -3,7 +3,6 @@ import {apiService} from "./apiService";
 import {
     IVenue,
     IVenuePhoto,
-    ITableBooking,
     IMenu,
     IMenuItem,
     IOrder,
@@ -11,7 +10,7 @@ import {
     INews,
     IVenueTag,
     PaginatedResponse, ITable,
-    INewsPhoto, ITravelLogistics, ITravelEstimate
+    INewsPhoto, ITravelLogistics, ITravelEstimate, IExtraService
 } from "@/models/IVenue";
 import {IUser} from "@/models/IUser";
 
@@ -69,18 +68,18 @@ export interface OrderFilterCriteria {
     start_date?: string;
     end_date?: string;
 }
-
-const buildOrderParams = (criteria?: OrderFilterCriteria) => {
-    const params: Record<string, string | number | boolean> = {};
-    if (!criteria) return params;
-    if (criteria.status) params.status = criteria.status;
-    if (criteria.currency) params.currency = criteria.currency;
-    if (criteria.user) params.user = criteria.user;
-    if (criteria.venue) params.venue = criteria.venue;
-    if (criteria.start_date) params.start_date = criteria.start_date;
-    if (criteria.end_date) params.end_date = criteria.end_date;
-    return params;
-};
+//
+// const buildOrderParams = (criteria?: OrderFilterCriteria) => {
+//     const params: Record<string, string | number | boolean> = {};
+//     if (!criteria) return params;
+//     if (criteria.status) params.status = criteria.status;
+//     if (criteria.currency) params.currency = criteria.currency;
+//     if (criteria.user) params.user = criteria.user;
+//     if (criteria.venue) params.venue = criteria.venue;
+//     if (criteria.start_date) params.start_date = criteria.start_date;
+//     if (criteria.end_date) params.end_date = criteria.end_date;
+//     return params;
+// };
 
 export interface ReviewFilterCriteria {
     venue?: string;
@@ -182,12 +181,20 @@ const venueServices = {
         travelLogistics: (token?: Token) => (venueId: string) => ({
                 getAll: () => api(token).get<ITravelLogistics[]>(urls.venues.travelLogistics(venueId)),
                 updatePrices: (data: { step_type: string; price_per_km: number }[]) => api(token).post<ITravelLogistics[]>(`${urls.venues.travelLogistics(venueId)}update-prices/`, data),
-                calculate: (lat: number, lng: number) => api(token).get<ITravelEstimate>(`${urls.venues.travelLogistics(venueId)}calculate/`, {params: {lat, lng}}),
+                calculate: (lat: number, lng: number, start?: string, end?: string) => api(token).get<ITravelEstimate>(`${urls.venues.travelLogistics(venueId)}calculate/`, {params: { lat, lng, start, end }}),
                 get: (id: string) => api(token).get<ITravelLogistics>(`${urls.venues.travelLogistics(venueId)}${id}/`),
                 create: (data: Partial<ITravelLogistics>) => api(token).post<ITravelLogistics>(urls.venues.travelLogistics(venueId), data),
                 update: (id: string, data: Partial<ITravelLogistics>) => api(token).patch<ITravelLogistics>(`${urls.venues.travelLogistics(venueId)}${id}/`, data),
                 delete: (id: string) => api(token).delete(`${urls.venues.travelLogistics(venueId)}${id}/`),
             }),
+        extraServices: (token?: Token) => (venueId: string) => ({
+                getAll: () => api(token).get<IExtraService[]>(urls.venues.extraServices(venueId)),
+                updatePrices: (data: { service_type: string; price: number; price_type: string; name: string }[]) =>api(token).post<IExtraService[]>(`${urls.venues.extraServices(venueId)}update-prices/`, data),
+                get: (id: string) => api(token).get<IExtraService>(`${urls.venues.extraServices(venueId)}${id}/`),
+                create: (data: Partial<IExtraService>) => api(token).post<IExtraService>(urls.venues.extraServices(venueId), data),
+                update: (id: string, data: Partial<IExtraService>) => api(token).patch<IExtraService>(`${urls.venues.extraServices(venueId)}${id}/`, data),
+                delete: (id: string) => api(token).delete(`${urls.venues.extraServices(venueId)}${id}/`),
+}),
         reviews: {
             getAllWithFilter: (filterCriteria?: ReviewFilterCriteria, token?: Token) =>
                 api(token).get<IReview[]>(urls.reviews.list, {params: buildReviewParams(filterCriteria)}),

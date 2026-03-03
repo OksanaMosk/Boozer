@@ -1,8 +1,8 @@
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from .models import TravelLogisticsModel
-from .serializer import TravelLogisticsSerializer
+from .models import TravelLogisticsModel, ExtraServiceModel
+from .serializer import TravelLogisticsSerializer, ExtraServiceSerializer
 from .services import TravelCalculationService
 
 from ..user.permissions import IsAdminOrVenueAdminOrReadOnly
@@ -66,7 +66,8 @@ class TravelLogisticsViewSet(viewsets.ModelViewSet):
             )
             results.append({
                 "step_type": step.step_type,
-                "price_per_km": step.price_per_km
+                "price_per_km": step.price_per_km,
+                "currency": step.currency
             })
 
         return Response(results, status=status.HTTP_200_OK)
@@ -82,8 +83,6 @@ class TravelLogisticsViewSet(viewsets.ModelViewSet):
 
         if not v_lat or not v_lng:
             return Response({"error": "Latitude and longitude are required"}, status=400)
-
-        # Fetch venue object once and pass it to the service
         try:
             venue = VenueModel.objects.get(pk=venue_pk)
         except VenueModel.DoesNotExist:
@@ -93,3 +92,44 @@ class TravelLogisticsViewSet(viewsets.ModelViewSet):
         result = service.calculate_trip(float(v_lat), float(v_lng))
 
         return Response(result)
+
+
+class ExtraServiceViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAdminOrVenueAdminOrReadOnly]
+    serializer_class = ExtraServiceSerializer
+
+    def get_queryset(self):
+        return ExtraServiceModel.objects.filter(venue_id=self.kwargs.get('venue_pk'))
+
+    def perform_create(self, serializer):
+        serializer.save(venue_id=self.kwargs.get('venue_pk'))
+
+    @action(detail=False, methods=['post'], url_path='update-prices')
+    def update_prices(self, request, venue_pk=None):
+        """
+        """
+        prices_data = request.data
+
+        if not isinstance(prices_data, list):
+            return Response({"error": "Expected a list of service objects"}, status=status.HTTP_400_BAD_REQUEST)
+
+        results = []
+        for item in prices_data:
+            service, created = ExtraServiceModel.objects.update_or_create(
+                venue_id=venue_pk,
+                service_type=item.get('service_type'),
+                defaults={
+                    'name': item.get('name', item.get('service_type')),
+                    'price': item.get('price'),
+                    'price_type': item.get('price_type', 'fixed')
+                }
+            )
+            results.append({
+                "service_type": service.service_type,
+                "price": service.price,
+                "price_type": service.price_type,
+                "currency": service.currency
+            })
+
+        return Response(results, status=status.HTTP_200_OK)
+

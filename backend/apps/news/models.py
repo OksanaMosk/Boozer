@@ -1,16 +1,11 @@
 from django.db import models
+
+from core.constants.news import NewsType, NewsStatus
 from core.models import BaseModel
 
 
 class NewsModel(BaseModel):
-    class NewsType(models.TextChoices):
-        GENERAL = 'general', 'General'
-        PROMOTION = 'promotion', 'Promotion'
-        EVENT = 'event', 'Event'
 
-    class NewsStatus(models.TextChoices):
-        PENDING = 'pending', 'Pending'
-        ACTIVE = 'active', 'Active'
 
     class Meta:
         db_table = 'venue_news'
@@ -59,6 +54,9 @@ class NewsImageModel(models.Model):
 
     image = models.ImageField(upload_to='venue_news/')
     is_cover = models.BooleanField(default=False)
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
 
     created_at = models.DateTimeField(auto_now_add=True)
 

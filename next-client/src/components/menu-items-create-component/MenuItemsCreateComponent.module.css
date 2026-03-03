@@ -8,37 +8,6 @@
     text-align: center;
 }
 
-.selectCurrency {
-    color: var(--color-text);
-    align-items: flex-end;
-    width: 100%;
-    display: flex;
-    justify-content: flex-start;
-    gap: 1rem;
-}
-.select {
-     color: var(--color-text);
-     padding: 2px;
-    width: 80px;
-    font-size: 0.8rem;
-    border-radius: 0.5rem;
-    border: 1px solid var(--color-text);
-    cursor: pointer;
-    outline: none;
-    background: linear-gradient(
-        90deg,
-        #f9f295,
-        #ae8625,
-        #faf398,
-        #b88a44
-    );
-}
-.select option {
-    outline: none;
-    background: var(--title-color);
-    color: var(--color-badgeId);
-    border: none;
-}
 
 .wrapperTitle {
     margin: 0;
@@ -72,6 +41,54 @@
     color: var(--title-primary-color);
     letter-spacing: 10px;
 }
+.selectCurrency {
+    margin:30px auto;
+    font-size: 1rem;
+    color: var(--title-primary-color);
+    align-items: center;
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    gap: 1rem;
+}
+.currencyDisplay {
+    font-size: 1rem;
+    color: var(--title-primary-color);
+}
+.currency{
+    font-weight: 700;
+    font-size: 1.6rem;
+     font-family: var(--font-imperial),sans-serif;
+}
+/*.select {*/
+/*    padding: 8px;*/
+/*    width: 160px;*/
+/*    border: 1px solid var(--color-white);*/
+/*    font-size: 1rem;*/
+/*    border-radius: 1.5rem;*/
+/*    cursor: pointer;*/
+/*    outline: none;*/
+
+
+/*background: linear-gradient(*/
+/*        90deg,*/
+/*        #f9f295,*/
+/*        #ae8625,*/
+/*        #faf398,*/
+/*        #b88a44*/
+/*    );*/
+/*    color:  var(--input-color);*/
+/*    background: transparent;*/
+/*}*/
+/*.select option {*/
+/*    outline: none;*/
+/*   background: var(--color-container);*/
+/*  color: var(--color-badgeId);*/
+/*    border: none;*/
+/*}*/
+
+
+
 
 .wrapper{
     margin: 0 auto 60px;
@@ -205,4 +222,36 @@
 .titleForm {
     justify-content: center;
 }
+.warningText {
+    text-align: left;
+    color:var(--title-primary-color);
+    font-size: 13px;
+    margin-top: 8px;
+    line-height: 1.4;
+    font-style: italic;
+    max-width: 400px;
+}
 
+.lockHintWrapper {
+    margin-top: 4px;
+    display: flex;
+    flex-direction: column;
+}
+
+.lockHint {
+    color: #7f8c8d;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.helperText {
+    font-size: 11px;
+    color: #95a5a6;
+    margin: 0;
+}
+
+.select:disabled {
+    background-color: #ecf0f1;
+    cursor: not-allowed;
+    border-color: #bdc3c7;
+}

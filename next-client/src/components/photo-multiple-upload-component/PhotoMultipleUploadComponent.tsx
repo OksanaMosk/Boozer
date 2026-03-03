@@ -19,6 +19,7 @@ interface MultiplePhotoUploadProps {
     onUploadComplete: (photos: string[]) => void;
     existingPhotos?: { id: string; url?: string; image?: string; is_cover: boolean }[];
     maxFiles: number;
+    onSetCover?: (photoId: string | number) => void;
 }
 
 const PhotoMultipleUploadComponent: React.FC<MultiplePhotoUploadProps> = ({
@@ -27,6 +28,7 @@ const PhotoMultipleUploadComponent: React.FC<MultiplePhotoUploadProps> = ({
     onUploadComplete,
     existingPhotos = [],
     maxFiles,
+     onSetCover,
 }) => {
     const { user } = useUser();
     const [loading, setLoading] = useState<boolean>(false);
@@ -106,9 +108,18 @@ const PhotoMultipleUploadComponent: React.FC<MultiplePhotoUploadProps> = ({
             setLoading(false);
         }
     };
+
     const handleCoverChange = (index: number) => {
-        setPhotos(prev => prev.map((p, i) => ({ ...p, is_cover: i === index })));
+        const selectedPhoto = photos[index];
+        if (selectedPhoto.id && onSetCover) {
+            onSetCover(selectedPhoto.id);
+        }
+        setPhotos(prev => prev.map((p, i) => ({
+            ...p,
+            is_cover: i === index
+        })));
     };
+
     const openFileDialog = () => {
         inputRef.current?.click();
     };
@@ -156,6 +167,7 @@ const PhotoMultipleUploadComponent: React.FC<MultiplePhotoUploadProps> = ({
                                     name="coverPhoto"
                                     checked={photo.is_cover}
                                     onChange={() => handleCoverChange(index)}
+
                                 />
                                 Cover
                             </label>

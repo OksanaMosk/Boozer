@@ -6,7 +6,7 @@ import { LoaderComponent } from "@/components/loader-component/LoaderComponent";
 import { IVenue, IVenuePhoto } from "@/models/IVenue";
 import venueServices from "@/lib/services/venueService";
 import { useUser } from "@/app/contexts/UserProvider";
-import {VenueForm} from "@/components/venue_form_component/VenueFormComponent";
+import {VenueFormComponent} from "@/components/venue-form-component/VenueFormComponent";
 import {VenuePhotosComponent} from "@/components/venue-photos-component/VenuePhotosComponent";
 
 interface Props {
@@ -137,7 +137,7 @@ const VenueEditComponent = ({ venueId }: Props) => {
 
     return (
         <>
-            <VenueForm
+            <VenueFormComponent
             mode="edit"
             venueId={venueId}
             form={form}

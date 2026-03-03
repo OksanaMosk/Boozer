@@ -3,16 +3,18 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.contrib.auth import get_user_model
 
-from apps.menu.models import MenuItem
+from apps.menu.models import MenuItemModel
 from apps.orders.models import OrderModel
 from django.contrib.postgres.fields import DateTimeRangeField
 from django.contrib.postgres.indexes import GistIndex
 
 from apps.venue.services.geocode import geocode_city
 from apps.venue.services.venue_service import notify_admin
+from core.constants.countries_cities import COUNTRIES
+from core.constants.currencies import CURRENCY_CHOICES
 from core.services.file_service import upload_venue_photo
 from core.models import BaseModel
-from countries_cities import COUNTRIES
+
 
 from django.contrib.postgres.constraints import ExclusionConstraint
 from django.contrib.postgres.fields.ranges import RangeOperators
@@ -55,6 +57,11 @@ class VenueModel( BaseModel):
     features = models.JSONField(blank=True, null=True)
 
     average_check = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    currency = models.CharField(
+        max_length=3,
+        choices=CURRENCY_CHOICES,
+        default="UAH"
+    )
     rating = models.FloatField(default=0)
     reviews_count = models.PositiveIntegerField(default=0)
 
@@ -72,7 +79,7 @@ class VenueModel( BaseModel):
     last_exchange_update = models.DateField(null=True, blank=True)
     tags = models.ManyToManyField(
         TagModel,
-        through='VenueTag',
+        through='VenueTagModel',
         blank=True,
         related_name='venues'
     )
@@ -98,7 +105,7 @@ class VenuePhotoModel(models.Model):
     is_main = models.BooleanField(default=False)
 
 
-class VenueTag(models.Model):
+class VenueTagModel(models.Model):
     venue = models.ForeignKey(VenueModel, on_delete=models.CASCADE)
     tag = models.ForeignKey(TagModel, on_delete=models.CASCADE)
 

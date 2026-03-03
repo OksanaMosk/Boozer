@@ -1,3 +1,5 @@
+"use client"
+
 import React from "react";
 import styles from "./VenueFormComponent.module.css"
 import VenueSelectsComponent from "@/components/venue-selects-component/VenueSelectsComponent";
@@ -19,8 +21,8 @@ interface VenueFormProps {
     tagsInput?: string;
     setTagsInput?: React.Dispatch<React.SetStateAction<string>>;
 }
-
-export const VenueForm = ({
+const CURRENCY_OPTIONS = ["UAH", "USD", "EUR"];
+export const VenueFormComponent = ({
                               mode,
                               venueId,
                               form,
@@ -121,6 +123,28 @@ const { inputRef: phoneRef, error: phoneError } = usePhoneMask(
                                     placeholder="+xx (xxx) xxx-xx-xx"
                                 />
                                 {phoneError && <p className={styles.error}>{phoneError}</p>}
+                            </div>
+
+                            <div className={styles.inputWrapper}>
+                                <label className={styles.label}>Venue Currency *</label>
+                                <select
+                                    name="currency"
+                                    value={form.currency || "UAH"}
+                                    onChange={(e) =>
+                                        setForm((prev: any) => ({...prev, currency: e.target.value}))
+                                    }
+                                    className={styles.select}
+                                >
+                                    {CURRENCY_OPTIONS.map(c => (
+                                        <option key={c} value={c}>
+                                            {c}
+                                        </option>
+                                    ))}
+                                </select>
+                                <p className={styles.helperText}>
+                                    Select the main currency for this venue.
+                                    It will be used for all menus, logistics, and services.
+                                </p>
                             </div>
                             <div className={styles.inputWrapper}>
                                 <OpeningHoursFormComponent

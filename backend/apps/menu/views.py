@@ -3,7 +3,7 @@ from rest_framework import viewsets, filters
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from .models import MenuModel, MenuItem
+from .models import MenuModel, MenuItemModel
 from .serializers import MenuSerializer, MenuItemSerializer
 from ..user.permissions import IsAdminOrVenueAdminOrReadOnly
 from django.shortcuts import get_object_or_404
@@ -61,7 +61,7 @@ class MenuItemViewSet(viewsets.ModelViewSet):
         venue_pk = self.kwargs.get('venue_pk')
         menu_pk = self.kwargs.get('menu_pk')
 
-        return MenuItem.objects.filter(
+        return MenuItemModel.objects.filter(
             menu_id=menu_pk,
             menu__venue_id=venue_pk
         )
@@ -87,7 +87,7 @@ class MenuItemViewSet(viewsets.ModelViewSet):
                 if "category" in item:
                     update_data["category"] = item["category"]
 
-                MenuItem.objects.filter(
+                MenuItemModel.objects.filter(
                     id=item['id'],
                     menu__id=menu_pk,
                     menu__venue__id=venue_pk

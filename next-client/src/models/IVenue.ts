@@ -15,6 +15,7 @@ export interface IVenue {
     opening_hours?: Record<string, any>;
     features?: Record<string, any>;
     average_check?: number;
+    currency:CurrencyCode;
     rating?: number;
     reviews_count?: number;
     status?: string;
@@ -36,6 +37,7 @@ export interface IVenue {
     news?: INews[];
     background_tables?: string;
 }
+export type CurrencyCode = "UAH" | "USD" | "EUR";
 
 export interface IVenueWithId extends Omit<IVenue, "id"> {
   id: string;
@@ -133,8 +135,6 @@ export interface ITravelLogistics {
     venue: string;
     step_type: "to_airport" | "flight" | "from_airport";
     price_per_km: number;
-    created_at?: string;
-    updated_at?: string;
 }
 
 export interface IAirport {
@@ -158,6 +158,21 @@ export interface ITravelEstimate {
     end_airport: string;
     segments: ITravelSegment[];
     total_price: number;
+}
+
+export type ServiceType ='hotel' | 'insurance' | 'decoration'
+
+export type PriceType = 'fixed' | 'per_day'
+
+export interface IExtraService {
+    id: string;
+    venue: string;
+    name: string;
+    service_type: ServiceType;
+    service_type_display?: string;
+    price_type: PriceType;
+    price_type_display?: string;
+    price: number | string;
 }
 
 export interface IOrder {

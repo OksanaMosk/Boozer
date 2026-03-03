@@ -200,11 +200,11 @@ const VenueListingComponent: React.FC<Props> = ({
                             Tables
                         </Link>
                         <Link
-                            href={`/venue-admin/venues/${venue.id}/features/`}
+                            href={`/venue-admin/venues/${venue.id}/travel-extra-services/`}
                             className={styles.buttonLink}
                             onClick={(e) => e.stopPropagation()}
                         >
-                            Features
+                            Services
                         </Link>
                         <Link
                             href={`/venue-admin/venues/${venue.id}/orders/`}

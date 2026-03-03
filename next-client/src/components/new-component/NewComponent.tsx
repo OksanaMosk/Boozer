@@ -26,6 +26,28 @@ export const NewComponent = ({ news, venueId, onDelete, onUpdate }: VenueNewComp
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setEditNews({ ...editNews, [e.target.name]: e.target.value });
     };
+    const handleSetCover = async (photoId: string | number) => {
+    if (!user?.token || !editNews?.id) return;
+
+    try {
+        const res = await venueServices.venues
+            .news({ accessToken: user.token })(venueId)
+            .images(editNews.id.toString())
+            .update(photoId.toString(), { is_cover: true });
+        if (res.data && res.data.id) {
+            const serverPhotoId = res.data.id.toString();
+            const updatedImages = editNews.images.map((img: any) => ({
+                ...img,
+                is_cover: img.id.toString() === serverPhotoId
+            }));
+            const updatedNews = { ...editNews, images: updatedImages };
+            setEditNews(updatedNews);
+            onUpdate(updatedNews);
+        }
+    } catch (err) {
+        console.error("Failed to set cover:", err);
+    }
+};
     const handleSave = async () => {
         if (!user?.token) return;
         setLoading(true);
@@ -113,6 +135,7 @@ export const NewComponent = ({ news, venueId, onDelete, onUpdate }: VenueNewComp
                 {editMode && (
                     <div className={styles.photoWrapper}>
                         <PhotoMultipleUploadComponent
+                            key={editNews.id}
                             venueId={venueId}
                             newsId={editNews.id.toString()}
                             existingPhotos={editNews.images?.map((img: any)  => ({
@@ -121,15 +144,24 @@ export const NewComponent = ({ news, venueId, onDelete, onUpdate }: VenueNewComp
                                 is_cover: img.is_cover || false
                             })) || []}
                             maxFiles={7}
-                            onUploadComplete={(uploadedUrls) => {
-                            setEditNews((prev:INews) => ({
-                                ...prev,
-                                images: [
-                                    ...(prev.images || []),
-                                    ...uploadedUrls.map(url => ({image: url, is_cover: false}))
-                                ]
-                            }));
-                        }}
+                            onSetCover={handleSetCover}
+                            onUploadComplete={(uploadedPhotos: any[]) => {
+    setEditNews((prev: any) => {
+        const updatedNews = {
+            ...prev,
+            images: [
+                ...(prev.images || []),
+                ...uploadedPhotos.map((p) => ({
+                    id: p.id,            // Обов'язково зберігаємо ID
+                    image: p.image || p.url,
+                    is_cover: p.is_cover || false
+                }))
+            ]
+        };
+        onUpdate(updatedNews);
+        return updatedNews;
+    });
+}}
                     /></div>
                 )}
                 {images.length > 0 && <NewsGallery images={images}/>}

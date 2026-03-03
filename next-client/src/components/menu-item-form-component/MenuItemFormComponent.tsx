@@ -40,6 +40,9 @@ const CATEGORY_OPTIONS = ["main", "dessert", "drink", "salad", "soup"];
 
 const MenuItemFormComponent: React.FC<MenuItemFormProps> = ({venueId, menuId, globalCurrency, onCreate}) => {
     const {user} = useUser();
+    const [loadingItem, setLoadingItem] = useState(false);
+    const [createdItem, setCreatedItem] = useState<MenuItem | null>(null);
+    const [photoUploaded, setPhotoUploaded] = useState(false);
     const [menuItem, setMenuItem] = useState<NewMenuItem>({
         name: "",
         description: "",
@@ -49,9 +52,14 @@ const MenuItemFormComponent: React.FC<MenuItemFormProps> = ({venueId, menuId, gl
         photo: null,
         preview: null,
     });
-    const [loadingItem, setLoadingItem] = useState(false);
-    const [createdItem, setCreatedItem] = useState<MenuItem | null>(null);
-    const [photoUploaded, setPhotoUploaded] = useState(false);
+
+    useEffect(() => {
+    setMenuItem(prev => ({
+        ...prev,
+        currency: globalCurrency
+    }));
+}, [globalCurrency]);
+
 
     useEffect(() => {
         if (createdItem) {
@@ -78,9 +86,10 @@ const MenuItemFormComponent: React.FC<MenuItemFormProps> = ({venueId, menuId, gl
             formData.append("category", menuItem.category);
             formData.append("menu", menuId);
 
+
             const res = await venueServices.venues.menuItems({accessToken: user.token})(venueId)(menuId)
                 .create(formData as any);
-
+            console.log("Server saved currency:", res.data.currency)
             const newItem: MenuItem = {
                 ...res.data,
                 id: String(res.data.id),
@@ -89,11 +98,11 @@ const MenuItemFormComponent: React.FC<MenuItemFormProps> = ({venueId, menuId, gl
                 position: 0,
                 currency: globalCurrency,
             };
+            setPhotoUploaded(false);
             setCreatedItem(newItem);
             onCreate(newItem);
-
-            setCreatedItem(newItem);
-        onCreate(newItem);
+            } catch (error) {
+            console.error("error:", error);
         } finally {
             setLoadingItem(false);
         }
@@ -105,8 +114,11 @@ const MenuItemFormComponent: React.FC<MenuItemFormProps> = ({venueId, menuId, gl
                 <input type="text" name="name" placeholder="Item Name" value={menuItem.name} onChange={handleChange} required className={styles.inputCreate}/>
                 <textarea name="description" placeholder="Description" value={menuItem.description}
                           onChange={handleChange} className={styles.textarea}/>
-                <input type="number" step="0.01" name="price" placeholder="Price" value={menuItem.price}
-                       onChange={handleChange} required className={styles.inputPrice}/>
+                <div className={styles.priceInputWrapper}>
+                    <input type="number" step="0.01" name="price" placeholder="Price" value={menuItem.price}
+                          onChange={handleChange} required className={styles.inputPrice}/>
+                    <span className={styles.currencyLabel}>{globalCurrency}</span>
+                </div>
                 <label className={styles.label} htmlFor="category">Category</label>
                 <select name="category" value={menuItem.category} onChange={handleChange} className={styles.select}>
                     {CATEGORY_OPTIONS.map(c => <option key={c}
@@ -119,6 +131,7 @@ const MenuItemFormComponent: React.FC<MenuItemFormProps> = ({venueId, menuId, gl
                     </button>
                 ) : (
                     <PhotoSingleUploadComponent
+                         key={createdItem.id}
                         initialPhotoUrl={createdItem.preview || ""}
                         label="Upload Menu Item Photo"
                         onUpload={async (file: File) => {

@@ -1,6 +1,9 @@
 from django.core.exceptions import ValidationError
 from django.db import models
-from apps.menu.models import MenuItem
+from apps.menu.models import MenuItemModel
+from apps.travel_logistics.models import ExtraServiceModel
+from core.constants.currencies import CURRENCY_CHOICES
+from core.constants.order import STATUS_CHOICES
 from core.models import BaseModel
 from django.conf import settings
 
@@ -8,11 +11,7 @@ class OrderModel(BaseModel):
     class Meta:
         db_table = 'orders'
 
-    STATUS_CHOICES = (
-        ('new', 'New'),
-        ('confirmed', 'Confirmed'),
-        ('rejected', 'Rejected'),
-    )
+
 
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -27,11 +26,7 @@ class OrderModel(BaseModel):
         default=1
     )
 
-    currency = models.CharField(
-        max_length=3,
-        choices=[('UAH', 'UAH'), ('USD', 'USD'), ('EUR', 'EUR')],
-        default='UAH'
-    )
+    currency = models.CharField(max_length=3, choices=CURRENCY_CHOICES, default="UAH")
 
     exchange_rate = models.DecimalField(
         max_digits=10,
@@ -82,32 +77,16 @@ class OrderItemModel(BaseModel):
     )
 
     menu_item = models.ForeignKey(
-        MenuItem,
+        MenuItemModel,
         on_delete=models.CASCADE
     )
 
     quantity = models.PositiveIntegerField(default=1)
-    price = models.DecimalField(max_digits=10, decimal_places=2)  # фіксована ціна на момент замовлення
+    price = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self):
         return f"{self.menu_item.name} x{self.quantity}"
 
-class ExtraServiceModel(models.Model):
-    class Meta:
-        db_table = 'extra_services'
-
-    SERVICE_TYPES = (
-        ('hotel', 'Hotel Stay'),
-        ('insurance', 'Insurance'),
-        ('decoration', 'Decoration'),
-    )
-
-    name = models.CharField(max_length=100)
-    service_type = models.CharField(max_length=50, choices=SERVICE_TYPES)
-    price = models.DecimalField(max_digits=10, decimal_places=2)
-
-    def __str__(self):
-        return self.name
 
 class OrderExtraServiceModel(models.Model):
     order = models.ForeignKey(

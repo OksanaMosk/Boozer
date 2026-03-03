@@ -5,9 +5,11 @@ import {useRouter} from "next/navigation";
 import {IVenue, ITag} from "@/models/IVenue";
 import {useUser} from "@/app/contexts/UserProvider";
 import venueServices from "@/lib/services/venueService";
-import {VenueForm} from "@/components/venue_form_component/VenueFormComponent";
+
 import {VenuePhotosComponent} from "@/components/venue-photos-component/VenuePhotosComponent";
-import styles from "@/components/venue_form_component/VenueFormComponent.module.css";
+
+import styles from "./VenueCreateComponent.module.css";
+import {VenueFormComponent} from "@/components/venue-form-component/VenueFormComponent";
 
 interface ILocalPhoto {
     file: File;
@@ -185,7 +187,7 @@ const VenueCreateComponent = () => {
 
     return (
         <div className={styles.wrap}>
-            <VenueForm
+            <VenueFormComponent
                 mode="create"
                 form={newVenue}
                 setForm={setNewVenue}
