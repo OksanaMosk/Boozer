@@ -7,7 +7,8 @@ import VenuesComponent from "@/components/venues-component/VenuesComponent";
 import VenueFilterComponent from "@/components/venue-filter-component/VenueFilterComponent";
 import { IVenue } from "@/models/IVenue";
 import { LoaderComponent } from "@/components/loader-component/LoaderComponent";
-import styles from "./VenuesClientComponent.module.css";
+import styles from "./BoozerVenuesClientComponent.module.css";
+import BoozerVenuesComponent from "@/components/boozer-venues-component/BoozerVenuesComponent";
 
 interface VenueFilters {
     name?: string;
@@ -20,7 +21,7 @@ interface VenueQueryParams extends VenueFilterCriteria {
     page?: number;
 }
 
-export const VenuesClientComponent = () => {
+export const BoozerVenuesClientComponent = () => {
     const [filters, setFilters] = useState<VenueFilters>({});
     const [venuesData, setVenuesData] = useState<IVenue[]>([]);
     const [totalPagesState, setTotalPagesState] = useState(1);
@@ -63,14 +64,14 @@ export const VenuesClientComponent = () => {
 
     return (
         <div className={styles.wrapper}>
-            <h1 className={styles.title}>Venues</h1>
+            <h1 className={styles.title}>Choose Venue</h1>
 
             <VenueFilterComponent onFilterChange={handleFilterChange} />
 
             {isLoading ? (
                 <div className={styles.loaderWrapper}><LoaderComponent/></div>
             ) : (
-                <VenuesComponent
+                <BoozerVenuesComponent
                     venues={venuesData}
                     totalPages={totalPagesState}
                 />

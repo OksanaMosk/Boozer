@@ -206,6 +206,20 @@ useEffect(() => {
                             </div>
                         )}
                     </div>
+                    <Link href="/boozer">
+                        <p className={styles.titleMenu}>Your VIP Boozer status starts here!</p>
+                        <img
+                        src="/favicon/android-chrome-512x512.png"
+                        alt="logo"
+                        width={80}
+                        height={80}
+                        className={styles.logoImage}
+                          loading="eager"
+                        // priority={true}
+                         style={{ objectFit: "contain" }}
+                    />
+                        <p  className={styles.titleJoin}>Join now</p>
+                    </Link>
                 </div>
             </div>
 

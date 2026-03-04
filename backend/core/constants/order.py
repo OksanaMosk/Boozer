@@ -1,5 +1,7 @@
-STATUS_CHOICES = (
-    ('new', 'New'),
-    ('confirmed', 'Confirmed'),
-    ('rejected', 'Rejected'),
-)
+STATUS_CHOICES = [
+    ('DRAFT', 'Draft'),
+    ('HOLD', 'Hold'),
+    ('CONFIRMED', 'Confirmed'),
+    ('EXPIRED', 'Expired'),
+    ('CANCELLED', 'Cancelled')
+]

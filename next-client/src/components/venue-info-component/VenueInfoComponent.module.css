@@ -8,6 +8,7 @@
 }
 
 .mainContainer {
+    margin-bottom: 120px;
     align-items: center;
     justify-content: center;
     display: flex;
@@ -47,7 +48,7 @@
     align-items: flex-start;
     width: 25rem;
 }
-
+.titleJoin,
 .title,
 .titleMenu {
     color: var(--color-text);
@@ -64,7 +65,10 @@
     width: 100%;
      text-align: center;
 }
-
+.titleJoin {
+    font-size: 1rem;
+    text-decoration: underline;
+}
 .overview{
     text-align: left;
     font-size: 1rem;

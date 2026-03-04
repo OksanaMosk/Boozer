@@ -1,22 +1,22 @@
 'use client';
 
 import React from 'react';
-import {VenuesClientComponent} from "@/components/venues-client-component/VenuesClientComponent";
 import {ButtonGoBackComponent} from "@/components/button-go-back-component/ButtonGoBackComponent";
 import {ButtonScrollTopComponent} from "@/components/button-scroll-top-component/ButtonScrollTopComponent";
+import {BoozerVenuesClientComponent} from "@/components/boozer-venues-client-component/BoozerVenuesClientComponent";
 
-const VenuesPage = () => {
+const BoozerPage = () => {
   return (
     <div style={{
       textAlign: 'center',
     }}>
         <ButtonGoBackComponent/>
-        <VenuesClientComponent/>
+        <BoozerVenuesClientComponent/>
         <ButtonScrollTopComponent/>
     </div>
   );
 };
 
-export default VenuesPage;
+export default BoozerPage;
 
 
