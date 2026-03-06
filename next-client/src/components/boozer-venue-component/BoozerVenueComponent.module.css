@@ -61,7 +61,8 @@
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
-
+.wrapper:hover,
+.wrapper:focus,
 .wrapper.selected {
        background: linear-gradient(90deg, #1f2937, white, #1f2937);
 }

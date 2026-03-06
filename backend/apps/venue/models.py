@@ -1,12 +1,9 @@
 
-from django.core.exceptions import ValidationError
 from django.db import models
 from django.contrib.auth import get_user_model
 
 from apps.menu.models import MenuItemModel
 from apps.orders.models import OrderModel
-from django.contrib.postgres.fields import DateTimeRangeField
-from django.contrib.postgres.indexes import GistIndex
 
 from apps.venue.services.geocode import geocode_city
 from apps.venue.services.venue_service import notify_admin
@@ -14,11 +11,6 @@ from core.constants.countries_cities import COUNTRIES
 from core.constants.currencies import CURRENCY_CHOICES
 from core.services.file_service import upload_venue_photo
 from core.models import BaseModel
-
-
-from django.contrib.postgres.constraints import ExclusionConstraint
-from django.contrib.postgres.fields.ranges import RangeOperators
-from django.db.models import Q
 
 
 User = get_user_model()
@@ -128,62 +120,3 @@ class TableModel(models.Model):
 
     def __str__(self):
         return f"Table {self.capacity} at {self.venue.name}"
-
-
-class TableBookingModel(models.Model):
-    order = models.ForeignKey(
-        OrderModel,
-        on_delete=models.CASCADE,
-        related_name='table_bookings'
-    )
-
-    table = models.ForeignKey(
-        TableModel,
-        on_delete=models.CASCADE,
-        related_name='bookings'
-    )
-    time_range = DateTimeRangeField(null=True, blank=True)
-    is_active = models.BooleanField(default=True)
-
-    class Meta:
-        db_table = 'table_bookings'
-        indexes = [GistIndex(fields=['table', 'time_range'])]
-        constraints = [
-            ExclusionConstraint(
-                name='prevent_overlapping_bookings',
-                expressions=[
-                    ('table', RangeOperators.EQUAL),
-                    ('time_range', RangeOperators.OVERLAPS),
-                ],
-                condition=Q(is_active=True),
-            ),
-        ]
-        ordering = ['time_range']
-
-    @property
-    def user(self):
-        return self.order.user
-
-    def clean(self):
-        if self.table.venue_id != self.order.venue_id:
-            raise ValidationError("Table and order must belong to same venue.")
-
-        start = self.time_range.lower
-        end = self.time_range.upper
-
-        if start >= end:
-            raise ValidationError("Booking start must be before booking end.")
-
-        if not (self.order.start_date <= start.date() <= self.order.end_date):
-            raise ValidationError("Booking start must be within order period.")
-
-        if not (self.order.start_date <= end.date() <= self.order.end_date):
-            raise ValidationError("Booking end must be within order period.")
-
-        existing_capacity = sum(
-            b.table.capacity
-            for b in self.order.table_bookings.exclude(pk=self.pk)
-        )
-        total_capacity = existing_capacity + self.table.capacity
-        if total_capacity < self.order.guests_count:
-            raise ValidationError("Not enough seats assigned for this order.")

@@ -1,4 +1,5 @@
 import googlemaps
+from decimal import Decimal
 from django.conf import settings
 from math import radians, cos, sin, asin, sqrt
 from .models import AirportModel
@@ -34,6 +35,10 @@ class TravelCalculationService:
         try:
             # noinspection PyUnresolvedReferences
             res_to = self.gmaps.distance_matrix((v_lat, v_lng), (start_airport.latitude, start_airport.longitude))
+
+            if res_to['rows'][0]['elements'][0]['status'] != 'OK':
+                return {"error": "Road not found to the starting airport"}
+
             dist_to = res_to['rows'][0]['elements'][0]['distance']['value'] / 1000
 
             dist_flight = self._haversine(start_airport.latitude, start_airport.longitude,
@@ -41,9 +46,13 @@ class TravelCalculationService:
             # noinspection PyUnresolvedReferences
             res_from = self.gmaps.distance_matrix((end_airport.latitude, end_airport.longitude),
                                                   (self.venue.latitude, self.venue.longitude))
+            if res_from['rows'][0]['elements'][0]['status'] != 'OK':
+                return {"error": "Road not found from airport to the venue"}
+
             dist_from = res_from['rows'][0]['elements'][0]['distance']['value'] / 1000
-        except (KeyError, IndexError):
-            return {"error": "Google Maps could not calculate road distance"}
+
+        except (KeyError, IndexError, Exception) as e:
+            return {"error": f"Travel service error: {str(e)}"}
 
         cost_to = dist_to * pricing.get('to_airport', 0)
         cost_flight = dist_flight * pricing.get('flight', 0)
@@ -73,7 +82,18 @@ class TravelCalculationService:
         res_currency = self.venue.currency
         return {
             "currency": res_currency,
-            "airports": {"start": start_airport.iata_code, "end": end_airport.iata_code},
+            "airports": {
+                "start": {
+                    "code": start_airport.iata_code,
+                    "lat": start_airport.latitude,
+                    "lng": start_airport.longitude
+                },
+                "end": {
+                    "code": end_airport.iata_code,
+                    "lat": end_airport.latitude,
+                    "lng": end_airport.longitude
+                }
+            },
             "travel_segments": [
                 {"type": "To Airport", "km": round(dist_to, 2), "price": round(cost_to, 2)},
                 {"type": "Flight", "km": round(dist_flight, 2), "price": round(cost_flight, 2)},
@@ -82,3 +102,23 @@ class TravelCalculationService:
             "extra_services": extra_segments,
             "total_price": round(travel_total + total_extra, 2)
         }
+
+    def apply_to_order(self, order):
+        if not all([order.user_latitude, order.user_longitude]):
+            return
+
+        res = self.calculate_trip(order.user_latitude, order.user_longitude)
+
+        if "error" in res:
+            return
+
+        seg_dict = {s.get('type'): s.get('price', 0) for s in res.get('travel_segments', []) if isinstance(s, dict)}
+
+        order.transfer_price = Decimal(str(seg_dict.get('To Airport', 0) + seg_dict.get('From Airport', 0)))
+        order.flight_price = Decimal(str(seg_dict.get('Flight', 0)))
+
+        order.distance_km = sum(s.get('km', 0) for s in res.get('travel_segments', []))
+
+        order.travel_calculation = res
+
+        order.save(update_fields=['transfer_price', 'flight_price', 'distance_km', 'travel_calculation'])

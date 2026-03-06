@@ -4,7 +4,6 @@ import React, {useState} from "react";
 import {useRouter} from "next/navigation"
 import {useSession} from "next-auth/react";
 import styles from "./CompleteProfileFormComponent.module.css";
-import Image from "next/image";
 import DatePickerComponent from "@/components/date-picker-component/DatePickerComponent";
 import {LoaderComponent} from "@/components/loader-component/LoaderComponent";
 import profileService from "@/lib/services/profileService";

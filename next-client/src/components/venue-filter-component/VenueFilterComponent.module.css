@@ -4,19 +4,26 @@
   padding: 16px;
   background-color:transparent;
   border-radius: 2rem;
+    width: auto;
   max-width: 900px;
   margin: 0 auto;
   box-shadow: 0 0 12px white;
+align-items: center;
+    justify-content: space-between;
 }
 
 .row {
   display: flex;
+    justify-content: center;
+    align-items: center;
   gap: 12px;
   flex-wrap: wrap;
     outline: none;
     color: var(--color-border);
 }
-
+.row:last-child {
+   justify-content: flex-end;
+}
 .input {
   flex: 1;
   padding: 8px 12px;
@@ -34,6 +41,7 @@
 }
 
 .select {
+    width: 180px;
     padding: 8px 12px;
     border: 1px solid var(--color-white);
     font-size: 1rem;

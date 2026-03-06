@@ -10,9 +10,10 @@ interface TableProps {
     onDragEnd?: (updatedTable: ITable) => void;
     onClick?: (table: ITable) => void;
     onContextMenu?: (e: any, table: ITable) => void;
+    isSelected?: boolean;
 }
 
-const Table: React.FC<TableProps> = ({ table, draggable = false, onDragEnd, onClick, onContextMenu}) => {
+const Table: React.FC<TableProps> = ({ table, draggable = false, onDragEnd, onClick, onContextMenu, isSelected}) => {
   const { x, y, capacity } = table;
 
   const getImageSrc = (capacity: number) => {
@@ -46,6 +47,14 @@ const Table: React.FC<TableProps> = ({ table, draggable = false, onDragEnd, onCl
       height={desiredSize}
       image={image || undefined}
       draggable={draggable}
+
+      shadowColor={isSelected ? "gold" : "black"}
+      shadowBlur={isSelected ? 20 : 5}
+      shadowOpacity={isSelected ? 0.8 : 0.3}
+      shadowOffset={{ x: 2, y: 2 }}
+      stroke={isSelected ? "gold" : "transparent"}
+      strokeWidth={isSelected ? 5 : 0}
+
       onDragEnd={(e) => draggable && onDragEnd
         ? onDragEnd({ ...table, x: e.target.x(), y: e.target.y() })
         : undefined

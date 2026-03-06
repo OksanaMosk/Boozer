@@ -1,28 +1,27 @@
 'use client';
 
 import React from 'react';
-import Link from "next/link";
-import VenueComponent from "@/components/venue-component/VenueComponent";
 import {PaginationComponent} from "@/components/pagination-component/PaginationComponent";
-import {ButtonScrollTopComponent} from "@/components/button-scroll-top-component/ButtonScrollTopComponent";
 import {IVenue} from "@/models/IVenue";
-import styles from "./BoozerVenuesComponent.module.css";
+import styles from "./BoozerStep1VenuesComponent.module.css";
 import BoozerVenueComponent from "@/components/boozer-venue-component/BoozerVenueComponent";
-import {ButtonGoBackComponent} from "@/components/button-go-back-component/ButtonGoBackComponent";
 
 interface VenuesComponentProps {
   venues: IVenue[];
   totalPages: number;
+  onSelectVenue: (venue: IVenue) => void; // Додаємо цей пропс
 }
 
-
-const BoozerVenuesComponent: React.FC<VenuesComponentProps > = ({venues, totalPages}) => {
+const BoozerStep1VenuesComponent: React.FC<VenuesComponentProps> = ({venues, totalPages, onSelectVenue}) => {
     return (
         <div className={styles.venuesListContainer}>
             <ul className={styles.list}>
                 {venues.map((venue) => (
                     <li key={venue.id}>
-                            <BoozerVenueComponent venue={venue}/>
+                        <BoozerVenueComponent
+                            venue={venue}
+                            onSelect={onSelectVenue}
+                        />
                     </li>
                 ))}
             </ul>
@@ -31,9 +30,4 @@ const BoozerVenuesComponent: React.FC<VenuesComponentProps > = ({venues, totalPa
     );
 };
 
-export default BoozerVenuesComponent;
-
-
-
-
-
+export default BoozerStep1VenuesComponent;

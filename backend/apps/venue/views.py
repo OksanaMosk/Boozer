@@ -7,13 +7,12 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import VenueModel, TagModel, TableModel, VenuePhotoModel, TableBookingModel, VenueTagModel
-from .serializers import VenueSerializer, TagSerializer, TableSerializer, VenuePhotoSerializer, TableBookingSerializer, \
-    VenueTagSerializer
+from .models import VenueModel, TagModel, TableModel, VenuePhotoModel, VenueTagModel
+from .serializers import VenueSerializer, TagSerializer, TableSerializer, VenuePhotoSerializer, VenueTagSerializer
 from .services.geocode import geocode_city
 from .services.venue_constants_service import get_venue_constants
 from .services.venue_service import get_user_venues
-from ..user.permissions import IsAdminOrVenueAdminOrReadOnly, IsVisitorOrReadOnly
+from ..user.permissions import IsAdminOrVenueAdminOrReadOnly
 
 
 class VenueViewSet(viewsets.ModelViewSet):
@@ -133,25 +132,6 @@ class TablesLayoutViewSet(viewsets.ViewSet):
         venue.save()
         return Response({"url": venue.background_tables})
 
-class TableBookingViewSet(viewsets.ModelViewSet):
-    queryset = TableBookingModel.objects.all()
-    serializer_class = TableBookingSerializer
-    permission_classes = [IsVisitorOrReadOnly]
-    filterset_fields = ['table', 'order', 'is_active']
-
-    def perform_create(self, serializer):
-        order = serializer.validated_data['order']
-        if order.user != self.request.user:
-            raise PermissionError("Cannot book tables for another user's order")
-        serializer.save()
-
-    def get_queryset(self):
-        qs = super().get_queryset()
-        venue_pk = self.kwargs.get('venue_pk')
-        if venue_pk:
-            qs = qs.filter(table__venue_id=venue_pk)
-        return qs
-
 class VenueUserListView(APIView):
     """
     get:
@@ -180,9 +160,6 @@ def venue_constants(request):
         return Response({'detail': str(e)}, status=status.HTTP_400_BAD_REQUEST)
     except KeyError as e:
         return Response({'detail': f'Missing key: {e}'}, status=status.HTTP_400_BAD_REQUEST)
-
-
-
 
 
 @api_view(['GET'])

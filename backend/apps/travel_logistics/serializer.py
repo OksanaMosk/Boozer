@@ -48,3 +48,14 @@ class ExtraServiceSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             'venue': {'read_only': True}
         }
+
+    def validate_price(self, value):
+        if value <= 0:
+            raise serializers.ValidationError("Service price must be greater than zero.")
+        return value
+
+
+    def validate_price_per_km(self, value):
+        if value <= 0:
+            raise serializers.ValidationError("Price per kilometer must be greater than zero.")
+        return value

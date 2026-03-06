@@ -1,12 +1,16 @@
 import datetime
-from decimal import Decimal
-
-from rest_framework.exceptions import ValidationError
 import requests
+from decimal import Decimal
+from rest_framework.exceptions import ValidationError
+
+_last_rates_cache = None
+_last_rates_date = None
 
 
 def get_private_bank_exchange_rate():
-    response = requests.get('https://api.privatbank.ua/p24api/pubinfo?json&exchange&coursid=5')
+    response = requests.get(
+        'https://api.privatbank.ua/p24api/pubinfo?json&exchange&coursid=5'
+    )
     response.raise_for_status()
     data = response.json()
 
@@ -14,34 +18,24 @@ def get_private_bank_exchange_rate():
     eur_rate = next((item for item in data if item['ccy'] == 'EUR'), None)
 
     if not usd_rate or not eur_rate:
-        raise ValidationError('Failed to retrieve USD or EUR exchange rate from PrivatBank.')
+        raise ValidationError('Failed to retrieve USD or EUR exchange rate.')
 
     return {
-        'USD': float(usd_rate['buy']),
-        'EUR': float(eur_rate['buy']),
+        'USD': Decimal(usd_rate['buy']),
+        'EUR': Decimal(eur_rate['buy']),
     }
 
 
-def update_venue_prices(venue, rates=None):
-    current_date = datetime.date.today()
-    if venue.last_exchange_update == current_date:
-        return
+def get_today_rates():
+    global _last_rates_cache, _last_rates_date
 
-    if rates is None:
-        rates = get_private_bank_exchange_rate()
+    today = datetime.date.today()
 
-    venue.exchange_rate_id = f'Privatbank_{current_date}'
+    if _last_rates_cache and _last_rates_date == today:
+        return _last_rates_cache
 
-    if venue.currency == 'USD':
-        venue.price_usd = Decimal(venue.price).quantize(Decimal('0.01'))
-        venue.price_eur = (Decimal(venue.price) * Decimal(rates['EUR']) / Decimal(rates['USD'])).quantize(
-            Decimal('0.01'))
-    elif venue.currency == 'EUR':
-        venue.price_eur = Decimal(venue.price).quantize(Decimal('0.01'))
-        venue.price_usd = (Decimal(venue.price) * Decimal(rates['USD']) / Decimal(rates['EUR'])).quantize(
-            Decimal('0.01'))
-    else:
-        venue.price_usd = (Decimal(venue.price) / Decimal(rates['USD'])).quantize(Decimal('0.01'))
-        venue.price_eur = (Decimal(venue.price) / Decimal(rates['EUR'])).quantize(Decimal('0.01'))
+    rates = get_private_bank_exchange_rate()
+    _last_rates_cache = rates
+    _last_rates_date = today
 
-    venue.last_exchange_update = current_date
+    return rates

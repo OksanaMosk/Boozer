@@ -1,0 +1,275 @@
+.pageWrapper {
+    margin:0;
+    width: 70vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    background:transparent;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.2s ease-in-out;
+    height: auto;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.title {
+    padding: 0;
+    margin: 12px 0;
+    font-family: var(--font-imperial),serif;
+    font-weight: 700;
+    font-size: 4rem;
+    letter-spacing: 2px;
+    line-height: 1.25;
+    color: var(--color-text);
+}
+
+.detailsForm {
+    margin: 16px 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: transparent;
+    padding: 2rem;
+    border-radius: 1.5rem;
+    width: 100%;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 0 12px white;
+    animation: float 6s ease-in-out infinite;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    gap: 1rem;
+}
+.detailsForm:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 25px 50px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.2);
+}
+@keyframes float {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
+    100% { transform: translateY(0); }
+}
+.top {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+}
+.calendarWrapper {
+    width: 40%;
+    display: flex;
+    align-items:flex-start;
+    justify-content: center;
+    position: relative;
+    gap: 0.5rem;
+    flex-direction: column;
+}
+.closeCal {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 1.5rem;
+    outline: none;
+    width: 70px;
+    height: 36px;
+    padding: 0.5rem 1rem;
+    color: #30240b;
+    background: linear-gradient(90deg, #30240b, white, #30240b);
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    border: 1px solid rgba(255,255,255,0.5);
+
+}
+.closeCal:hover {
+    background: linear-gradient(90deg, white, #30240b, white);
+    color: white;
+}
+.inputGroup {
+    position: relative;
+    width: 100%;
+    margin-bottom: 0.5rem;
+    display: flex;
+    justify-content:center;
+    align-items: center;
+}
+
+.input {
+    width: 100%;
+    padding: 0.5rem 2.5rem 0.5rem 1rem;
+    border-radius: 1.5rem;
+    color: var(--input-color);
+    border: 1px solid var(--input-color);
+    outline: none;
+    background-color: transparent;
+    box-sizing: border-box;
+    justify-content: flex-start;
+    height: 40px;
+    font-size: 0.9rem;
+}
+
+.input:focus {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+.icon {
+    position: absolute;
+    top: 50%;
+    right: 1rem;
+    transform: translateY(-50%);
+    cursor: pointer;
+}
+
+.input:focus + .calendar,
+.icon:focus + .calendar {
+    display: block;
+}
+.inputGuests {
+    width: 40%;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+.error {
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(90deg, #7a5c1e, #d4af37, #f5e6a1, #d4af37, #7a5c1e);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
+    font-size: 0.6rem;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.inputError {
+    margin: 0;
+    padding: 0;
+    max-height: 40px;
+}
+.calendarSidebar {
+    top: 300px;
+}
+
+.selectContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items:flex-start;
+    width: 100%;
+}
+.selectWrapper {
+    color: var(--color-text);
+    width: 25%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+.select {
+     color: var(--input-color);
+    width: 100%;
+    font-size: 0.9rem;
+    cursor: pointer;
+    outline: none;
+    padding: 0.5rem 2.5rem 0.5rem 1rem;
+    border-radius: 1.5rem;
+    border: 1px solid var(--input-color);
+    background-color: transparent;
+    box-sizing: border-box;
+    justify-content: flex-start;
+    height: 40px;
+}
+.select option {
+    outline: none;
+    background: var(--title-color);
+    color: var(--color-badgeId);
+    border: none;
+}
+
+.inputPurpose {
+    width: 100%;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+.textarea{
+    min-height: 40px;
+    width: 100%;
+    padding: 16px;
+    border-radius: 2rem;
+    color: var(--input-color);
+    border: 1px solid var(--input-color);
+    outline: none;
+    background-color: transparent;
+    box-sizing: border-box;
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+.textarea:focus {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+.label {
+    padding: 0;
+    margin: 0;
+    font-family: var(--font-imperial),serif;
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    line-height: 1;
+    color: var(--color-text);
+    text-align: left;
+}
+.actions {
+    margin-top: 1rem;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+.buttonN,
+.buttonPr {
+    width: 40%;
+    display: flex;
+}
+.buttonN {
+    justify-content: flex-start;
+
+}
+.buttonPr {
+    justify-content: flex-end;
+}
+
+.buttonPrev,
+.buttonNext {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100px;
+    height: 36px;
+    padding: 0.5rem 1rem;
+    border-radius: 1.5rem;
+    color: #30240b;
+    background: linear-gradient(90deg, #30240b, white, #30240b);
+    cursor: pointer;
+    outline: none;
+    transition: all 0.3s ease-in-out;
+    border: 1px solid rgba(255,255,255,0.5);
+}
+.buttonPrev:hover,
+.buttonNext:hover {
+   background: linear-gradient(90deg, white, #30240b, white);
+    color: white;
+}
+.buttonNext {
+    border-radius: 0 1.5rem 1.5rem 0;
+}
+.buttonPrev {
+    border-radius: 1.5rem 0 0 1.5rem;
+}

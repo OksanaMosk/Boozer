@@ -90,6 +90,29 @@ class IsVisitorOrReadOnly(permissions.BasePermission):
         return getattr(obj, 'user', None) == request.user
 
 
+class IsOrderOwnerOrVenueAdmin(BasePermission):
+    def has_permission(self, request, view):
+        if request.method in permissions.SAFE_METHODS:
+            return True
+
+        order = view.get_object()
+        if order.user == request.user:
+            return True
+        return order.venue.venue_admin == request.user
+
+
+class IsBookingOwnerOrVenueAdmin(BasePermission):
+    def has_permission(self, request, view):
+        if request.method in permissions.SAFE_METHODS:
+            return True
+
+        booking = view.get_object()
+        if booking.user == request.user:
+            return True
+
+        return booking.table.venue.venue_admin == request.user
+
+
 class IsGuestReadOnly(permissions.BasePermission):
     """
     Unauthenticated users can only read (GET requests).

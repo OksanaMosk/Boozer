@@ -34,6 +34,19 @@ services:
     command: >
       sh -c 'celery -A configs worker -l info'
 
+  celery-beat:
+    build:
+      context: .
+    volumes:
+      - ./backend:/app
+    env_file:
+      - .env
+    restart: on-failure
+    depends_on:
+      - app
+      - redis
+    command: sh -c 'celery -A configs beat -l info'
+
   next-client:
     build:
       context: ./next-client

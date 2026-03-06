@@ -161,7 +161,6 @@ export interface ITravelEstimate {
 }
 
 export type ServiceType ='hotel' | 'insurance' | 'decoration'
-
 export type PriceType = 'fixed' | 'per_day'
 
 export interface IExtraService {
@@ -179,12 +178,27 @@ export interface IOrder {
     id?: string;
     venue_id: string;
     user_id: string;
+    start_date: string;
+    end_date: string;
+    guests_count: number;
+    comment?: string;
+    gender_preference?: GenderPreference;
+    payment_type?: PaymentType;
+    budget_range?: BudgetRange;
+    budget: number;
+    user_latitude?: number | null;
+    user_longitude?: number | null;
+    user_city?: string;
     items?: IOrderItem[];
     total_price?: number;
-    status?: string;
+    status?: OrderStatus
     created_at?: string;
     updated_at?: string;
 }
+export type PaymentType = "Each pays for themselves" | "I pay" | "Someone else pays";
+export type BudgetRange = "0-1000" | "1000-3000" | "3000-5000" | "5000+";
+export type GenderPreference = "ANY" | "MALE" | "FEMALE";
+export type OrderStatus = "DRAFT" | "PENDING" | "CONFIRMED" | "CANCELLED";
 
 export interface IOrderItem {
     id?: string;

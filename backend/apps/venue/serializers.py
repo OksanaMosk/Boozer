@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from .models import VenueModel, VenuePhotoModel, TableModel, TableBookingModel, TagModel, VenueTagModel
+from .models import VenueModel, VenuePhotoModel, TableModel, TagModel, VenueTagModel
+from ..orders.serializers import TableBookingSerializer
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -19,19 +20,6 @@ class VenuePhotoSerializer(serializers.ModelSerializer):
     class Meta:
         model = VenuePhotoModel
         fields = ['id', 'photo', 'is_main', 'venue']
-
-class TableBookingSerializer(serializers.ModelSerializer):
-    table = serializers.PrimaryKeyRelatedField(queryset=TableModel.objects.filter(is_active=True))
-
-    class Meta:
-        model = TableBookingModel
-        fields = ['id', 'order', 'table', 'time_range', 'is_active']
-        read_only_fields = ['id', 'order']
-
-    def validate(self, data):
-        instance = TableBookingModel(**data)
-        instance.clean()
-        return data
 
 
 class TableSerializer(serializers.ModelSerializer):

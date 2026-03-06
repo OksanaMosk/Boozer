@@ -152,7 +152,7 @@ export const NewComponent = ({ news, venueId, onDelete, onUpdate }: VenueNewComp
             images: [
                 ...(prev.images || []),
                 ...uploadedPhotos.map((p) => ({
-                    id: p.id,            // Обов'язково зберігаємо ID
+                    id: p.id,
                     image: p.image || p.url,
                     is_cover: p.is_cover || false
                 }))

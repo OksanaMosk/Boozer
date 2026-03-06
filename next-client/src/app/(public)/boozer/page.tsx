@@ -3,7 +3,7 @@
 import React from 'react';
 import {ButtonGoBackComponent} from "@/components/button-go-back-component/ButtonGoBackComponent";
 import {ButtonScrollTopComponent} from "@/components/button-scroll-top-component/ButtonScrollTopComponent";
-import {BoozerVenuesClientComponent} from "@/components/boozer-venues-client-component/BoozerVenuesClientComponent";
+import {BoozerVenuesClientComponent} from "@/components/boozer-venues-client-component/BoozerVenuesClientComponent.";
 
 const BoozerPage = () => {
   return (

@@ -1,11 +1,11 @@
 from django.urls import path, include
 from rest_framework_nested import routers
-from .views import VenueViewSet, VenuePhotoViewSet, TableViewSet, TableBookingViewSet, venue_constants, \
+from .views import VenueViewSet, VenuePhotoViewSet, TableViewSet, venue_constants, \
     city_coordinates, TagViewSet, VenueTagViewSet, TablesLayoutViewSet
 from apps.menu.views import MenuViewSet, MenuItemViewSet
 from apps.news.views import NewsViewSet, NewsImageViewSet
 from apps.reviews_feedback.views import ReviewViewSet, FavoriteVenueViewSet
-from apps.orders.views import OrderViewSet
+from apps.orders.views import OrderViewSet, TableBookingViewSet
 from ..travel_logistics.views import TravelLogisticsViewSet, ExtraServiceViewSet
 
 router = routers.DefaultRouter()

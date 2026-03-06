@@ -18,9 +18,9 @@
     padding: 2.5rem;
     border-radius: 1.5rem;
     width: 380px;
- backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-      box-shadow: 0 0 12px white;
+    box-shadow: 0 0 12px white;
     animation: float 6s ease-in-out infinite;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
@@ -37,14 +37,14 @@
 
 .title {
     margin: 12px auto;
-       font-size: 2rem;
+    font-size: 2rem;
     text-align: center;
     font-weight: 800;
      background: linear-gradient(90deg, #30240b 25%, white, #30240b, white);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  color: transparent;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
 }
 
 .inputGroup,
@@ -216,8 +216,8 @@
     transform: scale(0.2);
 }
 .calendarSidebar {
-  position: absolute;
-  left: 115%;
-top: -108px;
-  z-index: 100;
+    position: absolute;
+    left: 115%;
+    top: -108px;
+    z-index: 100;
 }

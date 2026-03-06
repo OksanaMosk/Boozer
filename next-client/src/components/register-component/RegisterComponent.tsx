@@ -4,7 +4,7 @@ import React, {useEffect, useRef, useState} from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { authService } from "@/lib/services/authService";
-import { PasswordInput } from "@/components/passwordInput-component/PasswordInputComponent";
+import { PasswordInput } from "@/components/password-input-component/PasswordInputComponent";
 import { LoaderComponent } from "@/components/loader-component/LoaderComponent";
 import DatePickerComponent from "@/components/date-picker-component/DatePickerComponent";
 import styles from "./RegisterComponent.module.css";
