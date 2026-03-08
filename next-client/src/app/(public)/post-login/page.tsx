@@ -2,12 +2,13 @@
 
 import React, {useEffect, useState} from "react";
 import {getSession} from "next-auth/react";
-import {useRouter} from "next/navigation";
+import {useRouter, useSearchParams} from "next/navigation";
 import {LoaderComponent} from "@/components/loader-component/LoaderComponent";
 
 
 export default function PostLoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams()
   const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -24,6 +25,12 @@ export default function PostLoginPage() {
 
       if (session.user.needsProfile) {
         router.replace("/complete-profile");
+        return;
+      }
+
+       const callbackUrl = searchParams.get('callbackUrl');
+      if (callbackUrl) {
+        router.replace(callbackUrl);
         return;
       }
 

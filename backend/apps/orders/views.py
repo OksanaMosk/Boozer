@@ -1,19 +1,27 @@
+from typing import cast
+
 from rest_framework import viewsets, filters
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.permissions import IsAuthenticated
-
+from rest_framework.decorators import action
+from rest_framework.request import Request
+from rest_framework.response import Response
+from rest_framework.exceptions import ValidationError
 from .models import OrderModel, TableBookingModel
 from .serializers import OrderSerializer, TableBookingSerializer
+from .services.table_booking_service import create_bulk_table_bookings
 from ..user.permissions import IsAdminOrVenueAdminOrReadOnly, IsOrderOwnerOrVenueAdmin, \
     IsBookingOwnerOrVenueAdmin
 from rest_framework.exceptions import PermissionDenied
+from django.db.backends.postgresql.psycopg_any import DateTimeRange
+from datetime import datetime
 
 
-PRICE_AFFECTING_FIELDS = (
-    'currency',
-    'flight_price',
-    'transfer_price',
-)
+# PRICE_AFFECTING_FIELDS = (
+#     'currency',
+#     'flight_price',
+#     'transfer_price'
+# )
 
 
 class OrderViewSet(viewsets.ModelViewSet):
@@ -92,7 +100,7 @@ class TableBookingViewSet(viewsets.ModelViewSet):
         - List/Create: Authenticated users.
         - Update/Delete: Booking owners or Venue Admins.
         """
-        if self.action in ['create', 'list']:
+        if self.action in ['create', 'list', 'bulk_create']:
             return [IsAuthenticated()]
         elif self.action in ['update', 'partial_update', 'destroy']:
             return [IsBookingOwnerOrVenueAdmin()]
@@ -100,20 +108,36 @@ class TableBookingViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         """
-        Filter bookings based on user ownership and venue context.
+        Filter bookings based on venue context and time range overlap.
         """
-        qs = TableBookingModel.objects.all()
+        request = cast(Request, self.request)
         venue_pk = self.kwargs.get('venue_pk')
         table_pk = self.kwargs.get('table_pk')
 
-        if not self.request.user.is_staff:
-            qs = qs.filter(order__user=self.request.user)
+        lower = request.query_params.get('lower')
+        upper = request.query_params.get('upper')
 
+        qs = TableBookingModel.objects.all()
         if venue_pk:
             qs = qs.filter(table__venue_id=venue_pk)
+        if lower and upper:
+            try:
+                l_dt = datetime.fromisoformat(lower.replace('Z', '+00:00'))
+                u_dt = datetime.fromisoformat(upper.replace('Z', '+00:00'))
 
-        if table_pk:
+                if l_dt > u_dt:
+                    return qs.none()
+
+                search_range = DateTimeRange(l_dt, u_dt)
+                qs = qs.filter(time_range__overlap=search_range)
+            except (ValueError, TypeError):
+                pass
+
+        if table_pk and table_pk.isdigit():
             qs = qs.filter(table_id=table_pk)
+
+        if self.action in ['update', 'partial_update', 'destroy'] and not self.request.user.is_staff:
+            qs = qs.filter(order__user=self.request.user)
 
         return qs.select_related('order', 'table')
 
@@ -130,3 +154,26 @@ class TableBookingViewSet(viewsets.ModelViewSet):
             raise PermissionDenied("You cannot book a table for another user's order.")
 
         serializer.save(table_id=table_id)
+
+    @action(detail=False, methods=['post'], url_path='bulk-create')
+    def bulk_create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+
+        try:
+            bookings = create_bulk_table_bookings(
+                order_id=request.data.get('order'),
+                table_ids=request.data.get('tables', []),
+                time_range=serializer.validated_data['time_range'],
+                venue_id=self.kwargs.get('venue_pk'),
+                user=request.user
+            )
+
+            return Response({
+                "status": "success",
+                "booking_ids": [b.id for b in bookings]
+            }, status=201)
+
+        except (ValidationError, PermissionDenied) as e:
+
+            raise e

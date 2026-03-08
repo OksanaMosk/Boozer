@@ -110,14 +110,10 @@ const venueServices = {
         photos: getByParent<IVenuePhoto>(urls.venues.photos),
         tables: (token?: Token) => (venueId: string) => ({
             getAll: () => getByParent<ITable>(urls.venues.tables, token)(venueId),
-            get: (tableId: string) =>
-                api(token).get<ITable>(`${urls.venues.tables(venueId)}${tableId}/`),
-            create: (data: Partial<ITable>) =>
-                api(token).post<ITable>(urls.venues.tables(venueId), data),
-            update: (tableId: string, data: Partial<ITable>) =>
-                api(token).patch<ITable>(`${urls.venues.tables(venueId)}${tableId}/`, data),
-            delete: (tableId: string) =>
-                api(token).delete(`${urls.venues.tables(venueId)}${tableId}/`)
+            get: (tableId: string) => api(token).get<ITable>(`${urls.venues.tables(venueId)}${tableId}/`),
+            create: (data: Partial<ITable>) => api(token).post<ITable>(urls.venues.tables(venueId), data),
+            update: (tableId: string, data: Partial<ITable>) => api(token).patch<ITable>(`${urls.venues.tables(venueId)}${tableId}/`, data),
+            delete: (tableId: string) => api(token).delete(`${urls.venues.tables(venueId)}${tableId}/`)
         }),
 // venueServices.venues.bookings(token)(venueId)(tableId).getAll()
         background: (token?: Token) => (venueId: string) => ({
@@ -136,6 +132,8 @@ const venueServices = {
             create: (data: ITableBooking) => api(token).post<ITableBooking>(urls.venues.bookings(venueId, tableId), data),
             update: (bookingId: string, data: Partial<ITableBooking>) => api(token).patch<ITableBooking>(`${urls.venues.bookings(venueId, tableId)}${bookingId}/`, data),
             delete: (bookingId: string | number) => api(token).delete(`${urls.venues.bookings(venueId, tableId)}${bookingId}/`),
+            getAllByVenue: (params: { lower: string; upper: string }) => api(token).get<ITableBooking[]>(`${urls.venues.list}${venueId}/bookings/`, {params}),
+           bulkCreate: (data: { order: number; tables: number[]; time_range: any }) => api(token).post(`${urls.venues.list}${venueId}/bookings/bulk-create/`, data)
         }),
         menu: (token?: Token) => (venueId: string) => ({
             getAll: () => getByParent<PaginatedResponse<IMenu>>(urls.venues.menu, token)(venueId),

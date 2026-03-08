@@ -6,6 +6,7 @@ import venueServices from "@/lib/services/venueService";
 import { useUser } from "@/app/contexts/UserProvider";
 import {AxiosResponse} from "axios";
 import {OrderStatus} from "@/models/IVenue";
+import {ButtonScrollBottomComponent} from "@/components/button-scroll-bottom-component/ButtonScrollBottomComponent";
 
 interface IMenuItem {
   id: string;
@@ -112,6 +113,7 @@ const BoozerStep3MenuComponent: React.FC<Props> = ({ venueId, orderId, onNext, o
   return (
     <div className={styles.orderPage}>
         <h4 className={styles.title}>Step 3: Menu Selection</h4>
+        <ButtonScrollBottomComponent/>
       {menuList.map((category) => (
         <div key={category} className={styles.categorySection}>
           <h5 className={styles.subTitle}>{category.toUpperCase()}</h5>

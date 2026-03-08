@@ -25,7 +25,7 @@ venues_router.register(r'extra_services', ExtraServiceViewSet, basename='venue-e
 venues_router.register(r'favorites', FavoriteVenueViewSet, basename='venue-favorites')
 venues_router.register(r'orders', OrderViewSet, basename='venue-orders')
 venues_router.register(r'tables_layout', TablesLayoutViewSet, basename='venue-tables-layout')
-
+venues_router.register(r'bookings', TableBookingViewSet, basename='venue-bookings')
 menus_router = routers.NestedDefaultRouter(
     venues_router,
     r'menu',

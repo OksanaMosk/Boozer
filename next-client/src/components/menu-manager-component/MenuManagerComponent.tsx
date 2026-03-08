@@ -25,7 +25,6 @@ const MenuManagerComponent: React.FC<Props> = ({ venue }) => {
 
   useEffect(() => {
     if (!user?.token) {
-      // setMessage("User not authenticated.");
         return
     }
   }, [user]);

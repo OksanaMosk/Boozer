@@ -88,11 +88,11 @@ export const BoozerVenuesClientComponent = () => {
     };
 
     const renderStepContent = () => {
-        if (step === 7 && confirmedOrderId) {
-            return <BoozerStep7Final orderId={confirmedOrderId} onReset={handleResetWizard} />;
+        if (step === 7 && confirmedOrderId && selectedVenue) {
+            return <BoozerStep7Final venueId={String(selectedVenue.id)} orderId={confirmedOrderId} onReset={handleResetWizard} />;
         }
-        if (step === 6 && confirmedOrderId) {
-            return <BoozerStep6Summary orderId={confirmedOrderId} onNext={handleStep6ConfirmPayment} onBack={() => setStep(5)} />;
+        if (step === 6 && confirmedOrderId && selectedVenue) {
+            return <BoozerStep6Summary venueId={String(selectedVenue.id)} orderId={confirmedOrderId} onNext={handleStep6ConfirmPayment} onBack={() => setStep(5)} />;
         }
         if (step === 5 && confirmedOrderId && selectedVenue) {
             return <BoozerStep5ExtraServices venueId={String(selectedVenue.id)} orderId={confirmedOrderId} onNext={handleStep5ExtraSubmit} onBack={() => setStep(4)} />;

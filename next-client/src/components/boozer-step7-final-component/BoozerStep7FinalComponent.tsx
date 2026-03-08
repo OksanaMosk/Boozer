@@ -2,28 +2,36 @@
 
 import React, { useState } from "react";
 import styles from "./BoozerStep7FinalComponent.module.css";
-import axios from "axios";
 import { useUser } from "@/app/contexts/UserProvider";
+import {OrderStatus} from "@/models/IVenue";
+import venueServices from "@/lib/services/venueService";
 
 interface Props {
     orderId: number;
     onReset: () => void;
+    venueId: string;
 }
 
-const BoozerStep7Final: React.FC<Props> = ({ orderId, onReset }) => {
+const BoozerStep7Final: React.FC<Props> = ({ orderId, venueId, onReset }) => {
     const { user } = useUser();
     const [isConfirmed, setIsConfirmed] = useState(false);
     const [loading, setLoading] = useState(false);
 
     const handleFinalConfirm = async () => {
         setLoading(true);
-        try {
-            await axios.patch(`${process.env.NEXT_PUBLIC_API_URL}/api/orders/${orderId}/`, {
-                status: "CONFIRMED"
-            }, {
-                headers: { Authorization: `Bearer ${user?.token}` }
-            });
-            setIsConfirmed(true);
+        const payload = {
+          status: "CONFIRMED" as  OrderStatus
+      };
+      console.log("PAYLOAD:", payload);
+
+      try {
+          if (!user?.token) return
+          await venueServices.venues
+              .orders({accessToken: user.token})(venueId.toString())
+              .update(orderId, (payload))
+
+          setIsConfirmed(true);
+
         } catch (err) {
             console.error("Confirmation failed", err);
             alert("Payment failed. Please try again.");

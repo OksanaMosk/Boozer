@@ -30,6 +30,12 @@ class TableBookingSerializer(serializers.ModelSerializer):
             except (ValueError, TypeError):
                 raise serializers.ValidationError({"time_range": "Invalid date format"})
 
+        if not table_id or table_id == 'all':
+            return data
+
+        if TableBookingModel.objects.filter(table_id=table_id, time_range__overlap=data['time_range']).exists():
+            raise serializers.ValidationError({"time_range": "Already booked."})
+
         instance = TableBookingModel(
             table_id=table_id,
             order_id=order_id,

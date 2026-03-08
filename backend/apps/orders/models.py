@@ -97,8 +97,11 @@ class OrderModel(BaseModel):
         super().save(*args, **kwargs)
 
         if status_changed_to_confirmed:
+            self.table_bookings.all().update(status='CONFIRMED', is_active=True)
             from apps.orders.services.order_service import calculate_total
             calculate_total(self)
+
+
 
 class TableBookingModel(models.Model):
     order = models.ForeignKey(
@@ -158,6 +161,7 @@ class TableBookingModel(models.Model):
         total_capacity = existing_capacity + self.table.capacity
         if total_capacity < self.order.guests_count:
             raise ValidationError("Not enough seats assigned for this order.")
+
 
 class OrderItemModel(BaseModel):
     class Meta:

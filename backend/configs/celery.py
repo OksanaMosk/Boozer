@@ -13,7 +13,7 @@ app.autodiscover_tasks(['core.services', 'apps.orders'])
 app.conf.beat_schedule = {
     'expire-orders-every-minute': {
         'task': 'core.services.tasks.expire_orders_task',
-        'schedule': crontab(minute='*/59'),
+        'schedule': crontab(minute='*/1'),
     },
     'update-exchange-rates-daily': {
         'task': 'core.services.tasks.update_exchange_rate',

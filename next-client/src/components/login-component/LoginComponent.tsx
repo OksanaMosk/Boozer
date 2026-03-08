@@ -1,13 +1,12 @@
 "use client";
 
 import React, { useState} from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { authService } from "@/lib/services/authService";
 import { LoaderComponent } from "@/components/loader-component/LoaderComponent";
 import styles from "./LoginComponent.module.css";
 import ButtonsSocialComponent from "@/components/buttons-social-component/ButtonsSocialComponent";
-import { useRouter } from "next/navigation";
+import {useRouter, useSearchParams} from "next/navigation";
 
 const LoginComponent = () => {
     const [email, setEmail] = useState("");
@@ -15,28 +14,32 @@ const LoginComponent = () => {
     const [errorMsg, setErrorMsg] = useState("");
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
-
-  const router = useRouter();
+    const searchParams = useSearchParams();
+    const router = useRouter();
     const handleSubmit = async (event: React.SyntheticEvent<HTMLFormElement>) => {
         event.preventDefault();
         setLoading(true);
         setErrorMsg("");
 
         try {
-      const user = await authService.login({ email, password });
-      switch (user.role) {
-        case "admin":
-          router.push("/admin");
-          break;
-        case "venue_admin":
-          router.push("/venue-admin");
-          break;
-        default:
-          router.push("/visitor");
-      }
-    } catch (err: unknown) {
-      if (err instanceof Error) setErrorMsg(err.message);
-      else setErrorMsg("Невідома помилка");
+            const user = await authService.login({email, password});
+            const callbackUrl = searchParams.get('callbackUrl');
+            if (callbackUrl) {
+                return router.push(callbackUrl);
+            }
+            switch (user.role) {
+                case "admin":
+                    router.push("/admin");
+                    break;
+                case "venue_admin":
+                    router.push("/venue-admin");
+                    break;
+                default:
+                    router.push("/visitor");
+            }
+        } catch (err: unknown) {
+            if (err instanceof Error) setErrorMsg(err.message);
+            else setErrorMsg("Невідома помилка");
     } finally {
       setLoading(false);
     }

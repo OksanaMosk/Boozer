@@ -170,17 +170,23 @@ export type ServiceType ='hotel' | 'insurance' | 'decoration'
 export type PriceType = 'fixed' | 'per_day'
 
 export interface IExtraService {
-    id: string;
+    id?: string;
     venue: string;
     name: string;
     service_type: ServiceType;
     service_type_display?: string;
+    quantity: number;
     price_type: PriceType;
     price_type_display?: string;
     price: number | string;
     currency:CurrencyCode;
 }
-
+export interface IOrderExtraService {
+    id?: number;
+    service: string | number | IExtraService;
+    quantity: number;
+    price?: number;
+}
 export interface IOrder {
     id?: string;
     venue_id: string;
@@ -198,6 +204,7 @@ export interface IOrder {
     user_longitude?: number | null;
     user_city?: string;
     items?: IOrderItem[];
+    extra_services?: IOrderExtraService[];
     total_price?: number;
     status?: OrderStatus
     created_at?: string;

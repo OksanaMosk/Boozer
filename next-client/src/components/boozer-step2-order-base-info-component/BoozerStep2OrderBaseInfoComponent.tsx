@@ -17,6 +17,7 @@ const BoozerStep2OrderBaseInfoComponent: React.FC<Props> = ({venueId, onNext, on
     const [isCalendarOpen, setIsCalendarOpen] = useState(false);
     const [localDate, setLocalDate] = useState<Date | null>(null);
     const [selecting, setSelecting] = useState<"start" | "end">("start");
+    const [message, setMessage] = useState("");
     const [userGeo, setUserGeo] = useState({lat: null as number | null, lng: null as number | null, city: ""});
     const GENDER_CHOICES = ["ANY", "MALE", "FEMALE"];
     const PAYMENT_CHOICES = ["Each pays for themselves", "I pay", "Someone else pays"];
@@ -77,6 +78,19 @@ const BoozerStep2OrderBaseInfoComponent: React.FC<Props> = ({venueId, onNext, on
   const handleDateSelect = (value: Date | string) => {
     if (!value) return;
     const dateObj = value instanceof Date ? value : new Date(value);
+    const tomorrow = new Date();
+    tomorrow.setHours(0, 0, 0, 0);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    const selectedDate = new Date(dateObj);
+    selectedDate.setHours(0, 0, 0, 0);
+
+    if (selectedDate < tomorrow) {
+      setMessage("Next days only");
+      setLocalDate(null);
+      return;
+    }
+    setMessage("");
     if (isNaN(dateObj.getTime())) return;
 
     const year = dateObj.getFullYear();
@@ -153,6 +167,11 @@ const BoozerStep2OrderBaseInfoComponent: React.FC<Props> = ({venueId, onNext, on
           <div className={styles.top}>
               <div className={styles.calendarWrapper}>
                   <label className={styles.label}>Booking Period</label>
+                  {message && (
+                      <p className={styles.error}>
+                          {message}
+                      </p>
+                  )}
                   <div className={styles.inputGroup}>
                       <input
                           type="text"

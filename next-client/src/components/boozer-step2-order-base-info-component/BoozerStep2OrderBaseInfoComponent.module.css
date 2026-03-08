@@ -273,3 +273,17 @@
 .buttonPrev {
     border-radius: 1.5rem 0 0 1.5rem;
 }
+.error {
+    margin: 0;
+    padding: 0 0 0 1rem;
+    background: linear-gradient(90deg, #7a5c1e, #d4af37, #d4af37, #7a5c1e);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
+    font-size: 0.6rem;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
