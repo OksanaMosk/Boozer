@@ -125,7 +125,11 @@ export const BoozerVenuesClientComponent = () => {
     };
     return (
         <div className={styles.wrapper}>
-            <BoozerProgressBarComponent currentStep={step} />
+            <BoozerProgressBarComponent
+                currentStep={step}
+                orderId={confirmedOrderId ?? 0}
+                venueId={selectedVenue?.id ?? 0}
+            />
             <div className={styles.stepContent}>
                 {renderStepContent()}
             </div>

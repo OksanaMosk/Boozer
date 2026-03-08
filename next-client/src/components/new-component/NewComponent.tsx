@@ -6,7 +6,7 @@ import { NewsGallery } from "@/components/news-gallery-compopnent/NewsGalleryCom
 import venueServices from "@/lib/services/venueService";
 import { useUser } from "@/app/contexts/UserProvider";
 import PhotoMultipleUploadComponent from "@/components/photo-multiple-upload-component/PhotoMultipleUploadComponent";
-import {INews} from "@/models/IVenue";
+
 
 interface VenueNewComponentProps {
     news: any;
@@ -22,14 +22,25 @@ export const NewComponent = ({ news, venueId, onDelete, onUpdate }: VenueNewComp
     const [editNews, setEditNews] = useState(news);
     const [loading, setLoading] = useState(false);
     const images = editNews.images || [];
+    const [coverMessage, setCoverMessage] = useState("");
     const coverImage = images.find((img: any) => img.is_cover)?.image || editNews.preview;
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setEditNews({ ...editNews, [e.target.name]: e.target.value });
     };
     const handleSetCover = async (photoId: string | number) => {
-    if (!user?.token || !editNews?.id) return;
+        if (!user?.token || !editNews?.id) return;
+        const photo = editNews.images?.find((p: any) => p.id.toString() === photoId.toString());
+    const isLocal = !photo || photo.id.toString().includes('blob');
 
-    try {
+
+    if (isLocal) {
+        setCoverMessage("Upload photos please!");
+        setTimeout(() => setCoverMessage(""), 3000);
+        return;
+    }
+
+
+        try {
         const res = await venueServices.venues
             .news({ accessToken: user.token })(venueId)
             .images(editNews.id.toString())
@@ -43,6 +54,7 @@ export const NewComponent = ({ news, venueId, onDelete, onUpdate }: VenueNewComp
             const updatedNews = { ...editNews, images: updatedImages };
             setEditNews(updatedNews);
             onUpdate(updatedNews);
+            setCoverMessage("");
         }
     } catch (err) {
         console.error("Failed to set cover:", err);
@@ -134,35 +146,38 @@ export const NewComponent = ({ news, venueId, onDelete, onUpdate }: VenueNewComp
 
                 {editMode && (
                     <div className={styles.photoWrapper}>
+                        {coverMessage && <div className={styles.error}>{coverMessage}</div>}
                         <PhotoMultipleUploadComponent
                             key={editNews.id}
                             venueId={venueId}
                             newsId={editNews.id.toString()}
-                            existingPhotos={editNews.images?.map((img: any)  => ({
+                            existingPhotos={editNews.images
+                                ?.filter((img: any) => img.image || img.preview)
+                                .map((img: any) => ({
+
                                 id: img.id,
-                                url: img.image || img.preview || "",
+                                url: img.image || img.preview || null,
                                 is_cover: img.is_cover || false
                             })) || []}
                             maxFiles={7}
                             onSetCover={handleSetCover}
                             onUploadComplete={(uploadedPhotos: any[]) => {
-    setEditNews((prev: any) => {
-        const updatedNews = {
-            ...prev,
-            images: [
-                ...(prev.images || []),
-                ...uploadedPhotos.map((p) => ({
-                    id: p.id,
-                    image: p.image || p.url,
-                    is_cover: p.is_cover || false
-                }))
-            ]
-        };
-        onUpdate(updatedNews);
-        return updatedNews;
-    });
-}}
-                    /></div>
+                                const newImages = uploadedPhotos.map((p) => ({
+                                    id: p.id,
+                                    image: p.image || p.url,
+                                    is_cover: p.is_cover || false
+                                }));
+
+                                const updatedNews = {
+                                    ...editNews,
+                                    images: [...(editNews.images || []), ...newImages]
+                                };
+
+                                setEditNews(updatedNews);
+                                onUpdate(updatedNews);
+                            }}
+                        />
+                    </div>
                 )}
                 {images.length > 0 && <NewsGallery images={images}/>}
             </div>

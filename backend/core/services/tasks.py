@@ -27,7 +27,6 @@ def expire_orders_task():
         status__in=['DRAFT', 'HOLD'],
         expires_at__lt=now
     )
-
     if orders_to_expire.exists():
         from apps.orders.models import TableBookingModel
         TableBookingModel.objects.filter(

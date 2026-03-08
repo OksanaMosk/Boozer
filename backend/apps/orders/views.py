@@ -104,12 +104,16 @@ class TableBookingViewSet(viewsets.ModelViewSet):
         """
         qs = TableBookingModel.objects.all()
         venue_pk = self.kwargs.get('venue_pk')
+        table_pk = self.kwargs.get('table_pk')
 
         if not self.request.user.is_staff:
             qs = qs.filter(order__user=self.request.user)
 
         if venue_pk:
             qs = qs.filter(table__venue_id=venue_pk)
+
+        if table_pk:
+            qs = qs.filter(table_id=table_pk)
 
         return qs.select_related('order', 'table')
 
@@ -118,10 +122,11 @@ class TableBookingViewSet(viewsets.ModelViewSet):
         Verify that the user is the owner of the order or a staff member
         before creating a booking.
         """
+        table_id = self.kwargs.get('table_pk')
         order = serializer.validated_data['order']
         user = self.request.user
 
         if order.user != user and not user.is_staff:
             raise PermissionDenied("You cannot book a table for another user's order.")
 
-        serializer.save()
+        serializer.save(table_id=table_id)

@@ -215,7 +215,17 @@ const TableMapAdmin: React.FC<TableMapAdminProps> = ({ venueId, token }) => {
 
     return (
         <div className={styles.container}>
+            <div className={styles.wrapperTitle}>
+                <h4 className={styles.bigText}>
+                Table
+            </h4>
+                <div className={styles.smallText}>
+                    map
+                </div>
+            </div>
+
             <div className={styles.controls}>
+
                 <div className={styles.photoWrapper} >
                     <label htmlFor="background-upload" className={styles.inputFile}>
                         Choose Hall

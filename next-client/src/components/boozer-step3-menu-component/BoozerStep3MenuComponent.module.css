@@ -1,35 +1,14 @@
-.wrapperTitle {
-    margin: 0;
-    position: relative;
-    display: inline-block;
-}
-
-.bigText {
-    margin: 0;
-    font-family: Sans,sans-serif;
-    color:var(--title-color);
-    font-size: 14rem;
-    font-style: italic;
+.title {
+    padding: 0;
+    margin: 12px 0;
+    font-family: var(--font-imperial),serif;
     font-weight: 700;
-    position: relative;
-    z-index: 1;
-    text-shadow:
-    2px 2px 0 #000,
-    4px 4px 6px rgba(0,0,0,0.5);
+    font-size: 4rem;
+    letter-spacing: 2px;
+    line-height: 1.25;
+    color: var(--color-text);
 }
 
-.smallText {
-    font-family: var(--font-imperial),sans-serif;
-    position: absolute;
-    top: 70%;
-    right:15%;
-    transform: translateY(-50%);
-    font-size: 16rem;
-    font-weight: 500;
-    z-index: 2;
-    color: var(--title-primary-color);
-    letter-spacing: 10px;
-}
 .subTitle {
     text-align: left;
     margin: 6px;

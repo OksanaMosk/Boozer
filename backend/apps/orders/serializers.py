@@ -1,9 +1,10 @@
+from django.db.backends.postgresql.psycopg_any import DateTimeRange
 from rest_framework import serializers
 from .models import OrderModel, OrderItemModel, OrderExtraServiceModel, TableBookingModel
-# from .services.order_service import calculate_total, create_order_with_details
 from ..menu.models import MenuItemModel
 from ..venue.models import TableModel
 from django.utils import timezone
+from datetime import datetime
 
 class TableBookingSerializer(serializers.ModelSerializer):
     table = serializers.PrimaryKeyRelatedField(queryset=TableModel.objects.filter(is_active=True))
@@ -11,11 +12,31 @@ class TableBookingSerializer(serializers.ModelSerializer):
     class Meta:
         model = TableBookingModel
         fields = ['id', 'order', 'table', 'time_range', 'is_active']
-        read_only_fields = ['id', 'order']
+        read_only_fields = ['id']
 
     def validate(self, data):
-        instance = TableBookingModel(**data)
+        tr_data = data.get('time_range')
+        table_id = self.context['view'].kwargs.get('table_pk')
+        order_id = self.context['request'].data.get('order')
+
+        if isinstance(tr_data, dict):
+            lower_str = tr_data.get('lower')
+            upper_str = tr_data.get('upper')
+
+            try:
+                lower_dt = datetime.fromisoformat(lower_str.replace('Z', '+00:00'))
+                upper_dt = datetime.fromisoformat(upper_str.replace('Z', '+00:00'))
+                data['time_range'] = DateTimeRange(lower_dt, upper_dt)
+            except (ValueError, TypeError):
+                raise serializers.ValidationError({"time_range": "Invalid date format"})
+
+        instance = TableBookingModel(
+            table_id=table_id,
+            order_id=order_id,
+            **data
+        )
         instance.clean()
+
         return data
 
 
@@ -42,8 +63,8 @@ class OrderExtraServiceSerializer(serializers.ModelSerializer):
 
 
 class OrderSerializer(serializers.ModelSerializer):
-    items = OrderItemSerializer(many=True)
-    extra_services = OrderExtraServiceSerializer(many=True)
+    items = OrderItemSerializer(many=True, required=False)
+    extra_services = OrderExtraServiceSerializer(many=True, required=False)
     remaining_seconds = serializers.SerializerMethodField()
     is_expired = serializers.SerializerMethodField()
 
@@ -73,6 +94,40 @@ class OrderSerializer(serializers.ModelSerializer):
             items_data=items_data,
             extra_services_data=extra_services_data
         )
+
+    def update(self, instance, validated_data):
+        items_data = validated_data.pop('items', None)
+        extra_services_data = validated_data.pop('extra_services', None)
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+
+        if items_data is not None:
+            instance.items.all().delete()
+            for item_data in items_data:
+                menu_item = item_data.get('menu_item')
+                if menu_item:
+                    OrderItemModel.objects.create(
+                        order=instance,
+                        menu_item=menu_item,
+                        quantity=item_data.get('quantity', 1),
+                        price=menu_item.price
+                    )
+        if extra_services_data is not None:
+            instance.extra_services.all().delete()
+            for service_data in extra_services_data:
+                service = service_data['service']
+                OrderExtraServiceModel.objects.create(
+                    order=instance,
+                    service=service,
+                    quantity=service_data.get('quantity', 1),
+                    price=service.price
+                )
+
+        if hasattr(instance, 'calculate_total_price'):
+            instance.calculate_total_price()
+
+        return instance
 
     def get_remaining_seconds(self, obj):
         if obj.expires_at and obj.status in ['DRAFT', 'HOLD']:

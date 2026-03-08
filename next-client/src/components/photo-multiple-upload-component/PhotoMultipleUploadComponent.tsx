@@ -72,13 +72,18 @@ const PhotoMultipleUploadComponent: React.FC<MultiplePhotoUploadProps> = ({
                     .images(newsId)
                     .delete(photoToDelete.id);
                 setPhotos(prev => prev.filter((_, i) => i !== index));
-            } catch (error) {
+            } catch (error: any) {
+            if (error.response?.status === 404) {
+                setPhotos(prev => prev.filter((_, i) => i !== index));
+            } else {
                 console.error("Error deleting from server", error);
-            } finally {
-                setLoading(false);
             }
+        } finally {
+            setLoading(false);
         }
-    };
+    }
+};
+
     const handleUpload = async () => {
         if (!user?.token) return;
         const filesToUpload = photos.filter(p => p.file);
@@ -147,7 +152,7 @@ const PhotoMultipleUploadComponent: React.FC<MultiplePhotoUploadProps> = ({
             </div>
                     <span className={styles.photoSpan}>
                     {photos.filter(p => p.file).length > 0
-                        ? `${photos.filter(p => p.file).length} new files selected`
+                        ? `${photos.filter(p => p.file).length} new files selected (not saved yet)`
                         : "No new files chosen"}
             </span>
         </div>

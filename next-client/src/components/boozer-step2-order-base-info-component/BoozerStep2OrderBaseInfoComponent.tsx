@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from "react";
 import styles from "./BoozerStep2OrderBaseInfoComponent.module.css";
 import DatePickerComponent from "@/components/date-picker-component/DatePickerComponent";
+import venueServices from "@/lib/services/venueService";
+import {useUser} from "@/app/contexts/UserProvider";
 
 interface Props {
   venueId: number | string;
@@ -28,6 +30,7 @@ const BoozerStep2OrderBaseInfoComponent: React.FC<Props> = ({venueId, onNext, on
         payment_type: "Each pays for themselves",
         budget_range: "0-1000"
     });
+    const  {user}= useUser()
 
   useEffect(() => {
     const fetchCityFromIP = async () => {
@@ -113,32 +116,29 @@ const BoozerStep2OrderBaseInfoComponent: React.FC<Props> = ({venueId, onNext, on
   const handleCalendarClose = () => {
     setIsCalendarOpen(false);
     if (selecting === "start") setFormData({ ...formData, start_date: "", end_date: "" });
-    setLocalDate(null);
+      setLocalDate(null);
   };
-
-  const handleSubmit = async (e: React.SyntheticEvent) => {
-    e.preventDefault();
-    if (!formData.start_date || !formData.end_date) return;
-
-    const payload = {
-      ...formData,
-      venue_id: venueId,
-      user_latitude: userGeo.lat,
-      user_longitude: userGeo.lng,
-      user_city: userGeo.city,
-      status: "DRAFT"
-    };
-    console.log("PAYLOAD:", payload);
-    setLoading(true);
-    try {
-      const response = await fetch(`/api/venues/${venueId}/orders/`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      if (!response.ok) return new Error("Server error");
-      const data = await response.json();
-      onNext(data.id);
+    const handleSubmit = async (e: React.SyntheticEvent) => {
+        e.preventDefault();
+        if (!formData.start_date || !formData.end_date) return;
+        const payload = {
+            ...formData,
+            venue_id: venueId,
+            user_latitude: userGeo.lat,
+            user_longitude: userGeo.lng,
+            user_city: userGeo.city,
+            status: "DRAFT"
+        };
+        console.log("PAYLOAD:", payload);
+        setLoading(true);
+        try {
+            if (!user?.token) return
+            const response = await venueServices.venues
+                .orders({accessToken: user.token})(venueId.toString())
+                .create(payload as any);
+            if (response.data && response.data.id) {
+                onNext(Number(response.data.id));
+            }
     } catch (error) {
       console.error("Error saving order:", error);
     } finally {
@@ -150,7 +150,6 @@ const BoozerStep2OrderBaseInfoComponent: React.FC<Props> = ({venueId, onNext, on
     <div className={styles.pageWrapper}>
       <h2 className={styles.title} >Step 2: Meeting Details</h2>
       <form onSubmit={handleSubmit} className={styles.detailsForm}>
-
           <div className={styles.top}>
               <div className={styles.calendarWrapper}>
                   <label className={styles.label}>Booking Period</label>
@@ -167,7 +166,6 @@ const BoozerStep2OrderBaseInfoComponent: React.FC<Props> = ({venueId, onNext, on
                                className={styles.img}/>
                       </div>
                   </div>
-
                   {isCalendarOpen && (
                       <div className={styles.calendarSidebar}>
                           <DatePickerComponent

@@ -25,7 +25,8 @@ const MenuManagerComponent: React.FC<Props> = ({ venue }) => {
 
   useEffect(() => {
     if (!user?.token) {
-      setMessage("User not authenticated.");
+      // setMessage("User not authenticated.");
+        return
     }
   }, [user]);
 
@@ -108,7 +109,7 @@ const MenuManagerComponent: React.FC<Props> = ({ venue }) => {
     <div className={styles.wrapper}>
       {message && <p className={styles.error}>{message}</p>}
       {isLoading ? (
-        <p>Loading data from server...</p>
+        <p>Loading menus from server...</p>
       ) : menuList.length > 0 ? (
         <table className={styles.table}>
           <thead>

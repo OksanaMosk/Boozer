@@ -100,3 +100,34 @@
 .activeLabel {
   color: #333;
 }
+
+
+.timerWrapper {
+
+}
+
+.timerText {
+  font-size: 14px;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.time {
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--color-text);
+  margin-top:40px;
+}
+
+.danger {
+    color: #d63031;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+  100% { transform: scale(1); }
+}

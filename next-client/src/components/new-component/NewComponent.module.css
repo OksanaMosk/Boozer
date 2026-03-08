@@ -54,7 +54,7 @@
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
-    width: 90%;
+    width: 70%;
     height: 320px;
     border-radius: 15px;
     border: 3px solid var(--color-text);
@@ -63,6 +63,7 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease, opacity 0.3s ease;
     gap: 0.5rem;
+    background: var(--menu-color);
 }
 .newsCard.editMode {
     height: auto;
@@ -115,6 +116,7 @@
     width: 100%;
     display: flex;
     justify-content: space-between;
+    flex-wrap: wrap;
 }
 .contentTextEdit,
 .contentText {
@@ -131,4 +133,28 @@
 .contentTextEdit,
 .subTitleEdit {
     padding-left: 5px;
+    border-radius: 1rem;
+    outline: none;
+    border: 1px solid var(--color-white);
+    background-color: transparent;
+    box-sizing: border-box;
+}
+
+.contentTextEdit:focus,
+.subTitleEdit:focus {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+.error {
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(90deg, #7a5c1e, #d4af37, #f5e6a1, #d4af37, #7a5c1e);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
+    font-size: 0.6rem;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }

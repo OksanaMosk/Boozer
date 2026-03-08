@@ -93,15 +93,15 @@ export const urls = {
     //     bookings: (tableId: string) => `${paths.tables}/${tableId}/bookings/`,
     // },
 
-    // bookings: {
-    //     list: `${paths.bookings}/`,
-    //     detail: (id: string) => `${paths.bookings}/${id}/`,
-    //     create: `${paths.bookings}/`,
-    //     update: (id: string) => `${paths.bookings}/${id}/`,
-    //     delete: (id: string) => `${paths.bookings}/${id}/`,
-    //     byTable: (tableId: string) => `${paths.bookings}/?table=${tableId}`,
-    //     active: `${paths.bookings}/?is_active=true`,
-    // },
+    bookings: {
+        list: `${paths.bookings}/`,
+        detail: (id: string) => `${paths.bookings}/${id}/`,
+        create: `${paths.bookings}/`,
+        update: (id: string) => `${paths.bookings}/${id}/`,
+        delete: (id: string) => `${paths.bookings}/${id}/`,
+        byTable: (tableId: string) => `${paths.bookings}/?table=${tableId}`,
+        active: `${paths.bookings}/?is_active=true`,
+    },
 
     reviews: {
         list: `${paths.reviews}/reviews/`,

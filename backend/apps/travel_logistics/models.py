@@ -59,9 +59,9 @@ class AirportModel(BaseModel):
         return f"{self.name} ({self.iata_code})"
 
 
-class ExtraServiceModel(BaseModel):
+class ExtraServiceModel(models.Model):
     class Meta:
-        db_table = 'extra_services'
+        db_table = 'extra_services_create'
         unique_together = ('venue', 'service_type')
 
     venue = models.ForeignKey(

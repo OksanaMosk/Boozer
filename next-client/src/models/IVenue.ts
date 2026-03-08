@@ -75,12 +75,17 @@ export interface ITable {
 
 export interface ITableBooking {
     id?: string;
-    table_id: string;
-    venue_id: string;
+    table_id?: string;
+    venue_id?: string;
     user_id?: string;
-    time_range: string;
+    order: number;
+    table: number | string;
     status?: "pending" | "confirmed" | "canceled";
     is_active?: boolean;
+    time_range: {
+        lower: string;
+        upper: string;
+    };
 }
 
 export interface IMenu {
@@ -135,6 +140,7 @@ export interface ITravelLogistics {
     venue: string;
     step_type: "to_airport" | "flight" | "from_airport";
     price_per_km: number;
+    currency:CurrencyCode;
 }
 
 export interface IAirport {
@@ -172,6 +178,7 @@ export interface IExtraService {
     price_type: PriceType;
     price_type_display?: string;
     price: number | string;
+    currency:CurrencyCode;
 }
 
 export interface IOrder {
@@ -183,6 +190,7 @@ export interface IOrder {
     guests_count: number;
     comment?: string;
     gender_preference?: GenderPreference;
+    remaining_seconds:number;
     payment_type?: PaymentType;
     budget_range?: BudgetRange;
     budget: number;
@@ -198,14 +206,14 @@ export interface IOrder {
 export type PaymentType = "Each pays for themselves" | "I pay" | "Someone else pays";
 export type BudgetRange = "0-1000" | "1000-3000" | "3000-5000" | "5000+";
 export type GenderPreference = "ANY" | "MALE" | "FEMALE";
-export type OrderStatus = "DRAFT" | "PENDING" | "CONFIRMED" | "CANCELLED";
+export type OrderStatus = "DRAFT" | "HOLD" | "CONFIRMED" | "CANCELLED";
 
 export interface IOrderItem {
     id?: string;
-    order_id: string;
-    menu_item_id: string;
+    order_id?: string;
+    menu_item: number;
     quantity: number;
-    price: number;
+    price?: number;
 }
 
 export interface IReview {

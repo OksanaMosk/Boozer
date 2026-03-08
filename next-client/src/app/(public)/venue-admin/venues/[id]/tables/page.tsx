@@ -10,7 +10,7 @@ export default async function TablesPage({ params }: { params: Promise<{ id: str
         <div
             style={{
                 fontWeight: "bolder",
-                margin: "40px auto",
+                margin: "0 auto",
                 textAlign: "center"
             }}
         >

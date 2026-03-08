@@ -4,7 +4,8 @@ import React, { useState, useEffect } from "react";
 import styles from "./BoozerStep3MenuComponent.module.css";
 import venueServices from "@/lib/services/venueService";
 import { useUser } from "@/app/contexts/UserProvider";
-import axios from "axios";
+import {AxiosResponse} from "axios";
+import {OrderStatus} from "@/models/IVenue";
 
 interface IMenuItem {
   id: string;
@@ -19,7 +20,7 @@ interface IMenuItem {
 interface Props {
   venueId: string;
   orderId: number;
-  onNext: () => void;
+   onNext: (orderId: number) => void;
   onBack: () => void;
 }
 
@@ -79,38 +80,38 @@ const BoozerStep3MenuComponent: React.FC<Props> = ({ venueId, orderId, onNext, o
     void fetchMenu();
   }, [venueId, user?.token]);
   const handleNextStep = async () => {
-    setIsSubmitting(true);
-    const items = Object.entries(cart).map(([id, qty]) => ({
-      menu_item: parseInt(id),
-      quantity: qty
-    }));
+      setIsSubmitting(true);
 
-    try {
-      await axios.patch(`${process.env.NEXT_PUBLIC_API_URL}/api/orders/${orderId}/`, {
-        items,
-        status: "HOLD"
-      }, {
-        headers: { Authorization: `Bearer ${user?.token}` }
-      });
+      const payload = {
+          items: Object.entries(cart).map(([id, qty]) => ({
+              menu_item: parseInt(id),
+              quantity: qty
+          })) ,
+          status: "HOLD" as  OrderStatus
+      };
+      console.log("PAYLOAD:", payload);
+    
+      try {
+          if (!user?.token) return
+          const response: AxiosResponse = await venueServices.venues
+              .orders({accessToken: user.token})(venueId.toString())
+              .update(orderId, (payload))
 
-      onNext();
-    } catch (err) {
-      console.error("Update order error:", err);
-      setMessage("Error updating order items");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
+          if (response.data && response.data.id) {
+              onNext(Number(response.data.id));
+          }
+      } catch (err) {
+          console.error("Update order error:", err);
+          setMessage("Error updating order items");
+      } finally {
+          setIsSubmitting(false)
+      }
+  }
   if (loading) return <p className={styles.loading}>Loading tasty menu... 🍔</p>;
 
   return (
     <div className={styles.orderPage}>
-      <div className={styles.wrapperTitle}>
-        <h4 className={styles.bigText}>Step 3: Menu Selection</h4>
-        <div className={styles.smallText}>Order #{orderId} - Selection</div>
-      </div>
-
+        <h4 className={styles.title}>Step 3: Menu Selection</h4>
       {menuList.map((category) => (
         <div key={category} className={styles.categorySection}>
           <h5 className={styles.subTitle}>{category.toUpperCase()}</h5>

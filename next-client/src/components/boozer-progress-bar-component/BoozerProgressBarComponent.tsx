@@ -1,10 +1,15 @@
 "use client";
 
-import React from "react";
+import React, {useEffect, useState} from "react";
 import styles from "./BoozerProgressBarComponent.module.css";
+import venueServices from "@/lib/services/venueService";
+import {useUser} from "@/app/contexts/UserProvider";
+import {AxiosResponse} from "axios";
 
 interface Props {
-  currentStep: number;
+    venueId: number | string;
+    currentStep: number;
+    orderId?: number | null;
 }
 
 const steps = [
@@ -17,8 +22,52 @@ const steps = [
   { id: 7, label: "Finish" },
 ];
 
-export const BoozerProgressBarComponent: React.FC<Props> = ({ currentStep }) => {
-  return (
+export const BoozerProgressBarComponent: React.FC<Props> = ({ currentStep, orderId, venueId }) => {
+  const [seconds, setSeconds] = useState<number | null>(null);
+  const {user} = useUser()
+
+    useEffect(() => {
+    const fetchTimer = async () => {
+        if (!user?.token || !orderId || !venueId) {
+            setSeconds(null);
+            return;
+        }
+
+        try {
+            const response: AxiosResponse = await venueServices.venues
+                .orders({accessToken: user.token})(venueId.toString())
+                .get(orderId);
+
+            const dataRes = response.data;
+            if (dataRes.remaining_seconds) {
+                setSeconds(dataRes.remaining_seconds);
+            }
+        } catch (error) {
+            console.error("Не вдалося завантажити таймер:", error);
+        }
+    };
+
+    void fetchTimer();
+  }, [orderId, venueId, user?.token])
+
+useEffect(() => {
+    if (seconds === null || seconds <= 0) return;
+
+    const interval = setInterval(() => {
+      setSeconds((prev) => (prev !== null ? prev - 1 : null));
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [seconds]);
+
+  const formatTime = (totalSeconds: number) => {
+    const mins = Math.floor(totalSeconds / 60);
+    const secs = totalSeconds % 60;
+    return `${mins}:${secs.toString().padStart(2, "0")}`;
+  };
+
+
+    return (
     <div className={styles.wrapper}>
       <div className={styles.progressLine}>
         <div
@@ -41,6 +90,11 @@ export const BoozerProgressBarComponent: React.FC<Props> = ({ currentStep }) => 
           </div>
         ))}
       </div>
+        {seconds !== null && (
+        <div className={`${styles.time} ${seconds < 180 ? styles.danger : ""}`}>
+           {formatTime(seconds)}
+        </div>
+      )}
     </div>
   );
 };

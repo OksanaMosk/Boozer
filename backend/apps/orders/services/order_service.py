@@ -1,11 +1,15 @@
 from decimal import Decimal
 from apps.orders.services.exchange_service import get_today_rates
-
+from datetime import timedelta
+from django.utils import timezone
 from django.db import transaction
 
 def create_order_with_details(user, venue_id, validated_data, items_data, extra_services_data):
     with transaction.atomic():
         from apps.orders.models import OrderModel, OrderExtraServiceModel, OrderItemModel
+
+        validated_data['expires_at'] = timezone.now() + timedelta(minutes=1)
+
         order = OrderModel.objects.create(
             user=user,
             venue_id=venue_id,
