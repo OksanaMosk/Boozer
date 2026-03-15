@@ -1,54 +1,49 @@
-.successContainer {
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 40px 20px;
-    text-align: center;
-    font-family: 'Inter', sans-serif;
-    color: #1a1a1a;
+.title {
+    padding: 0;
+    margin: 0 ;
+    font-family: var(--font-imperial),serif;
+    font-weight: 700;
+    font-size: 4rem;
+    letter-spacing: 2px;
+    color: var(--color-text);
 }
 
-.confetti {
-    font-size: 50px;
-    margin-bottom: 20px;
-    animation: bounce 2s infinite;
-}
-
-@keyframes bounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
-}
-
-.successContainer h1 {
-    font-size: 28px;
-    font-weight: 800;
-    margin-bottom: 10px;
-    color: #000;
-}
-
-.receiptCard {
-    background: #ffffff;
-    border: 1px solid #e1e1e1;
-    border-radius: 16px;
-    padding: 30px;
-    text-align: left;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-    margin: 30px 0;
+.wrapperTitle {
+    padding: 0;
+    margin: 0 auto 80px ;
     position: relative;
+    display: inline-block;
 }
 
-/* Ефект перфорації чека знизу */
-.receiptCard::after {
-    content: "";
+.bigText {
+    padding: 0;
+    margin: 0 ;
+    color:var(--title-color);
+    font-size: 10rem;
+    font-style: italic;
+    font-weight: 700;
+    position: relative;
+    z-index: 1;
+}
+.smallText {
+    padding: 0;
+    margin: 0 ;
+    font-family: var(--font-imperial),sans-serif;
     position: absolute;
-    bottom: -10px;
-    left: 0;
-    right: 0;
-    height: 10px;
-    background-image: radial-gradient(circle, transparent 70%, #ffffff 70%);
-    background-size: 20px 20px;
-    background-position: 0 -10px;
+    top: 85%;
+    right:0%;
+    transform: translateY(-50%);
+    font-size: 12rem;
+    font-weight: 500;
+    z-index: 2;
+    color: var(--title-primary-color);
+    letter-spacing: 10px;
 }
-
+.small {
+    margin: 0;
+    padding: 0;
+   font-size: 8rem;
+}
 .receiptHeader {
     display: flex;
     justify-content: space-between;
@@ -56,17 +51,10 @@
     margin-bottom: 20px;
 }
 
-.receiptHeader h3 {
-    margin: 0;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    font-size: 18px;
-    color: #666;
-}
 
 .tableBadge {
-    background: #000;
-    color: #fff;
+    background: black;
+    color: var(--color-white);
     padding: 4px 12px;
     border-radius: 20px;
     font-size: 12px;
@@ -88,7 +76,7 @@
 
 .divider {
     height: 1px;
-    background: #eee;
+    background: var(--color-white);
     margin: 20px 0;
     border: none;
 }
@@ -122,19 +110,11 @@
     color: #888;
 }
 
-.subTotal {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 10px;
-    font-weight: 600;
-    font-size: 14px;
-    color: #666;
-}
 
 .totalBlock {
     margin-top: 30px;
     padding-top: 20px;
-    border-top: 2px dashed #eee;
+    border-top: 2px dashed var(--color-white);
 }
 
 .totalRow {
@@ -151,12 +131,12 @@
 .totalAmount {
     font-size: 24px;
     font-weight: 900;
-    color: #000;
+    color:black;
 }
 
 .homeBtn {
-    background: #000;
-    color: #fff;
+    background: black;
+    color: var(--color-white);
     border: none;
     padding: 16px 40px;
     border-radius: 12px;
@@ -170,14 +150,8 @@
     transform: scale(1.02);
 }
 
-/* Стилі для початкового стану (Pay Now) */
-.container {
-    padding: 60px 20px;
-    text-align: center;
-}
-
 .finalSummary {
-    background: #f9f9f9;
+    background: var(--color-white);
     padding: 40px;
     border-radius: 24px;
     display: inline-block;
@@ -189,68 +163,51 @@
     margin: 10px 0 30px;
 }
 
-.payBtn {
-    background: #27ae60;
-    color: white;
-    border: none;
-    padding: 18px 60px;
-    border-radius: 50px;
-    font-size: 20px;
-    font-weight: 700;
-    cursor: pointer;
-    box-shadow: 0 10px 20px rgba(39, 174, 96, 0.2);
-}
-/*-----------------------------*/
 .successContainer {
     max-width: 750px;
     margin: 40px auto;
     padding: 50px 30px;
-    background: #000; /* Глибокий чорний */
-    border: 1px solid #d4af37; /* Золотий контур */
+    background: var(--menu-color);
+    border: 1px solid var(--color-noposter);
     border-radius: 40px;
     text-align: center;
-    color: #fff;
+    color: var(--color-white);
     box-shadow: 0 40px 100px rgba(0,0,0,0.9);
 }
 
 .confetti {
     font-size: 70px;
-    margin-bottom: 10px;
-    filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.5));
+    margin-bottom: 20px;
+    animation: bounce 3s infinite;
 }
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
 
-.successContainer h1 {
-    font-size: 36px;
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    background: linear-gradient(135deg, #fff 0%, #d4af37 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
 }
-
-/* Картка Чеку */
+.titleId {
+    color:  var(--color-text);
+}
 .receiptCard {
-    background: #0a0a0a;
+    background: var(--menu-color);
     border-radius: 30px;
     padding: 40px;
     margin: 40px 0;
     text-align: left;
-    border: 1px solid #222;
     position: relative;
     overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 0 12px white;
+    animation: float 6s ease-in-out infinite;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.receiptCard:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 25px 50px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.2);
 }
 
-/* Золота полоса зверху чека */
-.receiptCard::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 4px;
-    background: linear-gradient(90deg, #d4af37, #f1d592, #d4af37);
-}
 
 .receiptHeader {
     display: flex;
@@ -259,24 +216,36 @@
     margin-bottom: 30px;
 }
 
-.receiptHeader h3 {
-    color: #d4af37;
+.receiptTitle {
+    color: var(--logo-hover-color);
     text-transform: uppercase;
     font-size: 20px;
     letter-spacing: 4px;
     margin: 0;
 }
-
+.logoImage{
+   width: 100px;
+    height: 100px;
+    padding: 5px;
+    border-radius: 50%;
+     font-weight: 700;
+     object-fit: contain;
+}
 .tableBadge {
-    background: #d4af37;
-    color: #000;
+    background: var(--color-noposter);
+    color: black;
     padding: 6px 15px;
     border-radius: 8px;
     font-weight: 900;
     font-size: 13px;
     text-transform: uppercase;
 }
-
+.tableSection {
+    text-align: left;
+}
+.tableList {
+    text-align: left;
+}
 .detailsGrid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -291,7 +260,7 @@
 }
 
 .detailsGrid strong {
-    color: #fff;
+    color: var(--color-white);
     margin-right: 5px;
 }
 
@@ -302,12 +271,12 @@
 }
 
 .orderSection h4 {
-    color: #d4af37;
+    color: var(--logo-hover-color);
     font-size: 14px;
     text-transform: uppercase;
     letter-spacing: 2px;
     margin-bottom: 20px;
-    border-left: 4px solid #d4af37;
+    border-left: 4px solid var(--logo-hover-color);
     padding-left: 15px;
 }
 
@@ -322,7 +291,7 @@
 .mathText {
     display: block;
     color: #555;
-    font-size: 12px;
+    font-size: 14px;
     margin-top: 4px;
 }
 
@@ -330,18 +299,17 @@
     display: flex;
     justify-content: space-between;
     margin-top: 15px;
-    color: #d4af37;
+    color: var(--color-noposter);
     font-weight: 700;
-    font-size: 14px;
+    font-size: 16px;
 }
 
-/* Блок TOTAL */
 .totalBlock {
     margin-top: 40px;
     padding: 30px;
-    background: #111;
-    border-radius: 20px;
-    border: 1px solid #d4af37;
+    background: black;
+    border-radius: 2rem;
+    border: 1px solid var(--color-noposter);
     position: relative;
 }
 
@@ -355,20 +323,20 @@
     font-size: 20px;
     font-weight: 900;
     letter-spacing: 2px;
-    color: #fff;
+    color: var(--color-white);
 }
 
 .totalAmount {
     font-size: 34px;
     font-weight: 900;
-    color: #d4af37;
+    color:var(--color-noposter);
     text-shadow: 0 0 25px rgba(212, 175, 55, 0.4);
 }
 
 .homeBtn {
     background: transparent;
-    color: #fff;
-    border: 1px solid #d4af37;
+    color: var(--logo-hover-color);
+    border: 1px solid var(--color-noposter);
     padding: 20px 60px;
     border-radius: 50px;
     font-size: 16px;
@@ -379,19 +347,21 @@
 }
 
 .homeBtn:hover {
-    background: #d4af37;
-    color: #000;
+    background: var(--color-noposter);
+    color: black;
     box-shadow: 0 0 30px rgba(212, 175, 55, 0.4);
 }
 
-/* Стан до оплати */
 .container {
-    padding: 100px 20px;
+    padding: 0 20px;
     text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
 }
-
 .finalSummary {
-    background: #0a0a0a;
+    background: black;
     border: 1px solid #333;
     padding: 60px;
     border-radius: 50px;
@@ -400,13 +370,13 @@
 
 .amount {
     font-size: 72px;
-    color: #d4af37;
+    color:var(--color-noposter);
     margin-bottom: 40px;
     font-weight: 900;
 }
 
 .payBtn {
-    background: #d4af37;
+    background: var(--color-noposter);
     color: #000;
     padding: 25px 80px;
     border-radius: 100px;

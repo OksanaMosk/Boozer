@@ -1,6 +1,5 @@
-
 .container {
-    width: 70vw;
+    width: 80vw;
     margin: 0 auto 40px;
     display: flex;
     justify-content: center;
@@ -17,6 +16,7 @@
     letter-spacing: 2px;
     color: var(--color-text);
 }
+
 .wrapperTitle {
     padding: 0;
     margin: 0 auto 80px ;
@@ -27,16 +27,12 @@
 .bigText {
     padding: 0;
     margin: 0 ;
-    font-family: Sans,sans-serif;
     color:var(--title-color);
-    font-size: 14rem;
+    font-size: 12rem;
     font-style: italic;
     font-weight: 700;
     position: relative;
     z-index: 1;
-    text-shadow:
-    2px 2px 0 #000,
-    4px 4px 6px rgba(0,0,0,0.5);
 }
 
 .smallText {
@@ -44,7 +40,7 @@
     margin: 0 ;
     font-family: var(--font-imperial),sans-serif;
     position: absolute;
-    top: 70%;
+    top: 75%;
     right:10%;
     transform: translateY(-50%);
     font-size: 16rem;
@@ -54,108 +50,82 @@
     letter-spacing: 10px;
 }
 
+.selectCurrency {
+    width: 70%;
+    color: var(--color-text);
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 100px;
+}
+.label {
+    width: 25%;
+    padding: 0;
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 500;
+    letter-spacing: 2px;
+    line-height: 1;
+    color: var(--color-text);
+    text-align: left;
+}
+.select {
+  color: var(--color-bg-dark);
+     padding: 2px;
+    width: 80px;
+    font-size: 0.8rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--color-text);
+    cursor: pointer;
+    outline: none;
+    background: linear-gradient(
+        90deg,
+        #f9f295,
+        #ae8625,
+        #faf398,
+        #b88a44
+    );
+}
+.select option {
+    outline: none;
+    background: var(--title-color);
+    color: var(--color-badgeId);
+    border: none;
+}
+
 .mainLayout {
     width: 100%;
-    display: flex;
-    gap: 20px;
-}
-
-.mapSide {
-    flex: 2;
-    width: 100%;
-}
-
-.billSide {
-    flex: 1;
-}
-.loader {
     display: flex;
     justify-content: center;
-    align-items: flex-start;
-    margin: 70px auto;
+    align-items: center;
+    flex-direction: column;
+    gap: 100px;
 }
 
-/*----------------*/
-.container {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 40px 20px;
-    color: #ffffff;
-    font-family: 'Inter', sans-serif;
-}
-
-.title {
-    color: #d4af37; /* Gold */
-    font-size: 14px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    margin-bottom: 5px;
-}
-
-.wrapperTitle {
-    display: flex;
-    align-items: baseline;
-    gap: 10px;
-    margin-bottom: 30px;
-}
-
-.bigText {
-    font-size: 42px;
-    font-weight: 900;
-    margin: 0;
-    color: #fff;
-    text-transform: uppercase;
-}
-
-.smallText {
-    font-size: 42px;
-    font-weight: 300;
-    margin: 0;
-    color: #d4af37;
-}
-
-/* Currency Select */
-.timerHeader {
-    display: flex;
-    justify-content: flex-end;
-    margin-bottom: 20px;
-}
-
-.currSelect {
-    background: #1a1a1a;
-    color: #d4af37;
-    border: 1px solid #d4af37;
-    padding: 8px 15px;
-    border-radius: 8px;
-    outline: none;
-    cursor: pointer;
-    font-weight: 600;
-}
-
-.mainLayout {
-    display: grid;
-    grid-template-columns: 1fr 450px;
-    gap: 30px;
-}
-
-/* Map Side */
 .mapSide {
-    border-radius: 20px;
+    border-radius: 2rem;
     overflow: hidden;
-    border: 1px solid #333;
-    height: 600px;
+    height: 700px;
     background: #000;
+    /*flex: 2;*/
+    width: 70%;
+    border: 1px solid var(--color-noposter);
+     box-shadow: 0 20px 50px rgba(0,0,0,0.5);
 }
 
-/* Bill Side - The "Black Card" Look */
 .billSide {
-    background: #0a0a0a;
-    border: 1px solid #d4af37;
+    width: 50%;
+    min-width: 400px;
+    background: var(--menu-color);
+    border: 1px solid var(--color-noposter);
     border-radius: 24px;
     padding: 35px;
     box-shadow: 0 20px 50px rgba(0,0,0,0.5);
     display: flex;
     flex-direction: column;
+
 }
 
 .summaryTable {
@@ -163,8 +133,8 @@
 }
 
 .groupTitle {
-    color: #d4af37;
-    font-size: 13px;
+    color: var(--logo-hover-color);
+    font-size: 16px;
     font-weight: 700;
     text-transform: uppercase;
     margin-bottom: 15px;
@@ -188,57 +158,58 @@
 .subTotal {
     display: flex;
     justify-content: space-between;
-    font-size: 14px;
-    color: #fff;
-    margin-bottom: 15px;
+    font-size: 16px;
+    color: var(--logo-hover-color);
+    margin: 15px auto;
+    padding-bottom: 15px;
+   border-bottom: 1px solid var(--color-noposter);
 }
 
 .subTotal b {
-    color: #d4af37;
+    color:  var(--logo-hover-color);
 }
 
 
 .billRow {
     display: flex;
+    align-items: center;
     justify-content: space-between;
     margin-bottom: 12px;
-    font-size: 15px;
+    color: var(--color-white);
 }
 
 .totalRow {
-    margin-top: 30px;
+    margin: 30px auto;
     padding-top: 25px;
-    border-top: 2px dashed #333;
+    border-top: 1px solid var(--logo-hover-color);
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
 .totalRow span {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     font-size: 18px;
-    font-weight: 800;
     text-transform: uppercase;
 }
 
 .totalPrice {
-    font-size: 28px;
-    color: #d4af37;
+     display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+    color: var(--color-noposter);
     text-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
-}
-
-.actions {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    margin-top: 30px;
 }
 
 .confirmBtn {
     background: linear-gradient(135deg, #d4af37 0%, #b8860b 100%);
-    color: #000;
+    color: black;
     border: none;
     padding: 18px;
-    border-radius: 12px;
+    border-radius: 2rem;
     font-size: 18px;
     font-weight: 800;
     text-transform: uppercase;
@@ -252,21 +223,6 @@
     box-shadow: 0 15px 30px rgba(212, 175, 55, 0.2);
 }
 
-.backBtn {
-    background: transparent;
-    color: #666;
-    border: 1px solid #333;
-    padding: 12px;
-    border-radius: 12px;
-    font-size: 14px;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.backBtn:hover {
-    color: #fff;
-    border-color: #666;
-}
 
 .loaderWrapper {
     display: flex;
@@ -274,41 +230,97 @@
     align-items: center;
 }
 
-@media (max-width: 1000px) {
-    .mainLayout {
-        grid-template-columns: 1fr;
-    }
-    .bigText, .smallText {
-        font-size: 32px;
-    }
-}
-.divider {
-    border: 0;
-    border-top: 1px solid #222;
-    margin: 20px 0;
-    width: 100%;
-}
+/*.divider {*/
+/*    border: 0;*/
+/*    border-top: 1px solid var(--color-noposter);*/
+/*    margin: 20px 0;*/
+/*    width: 100%;*/
+/*}*/
 
 .billTitle {
     font-size: 22px;
     margin-bottom: 25px;
     text-transform: uppercase;
     letter-spacing: 1px;
-    border-bottom: 1px solid #333;
+    border-bottom: 1px solid var(--logo-hover-color);
     padding-bottom: 15px;
-    color: #fff;
+    color:var(--logo-hover-color);
 }
-
+.billRowSmall,
 .listItem {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
     margin-bottom: 12px;
     font-size: 14px;
-    color: #ccc;
+    color: var(--color-white);
+}
+.billRowSmall p,
+.listItem p{
+text-align:left ;
 }
 
-.rowLabel {
+/*.rowLabel {*/
+/*    margin: 0;*/
+/*    color: red*/
+/*}*/
+
+.actions {
+    margin: 0 auto;
+    width: 100%;
+    display: flex;
+    justify-content:center;
+    flex-direction: column;
+    gap: 2rem;
+}
+.cancelBtn,
+.buttonNext {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100px;
+    height: 36px;
+    border-radius: 1.5rem;
+    color: #30240b;
+    cursor: pointer;
+    outline: none;
+    transition: all 0.3s ease-in-out;
+    border: 1px solid rgba(255,255,255,0.5);
+}
+.cancelBtn:hover,
+.buttonNext:hover {
+   background: linear-gradient(90deg, white, #30240b, white);
+    color: white;
+}
+.buttonNext {
+     padding: 0.5rem 8rem;
+    background: linear-gradient(90deg, #30240b, white, #30240b);
+}
+.cancelBtn{
+    padding: 0.5rem 0;
+    width: 150px;
+    background-color: #bf8282;
+}
+.loaderWrapper {
+    box-sizing: border-box;
+    height: 45px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
     margin: 0;
-    color: #999;
+    padding: 0;
+    line-height: 1.2;
+    transform: scale(0.2);
+}
+.cancelBtn:disabled,
+.buttonNext:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.loader {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    margin: 70px auto;
 }

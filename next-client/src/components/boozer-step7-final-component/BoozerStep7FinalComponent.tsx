@@ -28,6 +28,7 @@ const BoozerStep7Final: React.FC<Props> = ({ orderId, venueId, onReset }) => {
                     .orders({ accessToken: user.token })(venueId)
                     .get(orderId);
                 setOrder(res.data);
+
             } catch (e) {
                 console.error("Failed to fetch final order data", e);
             }
@@ -45,7 +46,6 @@ const BoozerStep7Final: React.FC<Props> = ({ orderId, venueId, onReset }) => {
 
             setIsConfirmed(true);
         } catch (err) {
-            console.error("Confirmation failed", err);
             alert("Payment failed. Please try again.");
         } finally {
             setLoading(false);
@@ -60,16 +60,70 @@ const BoozerStep7Final: React.FC<Props> = ({ orderId, venueId, onReset }) => {
     if (isConfirmed) {
         return (
             <div className={styles.successContainer}>
-                <div className={styles.confetti}>🎊🍹🎊</div>
-                <h1>Cheers! Your "VIP Boozer" is Ready!</h1>
-                <p>Order <b>#{order.id}</b> is officially confirmed.</p>
+                <div className={styles.confetti}>
+                    🎊
+                    <img
+                       src="/favicon/android-chrome-512x512.png"
+                        width={100}
+                        height={100}
+                        className={styles.logoImage}
+                        alt="VIP Icon"
+                    />
+                    🎊
+                </div>
+
+                <h1 className={styles.title}>Cheers!</h1>
+                <h2 className={styles.title}>Your "VIP Boozer"</h2>
+                 <h2 className={styles.title}>is Ready!</h2>
+                <p className={styles.titleId}>Order <b>#{order.id}</b> is officially confirmed.</p>
 
                 <div className={styles.receiptCard}>
+                     <h3 className={styles.receiptTitle} >Official Receipt</h3>
                     <div className={styles.receiptHeader}>
-                        <h3>Official Receipt</h3>
-                        {order.table_number && (
-                            <span className={styles.tableBadge}>Table: #{order.table_number}</span>
-                        )}
+
+                            {order.tables && order.tables.length > 0 && (() => {
+                                const firstBooking = order.tables[0];
+                                const range = typeof firstBooking.time_range === 'string'
+                                    ? JSON.parse(firstBooking.time_range)
+                                    : firstBooking.time_range;
+
+                                const bookingDate = range?.lower
+                                    ? new Date(range.lower).toLocaleDateString('uk-UA', {
+                                        day: '2-digit',
+                                        month: '2-digit',
+                                        year: 'numeric'
+                                    })
+                                    : "";
+
+                                const startTime = range?.lower
+                                    ? new Date(range.lower).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})
+                                    : "";
+                                const endTime = range?.upper
+                                    ? new Date(range.upper).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})
+                                    : "";
+
+                                return (
+                                    <div className={styles.tablesSection}>
+                                        <h4 className={styles.receiptRow}>
+                                            Reserved Tables
+                                        </h4>
+
+                                        {(bookingDate || (startTime && endTime)) && (
+                                            <p className={styles.timeSpan}>
+                                                {bookingDate} {startTime && endTime && `(${startTime} — ${endTime})`}
+                                            </p>
+                                        )}
+
+                                        <ul className={styles.tableList}>
+                                            {order.tables.map((booking: any) => (
+                                                <li key={booking.id} className={styles.receiptRow}>
+                                                    <strong>Table №{booking.table}</strong>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                );
+                            })()}
                     </div>
 
                     <div className={styles.detailsGrid}>
@@ -78,7 +132,7 @@ const BoozerStep7Final: React.FC<Props> = ({ orderId, venueId, onReset }) => {
                         <p><strong>Guests:</strong> {order.guests_count}</p>
                         <p><strong>Dates:</strong> {order.start_date} — {order.end_date}</p>
                     </div>
-                    <div className={styles.divider} />
+                    <div className={styles.divider}/>
                     {order.items && order.items.length > 0 && (
                         <div className={styles.orderSection}>
                             <h4>Menu Selection</h4>
@@ -103,7 +157,7 @@ const BoozerStep7Final: React.FC<Props> = ({ orderId, venueId, onReset }) => {
                                 const guests = order.guests_count || 1;
 
                                 let rowTotal = unitPrice * qty;
-                                let calculationText = `(x${qty} * ${unitPrice.toFixed(2)} ${order.currency})`;
+                                let calculationText = `(${qty} x ${unitPrice.toFixed(2)} ${order.currency})`;
 
                                 if (extra.service_type === 'hotel') {
                                     rowTotal = unitPrice * qty * guests;
@@ -161,7 +215,13 @@ const BoozerStep7Final: React.FC<Props> = ({ orderId, venueId, onReset }) => {
 
     return (
         <div className={styles.container}>
-            <h2>Final Step: Secure Your Booking 💳</h2>
+            <h2 className={styles.title}>Step 7:</h2>
+             <div className={styles.wrapperTitle}>
+                <h4 className={styles.bigText}> Secure Your</h4>
+                <p className={styles.smallText}>booking</p>
+
+            </div>
+            <p className={styles.small}> 💳</p>
             <div className={styles.finalSummary}>
                 <p className={styles.label}>Total to Pay:</p>
                 <h1 className={styles.amount}>

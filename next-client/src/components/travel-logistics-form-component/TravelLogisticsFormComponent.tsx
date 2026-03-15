@@ -6,7 +6,8 @@ import venueServices from "@/lib/services/venueService";
 import { useUser } from "@/app/contexts/UserProvider";
 import {ITravelLogistics} from "@/models/ITravel";
 import {IExtraService} from "@/models/IVenue";
-
+import styles from "./TravelLogisticsFormComponent.module.css"
+import {LoaderComponent} from "@/components/loader-component/LoaderComponent";
 interface Props {
     venueId: string;
 }
@@ -86,79 +87,79 @@ const TravelLogisticsFormComponent: React.FC<Props> = ({ venueId }) => {
                     }))
                 )
             ]);
-            alert("Збережено успішно!");
+            alert("Save!");
             await fetchData();
         } catch (err) {
-            alert("Помилка збереження");
+            alert("Error Save");
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <div className="space-y-10 max-w-3xl mx-auto p-4">
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="bg-gray-50 p-5 rounded-2xl border border-dashed border-gray-300">
-                    <h4 className="text-sm font-bold text-gray-500 uppercase mb-3"></h4>
+       <div className={styles.container}>
+            <div className={styles.summaryGrid}>
+                <div className={styles.card}>
+                    <h4 className={styles.cardHeader}>Current Logistics</h4>
                     {savedLogistics.length > 0 ? savedLogistics.map(l => (
-                        <div key={l.step_type} className="flex justify-between py-1 text-sm border-b last:border-0">
-                            <span className="capitalize">{l.step_type.replace('_', ' ')}</span>
-                            <span className="font-mono font-bold">{l.price_per_km} {l.currency}/km</span>
+                        <div key={l.step_type} className={styles.row}>
+                            <span className={styles.label}>{l.step_type.replace('_', ' ')}</span>
+                            <span className={styles.value}>{l.price_per_km} {l.currency}/km</span>
                         </div>
-                    )) : <p className="text-gray-400 text-sm italic">Дані відсутні</p>}
+                    )) : <p className={styles.emptyText}>No data available</p>}
                 </div>
 
-                <div className="bg-gray-50 p-5 rounded-2xl border border-dashed border-gray-300">
-                    <h4 className="text-sm font-bold text-gray-500 uppercase mb-3">Поточні послуги</h4>
+                <div className={styles.card}>
+                    <h4 className={styles.cardHeader}>Current Services</h4>
                     {savedExtras.length > 0 ? savedExtras.map(s => (
-                        <div key={s.service_type} className="flex justify-between py-1 text-sm border-b last:border-0">
-                            <span className="capitalize">{s.service_type}</span>
-                            <span className="font-mono font-bold">{s.price} {s.price_type === 'per_day' ? `${s.currency}/day` : `${s.currency}`}</span>
+                        <div key={s.service_type} className={styles.row}>
+                            <p className={styles.label}>{s.service_type}</p>
+                            <p className={styles.value}>
+                                {s.price} {s.price_type === 'per_day' ? `${s.currency}/day` : `${s.currency}`}
+                            </p>
                         </div>
-                    )) : <p className="text-gray-400 text-sm italic">Дані відсутні</p>}
+                    )) : <p className={styles.emptyText}>No data available</p>}
                 </div>
             </div>
 
-            <hr className="border-gray-200" />
+            <hr className={styles.divider} />
+            <div className={styles.formWrapper}>
+                <h2 className={styles.mainTitle}>Update or Create Rates</h2>
 
-            <div className="space-y-6">
-                <h2 className="text-2xl font-black text-gray-900 text-center">Оновити або створити тарифи</h2>
-
-                <div className="bg-white p-6 border rounded-xl shadow-sm">
-                    <h3 className="text-lg font-bold mb-5 text-indigo-600">Налаштування логістики</h3>
-                    <div className="grid grid-cols-1 gap-4">
+                <div className={styles.editorBlock}>
+                    <h3 className={`${styles.blockTitle} styles.logisticsTitle`}>Logistics Settings</h3>
+                    <div className={styles.inputList}>
                         {logistics.map((item) => (
-                            <div key={item.step_type} className="flex items-center gap-4 bg-gray-50 p-3 rounded-lg">
-                                <label className="capitalize flex-1 font-medium">{item.step_type?.replace('_', ' ')}</label>
-                                <input
-                                    type="number" step="0.1"
-                                    value={item.price_per_km  || ""}
-                                    onChange={(e) => handleLogisticsChange(item.step_type!, e.target.value)}
-                                    className="border border-gray-300 p-2 rounded-lg w-28 text-right outline-none focus:ring-2 focus:ring-indigo-400"
-                                />
-                                <span className="text-xs text-gray-400 w-12">{item.currency}/km</span>
+                            <div key={item.step_type} className={styles.inputRow}>
+                                <div className={styles.rowLeft} >
+                                    <label className={styles.label}>{item.step_type?.replace('_', ' ')}</label>
+                                    <input
+                                        type="number" step="0.1"
+                                        value={item.price_per_km || ""}
+                                        onChange={(e) => handleLogisticsChange(item.step_type!, e.target.value)}
+                                        className={styles.inputField}
+                                    /></div>
+                                <p className={styles.value}>{item.currency}/km</p>
                             </div>
                         ))}
                     </div>
                 </div>
 
-                <div className="bg-white p-6 border rounded-xl shadow-sm">
-                    <h3 className="text-lg font-bold mb-5 text-green-600">Додаткові сервіси</h3>
-                    <div className="space-y-4">
+                <div className={styles.editorBlock}>
+                    <h3 className={`${styles.blockTitle} styles.servicesTitle`}>Extra Services</h3>
+                    <div className={styles.inputList}>
                         {extraServices.map((service) => (
-                            <div key={service.service_type} className="flex items-center gap-4 border-b pb-4 last:border-0">
-                                <div className="flex-1">
-                                    <p className="font-bold capitalize text-gray-700">{service.service_type}</p>
-                                    <p className="text-[10px] text-gray-400 uppercase tracking-widest">{service.price_type?.replace('_', ' ')}</p>
+                            <div key={service.service_type} className={styles.inputRow}>
+                                <div className={styles.serviceType}>
+                                    <p className={styles.label}>{service.service_type}</p>
+                                    <p className={styles.value}>{service.price_type?.replace('_', ' ')}</p>
                                 </div>
-                                <div className="flex items-center gap-2">
-                                    <span className="text-gray-400">$</span>
+                                <div>
                                     <input
                                         type="number"
                                         value={service.price  || ""}
                                         onChange={(e) => handleServiceChange(service.service_type!, 'price', e.target.value)}
-                                        className="border border-gray-300 p-2 rounded-lg w-28 text-right outline-none focus:ring-2 focus:ring-green-400"
+                                        className={styles.inputField}
                                     />
                                 </div>
                             </div>
@@ -169,17 +170,14 @@ const TravelLogisticsFormComponent: React.FC<Props> = ({ venueId }) => {
                 <button
                     onClick={handleSave}
                     disabled={loading}
-                    className={`w-full py-4 rounded-2xl font-black text-lg shadow-xl transition-all active:scale-95 ${
-                        loading ? 'bg-gray-300 cursor-not-allowed' : 'bg-black text-white hover:bg-gray-800'
-                    }`}
+                    className={styles.submitBtn}
                 >
-                    {loading ? "Saving..." : "Edit"}
+                    {loading ? <div className={`authButton ${styles.loaderWrapper}`}><LoaderComponent/> </div> : "Save Rates"}
                 </button>
             </div>
         </div>
     );
 };
-
 export default TravelLogisticsFormComponent;
 
 

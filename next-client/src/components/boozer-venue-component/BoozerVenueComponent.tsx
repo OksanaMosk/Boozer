@@ -35,7 +35,6 @@ const BoozerVenueComponent: React.FC<Props> = ({ venue, selected = false, onSele
             className={`${styles.wrapper} ${isSelected ? styles.selected : ""}`}
         >
             <VenueComponent venue={venue} />
-
             <button
                 className={styles.selectButton}
                 onClick={handleToggle}

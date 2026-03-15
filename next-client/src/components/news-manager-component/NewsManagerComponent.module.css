@@ -92,8 +92,6 @@
     align-items: flex-start;
     justify-content: center;
 }
-/*-------------------------------------------------------------------*/
-
 .tabsContainer {
      position: fixed;
     margin-top: 70px;
@@ -106,7 +104,6 @@
     flex-direction: column;
     left: 10px;
     top: 150px;
-
     z-index: 4;
 }
 .tabButton {

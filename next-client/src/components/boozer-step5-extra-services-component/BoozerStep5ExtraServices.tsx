@@ -24,6 +24,7 @@ const BoozerStep5ExtraServices = ({ venueId, orderId, onNext, onBack }: Props) =
   const [order, setOrder] = useState<IOrder | null>(null);
   const [extraServices, setExtraServices] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isBackLoading, setIsBackLoading] = useState(false);
   const [includeLogistics, setIncludeLogistics] = useState(true);
   const [lastTravelData, setLastTravelData] = useState<any>(null);
   const [currency, setCurrency] = useState<"UAH" | "USD" | "EUR">("UAH");
@@ -42,9 +43,6 @@ const BoozerStep5ExtraServices = ({ venueId, orderId, onNext, onBack }: Props) =
     setLogisticsTotal,
     servicesTotal,
 } = useOrderPricing(extraServices, currency, venueCurrency, rates);
-
-console.log("HOOK CHECK → servicesTotal:", servicesTotal);
-console.log("HOOK CHECK → currency:", currency, "venueCurrency:", venueCurrency);
 
   useEffect(() => {
     const initExchange = async () => {
@@ -145,17 +143,32 @@ console.log("HOOK CHECK → currency:", currency, "venueCurrency:", venueCurrenc
     }
 };
 
-  const getConverted = (amount: number, fromCurrency: "UAH" | "USD" | "EUR" = venueCurrency) => {
-  if (currency === fromCurrency) return amount;
-  let amountInUAH = amount;
-  if (fromCurrency === "USD") amountInUAH = amount * rates.USD;
-  else if (fromCurrency === "EUR") amountInUAH = amount * rates.EUR;
-  if (currency === "USD") return +(amountInUAH / rates.USD).toFixed(2);
-  if (currency === "EUR") return +(amountInUAH / rates.EUR).toFixed(2);
-  return +amountInUAH.toFixed(2); // UAH
-};
+    const computedTotalAmount = includeLogistics ? logisticsTotal + servicesTotal : servicesTotal;
 
-  const computedTotalAmount = includeLogistics ? logisticsTotal + servicesTotal : servicesTotal;
+    const handleBack = async () => {if (!user?.token) return;
+        if (!user?.token) return;
+        setIsBackLoading(true);
+    try {
+        const allBookings = await venueServices.venues.bookings({ accessToken: user.token })(venueId)("").getAllByVenue({
+            lower: new Date(new Date().setFullYear(new Date().getFullYear() - 1)).toISOString(),
+            upper: new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString()
+        });
+        const resData = allBookings.data;
+        const orderBookings = resData.filter(b => b.order === orderId);
+        for (const booking of orderBookings) {
+    await venueServices.venues
+        .bookings({ accessToken: user.token })(venueId)(String(booking.table))
+        .delete(String(booking.id));
+        }
+        onBack();
+    } catch (error) {
+      onBack();
+    } finally {
+       setIsBackLoading(false);
+    }
+  };
+
+
    if (isLoading) return <div className={styles.loader}><LoaderComponent/></div>;
 
   return (
@@ -236,7 +249,7 @@ console.log("HOOK CHECK → currency:", currency, "venueCurrency:", venueCurrenc
             )}
 
             <p className={styles.orderSummary}>
-                Total Amount: {getConverted(computedTotalAmount, venueCurrency).toLocaleString(undefined, {
+                Total Amount: {computedTotalAmount.toLocaleString(undefined, {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2
             })} {currency}
@@ -245,17 +258,12 @@ console.log("HOOK CHECK → currency:", currency, "venueCurrency:", venueCurrenc
 
       </div>
         <div className={styles.actions}>
-          <button onClick={onBack} className={styles.buttonPrev}>Back</button>
-            <button
-                onClick={handleSave}
-                className={styles.buttonNext}
-                disabled={isSaving}
-            >
-                {isSaving ? <div className={`authButton ${styles.loaderWrapper}`}>
-                        <LoaderComponent/>
-                    </div>
-                    :
-                    "Next"}
+            <button onClick={handleBack} className={styles.buttonPrev} disabled={isBackLoading}>
+                {isBackLoading ?
+                    <div className={`authButton ${styles.loaderWrapper}`}><LoaderComponent/></div> : "Back"}
+            </button>
+            <button onClick={handleSave} className={styles.buttonNext} disabled={isSaving}>
+                {isSaving ? <div className={`authButton ${styles.loaderWrapper}`}><LoaderComponent/></div> : "Next"}
             </button>
         </div>
     </div>
@@ -263,3 +271,14 @@ console.log("HOOK CHECK → currency:", currency, "venueCurrency:", venueCurrenc
 };
 
 export default BoozerStep5ExtraServices;
+
+
+//   const getConverted = (amount: number, fromCurrency: "UAH" | "USD" | "EUR" = venueCurrency) => {
+//   if (currency === fromCurrency) return amount;
+//   let amountInUAH = amount;
+//   if (fromCurrency === "USD") amountInUAH = amount * rates.USD;
+//   else if (fromCurrency === "EUR") amountInUAH = amount * rates.EUR;
+//   if (currency === "USD") return +(amountInUAH / rates.USD).toFixed(2);
+//   if (currency === "EUR") return +(amountInUAH / rates.EUR).toFixed(2);
+//   return +amountInUAH.toFixed(2);
+// };

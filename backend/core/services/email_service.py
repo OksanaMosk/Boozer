@@ -45,3 +45,19 @@ class EmailService:
             context={'url': url},
             subject='Recovery'
         )
+
+    @classmethod
+    def order_confirmation(cls, user, order):
+        context = {
+            'name': user.profile.name,
+            'order_id': order.id,
+            'total_price': order.total_price,
+            'currency': order.currency
+        }
+
+        cls.__send_email.delay(
+            to=user.email,
+            template_name='confirm_order.html',
+            context=context,
+            subject=f'Order #{order.id} Confirmed - VIP Boozer'
+        )

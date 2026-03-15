@@ -213,7 +213,7 @@ const BoozerStep3MenuComponent: React.FC<Props> = ({venueId, orderId, onNext, on
                                             <button onClick={() => addPortion(item.id)} className={styles.qtyBtn}>+
                                             </button>
                                             <span className={styles.itemTotal}>
-                                                    {getConverted(getItemTotal(item), item.currency)} {currency}
+                                                    {getConverted(getItemTotal(item), item.currency).toFixed(2)} {currency}
                                             </span>
 
                                         </div>

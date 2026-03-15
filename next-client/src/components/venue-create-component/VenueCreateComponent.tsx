@@ -124,15 +124,13 @@ const VenueCreateComponent = () => {
                         }
 
                         try {
+                             if (!venueId) return;
+
                             console.log(`Прив'язка тегу "${tagResp.name}" до venue ${venueId}`);
                             await
-                                venueServices.venues.venueTags({accessToken: token}).create(
-                                venueId!,
-                                {
-                                    venue_id: venueId,
-                                    tag_id: tagResp.id
-                                },
-                                {accessToken: token}
+                                venueServices.venues
+                                    .venueTags({accessToken: token})(venueId)
+                                    .create({venue: venueId, tag: tagResp.id}
                             );
                             console.log(`Тег "${tagResp.name}" усп прив`);
                         } catch (err: any) {

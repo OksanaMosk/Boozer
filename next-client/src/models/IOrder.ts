@@ -51,6 +51,8 @@ export interface IOrder {
     exchange_rate?:number;
     items?: IOrderItem[];
     table_number?: string | number;
+    table_bookings:ITableBooking[];
+    tables?: ITableBooking[];
     travel_calculation?: {
         venue: {
             city: string;

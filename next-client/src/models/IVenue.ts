@@ -8,8 +8,16 @@ export type PriceType = 'fixed' | 'per_day';
 export type CurrencyCodeType = "UAH" | "USD" | "EUR";
 
 export interface ITag {
-    id?: string | null;
+    id?: number | string | null;
     name: string;
+}
+
+export interface IVenueTag {
+    id?: number | string;
+    venue_id?: number | string;
+    tag_id?: number | string;
+     tag?: number | string;
+    venue?: number | string;
 }
 
 export interface IVenuePhoto {
@@ -155,10 +163,4 @@ export interface PaginatedResponse<T> {
   prev: boolean;
   next: boolean;
   data: T[];
-}
-
-export interface IVenueTag {
-    id?: string;
-    venue_id: string;
-    tag_id: string;
 }

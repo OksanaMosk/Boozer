@@ -81,7 +81,8 @@ class OrderExtraServiceSerializer(serializers.ModelSerializer):
 class OrderSerializer(serializers.ModelSerializer):
     items = OrderItemSerializer(many=True, required=False)
     extra_services = OrderExtraServiceSerializer(many=True, required=False)
-    tables = TableBookingSerializer(many=True, read_only=True)
+    # tables = TableBookingSerializer(many=True, read_only=True)
+    tables = TableBookingSerializer(source='table_bookings', many=True, read_only=True)
 
     menu_total = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
     services_total = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)

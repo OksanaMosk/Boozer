@@ -47,14 +47,14 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   }
 }, [status, session]);
 
-    useEffect(() => {
-    const publicPages = ["/login", "/register", "/welcome"];
-    const isPublic = publicPages.includes(pathname);
-
-    if (!loading && !user?.token && !isPublic) {
-      router.replace("/login");
-    }
-  }, [user, loading, pathname, router]);
+  //   useEffect(() => {
+  //   const publicPages = ["/login", "/register", "/welcome"];
+  //   const isPublic = publicPages.includes(pathname);
+  //
+  //   if (!loading && !user?.token && !isPublic) {
+  //     router.replace("/login");
+  //   }
+  // }, [user, loading, pathname, router]);
 
 
 

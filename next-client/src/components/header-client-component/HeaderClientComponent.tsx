@@ -30,8 +30,6 @@ export const HeaderClientComponent = () => {
         {href: "/", label: "Home"},
         {href: "/venues", label: "Venues" },
         {href: "/boozer", label: "Boozer" },
-        {href: "/profile", label: "Profile" },
-
   ];
 
   const isLoginActive = pathname === "/login";
@@ -69,7 +67,6 @@ export const HeaderClientComponent = () => {
                         height={80}
                         className={styles.logoImage}
                           loading="eager"
-                        // priority={true}
                          style={{ objectFit: "contain" }}
                     />
                     <div className={styles.logo}>

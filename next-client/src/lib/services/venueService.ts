@@ -116,7 +116,6 @@ const venueServices = {
             update: (tableId: string, data: Partial<ITable>) => api(token).patch<ITable>(`${urls.venues.tables(venueId)}${tableId}/`, data),
             delete: (tableId: string) => api(token).delete(`${urls.venues.tables(venueId)}${tableId}/`)
         }),
-// venueServices.venues.bookings(token)(venueId)(tableId).getAll()
         background: (token?: Token) => (venueId: string) => ({
             getBackground: () => api(token).get<{
                 url: string

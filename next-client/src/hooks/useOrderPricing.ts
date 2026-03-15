@@ -85,34 +85,24 @@ export const useOrderPricing = (
     return inUAH;
   };
 
-
-
   const servicesTotal = useMemo(() => {
      const totalInVenueCurrency = extraServices.reduce((sum, item) => {
       const state = serviceStates[Number(item.id)];
       if (!state?.active) return sum;
       const price = Number(item.price) || 0;
       const qty = Number(state.qty) || 1;
-      console.log("Item:", item.name, "price:", item.price, "state:", state, "guestCount:", guestCount, "nightCount:", nightCount);
       if (item.service_type === "insurance") {
         return sum + (price * guestCount);
       }
       if (item.price_type === "per_day") {
         return sum + (price * nightCount * guestCount);
       }
-
-
       return sum + (price * qty);
     }, 0);
- console.log("HOOK LOG → totalInVenueCurrency:", totalInVenueCurrency, "venueCurrency:", venueCurrency);
-    console.log("HOOK LOG → currency:", currency);
 
       return convert(totalInVenueCurrency, venueCurrency, currency);
   }, [extraServices, serviceStates, guestCount, nightCount, currency, venueCurrency, rates]);
 
-console.log("HOOK STATE → serviceStates:", serviceStates);
-  console.log("HOOK STATE → logisticsTotal:", logisticsTotal);
-  console.log("HOOK STATE → servicesTotal:", servicesTotal);
   return {
     guestCount,
     setGuestCount,

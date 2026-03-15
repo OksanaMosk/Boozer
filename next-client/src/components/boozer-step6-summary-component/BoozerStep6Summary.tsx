@@ -8,15 +8,16 @@ import venueServices from "@/lib/services/venueService";
 import { exchangeService } from "@/lib/services/exchangeService";
 import BoozerTravelMapComponent from "@/components/boozer_travel_map_component/BoozerTravelMapComponent";
 import {LoaderComponent} from "@/components/loader-component/LoaderComponent";
+import {useRouter} from "next/navigation";
 
-const BoozerStep6Summary = ({ venueId, orderId, onNext, onBack }: any) => {
+const BoozerStep6Summary = ({ venueId, orderId, onNext }: any) => {
     const { user } = useUser();
     const [order, setOrder] = useState<any>(null);
     const [timeLeft, setTimeLeft] = useState<number>(0);
     const [currency, setCurrency] = useState<"UAH" | "USD" | "EUR">("UAH");
     const [rates, setRates] = useState({ USD: 1, EUR: 1 });
     const [isSaving, setIsSaving] = useState(false);
-
+    const router = useRouter();
     const getConverted = (amount: number, itemCurrency: string = order?.currency || "USD") => {
     if (currency === itemCurrency) return amount;
 
@@ -84,7 +85,7 @@ console.log("--- AUDIT START ---");
     if (!order) return null;
     const travel = order.travel_calculation;
 
-return {
+    return {
         start: { lat: order.user_latitude || 0, lng: order.user_longitude || 0 },
         end: { lat: order.venue_latitude || 0, lng: order.venue_longitude || 0 },
 
@@ -113,6 +114,21 @@ return {
     }
 };
 
+    const handleCancel = async () => {
+    if (!user?.token || !order || isSaving) return;
+
+    if (!confirm("Are you sure you want to cancel this order?")) return;
+
+    setIsSaving(true);
+    try {
+        const payload = { status: 'CANCELLED' };
+        await venueServices.venues.orders({ accessToken: user.token })(venueId).update(orderId, payload as any);
+        router.push("/");
+    } catch (error) {
+        setIsSaving(false);
+    }
+};
+
     if (!order) return <div className={styles.loader}><LoaderComponent/></div>;
 
     return (
@@ -122,8 +138,9 @@ return {
                 <h4 className={styles.bigText}>Confirm &</h4>
                 <p className={styles.smallText}>pay</p>
             </div>
-            <div className={styles.timerHeader}>
-                <select className={styles.currSelect} value={currency} onChange={(e) => setCurrency(e.target.value as any)}>
+            <div className={styles.selectCurrency}>
+                <label className={styles.label}>Currency</label>
+                <select className={styles.select} value={currency} onChange={(e) => setCurrency(e.target.value as any)}>
                     <option value="UAH">UAH</option>
                     <option value="USD">USD</option>
                     <option value="EUR">EUR</option>
@@ -135,21 +152,20 @@ return {
                     {mapData && <BoozerTravelMapComponent mapData={mapData}/>}
                 </div>
 
-               <div className={styles.billSide}>
-    <h3 className={styles.billTitle}>Final Bill 🧾</h3>
-    <div className={styles.summaryTable}>
-        <div className={styles.items}>
-            {order.items && order.items.length > 0 ? (
-                <div className={styles.group}>
-                    <p className={styles.groupTitle}>🥗 Menu Items:</p>
-                    <ul className={styles.list}>
-                        {order.items.map((item: any) => (
-                            <li key={item.id} className={styles.listItem}>
-                                <p>
-                                    {item.menu_item_name} (x{item.quantity})
-                                    <span>
-                                    * {getConverted(Number(item.menu_item_price), order.currency).toLocaleString(undefined, {minimumFractionDigits: 2})} {currency}
-                                    </span>
+                <div className={styles.billSide}>
+                    <h3 className={styles.billTitle}>Final Bill 🧾</h3>
+                    <div className={styles.summaryTable}>
+                        <div className={styles.items}>
+                            {order.items && order.items.length > 0 ? (
+                                <div className={styles.group}>
+                                    <p className={styles.groupTitle}>🥗 Menu Items:</p>
+                                    <ul className={styles.list}>
+                                        {order.items.map((item: any) => (
+                                            <li key={item.id} className={styles.listItem}>
+                                                <p>
+                                                    {item.menu_item_name}
+                                                    <span>({item.quantity} pcs x {getConverted(Number(item.menu_item_price), order.currency).toLocaleString(undefined, {minimumFractionDigits: 2})} {currency}
+                                                        )</span>
                                 </p>
                                 <p>
                                     {getConverted(Number(item.menu_item_price) * item.quantity, order.currency)
@@ -170,7 +186,7 @@ return {
                             })} {currency}
                         </b>
                     </div>
-                    <hr className={styles.divider}/>
+
                 </div>
             ) : (
                 <div className={styles.billRow}>
@@ -192,15 +208,17 @@ return {
                     <li key={extra.id} className={styles.billRowSmall}>
                         <p>
                             {extra.service_name}
-                            {extra.service_type === 'hotel' &&
-                                ` (${extra.quantity} nights × ${order.guests_count} guests) * ${getConverted(Number(extra.price), order.currency)} ${currency}`
+                            <span>{extra.service_type === 'hotel' &&
+                                ` (${extra.quantity} nights x ${order.guests_count} guests x ${getConverted(Number(extra.price), order.currency)} ${currency})`
                             }
-                            {extra.service_type === 'insurance' &&
-                                ` (${order.guests_count} guests) * ${getConverted(Number(extra.price), order.currency)} ${currency}`
+                            </span>
+                            <span>{extra.service_type === 'insurance' &&
+                                ` (${order.guests_count} guests x ${getConverted(Number(extra.price), order.currency)} ${currency})`
                             }
-                            {(extra.service_type !== 'hotel' && extra.service_type !== 'insurance') &&
-                                ` (x${extra.quantity}) * ${getConverted(Number(extra.price), order.currency)} ${currency}`
-                            }
+                            </span>
+                            <span>{(extra.service_type !== 'hotel' && extra.service_type !== 'insurance') &&
+                                ` (${extra.quantity} x ${getConverted(Number(extra.price), order.currency)} ${currency})`
+                            }</span>
                                     </p>
                                     <p>
                                     <b>
@@ -221,7 +239,6 @@ return {
                     .toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} {currency}
             </b>
         </div>
-        <hr/>
     </div>
             ) : (
                 <div className={styles.billRow}>
@@ -245,20 +262,20 @@ return {
 </div>
         </div>
 
-       <div className={styles.totalRow}>
-    <span>Total Amount:</span>
-    <b className={styles.totalPrice}>
-        {getConverted(Number(order.total_price), order.currency).toLocaleString(undefined, {
-            minimumFractionDigits: 2
-        })} {currency}
-    </b>
-</div>
-    </div>
+                        <div className={styles.totalRow}>
+                            <span>Total Amount:</span>
+                            <b className={styles.totalPrice}>
+                                {getConverted(Number(order.total_price), order.currency).toLocaleString(undefined, {
+                                    minimumFractionDigits: 2
+                                })} {currency}
+                            </b>
+                        </div>
+                    </div>
 
-                   <div className={styles.actions}>
-                       <button
-                           className={styles.confirmBtn}
-                           onClick={handleConfirm}
+                    <div className={styles.actions}>
+                        <button
+                            className={styles.confirmBtn}
+                            onClick={handleConfirm}
                            disabled={isSaving}
                        >
                            {isSaving ? (
@@ -268,9 +285,15 @@ return {
                            ) : (
                                "Confirm"
                            )}</button>
-                       <button className={styles.backBtn} onClick={onBack}>Back</button>
+                       <button
+                           className={styles.cancelBtn}
+                           onClick={handleCancel}
+                           disabled={isSaving}
+                       >
+                           Cancel Order
+                       </button>
                    </div>
-               </div>
+                </div>
             </div>
         </div>
     );

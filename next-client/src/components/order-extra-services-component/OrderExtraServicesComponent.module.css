@@ -20,7 +20,7 @@
     justify-content: space-between;
     background-color: transparent;
     padding: 1rem;
-    gap: 1rem;
+    gap: 0.5rem;
     border-radius: 1.8rem;
     width: 70vw;
     backdrop-filter: blur(20px);
@@ -128,7 +128,7 @@ align-items:center;
 }
 
 .serviceIcon {
-    width: 330px;
+    width: 320px;
     height: 220px;
     border-radius: 32px;
     object-fit: cover;
