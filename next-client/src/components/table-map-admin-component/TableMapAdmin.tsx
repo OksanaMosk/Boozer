@@ -43,7 +43,7 @@ const TableMapAdmin: React.FC<TableMapAdminProps> = ({ venueId, token }) => {
     const accessToken = token || user?.token;
 
   const getTableService = () => accessToken ? venueServices.venues.tables({ accessToken })(venueId) : null;
-  const getLayoutService = () => user?.token ? venueServices.venues.background({ accessToken: user.token })(venueId) : null;
+  const getLayoutService = () => accessToken  ? venueServices.venues.background({ accessToken })(venueId) : null;
 
     useEffect(() => {
         const service = getLayoutService();
@@ -190,7 +190,7 @@ const TableMapAdmin: React.FC<TableMapAdminProps> = ({ venueId, token }) => {
       setSaveStatus("Save successful");
       setTimeout(() => setSaveStatus(null), 3000);
   } catch (err) {
-      setSaveStatus("Save failed ❌");
+      setSaveStatus("Save failed");
       setTimeout(() => setSaveStatus(null), 3000);
   }
   };

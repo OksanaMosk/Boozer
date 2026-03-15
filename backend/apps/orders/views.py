@@ -1,28 +1,24 @@
 from typing import cast
 
-from rest_framework import viewsets, filters
+from rest_framework import viewsets, filters, status
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.decorators import action
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
+from rest_framework.views import APIView
+
 from .models import OrderModel, TableBookingModel
 from .serializers import OrderSerializer, TableBookingSerializer
+from .services.exchange_service import get_private_bank_exchange_rate
 from .services.table_booking_service import create_bulk_table_bookings
 from ..user.permissions import IsAdminOrVenueAdminOrReadOnly, IsOrderOwnerOrVenueAdmin, \
     IsBookingOwnerOrVenueAdmin
 from rest_framework.exceptions import PermissionDenied
 from django.db.backends.postgresql.psycopg_any import DateTimeRange
 from datetime import datetime
-
-
-# PRICE_AFFECTING_FIELDS = (
-#     'currency',
-#     'flight_price',
-#     'transfer_price'
-# )
-
+from django.utils import timezone
 
 class OrderViewSet(viewsets.ModelViewSet):
     """
@@ -76,12 +72,31 @@ class OrderViewSet(viewsets.ModelViewSet):
         """
         serializer.save()
 
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+
+        if instance.expires_at and timezone.now() > instance.expires_at:
+            return Response(
+                {"detail": "Reservation expired", "code": "EXPIRED"},
+                status=status.HTTP_410_GONE
+            )
+
+        return super().retrieve(request, *args, **kwargs)
+
     def perform_update(self, serializer):
         """
         Update the order. Price re-calculation logic is triggered automatically
         if price-affecting fields are modified.
+
+        Prevent updating expired orders.
         """
+        order = self.get_object()
+
+        if order.expires_at and timezone.now() > order.expires_at:
+            raise ValidationError("Order expired")
         serializer.save()
+
+
 
 
 class TableBookingViewSet(viewsets.ModelViewSet):
@@ -89,6 +104,7 @@ class TableBookingViewSet(viewsets.ModelViewSet):
     ViewSet for managing Table Bookings within an Order.
     Supports nested routing via /api/venues/{venue_pk}/tables/{table_pk}/bookings/
     """
+    pagination_class = None
     queryset = TableBookingModel.objects.all()
     serializer_class = TableBookingSerializer
     filter_backends = [DjangoFilterBackend]
@@ -127,7 +143,6 @@ class TableBookingViewSet(viewsets.ModelViewSet):
 
                 if l_dt > u_dt:
                     return qs.none()
-
                 search_range = DateTimeRange(l_dt, u_dt)
                 qs = qs.filter(time_range__overlap=search_range)
             except (ValueError, TypeError):
@@ -177,3 +192,18 @@ class TableBookingViewSet(viewsets.ModelViewSet):
         except (ValidationError, PermissionDenied) as e:
 
             raise e
+
+
+class ExchangeRateView(APIView):
+    """
+    get:
+        Retrieve current exchange rates from the private bank.
+        Accessible to all users (no authentication required).
+    """
+    permission_classes =(AllowAny,)
+    def get(self, request, *args, **kwargs):
+        try:
+            rates = get_private_bank_exchange_rate()
+            return Response(rates, status=status.HTTP_200_OK)
+        except ValidationError as e:
+            return Response({'detail': str(e)}, status=status.HTTP_400_BAD_REQUEST)

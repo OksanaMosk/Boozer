@@ -9,7 +9,6 @@
     border-radius: 12px;
     cursor: pointer;
     font-size: 16px;
-    transition: all 0.2s ease-in-out;
     height: auto;
     padding: 0;
     box-sizing: border-box;
@@ -49,7 +48,7 @@
 }
 @keyframes float {
     0% { transform: translateY(0); }
-    50% { transform: translateY(-12px); }
+    50% { transform: translateY(-4px); }
     100% { transform: translateY(0); }
 }
 .top {
@@ -286,4 +285,21 @@
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.loaderWrapper {
+    box-sizing: border-box;
+    height: 45px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    margin: 0;
+    padding: 0;
+     line-height: 1.2;
+    transform: scale(0.2);
+}
+.buttonPrev:disabled,
+.buttonNext:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
 }

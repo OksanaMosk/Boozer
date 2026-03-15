@@ -30,7 +30,7 @@ def create_bulk_table_bookings(*, order_id, table_ids, time_range, venue_id, use
             if TableBookingModel.objects.filter(
                 table=table,
                 time_range__overlap=time_range
-            ).exists():
+            ).exclude(status__in=['EXPIRED', 'CANCELLED']).exists():
                 raise ValidationError(f"Table {table.id} is already booked for the selected time.")
 
             booking = TableBookingModel(

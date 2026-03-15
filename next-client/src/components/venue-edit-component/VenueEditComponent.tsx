@@ -46,13 +46,6 @@ const VenueEditComponent = ({ venueId }: Props) => {
         })();
     }, [venueId]);
 
-    // const handleInputChange = (
-    //     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-    // ) => {
-    //     const {name, value} = e.target;
-    //     setForm(prev => prev ? {...prev, [name]: value} : prev);
-    // };
-
     const handleSubmit = async (e: React.SyntheticEvent) => {
         e.preventDefault();
         if (!form || !user?.token) return;
@@ -73,17 +66,6 @@ const VenueEditComponent = ({ venueId }: Props) => {
             setSaving(false);
         }
     };
-
-    // const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    //     if (!e.target.files) return;
-    //     const files = Array.from(e.target.files);
-    //     const previews = files.map((f) => ({
-    //         file: f,
-    //         preview_url: URL.createObjectURL(f),
-    //     }));
-    //
-    //     setNewFiles((prev) => [...prev, ...previews]);
-    // };
 
     const handleDeleteExistingPhoto = async (id: string) => {
         if (!user?.token) return;

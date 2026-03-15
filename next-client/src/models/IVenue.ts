@@ -1,4 +1,107 @@
-import {IUser} from "@/models/IUser";
+import {IOrder} from "@/models/IOrder";
+
+export type CategoryType = "mains" | "salads" | "soups" | "drinks" | "desserts";
+export type NewsType = "general" | "promotion" | "event";
+export type NewsStatus = "active" | "pending";
+export type ServiceType = 'hotel' | 'insurance' | 'decoration';
+export type PriceType = 'fixed' | 'per_day';
+export type CurrencyCodeType = "UAH" | "USD" | "EUR";
+
+export interface ITag {
+    id?: string | null;
+    name: string;
+}
+
+export interface IVenuePhoto {
+    id: string;
+    venue_id: string;
+    photo: string;
+    is_main?: boolean;
+}
+
+export interface ITable {
+    id?: string | number;
+    venue?: string | number;
+    capacity?: number;
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    is_active?: boolean;
+}
+
+export interface IMenuItem {
+    id?: string | null;
+    menu_id: string;
+    name: string;
+    description?: string;
+    price: number;
+    position: number;
+    photo_menu_item: string;
+    currency: CurrencyCodeType;
+    category: CategoryType;
+}
+
+export interface IMenu {
+    id?: string | null;
+    venue_id: string;
+    title: string;
+    items?: IMenuItem[];
+    is_published?: boolean;
+}
+
+export interface INewsPhoto {
+    id?: string;
+    news_id: string;
+    image: string;
+    is_cover?: boolean;
+    created_at?: string;
+    updated_at?: string;
+}
+
+export interface INews {
+    id?: number | string;
+    venue?: string;
+    title: string;
+    content: string;
+    images?: INewsPhoto[] | [];
+    is_pinned: boolean;
+    end_date?: string | null;
+    created_at?: string;
+    updated_at?: string;
+    status: NewsStatus;
+    type: NewsType;
+}
+
+export interface IReviewPhoto {
+    id?: string;
+    review_id: string;
+    photo: string;
+}
+
+export interface IReview {
+    id?: string;
+    venue_id: string;
+    user_id: string;
+    rating: number;
+    comment?: string;
+    created_at?: string;
+    updated_at?: string;
+    photos?: IReviewPhoto[];
+}
+
+export interface IExtraService {
+    id?: string | number;
+    venue: string;
+    name: string;
+    service_type: ServiceType;
+    service_type_display?: string;
+    quantity: number;
+    price_type: PriceType;
+    price_type_display?: string;
+    price: number | string;
+    currency: CurrencyCodeType;
+}
 
 
 export interface IVenue {
@@ -15,7 +118,7 @@ export interface IVenue {
     opening_hours?: Record<string, any>;
     features?: Record<string, any>;
     average_check?: number;
-    currency:CurrencyCode;
+    currency: CurrencyCodeType;
     rating?: number;
     reviews_count?: number;
     status?: string;
@@ -33,219 +136,29 @@ export interface IVenue {
     menus?: IMenu[];
     orders?: IOrder[];
     reviews?: IReview[];
-    favorite_by?: IUser[];
+    favorite_by?: any[];
     news?: INews[];
     background_tables?: string;
 }
-export type CurrencyCode = "UAH" | "USD" | "EUR";
 
 export interface IVenueWithId extends Omit<IVenue, "id"> {
   id: string;
 }
 
-export interface IVenuePhoto {
-    id: string;
-    venue_id: string;
-    photo: string;
-    is_main?: boolean;
-}
-
-
-export interface ITag {
-    id?: string |null;
-    name: string;
-
-}
-export interface IVenueTag {
-    id?: string;
-    venue_id: string;
-    tag_id: string;
-}
-
-export interface ITable {
-    id?: string | number;
-    venue?: string | number;
-    capacity?: number;
-    x: number;
-    y: number ;
-    width: number;
-    height:number;
-    is_active?: boolean;
-}
-
-export interface ITableBooking {
-    id?: string;
-    table_id?: string;
-    venue_id?: string;
-    user_id?: string;
-    order: number;
-    table: number | string;
-    status?: "pending" | "confirmed" | "canceled";
-    is_active?: boolean;
-    time_range: {
-        lower: string;
-        upper: string;
-    };
-}
-
-export interface IMenu {
-    id?: string | null;
-    venue_id: string;
-    title: string;
-    items?: IMenuItem[];
-    is_published?:boolean;
-
-}
-
-export interface IMenuItem {
-    id?: string | null;
-    menu_id: string;
-    name: string;
-    description?: string;
-    price: number;
-    currency:string;
-    position: number;
-    photo_menu_item:string;
-}
-
-export interface INews {
-    id?: number |string;
-    venue?: string;
-    title: string;
-    content: string;
-    images?:INewsPhoto[] | [];
-    is_pinned: boolean;
-    end_date?: string | null;
-    created_at?: string;
-    updated_at?: string;
-    status:NewsStatus;
-    type:NewsType;
-}
-
-export type NewsType = "general" | "promotion" | "event";
-export type NewsStatus = "active" | "pending";
-
-export interface INewsPhoto {
-    id?: string;
-    news_id: string;
-    image: string;
-    is_cover?: boolean;
-    created_at?: string;
-    updated_at?: string;
-}
-
-
-export interface ITravelLogistics {
-    id?: string;
-    venue: string;
-    step_type: "to_airport" | "flight" | "from_airport";
-    price_per_km: number;
-    currency:CurrencyCode;
-}
-
-export interface IAirport {
-    id: string;
-    name: string;
-    iata_code: string;
-    city: string;
-    country: string;
-    latitude: number;
-    longitude: number;
-}
-
-export interface ITravelSegment {
-    step: string;
-    km: number;
-    cost: number;
-}
-
-export interface ITravelEstimate {
-    start_airport: string;
-    end_airport: string;
-    segments: ITravelSegment[];
-    total_price: number;
-}
-
-export type ServiceType ='hotel' | 'insurance' | 'decoration'
-export type PriceType = 'fixed' | 'per_day'
-
-export interface IExtraService {
-    id?: string;
-    venue: string;
-    name: string;
-    service_type: ServiceType;
-    service_type_display?: string;
-    quantity: number;
-    price_type: PriceType;
-    price_type_display?: string;
-    price: number | string;
-    currency:CurrencyCode;
-}
-export interface IOrderExtraService {
-    id?: number;
-    service: string | number | IExtraService;
-    quantity: number;
-    price?: number;
-}
-export interface IOrder {
-    id?: string;
-    venue_id: string;
-    user_id: string;
-    start_date: string;
-    end_date: string;
-    guests_count: number;
-    comment?: string;
-    gender_preference?: GenderPreference;
-    remaining_seconds:number;
-    payment_type?: PaymentType;
-    budget_range?: BudgetRange;
-    budget: number;
-    user_latitude?: number | null;
-    user_longitude?: number | null;
-    user_city?: string;
-    items?: IOrderItem[];
-    extra_services?: IOrderExtraService[];
-    total_price?: number;
-    status?: OrderStatus
-    created_at?: string;
-    updated_at?: string;
-}
-export type PaymentType = "Each pays for themselves" | "I pay" | "Someone else pays";
-export type BudgetRange = "0-1000" | "1000-3000" | "3000-5000" | "5000+";
-export type GenderPreference = "ANY" | "MALE" | "FEMALE";
-export type OrderStatus = "DRAFT" | "HOLD" | "CONFIRMED" | "CANCELLED";
-
-export interface IOrderItem {
-    id?: string;
-    order_id?: string;
-    menu_item: number;
-    quantity: number;
-    price?: number;
-}
-
-export interface IReview {
-    id?: string;
-    venue_id: string;
-    user_id: string;
-    rating: number;
-    comment?: string;
-    created_at?: string;
-    updated_at?: string;
-    photos?: IReviewPhoto[];
-}
-
-export interface IReviewPhoto {
-    id?: string;
-    review_id: string;
-    photo: string;
-}
 export interface GetUserVenuesResponse {
     venues: IVenue[];
 }
+
 export interface PaginatedResponse<T> {
   total_items: number;
   total_pages: number;
   prev: boolean;
   next: boolean;
   data: T[];
+}
+
+export interface IVenueTag {
+    id?: string;
+    venue_id: string;
+    tag_id: string;
 }

@@ -36,7 +36,7 @@ interface MenuItemFormProps {
     onCreate: (item: MenuItem) => void;
 }
 
-const CATEGORY_OPTIONS = ["main", "dessert", "drink", "salad", "soup"];
+const CATEGORY_OPTIONS = ["mains", "desserts", "drinks", "salads", "soups"];
 
 const MenuItemFormComponent: React.FC<MenuItemFormProps> = ({venueId, menuId, globalCurrency, onCreate}) => {
     const {user} = useUser();
@@ -48,7 +48,7 @@ const MenuItemFormComponent: React.FC<MenuItemFormProps> = ({venueId, menuId, gl
         description: "",
         price: "",
         currency: globalCurrency,
-        category: "main",
+        category: "mains",
         photo: null,
         preview: null,
     });
@@ -149,7 +149,7 @@ const MenuItemFormComponent: React.FC<MenuItemFormProps> = ({venueId, menuId, gl
                                 description: "",
                                 price: "",
                                 currency: globalCurrency,
-                                category: "main",
+                                category: "mains",
                                 photo: null,
                                 preview: null,
                             });

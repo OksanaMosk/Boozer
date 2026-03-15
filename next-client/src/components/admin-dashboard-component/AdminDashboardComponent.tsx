@@ -8,7 +8,6 @@ import {useUser} from "@/app/contexts/UserProvider";
 
 const AdminDashboardComponent = () => {
     const {user} = useUser();
-// console.log('User:', user);
 
     if (!user) {
         return <div style={{display: "flex", justifyContent: "center", marginTop: 70}}>

@@ -34,7 +34,7 @@ class TravelCalculationService:
 
         try:
             # noinspection PyUnresolvedReferences
-            res_to = self.gmaps.distance_matrix((v_lat, v_lng), (start_airport.latitude, start_airport.longitude))
+            res_to = self.gmaps.distance_matrix((v_lat, v_lng), (start_airport.latitude, start_airport.longitude), language='en')
 
             if res_to['rows'][0]['elements'][0]['status'] != 'OK':
                 return {"error": "Road not found to the starting airport"}
@@ -82,16 +82,21 @@ class TravelCalculationService:
         res_currency = self.venue.currency
         return {
             "currency": res_currency,
+            "venue": {
+                "city": self.venue.city,
+            },
             "airports": {
                 "start": {
                     "code": start_airport.iata_code,
                     "lat": start_airport.latitude,
-                    "lng": start_airport.longitude
+                    "lng": start_airport.longitude,
+                    "city": start_airport.city,
                 },
                 "end": {
                     "code": end_airport.iata_code,
                     "lat": end_airport.latitude,
-                    "lng": end_airport.longitude
+                    "lng": end_airport.longitude,
+                    "city": end_airport.city,
                 }
             },
             "travel_segments": [
@@ -121,4 +126,5 @@ class TravelCalculationService:
 
         order.travel_calculation = res
 
-        order.save(update_fields=['transfer_price', 'flight_price', 'distance_km', 'travel_calculation'])
+        order.save(update_fields=['transfer_price', 'flight_price', 'distance_km', 'travel_calculation', 'venue_latitude',
+        'venue_longitude'])

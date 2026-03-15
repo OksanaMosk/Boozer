@@ -39,7 +39,7 @@ const LoginComponent = () => {
             }
         } catch (err: unknown) {
             if (err instanceof Error) setErrorMsg(err.message);
-            else setErrorMsg("Невідома помилка");
+            else setErrorMsg("Unknown error");
     } finally {
       setLoading(false);
     }

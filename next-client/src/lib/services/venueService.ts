@@ -5,14 +5,15 @@ import {
     IVenuePhoto,
     IMenu,
     IMenuItem,
-    IOrder,
     IReview,
     INews,
     IVenueTag,
     PaginatedResponse, ITable,
-    INewsPhoto, ITravelLogistics, ITravelEstimate, IExtraService, OrderStatus, ITableBooking
+    INewsPhoto, IExtraService
 } from "@/models/IVenue";
 import {IUser} from "@/models/IUser";
+import {IOrder, ITableBooking, OrderStatusType} from "@/models/IOrder";
+import {ITravelEstimate, ITravelLogistics} from "@/models/ITravel";
 
 type Token = { accessToken: string };
 
@@ -224,7 +225,7 @@ const venueServices = {
             get: (orderId: string | number) => api(token).get<IOrder>(`${urls.venues.orders(venueId)}${orderId}/`),
             create: (data: Partial<IOrder>) => api(token).post<IOrder>(urls.venues.orders(venueId), data),
             update: (orderId: string | number, data: Partial<IOrder>) => api(token).patch<IOrder>(`${urls.venues.orders(venueId)}${orderId}/`, data),
-            updateStatus: (orderId: string | number, status: OrderStatus) => api(token).patch<IOrder>(`${urls.venues.orders(venueId)}${orderId}/`, { status }),
+            updateStatus: (orderId: string | number, status: OrderStatusType) => api(token).patch<IOrder>(`${urls.venues.orders(venueId)}${orderId}/`, { status }),
             delete: (orderId: string | number) => api(token).delete(`${urls.venues.orders(venueId)}${orderId}/`),
             getActive: () => api(token).get<IOrder[]>(`${urls.venues.orders(venueId)}active/`),
         }),
@@ -253,6 +254,9 @@ const venueServices = {
     stats: {
        getStats: (venueId: string, token?: Token) => api(token).get (urls.venues.stats(venueId)),
     },
+    exchangeService: {
+        getRates: (token?: Token) => api(token).get<{ USD: number; EUR: number }>(urls.exchangeRates),
+    }
 };
 
 export default venueServices;

@@ -5,11 +5,11 @@ from enum import Enum
 class ActionTokenEnum(Enum):
     ACTIVATE=(
         'activate',
-        timedelta(minutes=15),
+        timedelta(minutes=30),
     )
     RECOVERY=(
         'recovery',
-        timedelta(minutes=15),
+        timedelta(minutes=30),
     )
 
     SOCKET=(

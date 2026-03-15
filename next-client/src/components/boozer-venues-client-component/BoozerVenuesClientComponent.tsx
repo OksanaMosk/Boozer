@@ -61,7 +61,8 @@ export const BoozerVenuesClientComponent = () => {
     };
 
     const handleStep3MenuSubmit = () => {
-        setStep(4);
+        // setStep(4);
+         setStep(5);
         window.scrollTo(0, 0);
     };
 

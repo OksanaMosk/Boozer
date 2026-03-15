@@ -1,7 +1,7 @@
 CATEGORY_CHOICES = [
-    ("main", "Main"),
-    ("dessert", "Dessert"),
-    ("drink", "Drink"),
-    ("salad", "Salad"),
-    ("soup", "Soup"),
+    ("mains", "Mains"),
+    ("desserts", "Desserts"),
+    ("drinks", "Drinks"),
+    ("salads", "Salads"),
+    ("soups", "Soups"),
 ]

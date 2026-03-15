@@ -1,0 +1,172 @@
+
+
+.wrapper {
+   margin: 16px 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: transparent;
+    padding: 2rem;
+    border-radius: 1.5rem;
+    width: 70vw;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 0 12px white;
+    animation: float 6s ease-in-out infinite;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    gap: 2rem;
+}
+.wrapper:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 25px 50px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.2);
+}
+@keyframes float {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
+    100% { transform: translateY(0); }
+}
+
+
+.card {
+   display: flex;
+    justify-content:space-between;
+    align-items: center;
+    width: 60vw;
+    height: 100px;
+    animation: float 6s ease-in-out infinite;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+    box-sizing: border-box;
+    padding-left: 0;
+    background-color: inherit;
+}
+.card:hover {
+    transform: translateY(-8px) scale(1.02);
+}
+
+
+.route {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    height: 100px;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 0 12px white;
+    gap: 1rem;
+    border-radius:0 50% 50% 0;
+    background: var(--menu-color);
+    color: var(--color-text);
+    border-width: 0 1px 1px 1px;
+    border-style: solid;
+    border-color: var(--color-disabled);
+    cursor: pointer;
+    box-sizing: border-box;
+    padding: 0 50px 0 30px;
+    margin-left: -50px;
+}
+.routeRow,
+.priceDetails,
+.cardHeader {
+    height: 100%;
+    margin: 0;
+    padding:0;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.icon {
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 0 12px white;
+    margin: 0;
+    padding:0;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background-color: var(--color-container);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2;
+}
+
+.title {
+    padding-left: 40px;
+    font-size: 0.6rem;
+    text-align: left;
+    width:35%;
+    color:var(--input-color);
+}
+
+.routeRow {
+    width: 60%;
+  display: flex;
+  align-items:center;
+  justify-content: flex-start;
+}
+
+.point {
+    display: flex;
+    margin: 0;
+    padding:0;
+    text-align: left;
+    width: 100%;
+}
+
+.cityName {
+    padding: 0;
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 700;
+    color:var(--title-primary-color);
+}
+
+.priceDetails {
+    width: 40%;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    flex-direction: column;
+    text-align: left;
+    font-size: 1rem;
+}
+
+.math {
+    margin: 0;
+    padding:0;
+    color: var(--color-text);
+}
+.segment {
+    font-weight: 700;
+    font-size: 1rem;
+}
+.segmentTotal {
+    margin: 0;
+    padding:0;
+    color: var(--color-text);
+}
+
+.totalFooter {
+    width: 60vw;
+    display: flex;
+    justify-content: flex-end;
+    color: var(--color-text);
+    font-size: 1.2rem;
+    font-weight: 700;
+
+}
+.loader {
+    box-sizing: border-box;
+    height: 45px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    margin: 0;
+    padding: 0;
+    line-height: 1.2;
+    transform: scale(0.7);
+}

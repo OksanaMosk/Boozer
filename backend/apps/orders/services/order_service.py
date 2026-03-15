@@ -4,12 +4,11 @@ from datetime import timedelta
 from django.utils import timezone
 from django.db import transaction
 
-
 def create_order_with_details(user, venue_id, validated_data, items_data, extra_services_data):
     with transaction.atomic():
         from apps.orders.models import OrderModel, OrderExtraServiceModel, OrderItemModel
 
-        validated_data['expires_at'] = timezone.now() + timedelta(minutes=10)
+        validated_data['expires_at'] = timezone.now() + timedelta(minutes=30)
 
         order = OrderModel.objects.create(
             user=user,
@@ -30,42 +29,87 @@ def create_order_with_details(user, venue_id, validated_data, items_data, extra_
         travel_service.apply_to_order(order)
 
         calculate_total(order)
-
         return order
 
 
 def calculate_total(order):
+    order.refresh_from_db()
+    from apps.orders.models import OrderExtraServiceModel
     rates = get_today_rates()
 
-    menu_total = sum(
-        item.price * item.quantity
-        for item in order.items.select_related('menu_item')
+    s_sum = Decimal('0.00')
+    services = OrderExtraServiceModel.objects.filter(order=order).select_related('service')
+
+    for s in services:
+        price = Decimal(str(s.price))
+        qty = s.quantity
+        if s.service.price_type == 'per_day':
+            s_sum += price * order.guests_count * qty
+        else:
+            s_sum += price * qty
+
+    order.services_total = s_sum
+
+    base_sum = (
+            order.menu_total +
+            order.services_total +
+            Decimal(str(order.flight_price or 0)) +
+            Decimal(str(order.transfer_price or 0))
     )
 
-    extra_services_total = sum(
-        es.price * es.quantity
-        for es in order.extra_services.all()
-    )
+    venue_curr = order.venue.currency if order.venue else "UAH"
+    user_curr = order.currency or venue_curr
 
-    total_uah = (
-        menu_total
-        + extra_services_total
-        + order.transfer_price
-        + order.flight_price
-    )
-
-    if order.currency == 'UAH':
-        order.total_price = total_uah
-        order.exchange_rate = Decimal('1')
+    if user_curr == venue_curr:
+        order.total_price = base_sum.quantize(Decimal('0.01'))
+        order.exchange_rate = Decimal('1.00')
     else:
-        if order.currency not in rates:
-            raise ValueError(f"Exchange rate for {order.currency} not available")
-        rate = Decimal(str(rates[order.currency]))
-        order.total_price = (total_uah / rate).quantize(Decimal('0.01'))
-        order.exchange_rate = rate
+        rate_from = Decimal(str(rates.get(venue_curr, 1.00)))
+        rate_to = Decimal(str(rates.get(user_curr, 1.00)))
+        conversion_rate = rate_from / rate_to
+        order.total_price = (base_sum * conversion_rate).quantize(Decimal('0.01'))
+        order.exchange_rate = conversion_rate
 
-    order.save(update_fields=['total_price', 'exchange_rate'])
+    order.save(update_fields=['total_price', 'services_total', 'exchange_rate'])
 
+
+# def calculate_total(order):
+#     order.refresh_from_db()
+#     from apps.orders.models import OrderExtraServiceModel
+#     rates = get_today_rates()
+#
+#     s_sum = Decimal('0.00')
+#     services = OrderExtraServiceModel.objects.filter(order=order).select_related('service')
+#
+#     for s in services:
+#         price = Decimal(str(s.price))
+#         qty = s.quantity
+#
+#         if s.service.price_type == 'per_day':
+#             s_sum += price * order.guests_count * qty
+#         elif s.service.service_type == 'insurance':
+#             s_sum += price * qty
+#         else:
+#             s_sum += price * qty
+#
+#     order.services_total = s_sum
+#
+#     total_uah = (
+#             order.menu_total +
+#             order.services_total +
+#             Decimal(str(order.flight_price or 0)) +
+#             Decimal(str(order.transfer_price or 0))
+#     )
+#
+#     if not order.currency or order.currency == 'UAH':
+#         order.total_price = total_uah
+#         order.exchange_rate = Decimal('1.00')
+#     else:
+#         rate = Decimal(str(rates.get(str(order.currency), 1.00)))
+#         order.exchange_rate = rate
+#         order.total_price = (total_uah / rate).quantize(Decimal('0.01'))
+#
+#     order.save(update_fields=['total_price', 'services_total', 'exchange_rate'])
 
 @transaction.atomic
 def confirm_order(order):

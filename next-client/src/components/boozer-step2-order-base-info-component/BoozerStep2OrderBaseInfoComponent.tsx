@@ -5,6 +5,7 @@ import styles from "./BoozerStep2OrderBaseInfoComponent.module.css";
 import DatePickerComponent from "@/components/date-picker-component/DatePickerComponent";
 import venueServices from "@/lib/services/venueService";
 import {useUser} from "@/app/contexts/UserProvider";
+import {LoaderComponent} from "@/components/loader-component/LoaderComponent";
 
 interface Props {
   venueId: number | string;
@@ -32,6 +33,9 @@ const BoozerStep2OrderBaseInfoComponent: React.FC<Props> = ({venueId, onNext, on
         budget_range: "0-1000"
     });
     const  {user}= useUser()
+    if (!user){
+          return <p className={styles.errorText}>Please log in.</p>;
+    }
 
   useEffect(() => {
     const fetchCityFromIP = async () => {
@@ -55,7 +59,7 @@ const BoozerStep2OrderBaseInfoComponent: React.FC<Props> = ({venueId, onNext, on
           const lng = pos.coords.longitude;
           let city;
           try {
-            const res = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`);
+            const res = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&accept-language=en`);
             const data = await res.json();
             city = data.address.city || data.address.town || data.address.village || "";
           } catch {
@@ -143,7 +147,7 @@ const BoozerStep2OrderBaseInfoComponent: React.FC<Props> = ({venueId, onNext, on
             user_city: userGeo.city,
             status: "DRAFT"
         };
-        console.log("PAYLOAD:", payload);
+        console.log("PAYLOAD2:", payload);
         setLoading(true);
         try {
             if (!user?.token) return
@@ -174,11 +178,13 @@ const BoozerStep2OrderBaseInfoComponent: React.FC<Props> = ({venueId, onNext, on
                   )}
                   <div className={styles.inputGroup}>
                       <input
+                          required
                           type="text"
                           className={styles.input}
                           value={formData.start_date ? `${formData.start_date} — ${formData.end_date || '...'}` : ""}
-                          placeholder="Select dates"
-                          readOnly
+                          placeholder="Select dates" onClick={handleCalendarOpen}
+                          onKeyDown={(e) => e.preventDefault()}
+                            onChange={() => {}}
                       />
                       <div onClick={handleCalendarOpen} className={styles.icon}>
                           <img src="/images/calendar.png" alt="calendar icon" width={20} height={20}
@@ -205,7 +211,7 @@ const BoozerStep2OrderBaseInfoComponent: React.FC<Props> = ({venueId, onNext, on
                       type="number"
                       min="1"
                       className={styles.input}
-                      value={formData.guests_count}
+                      value={formData.guests_count || ""}
                       onChange={e => setFormData({...formData, guests_count: +e.target.value})}
                   />
               </div>
@@ -257,7 +263,8 @@ const BoozerStep2OrderBaseInfoComponent: React.FC<Props> = ({venueId, onNext, on
                   className={styles.textarea}
                   value={formData.comment}
                   onChange={e => setFormData({...formData, comment: e.target.value})}
-              /></div>
+              />
+          </div>
 
         <div className={styles.actions}>
             <div className={styles.buttonPr}>
@@ -265,7 +272,9 @@ const BoozerStep2OrderBaseInfoComponent: React.FC<Props> = ({venueId, onNext, on
             </div>
             <div className={styles.buttonN}>
           <button type="submit" disabled={loading} className={styles.buttonNext}>
-            {loading ? "Saving..." : "Next Step"}
+            {loading ? <div className={`authButton ${styles.loaderWrapper}`}>
+                            <LoaderComponent/>
+                        </div> : "Next"}
           </button>
                 </div>
         </div>

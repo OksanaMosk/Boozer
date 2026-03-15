@@ -11,6 +11,7 @@ const paths = {
     favorites: "/favorites",
     constants: "/constants",
     venuesStats: "/venues/stats",
+    exchangeRates: "/exchange-rates"
 };
 
 export const urls = {
@@ -82,17 +83,6 @@ export const urls = {
         mainForVenue: (venueId: string) => `${paths.photos}/?venue=${venueId}&is_main=true`,
     },
 
-    // tables: {
-    //     list: `${paths.tables}/`,
-    //     detail: (id: string) => `${paths.tables}/${id}/`,
-    //     create: `${paths.tables}/`,
-    //     update: (id: string) => `${paths.tables}/${id}/`,
-    //     delete: (id: string) => `${paths.tables}/${id}/`,
-    //     byVenue: (venueId: string) => `${paths.tables}/?venue=${venueId}`,
-    //     activeByVenue: (venueId: string) => `${paths.tables}/?venue=${venueId}&is_active=true`,
-    //     bookings: (tableId: string) => `${paths.tables}/${tableId}/bookings/`,
-    // },
-
     bookings: {
         list: `${paths.bookings}/`,
         detail: (id: string) => `${paths.bookings}/${id}/`,
@@ -114,5 +104,6 @@ export const urls = {
     },
     constants: {
         constantsList: `${paths.constants}/`
-}
+},
+   exchangeRates: `${paths.exchangeRates}/`,
 };

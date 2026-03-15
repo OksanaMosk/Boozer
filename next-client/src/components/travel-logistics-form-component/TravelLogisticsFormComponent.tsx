@@ -1,9 +1,11 @@
 "use client"
 import {AxiosResponse} from "axios";
 import React, { useEffect, useState } from 'react';
-import { ITravelLogistics, IExtraService } from '@/models/IVenue';
+
 import venueServices from "@/lib/services/venueService";
 import { useUser } from "@/app/contexts/UserProvider";
+import {ITravelLogistics} from "@/models/ITravel";
+import {IExtraService} from "@/models/IVenue";
 
 interface Props {
     venueId: string;
@@ -68,7 +70,7 @@ const TravelLogisticsFormComponent: React.FC<Props> = ({ venueId }) => {
     };
 
     const handleSave = async () => {
-        if (!token) return alert("Ви не авторизовані");
+        if (!token) return alert("Log In please");
         setLoading(true);
         try {
             await Promise.all([
@@ -131,7 +133,7 @@ const TravelLogisticsFormComponent: React.FC<Props> = ({ venueId }) => {
                                 <label className="capitalize flex-1 font-medium">{item.step_type?.replace('_', ' ')}</label>
                                 <input
                                     type="number" step="0.1"
-                                    value={item.price_per_km}
+                                    value={item.price_per_km  || ""}
                                     onChange={(e) => handleLogisticsChange(item.step_type!, e.target.value)}
                                     className="border border-gray-300 p-2 rounded-lg w-28 text-right outline-none focus:ring-2 focus:ring-indigo-400"
                                 />
@@ -154,7 +156,7 @@ const TravelLogisticsFormComponent: React.FC<Props> = ({ venueId }) => {
                                     <span className="text-gray-400">$</span>
                                     <input
                                         type="number"
-                                        value={service.price}
+                                        value={service.price  || ""}
                                         onChange={(e) => handleServiceChange(service.service_type!, 'price', e.target.value)}
                                         className="border border-gray-300 p-2 rounded-lg w-28 text-right outline-none focus:ring-2 focus:ring-green-400"
                                     />

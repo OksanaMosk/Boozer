@@ -1,7 +1,9 @@
 const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
+export const GOOGLE_MAPS_LIBRARIES: ("geometry" | "places")[] = ["geometry"];
+
 export const fetchCoordinates = async (city: string, country: string) => {
-  const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(city)},${encodeURIComponent(country)}&key=${apiKey}`;
+  const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(city)},${encodeURIComponent(country)}&key=${apiKey}&language=en`;
   try {
     const response = await fetch(url);
     const data = await response.json();

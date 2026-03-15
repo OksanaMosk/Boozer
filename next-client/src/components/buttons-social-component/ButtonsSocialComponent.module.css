@@ -8,14 +8,14 @@
     outline: none;
     border: 1px solid var(--color-white);
      display: flex;
-  align-items: center;
-  justify-content: center;
+    align-items: center;
+    justify-content: center;
     color: white;
-  cursor: pointer;
-  font-size: 0.6rem;
-  width: 47%;
+    cursor: pointer;
+    font-size: 0.6rem;
+    width: 47%;
     height: 40px;
-     border-radius: 1.5rem;
+    border-radius: 1.5rem;
     background: linear-gradient(90deg, white, #30240b 50%);
 }
 .socialButton:hover {
@@ -29,6 +29,12 @@
   );
     color: #30240b;
 
+}
+.google:disabled,
+.facebook:disabled,
+.socialButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
 }
 
 .socialButton img {
@@ -50,7 +56,7 @@
      line-height: 1.2;
     transform: scale(0.2);
 }
-.socialButtonItem{
+.socialButtonItem {
     display: flex;
     justify-content: center;
     align-items: center;

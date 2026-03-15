@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django.db.backends.postgresql.psycopg_any import DateTimeRange
 from rest_framework import serializers
 from .models import OrderModel, OrderItemModel, OrderExtraServiceModel, TableBookingModel
@@ -11,7 +13,7 @@ class TableBookingSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = TableBookingModel
-        fields = ['id', 'order', 'table', 'time_range', 'is_active']
+        fields = ['id', 'order', 'table', 'time_range', 'is_active', 'status']
         read_only_fields = ['id']
 
     def validate(self, data):
@@ -61,29 +63,46 @@ class OrderExtraServiceSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
     service_name = serializers.CharField(source='service.name', read_only=True)
     service_type = serializers.CharField(source='service.service_type', read_only=True)
-
+    row_total = serializers.SerializerMethodField()
     class Meta:
         model = OrderExtraServiceModel
-        fields = ['id', 'service', 'service_name', 'service_type', 'quantity',  'price']
-        read_only_fields = ['id', 'service_name', 'service_type',  'price']
+        fields = ['id', 'service', 'service_name', 'service_type', 'quantity',  'price', 'row_total']
+        read_only_fields = ['id', 'service_name', 'service_type',  'price', 'row_total']
 
+    def get_row_total(self, obj):
+        price = Decimal(str(obj.price))
+        qty = obj.quantity
+        order = obj.order
+
+        if obj.service.price_type == 'per_day':
+            return price * order.guests_count * qty
+        return price * qty
 
 class OrderSerializer(serializers.ModelSerializer):
     items = OrderItemSerializer(many=True, required=False)
     extra_services = OrderExtraServiceSerializer(many=True, required=False)
+    tables = TableBookingSerializer(many=True, read_only=True)
+
+    menu_total = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
+    services_total = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
+
     remaining_seconds = serializers.SerializerMethodField()
     is_expired = serializers.SerializerMethodField()
 
     class Meta:
         model = OrderModel
         fields = [
-            'id', 'user', 'venue', 'status', 'currency', 'exchange_rate',
-            'flight_price', 'transfer_price', 'total_price',
+            'id', 'status', 'total_price', 'currency',  'menu_total', 'services_total', 'is_expired', 'remaining_seconds','exchange_rate',
+
+             'user_city', 'user_latitude', 'user_longitude', 'venue_latitude', 'venue_longitude', 'distance_km',
+
+            'flight_price', 'transfer_price', 'travel_calculation',
+
             'start_date', 'end_date', 'guests_count', 'gender_preference', 'payment_type', 'budget_range', 'comment',
-            'user_city', 'user_latitude', 'user_longitude', 'distance_km',
-            'items', 'extra_services', 'remaining_seconds', 'is_expired'
+
+            'items', 'extra_services', 'tables', 'user', 'venue',
         ]
-        read_only_fields = ['total_price', 'exchange_rate', 'user', 'venue']
+        read_only_fields = ['total_price', 'user', 'venue', 'venue_latitude', 'venue_longitude']
 
     def create(self, validated_data):
         items_data = validated_data.pop('items', [])
@@ -130,8 +149,9 @@ class OrderSerializer(serializers.ModelSerializer):
                     price=service.price
                 )
 
-        if hasattr(instance, 'calculate_total_price'):
-            instance.calculate_total_price()
+
+        from apps.orders.services.order_service import calculate_total
+        calculate_total(instance)
 
         return instance
 
@@ -146,5 +166,3 @@ class OrderSerializer(serializers.ModelSerializer):
         if obj.status == 'EXPIRED' or (obj.expires_at and obj.expires_at < timezone.now()):
             return True
         return False
-
-    # "Time's up! Your reservation has expired. Please start a new order."

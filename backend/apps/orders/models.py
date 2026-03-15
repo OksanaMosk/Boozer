@@ -16,7 +16,6 @@ class OrderModel(BaseModel):
     class Meta:
         db_table = 'orders'
 
-
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -64,16 +63,21 @@ class OrderModel(BaseModel):
     user_city = models.CharField(max_length=100)
     user_latitude = models.FloatField()
     user_longitude = models.FloatField()
-
+    venue_latitude = models.FloatField(null=True, blank=True)
+    venue_longitude = models.FloatField(null=True, blank=True)
     distance_km = models.FloatField(null=True, blank=True)
     flight_price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     transfer_price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
     total_price = models.DecimalField(max_digits=12, decimal_places=2, default=0)
-
+    services_total = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='DRAFT')
     expires_at = models.DateTimeField(null=True, blank=True)
     travel_calculation = models.JSONField(null=True, blank=True)
+
+    @property
+    def menu_total(self):
+        return sum(item.price * item.quantity for item in self.items.all())
 
 
     def __str__(self):
@@ -85,6 +89,11 @@ class OrderModel(BaseModel):
 
     def save(self, *args, **kwargs):
         is_new = self.pk is None
+
+        if is_new and self.venue:
+            self.currency = self.venue.currency
+            self.venue_latitude = self.venue.latitude
+            self.venue_longitude = self.venue.longitude
 
         if not is_new:
             old = OrderModel.objects.get(pk=self.pk)
@@ -100,7 +109,6 @@ class OrderModel(BaseModel):
             self.table_bookings.all().update(status='CONFIRMED', is_active=True)
             from apps.orders.services.order_service import calculate_total
             calculate_total(self)
-
 
 
 class TableBookingModel(models.Model):

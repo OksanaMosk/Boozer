@@ -3,7 +3,7 @@ from configs.settings import GOOGLE_MAPS_API_KEY
 
 def geocode_city(city: str, country: str):
     url = "https://maps.googleapis.com/maps/api/geocode/json"
-    params = {"address": f"{city}, {country}", "key": GOOGLE_MAPS_API_KEY}
+    params = {"address": f"{city}, {country}", "key": GOOGLE_MAPS_API_KEY, "language": "en" }
     response = requests.get(url, params=params).json()
 
     if response["status"] == "OK":

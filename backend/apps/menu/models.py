@@ -58,7 +58,7 @@ class MenuItemModel(BaseModel):
     category = models.CharField(
         max_length=20,
         choices=CATEGORY_CHOICES,
-        default="main"
+        default="mains"
     )
 
     def save(self, *args, **kwargs):

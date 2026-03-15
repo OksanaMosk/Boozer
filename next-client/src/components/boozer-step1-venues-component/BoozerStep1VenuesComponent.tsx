@@ -9,7 +9,7 @@ import BoozerVenueComponent from "@/components/boozer-venue-component/BoozerVenu
 interface VenuesComponentProps {
   venues: IVenue[];
   totalPages: number;
-  onSelectVenue: (venue: IVenue) => void; // Додаємо цей пропс
+  onSelectVenue: (venue: IVenue) => void;
 }
 
 const BoozerStep1VenuesComponent: React.FC<VenuesComponentProps> = ({venues, totalPages, onSelectVenue}) => {

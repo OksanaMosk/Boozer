@@ -126,10 +126,11 @@ const { inputRef: phoneRef, error: phoneError } = usePhoneMask(
                             </div>
 
                             <div className={styles.inputWrapper}>
-                                <label className={styles.label}>Venue Currency *</label>
+                                <label className={styles.label}>Venue currency *</label>
                                 <select
                                     name="currency"
                                     value={form.currency || "UAH"}
+                                    disabled={!isCreate}
                                     onChange={(e) =>
                                         setForm((prev: any) => ({...prev, currency: e.target.value}))
                                     }
@@ -141,10 +142,18 @@ const { inputRef: phoneRef, error: phoneError } = usePhoneMask(
                                         </option>
                                     ))}
                                 </select>
-                                <p className={styles.helperText}>
-                                    Select the main currency for this venue.
-                                    It will be used for all menus, logistics, and services.
-                                </p>
+                                {isCreate && (
+                                    <p className={styles.helperText}>
+                                        Select the main currency for this venue.
+                                        It will be used for all menus, logistics, and services.
+                                    </p>
+                                )}
+
+                                {!isCreate && (
+                                    <p className={styles.helperText}>
+                                        Currency cannot be changed after venue creation.
+                                    </p>
+                                )}
                             </div>
                             <div className={styles.inputWrapper}>
                                 <OpeningHoursFormComponent

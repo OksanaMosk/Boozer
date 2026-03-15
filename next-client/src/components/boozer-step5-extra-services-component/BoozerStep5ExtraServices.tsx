@@ -1,283 +1,265 @@
 "use client";
-
-"use client";
-
 import React, { useState, useEffect } from "react";
 import styles from "./BoozerStep5ExtraServices.module.css";
 import { useUser } from "@/app/contexts/UserProvider";
-import { AxiosResponse } from "axios";
 import venueServices from "@/lib/services/venueService";
+import { exchangeService } from "@/lib/services/exchangeService";
 
-interface IExtraService {
-    id: number;
-    name: string;
-    description: string;
-    price: number;
-    price_type: 'fixed' | 'per_guest' | 'per_hour' | 'per_day';
-    service_type: string;
-    currency?: string;
-}
+import OrderTravelCostComponent from "@/components/order-travel-cost-component/OrderTravelCostComponent";
+import OrderExtraServicesComponent from "@/components/order-extra-services-component/OrderExtraServicesComponent";
 
-interface ITravelLogistics {
-    step_type: string;
-    price_per_km: number;
-    currency: string;
-}
+import { IOrder } from "@/models/IOrder";
+import { useOrderPricing } from "@/hooks/useOrderPricing";
+import {LoaderComponent} from "@/components/loader-component/LoaderComponent";
 
 interface Props {
-    venueId: string;
-    orderId: number;
-    onNext: (id: number) => void;
-    onBack: () => void;
+  venueId: string;
+  orderId: number;
+  onNext: () => void;
+  onBack: () => void;
 }
 
-const BoozerStep5ExtraServices: React.FC<Props> = ({ venueId, orderId, onNext, onBack }) => {
-    const { user } = useUser();
-    const [availableServices, setAvailableServices] = useState<IExtraService[]>([]);
-    const [logistics, setLogistics] = useState<ITravelLogistics[]>([]);
-    const [selectedServices, setSelectedServices] = useState<Record<number, number>>({});
-    const [loading, setLoading] = useState(true);
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [message, setMessage] = useState("");
+const BoozerStep5ExtraServices = ({ venueId, orderId, onNext, onBack }: Props) => {
+  const { user } = useUser();
+  const [order, setOrder] = useState<IOrder | null>(null);
+  const [extraServices, setExtraServices] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [includeLogistics, setIncludeLogistics] = useState(true);
+  const [lastTravelData, setLastTravelData] = useState<any>(null);
+  const [currency, setCurrency] = useState<"UAH" | "USD" | "EUR">("UAH");
+  const [venueCurrency, setVenueCurrency] = useState<"UAH" | "USD" | "EUR">("UAH");
+  const [rates, setRates] = useState<{ USD: number; EUR: number }>({ USD: 1, EUR: 1 });
+  const [isSaving, setIsSaving] = useState(false);
 
-    const token = user?.token ? { accessToken: user.token } : undefined;
+  const {
+    guestCount,
+    setGuestCount,
+    nightCount,
+    setNightCount,
+    serviceStates,
+    setServiceStates,
+    logisticsTotal,
+    setLogisticsTotal,
+    servicesTotal,
+} = useOrderPricing(extraServices, currency, venueCurrency, rates);
 
-    useEffect(() => {
-        if (!token || !venueId) return;
-        const fetchData = async () => {
-            try {
-                const [logRes, servRes]: AxiosResponse[] = await Promise.all([
-                    venueServices.venues.travelLogistics(token)(venueId).getAll(),
-                    venueServices.venues.extraServices(token)(venueId).getAll()
-                ]);
+console.log("HOOK CHECK → servicesTotal:", servicesTotal);
+console.log("HOOK CHECK → currency:", currency, "venueCurrency:", venueCurrency);
 
-                setLogistics(logRes.data.data || []);
-                setAvailableServices(servRes.data.data || []);
-                setLoading(false);
-            } catch (err) {
-                console.error("Error fetching data:", err);
-                setLoading(false);
-            }
-        };
-        void fetchData();
-    }, [venueId, user?.token]);
-
-    const updateServiceQty = (id: number, delta: number) => {
-        setSelectedServices(prev => ({
-            ...prev,
-            [id]: Math.max(0, (prev[id] || 0) + delta)
-        }));
+  useEffect(() => {
+    const initExchange = async () => {
+      if (user?.token) {
+        const data = await exchangeService.init(user.token);
+        setRates(data);
+      }
     };
+    void initExchange();
+  }, [user?.token]);
 
-    const handleNext = async () => {
-        if (!user?.token) return;
-        setIsSubmitting(true);
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!user?.token) return;
+      try {
+        const [orderRes, servRes, travelLogisticsRes]: any = await Promise.all([
+          venueServices.venues.orders({ accessToken: user.token })(venueId).get(orderId),
+          venueServices.venues.extraServices({ accessToken: user.token })(venueId).getAll(),
+          venueServices.venues.travelLogistics({ accessToken: user.token })(venueId).getAll()
+        ]);
+        const orderData = orderRes.data || orderRes;
+        const servicesData = servRes.data.data || servRes;
+        const travelLogisticsData = travelLogisticsRes.data || travelLogisticsRes;
+        setOrder(orderData);
 
-        const extra_services_payload = Object.entries(selectedServices)
-            .filter(([_, qty]) => qty > 0)
-            .map(([id, qty]) => ({ service: parseInt(id), quantity: qty }));
-        try {
-            const response: AxiosResponse = await venueServices.venues
-                .orders({ accessToken: user.token })(venueId.toString())
-                .update(orderId, {
-                extra_services: extra_services_payload
-            });
+          const venueCurr = travelLogisticsData.data?.[0]?.currency || "UAH";
+          setVenueCurrency(venueCurr);
+          setCurrency(venueCurr);
 
-            if (response.data) {
-                onNext(Number(response.data.id || orderId));
-            }
-        } catch (err) {
-            console.error("Update order error:", err);
-            setMessage("Error updating services");
-        } finally {
-            setIsSubmitting(false);
+          console.log("Travel logistics:", travelLogisticsData);
+          console.log("Detected currency:", venueCurrency);
+
+          setExtraServices(Array.isArray(servicesData) ? servicesData : []);
+          setGuestCount(orderData.guests_count || 1);
+          if (orderData.start_date && orderData.end_date) {
+          const start = new Date(orderData.start_date);
+          const end = new Date(orderData.end_date);
+          const days = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
+          setNightCount(days > 0 ? days : 1);
         }
+      } catch (error) {
+        console.error("Fetch error:", error);
+      } finally {
+        setIsLoading(false);
+      }
     };
+      void fetchData();
+  }, [venueId, orderId, user?.token]);
 
-    if (loading) return <div className={styles.loader}>Loading special offers... 🥂</div>;
+  useEffect(() => {
+    if (order && order.extra_services && order.extra_services.length > 0) {
+        const initialStates: Record<number, { active: boolean; qty: number }> = {};
+        order.extra_services.forEach((s: any) => {
+            const serviceId = s.service?.id || s.service;
+            if (serviceId) {
+                initialStates[Number(serviceId)] = {
+                    active: true,
+                    qty: s.quantity || 1
+                };
+            }
+        });
+        setServiceStates(initialStates);
+    }
+}, [order, setServiceStates]);
 
-    return (
-        <div className={styles.container}>
-            <div className={styles.header}>
-                <h2>Step 5: Extra Services & Logistics 🛡️🎂</h2>
-                <p>Make your event even better!</p>
+    const handleSave = async () => {
+        if (!user?.token) return;
+        setIsSaving(true);
+        const payload = {
+        guests_count: guestCount,
+        travel_calculation: lastTravelData,
+        extra_services: Object.entries(serviceStates)
+            .filter(([_, state]) => state.active)
+            .map(([id, state]) => {
+                const sId = Number(id);
+                const sInfo = extraServices.find(s => s.id === sId);
+                let finalQty = state.qty || 1;
+                if (sInfo?.price_type === "per_day") {
+                    finalQty = nightCount;
+                } else if (sInfo?.service_type === "insurance") {
+                    finalQty = guestCount;
+                }
+
+                return {
+                    service: sId,
+                    quantity: finalQty
+                };
+            }),
+    };
+        try {
+            console.log("PAYLOAD5:", payload);
+            await venueServices.venues.orders({accessToken: user.token})(venueId).update(orderId, payload as any);
+            onNext();
+        } catch (error) {
+            console.error(" Помилка при збереженні:", error);
+        } finally {
+        setIsSaving(false);
+    }
+};
+
+  const getConverted = (amount: number, fromCurrency: "UAH" | "USD" | "EUR" = venueCurrency) => {
+  if (currency === fromCurrency) return amount;
+  let amountInUAH = amount;
+  if (fromCurrency === "USD") amountInUAH = amount * rates.USD;
+  else if (fromCurrency === "EUR") amountInUAH = amount * rates.EUR;
+  if (currency === "USD") return +(amountInUAH / rates.USD).toFixed(2);
+  if (currency === "EUR") return +(amountInUAH / rates.EUR).toFixed(2);
+  return +amountInUAH.toFixed(2); // UAH
+};
+
+  const computedTotalAmount = includeLogistics ? logisticsTotal + servicesTotal : servicesTotal;
+   if (isLoading) return <div className={styles.loader}><LoaderComponent/></div>;
+
+  return (
+    <div className={styles.container}>
+        <h2 className={styles.title}>Step 5:</h2>
+        <div className={styles.section}>
+            <div className={styles.wrapperTitle}>
+                <h4 className={styles.bigText}>Transfer &</h4>
+                <p className={styles.smallText}>Services</p>
             </div>
-
-            <div className={styles.servicesList}>
-                <h3 className="text-xs font-black text-gray-400 uppercase tracking-widest mb-4 ml-2">Transport Rates</h3>
-                {logistics.map((item) => (
-                    <div key={item.step_type} className={styles.serviceCard} style={{ borderLeft: '4px solid #6366f1' }}>
-                        <div className={styles.info}>
-                            <h4 className="capitalize">{item.step_type.replace('_', ' ')}</h4>
-                            <p className={styles.desc}>Automatic route calculation</p>
-                            <span className={styles.priceTag}>
-                                {item.price_per_km} {item.currency}/km
-                            </span>
-                        </div>
-                    </div>
-                ))}
-
-                <h3 className="text-xs font-black text-gray-400 uppercase tracking-widest mt-8 mb-4 ml-2">Available Services</h3>
-                {availableServices.length > 0 ? (
-                    availableServices.map(service => (
-                        <div key={service.id} className={styles.serviceCard}>
-                            <div className={styles.info}>
-                                <h4 className="capitalize">{service.name}</h4>
-                                <p className={styles.desc}>{service.description || `Special offer`}</p>
-                                <span className={styles.priceTag}>
-                                    {service.price} {service.currency || 'UAH'} ({service.price_type.replace('_', ' ')})
-                                </span>
-                            </div>
-
-                            <div className={styles.controls}>
-                                <button onClick={() => updateServiceQty(service.id, -1)} disabled={isSubmitting}>-</button>
-                                <span>{selectedServices[service.id] || 0}</span>
-                                <button onClick={() => updateServiceQty(service.id, 1)} disabled={isSubmitting}>+</button>
-                            </div>
-                        </div>
-                    ))
-                ) : (
-                    <p className={styles.empty}>No extra services found.</p>
-                )}
+            <div className={styles.selectCurrency}>
+                <label className={styles.label}>Currency</label>
+                <select value={currency} onChange={(e) => setCurrency(e.target.value as any)} className={styles.select}>
+                    <option value="UAH">UAH</option>
+                    <option value="USD">USD</option>
+                    <option value="EUR">EUR</option>
+                </select>
             </div>
+            <OrderTravelCostComponent
+                venueId={venueId}
+                userLatitude={order?.user_latitude ?? null}
+                userLongitude={order?.user_longitude ?? null}
+                userCity={order?.user_city ?? null}
+                userToken={user?.token ?? null}
+                onTotalChange={setLogisticsTotal}
+                onCalculationComplete={setLastTravelData}
+                currency={currency}
+                venueCurrency={venueCurrency}
+                rates={rates}
+            />
+      </div>
+      <div className={styles.includeLogisticsToggle}>
+        <label className={styles.switch}
+        >
+          <input
+            type="checkbox"
+            checked={includeLogistics}
+            onChange={() => setIncludeLogistics(p => !p)}
+            style={{ marginRight: '0.5rem' }}
+          />  <span className={styles.slider}></span>
+        </label>
+      </div>
 
-            <div className={styles.actions}>
-                <button onClick={onBack} disabled={isSubmitting}>Back</button>
-                <button className={styles.nextBtn} onClick={handleNext} disabled={isSubmitting}>
-                    {isSubmitting ? "Saving..." : "Next: Route & Final Summary ➔"}
-                </button>
-            </div>
-            {message && <p className={styles.errorMessage} style={{ color: 'red', textAlign: 'center', marginTop: '10px' }}>{message}</p>}
+      <div className={styles.section}>
+        {extraServices.length > 0 ? (
+          <OrderExtraServicesComponent
+            services={extraServices}
+            guestCount={guestCount}
+            setGuestCount={setGuestCount}
+            nightCount={nightCount}
+            setNightCount={setNightCount}
+            serviceStates={serviceStates}
+            setServiceStates={setServiceStates}
+            currency={currency}
+            venueCurrency={venueCurrency}
+            rates={rates}
+          />
+        ) : (
+          <p className={styles.noServices}>Extra services are currently unavailable for this venue.</p>
+        )}
+      </div>
+      <div className={styles.footer}>
+        <div className={styles.summaryBox}>
+            <p className={styles.summary}>
+                Services: {servicesTotal.toLocaleString(undefined, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            })} {currency}
+            </p>
+
+            {includeLogistics && (
+                <p className={styles.summary}>
+                    Logistics: {logisticsTotal.toLocaleString(undefined, {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    })} {currency}
+                </p>
+            )}
+
+            <p className={styles.orderSummary}>
+                Total Amount: {getConverted(computedTotalAmount, venueCurrency).toLocaleString(undefined, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            })} {currency}
+            </p>
         </div>
-    );
+
+      </div>
+        <div className={styles.actions}>
+          <button onClick={onBack} className={styles.buttonPrev}>Back</button>
+            <button
+                onClick={handleSave}
+                className={styles.buttonNext}
+                disabled={isSaving}
+            >
+                {isSaving ? <div className={`authButton ${styles.loaderWrapper}`}>
+                        <LoaderComponent/>
+                    </div>
+                    :
+                    "Next"}
+            </button>
+        </div>
+    </div>
+  );
 };
 
 export default BoozerStep5ExtraServices;
-
-
-
-
-// "use client";
-//
-// import React, { useState, useEffect } from "react";
-// import styles from "./BoozerStep5ExtraServices.module.css";
-// import { useUser } from "@/app/contexts/UserProvider";
-// import axios from "axios";
-//
-// interface IExtraService {
-//     id: number;
-//     name: string;
-//     description: string;
-//     price: number;
-//     price_type: 'fixed' | 'per_guest' | 'per_hour';
-//     service_type: string;
-// }
-//
-// interface Props {
-//     venueId: string;
-//     orderId: number;
-//     onNext: () => void;
-//     onBack: () => void;
-// }
-//
-// const BoozerStep5ExtraServices: React.FC<Props> = ({ venueId, orderId, onNext, onBack }) => {
-//     const { user } = useUser();
-//     const [availableServices, setAvailableServices] = useState<IExtraService[]>([]);
-//     const [selectedServices, setSelectedServices] = useState<Record<number, number>>({});
-//     const [loading, setLoading] = useState(true);
-//     const [isSubmitting, setIsSubmitting] = useState(false);
-//
-//     useEffect(() => {
-//         if (!user?.token) return;
-//         fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/venues/${venueId}/extra_services/`, {
-//             headers: { Authorization: `Bearer ${user.token}` }
-//         })
-//         .then(res => res.json())
-//         .then(data => {
-//             setAvailableServices(data.data || data || []);
-//             setLoading(false);
-//         })
-//         .catch(err => {
-//             console.error("Error fetching extra services:", err);
-//             setLoading(false);
-//         });
-//     }, [venueId, user?.token]);
-//
-//     const updateServiceQty = (id: number, delta: number) => {
-//         setSelectedServices(prev => ({
-//             ...prev,
-//             [id]: Math.max(0, (prev[id] || 0) + delta)
-//         }));
-//     };
-//
-//     const handleNext = async () => {
-//         setIsSubmitting(true);
-//         const extra_services = Object.entries(selectedServices)
-//             .filter(([_, qty]) => qty > 0)
-//             .map(([id, qty]) => ({
-//                 service: parseInt(id),
-//                 quantity: qty
-//             }));
-//
-//         try {
-//             await axios.patch(`${process.env.NEXT_PUBLIC_API_URL}/api/orders/${orderId}/`, {
-//                 extra_services: extra_services
-//             }, {
-//                 headers: { Authorization: `Bearer ${user?.token}` }
-//             });
-//             onNext();
-//         } catch (err) {
-//             console.error("Failed to add extra services:", err);
-//         } finally {
-//             setIsSubmitting(false);
-//         }
-//     };
-//
-//     if (loading) return <div className={styles.loader}>Loading special offers... 🥂</div>;
-//
-//     return (
-//         <div className={styles.container}>
-//             <div className={styles.header}>
-//                 <h2>Step 5: Extra Services 🛡️🎂</h2>
-//                 <p>Make your even better!</p>
-//             </div>
-//
-//             <div className={styles.servicesList}>
-//                 {availableServices.length > 0 ? (
-//                     availableServices.map(service => (
-//                         <div key={service.id} className={styles.serviceCard}>
-//                             <div className={styles.info}>
-//                                 <h4>{service.name}</h4>
-//                                 <p className={styles.desc}>{service.description}</p>
-//                                 <span className={styles.priceTag}>
-//                                     {service.price} UAH ({service.price_type.replace('_', ' ')})
-//                                 </span>
-//                             </div>
-//
-//                             <div className={styles.controls}>
-//                                 <button onClick={() => updateServiceQty(service.id, -1)}>-</button>
-//                                 <span>{selectedServices[service.id] || 0}</span>
-//                                 <button onClick={() => updateServiceQty(service.id, 1)}>+</button>
-//                             </div>
-//                         </div>
-//                     ))
-//                 ) : (
-//                     <p className={styles.empty}>No extra services available for this venue.</p>
-//                 )}
-//             </div>
-//
-//             <div className={styles.actions}>
-//                 <button onClick={onBack} disabled={isSubmitting}>Back</button>
-//                 <button
-//                     className={styles.nextBtn}
-//                     onClick={handleNext}
-//                     disabled={isSubmitting}
-//                 >
-//                     {isSubmitting ? "Saving..." : "Next: Route & Final Summary ➔"}
-//                 </button>
-//             </div>
-//         </div>
-//     );
-// };
-//
-// export default BoozerStep5ExtraServices;

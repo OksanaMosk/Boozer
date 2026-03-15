@@ -3,6 +3,7 @@
 import React, { useContext, useEffect, useState, useMemo } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { IUser, UserContextType } from "@/models/IUser";
+import {usePathname, useRouter} from "next/navigation";
 
 const UserContext = React.createContext<UserContextType | undefined>(undefined);
 
@@ -10,6 +11,8 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   const { data: session, status } = useSession();
   const [user, setUser] = useState<IUser | null>(null);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
+  const pathname = usePathname();
 
     useEffect(() => {
   if (status === "loading") return;
@@ -43,6 +46,16 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     setLoading(false);
   }
 }, [status, session]);
+
+    useEffect(() => {
+    const publicPages = ["/login", "/register", "/welcome"];
+    const isPublic = publicPages.includes(pathname);
+
+    if (!loading && !user?.token && !isPublic) {
+      router.replace("/login");
+    }
+  }, [user, loading, pathname, router]);
+
 
 
   const value = useMemo(() => ({

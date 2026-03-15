@@ -4,6 +4,7 @@ from django.contrib import admin
 from django.http import HttpResponse
 from django.urls import include, path
 
+from apps.orders.views import ExchangeRateView
 
 
 # from drf_yasg import openapi
@@ -21,6 +22,7 @@ urlpatterns = [
     path('api/orders/', include('apps.orders.urls')),
     path('api/reviews-feedback/', include('apps.reviews_feedback.urls')),
     path('api/news/', include('apps.news.urls')),
+    path('api/exchange-rates/', ExchangeRateView.as_view(), name='exchange_rates'),
 ]
 
 if settings.DEBUG:

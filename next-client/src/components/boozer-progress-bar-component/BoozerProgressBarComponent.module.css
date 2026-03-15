@@ -101,24 +101,14 @@
   color: #333;
 }
 
-
-.timerWrapper {
-
-}
-
-.timerText {
-  font-size: 14px;
-  color: #666;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
 .time {
+    width: 200px;
+    text-align: center;
   font-family: 'Courier New', Courier, monospace;
   font-weight: 700;
   font-size: 18px;
   color: var(--color-text);
-  margin-top:40px;
+  margin:40px auto 0;
 }
 
 .danger {

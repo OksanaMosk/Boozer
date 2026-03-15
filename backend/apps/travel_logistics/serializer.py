@@ -21,12 +21,6 @@ class TravelLogisticsSerializer(serializers.ModelSerializer):
             'currency': {'read_only': True}
         }
 
-    def validate_price_per_km(self, value):
-        if value < 0:
-            raise serializers.ValidationError("Price per kilometer cannot be negative.")
-        return value
-
-
 
 class ExtraServiceSerializer(serializers.ModelSerializer):
     service_type_display = serializers.CharField(source='get_service_type_display', read_only=True)
@@ -55,7 +49,10 @@ class ExtraServiceSerializer(serializers.ModelSerializer):
         return value
 
 
-    def validate_price_per_km(self, value):
-        if value <= 0:
-            raise serializers.ValidationError("Price per kilometer must be greater than zero.")
-        return value
+
+
+
+    # def validate_price_per_km(self, value):
+    #     if value <= 0:
+    #         raise serializers.ValidationError("Price per kilometer must be greater than zero.")
+    #     return value
