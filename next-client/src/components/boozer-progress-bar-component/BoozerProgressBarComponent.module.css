@@ -70,7 +70,7 @@
 }
 
 .circle.active {
-  transform: scale(1.1);
+    transform: scale(1.1);
     background: var(--logo-hover-color);
     color:  #30240b;
     background: linear-gradient(90deg, #30240b, white, #30240b);
@@ -104,11 +104,11 @@
 .time {
     width: 200px;
     text-align: center;
-  font-family: 'Courier New', Courier, monospace;
-  font-weight: 700;
-  font-size: 18px;
-  color: var(--color-text);
-  margin:40px auto 0;
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: 700;
+    font-size: 18px;
+    color: var(--color-text);
+    margin:40px auto 0;
 }
 
 .danger {

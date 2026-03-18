@@ -1,16 +1,16 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import {useUser} from "@/app/contexts/UserProvider";
 import userService from "@/lib/services/userService";
+import { IVenueWithId} from "@/models/IVenue";
 import VenueListingComponent from "@/components/venue-listing-component/VenueListingComponent";
 import { LoaderComponent } from "@/components/loader-component/LoaderComponent";
 import ChatComponent from "@/components/chat-component/ChatComponent";
-import { IVenueWithId} from "@/models/IVenue";
 import styles from "./VenueAdminDashboardComponent.module.css";
-import {useUser} from "@/app/contexts/UserProvider";
 
 const VenueAdminDashboardComponent: React.FC = () => {
-    const { user, loading: userLoading } = useUser();
+    const {user, loading: userLoading} = useUser();
     const [error, setError] = useState<string | null>(null);
     const [venues, setVenues] = useState<IVenueWithId[]>([]);
     const [venuesLoading, setVenuesLoading] = useState(true);
@@ -32,13 +32,12 @@ const VenueAdminDashboardComponent: React.FC = () => {
             } catch {
                 setVenues([])
                 setError("Failed to load venues.");
-            }
-            finally {
+            } finally {
                 setVenuesLoading(false)
             }
         };
 
-      void loadVenues();
+        void loadVenues();
     }, [user?.id, user?.token]);
 
     const handleDelete = (venueId: string) => {
@@ -53,8 +52,8 @@ const VenueAdminDashboardComponent: React.FC = () => {
     };
     if (userLoading) {
         return (
-            <div style={{ display: "flex", justifyContent: "center", marginTop: 70 }}>
-                <LoaderComponent />
+            <div style={{display: "flex", justifyContent: "center", marginTop: 70}}>
+                <LoaderComponent/>
             </div>
         );
     }
@@ -65,7 +64,7 @@ const VenueAdminDashboardComponent: React.FC = () => {
 
     return (
 
-        <><h2 className={styles.subtitle} >My Venue Listings</h2>
+        <><h2 className={styles.subtitle}>My Venue Listings</h2>
             <div className={styles.dashboard}>
 
                 <table className={styles.table}>
@@ -108,9 +107,8 @@ const VenueAdminDashboardComponent: React.FC = () => {
                     )}
                     </tbody>
                 </table>
-
-
             </div>
+
             {user && (
                 <div className={styles.chatWrapper}>
                     <h3 style={{margin: "40px auto", textAlign: "center", width: "fit-content"}}>Chat with Buyers</h3>

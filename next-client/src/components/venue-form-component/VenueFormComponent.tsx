@@ -1,12 +1,13 @@
 "use client"
 
 import React from "react";
-import styles from "./VenueFormComponent.module.css"
+import {usePhoneMask} from "@/hooks/usePhoneMask";
 import VenueSelectsComponent from "@/components/venue-selects-component/VenueSelectsComponent";
 import {OpeningHoursFormComponent} from "@/components/opening-hours-form-component/OpeningHoursFormComponent";
 import MapVenueComponent from "@/components/map-venue-component/MapVenueComponent";
 import {LoaderComponent} from "@/components/loader-component/LoaderComponent";
- import { usePhoneMask } from "@/hooks/usePhoneMask";
+import styles from "./VenueFormComponent.module.css"
+
 type VenueFormMode = "create" | "edit";
 
 interface VenueFormProps {
@@ -21,19 +22,20 @@ interface VenueFormProps {
     tagsInput?: string;
     setTagsInput?: React.Dispatch<React.SetStateAction<string>>;
 }
+
 const CURRENCY_OPTIONS = ["UAH", "USD", "EUR"];
 export const VenueFormComponent = ({
-                              mode,
-                              venueId,
-                              form,
-                              setForm,
-                              onSubmit,
-                              saving,
-                              error,
-                              message,
-                              tagsInput,
-                              setTagsInput,
-                          }: VenueFormProps) => {
+                                       mode,
+                                       venueId,
+                                       form,
+                                       setForm,
+                                       onSubmit,
+                                       saving,
+                                       error,
+                                       message,
+                                       tagsInput,
+                                       setTagsInput,
+                                   }: VenueFormProps) => {
     const isCreate = mode === "create";
     const handleInputChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -42,10 +44,10 @@ export const VenueFormComponent = ({
         setForm((prev: any) => ({...prev, [name]: value}));
     };
 
-const { inputRef: phoneRef, error: phoneError } = usePhoneMask(
-  form.phone,
-  (value) => setForm((prev: any) => ({ ...prev, phone: value }))
-);
+    const {inputRef: phoneRef, error: phoneError} = usePhoneMask(
+        form.phone,
+        (value) => setForm((prev: any) => ({...prev, phone: value}))
+    );
 
 
     return (
@@ -197,7 +199,7 @@ const { inputRef: phoneRef, error: phoneError } = usePhoneMask(
 
                         <button
                             type="submit"
-                              disabled={saving || !!phoneError}
+                            disabled={saving || !!phoneError}
                             className={styles.submitButton}
                         >
                             {saving ? (

@@ -8,7 +8,7 @@ interface Props {
     venue: IVenue;
 }
 
-const VenueComponent: React.FC<Props> = ({ venue }) => {
+const VenueComponent: React.FC<Props> = ({venue}) => {
 
     const mainPhoto =
         venue.photos?.find((p) => p.is_main) || venue.photos?.[0];

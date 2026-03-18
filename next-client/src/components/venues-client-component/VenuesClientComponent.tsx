@@ -3,9 +3,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from "next/navigation";
 import venueService, { VenueFilterCriteria } from "@/lib/services/venueService";
+import { IVenue } from "@/models/IVenue";
 import VenuesComponent from "@/components/venues-component/VenuesComponent";
 import VenueFilterComponent from "@/components/venue-filter-component/VenueFilterComponent";
-import { IVenue } from "@/models/IVenue";
 import { LoaderComponent } from "@/components/loader-component/LoaderComponent";
 import styles from "./VenuesClientComponent.module.css";
 
@@ -25,7 +25,6 @@ export const VenuesClientComponent = () => {
     const [venuesData, setVenuesData] = useState<IVenue[]>([]);
     const [totalPagesState, setTotalPagesState] = useState(1);
     const [isLoading, setIsLoading] = useState(false);
-
     const searchParams = useSearchParams();
     const currentPageFromURL = Number(searchParams.get("page") || "1");
 
@@ -64,9 +63,7 @@ export const VenuesClientComponent = () => {
     return (
         <div className={styles.wrapper}>
             <h1 className={styles.title}>Venues</h1>
-
-            <VenueFilterComponent onFilterChange={handleFilterChange} />
-
+            <VenueFilterComponent onFilterChange={handleFilterChange}/>
             {isLoading ? (
                 <div className={styles.loaderWrapper}><LoaderComponent/></div>
             ) : (

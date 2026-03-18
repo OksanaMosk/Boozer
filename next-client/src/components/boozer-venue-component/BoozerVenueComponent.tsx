@@ -2,8 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 import { IVenue } from "@/models/IVenue";
-import styles from "./BoozerVenueComponent.module.css";
 import VenueComponent from "@/components/venue-component/VenueComponent";
+import styles from "./BoozerVenueComponent.module.css";
 
 interface Props {
     venue: IVenue;
@@ -12,8 +12,7 @@ interface Props {
     onDeselect?: (venue: IVenue) => void;
 }
 
-const BoozerVenueComponent: React.FC<Props> = ({ venue, selected = false, onSelect, onDeselect }) => {
-
+const BoozerVenueComponent: React.FC<Props> = ({venue, selected = false, onSelect, onDeselect}) => {
     const [isSelected, setIsSelected] = useState(selected);
 
     const handleToggle = () => {
@@ -34,12 +33,12 @@ const BoozerVenueComponent: React.FC<Props> = ({ venue, selected = false, onSele
         <div
             className={`${styles.wrapper} ${isSelected ? styles.selected : ""}`}
         >
-            <VenueComponent venue={venue} />
+            <VenueComponent venue={venue}/>
             <button
                 className={styles.selectButton}
                 onClick={handleToggle}
             >
-               {isSelected ? "Selected 🍹" : "Choose"}
+                {isSelected ? "Selected 🍹" : "Choose"}
             </button>
         </div>
     );

@@ -14,7 +14,6 @@ const userService = {
         },
         token: { accessToken: string }
     ): Promise<IUser[]> => {
-        // console.log(token.accessToken);
         const response = await apiService(token.accessToken).get(urls.users.list);
         const usersArray: IUser[] = Array.isArray(response.data.data) ? response.data.data : [];
         let filtered: IUser[] = usersArray;
@@ -42,7 +41,6 @@ const userService = {
                         ? Number(fieldB) - Number(fieldA)
                         : Number(fieldA) - Number(fieldB);
                 }
-
                 const strA = String(fieldA);
                 const strB = String(fieldB);
 
@@ -51,24 +49,18 @@ const userService = {
                 return 0;
             });
         }
-// console.log(filtered)
         return filtered;
     },
-
     toggleActive: async (userId: string, isActive: boolean, token: { accessToken: string }) => {
         const {data} = await apiService(token.accessToken).patch(urls.users.active(userId), {
             is_active: isActive
         });
         return data;
     },
-
-
     changeRole: async (userId: string, role: string, token: { accessToken: string }) => {
         const {data} = await apiService(token.accessToken).patch(urls.users.changeRole(userId), {role});
         return data;
     },
-
-
     delete: async (userId: string, token: { accessToken: string }) => {
         const {data} = await apiService(token.accessToken).delete(urls.users.delete(userId));
         return data;
@@ -76,9 +68,6 @@ const userService = {
     getUserVenues(userId: string, token: { accessToken: string }) {
         return apiService(token.accessToken).get<GetUserVenuesResponse>(urls.users.userVenues(userId));
     },
-
-
-
 };
 
 export default userService

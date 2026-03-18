@@ -1,10 +1,11 @@
 "use client";
+
 import React, { useEffect, useState, useMemo } from "react";
-import venueServices from "@/lib/services/venueService";
-import styles from "./OrderTravelCostComponent.module.css";
-import { ITravelCalculation, ITravelSegment } from "@/models/ITravel";
 import { AxiosResponse } from "axios";
+import venueServices from "@/lib/services/venueService";
+import { ITravelCalculation, ITravelSegment } from "@/models/ITravel";
 import {LoaderComponent} from "@/components/loader-component/LoaderComponent";
+import styles from "./OrderTravelCostComponent.module.css";
 
 interface Props {
     venueId: string;
@@ -36,17 +37,17 @@ const OrderTravelCostComponent = ({
     const [totalUAH, setTotalUAH] = useState<number>(0);
     const [loading, setLoading] = useState<boolean>(true);
 
-   const convert = (amount: number, fromCurrency: "UAH" | "USD" | "EUR" = venueCurrency!) => {
-    if (currency === fromCurrency) return amount;
+    const convert = (amount: number, fromCurrency: "UAH" | "USD" | "EUR" = venueCurrency!) => {
+        if (currency === fromCurrency) return amount;
 
-    let amountInUAH = amount;
-    if (fromCurrency === "USD") amountInUAH = amount * rates.USD;
-    else if (fromCurrency === "EUR") amountInUAH = amount * rates.EUR;
+        let amountInUAH = amount;
+        if (fromCurrency === "USD") amountInUAH = amount * rates.USD;
+        else if (fromCurrency === "EUR") amountInUAH = amount * rates.EUR;
 
-    if (currency === "USD") return +(amountInUAH / rates.USD).toFixed(2);
-    if (currency === "EUR") return +(amountInUAH / rates.EUR).toFixed(2);
-    return +amountInUAH.toFixed(2);
-};
+        if (currency === "USD") return +(amountInUAH / rates.USD).toFixed(2);
+        if (currency === "EUR") return +(amountInUAH / rates.EUR).toFixed(2);
+        return +amountInUAH.toFixed(2);
+    };
 
     useEffect(() => {
         if (!userToken || !userLatitude || !userLongitude) return;
@@ -110,8 +111,8 @@ const OrderTravelCostComponent = ({
     }, [venueId, userLatitude, userLongitude, userToken]);
 
     useEffect(() => {
-    onTotalChange?.(convert(totalUAH));
-}, [totalUAH, currency, rates, onTotalChange]);
+        onTotalChange?.(convert(totalUAH));
+    }, [totalUAH, currency, rates, onTotalChange]);
 
     const total = useMemo(() => convert(totalUAH), [totalUAH, currency, rates])
     if (loading) return (<div className={styles.loader}><LoaderComponent/></div>)
@@ -130,31 +131,30 @@ const OrderTravelCostComponent = ({
                         <div className={styles.cardHeader}>
                             <p className={styles.icon}>
                                 <img
-                                src={iconUrl}
-                                alt={seg.step_type}
-                                width={60}
-                                height={60}
-                                className={styles.img}
-                            />
-                        </p>
+                                    src={iconUrl}
+                                    alt={seg.step_type}
+                                    width={60}
+                                    height={60}
+                                    className={styles.img}
+                                />
+                            </p>
                         </div>
 
                         <div className={styles.route}>
                             <div className={styles.routeRow}>
-                                   <strong className={styles.title}>{title}</strong>
+                                <strong className={styles.title}>{title}</strong>
                                 <div className={styles.point}>
                                     <p className={styles.cityName}>{seg.from_city}</p>
-                                    {/*{seg.from_code && <span className={styles.code}>{seg.from_code}</span>}*/}→
                                     <p className={styles.cityName}>{seg.to_city}</p>
-                                    {/*{seg.to_code && <span className={styles.code}>{seg.to_code}</span>}*/}
                                 </div>
                             </div>
                             <div className={styles.priceDetails}>
                                 <p className={styles.math}>
-                                    {seg.km.toFixed(1)} km × {costPerKm} {currency}<strong className={styles.segment}>/</strong>km
+                                    {seg.km.toFixed(1)} km × {costPerKm} {currency}<strong
+                                    className={styles.segment}>/</strong>km
                                 </p>
                                 <strong className={styles.segmentTotal}>
-                                  Total:  {convert(seg.price).toLocaleString()} {currency}
+                                    Total: {convert(seg.price).toLocaleString()} {currency}
                                 </strong>
                             </div>
                         </div>

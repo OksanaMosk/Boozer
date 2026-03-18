@@ -74,18 +74,18 @@ class MenuItemViewSet(viewsets.ModelViewSet):
         serializer.save(menu=menu)
 
     @action(detail=False, methods=['patch'])
-    def reorder(self, request, **kwargs):  # <-- додано **kwargs
+    def reorder(self, request, **kwargs):
         venue_pk = self.kwargs.get('venue_pk')
         menu_pk = self.kwargs.get('menu_pk')
 
         if not isinstance(request.data, list):
-            return Response({"error": "List expected"}, status=400)
+            return Response({'error': 'List expected'}, status=400)
 
         with transaction.atomic():
             for item in request.data:
-                update_data = {"position": item['position']}
-                if "category" in item:
-                    update_data["category"] = item["category"]
+                update_data = {'position': item['position']}
+                if 'category' in item:
+                    update_data['category'] = item['category']
 
                 MenuItemModel.objects.filter(
                     id=item['id'],
@@ -93,4 +93,4 @@ class MenuItemViewSet(viewsets.ModelViewSet):
                     menu__venue__id=venue_pk
                 ).update(**update_data)
 
-        return Response({"status": "ok"})
+        return Response({'status': 'ok'})

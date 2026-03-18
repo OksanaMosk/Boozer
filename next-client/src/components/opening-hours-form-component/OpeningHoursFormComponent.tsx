@@ -12,9 +12,9 @@ interface OpeningHoursFormProps {
 const days = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"];
 
 export const OpeningHoursFormComponent: React.FC<OpeningHoursFormProps> = ({
-    newVenue,
-    setNewVenue,
-}) => {
+                                                                               newVenue,
+                                                                               setNewVenue,
+                                                                           }) => {
     const openingHours = newVenue.opening_hours || {};
 
     const handleTimeChange = (day: string, type: "open" | "close", value: string) => {
@@ -44,7 +44,7 @@ export const OpeningHoursFormComponent: React.FC<OpeningHoursFormProps> = ({
                         onChange={(e) => handleTimeChange(day, "open", e.target.value)}
                         ref={(el) => {
                             if (!el) return;
-                            IMask(el, { mask: "00:00" });
+                            IMask(el, {mask: "00:00"});
                         }}
                     />
 
@@ -58,7 +58,7 @@ export const OpeningHoursFormComponent: React.FC<OpeningHoursFormProps> = ({
                         onChange={(e) => handleTimeChange(day, "close", e.target.value)}
                         ref={(el) => {
                             if (!el) return;
-                            IMask(el, { mask: "00:00" });
+                            IMask(el, {mask: "00:00"});
                         }}
                     />
                 </div>

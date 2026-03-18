@@ -9,9 +9,34 @@ from django.db import transaction
 def recalc_order_total(sender, instance, **kwargs):
     calculate_total(instance.order)
 
+
 @receiver(post_save, sender=OrderModel)
 def send_order_confirmed_email_signal(sender, instance, created, **kwargs):
-    if instance.status == 'CONFIRMED':
-        transaction.on_commit(
-            lambda: EmailService.order_confirmation(instance.user, instance)
-        )
+    if instance.status == 'CONFIRMED' and instance.user:
+        if not getattr(instance, '_email_sent', False):
+            instance._email_sent = True
+            user_to_notify = instance.user
+
+            def send_safe():
+                try:
+                    EmailService.order_confirmation(user_to_notify, instance)
+                except Exception:
+                    pass
+            transaction.on_commit(send_safe)
+
+
+#
+# @receiver(post_save, sender=OrderModel)
+# def send_order_confirmed_email_signal(sender, instance, created, **kwargs):
+#     if instance.status == 'CONFIRMED' and instance.user:
+#         if not getattr(instance, '_email_sent', False):
+#             instance._email_sent = True
+#             user_to_notify = instance.user
+#
+#             def send_safe():
+#                 try:
+#                     EmailService.order_confirmation(user_to_notify, instance)
+#                 except Exception:
+#                     pass
+#
+#             transaction.on_commit(send_safe)

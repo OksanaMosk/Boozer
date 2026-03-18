@@ -29,7 +29,7 @@ export const urls = {
         changeRole: (id: string) => `${paths.users}/change-role/${id}/`,
         delete: (id: string) => `${paths.users}/${id}/delete/`,
         reviews: (userId: string) => `${paths.users}/${userId}/reviews/`,
-        favorites: (userId: string) => `${paths.users}/${userId}/favorites/`,
+        // favorites: (userId: string) => `${paths.users}/${userId}/favorites/`,
         userVenues: (userId: string) => `${paths.users}/${userId}/venues/`,
     },
     profile: {
@@ -79,8 +79,8 @@ export const urls = {
         detail: (id: string) => `${paths.photos}/${id}/`,
         create: `${paths.photos}/`,
         delete: (id: string) => `${paths.photos}/${id}/`,
-        byVenue: (venueId: string) => `${paths.photos}/?venue=${venueId}`,
-        mainForVenue: (venueId: string) => `${paths.photos}/?venue=${venueId}&is_main=true`,
+        // byVenue: (venueId: string) => `${paths.photos}/?venue=${venueId}`,
+        // mainForVenue: (venueId: string) => `${paths.photos}/?venue=${venueId}&is_main=true`,
     },
 
     bookings: {

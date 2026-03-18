@@ -45,6 +45,7 @@ class OrderViewSet(viewsets.ModelViewSet):
             return [IsAuthenticated()]
         elif self.action in ['update', 'partial_update', 'destroy']:
             return [IsOrderOwnerOrVenueAdmin()]
+
         return [IsAdminOrVenueAdminOrReadOnly()]
 
     def get_queryset(self):
@@ -63,6 +64,7 @@ class OrderViewSet(viewsets.ModelViewSet):
             qs = OrderModel.objects.filter(user=user)
         if venue_id:
             qs = qs.filter(venue_id=venue_id)
+
         return qs.select_related('user', 'venue').prefetch_related('items', 'extra_services')
 
     def perform_create(self, serializer):
@@ -77,7 +79,7 @@ class OrderViewSet(viewsets.ModelViewSet):
 
         if instance.expires_at and timezone.now() > instance.expires_at:
             return Response(
-                {"detail": "Reservation expired", "code": "EXPIRED"},
+                {'detail': 'Reservation expired', 'code': 'EXPIRED'},
                 status=status.HTTP_410_GONE
             )
 
@@ -93,11 +95,9 @@ class OrderViewSet(viewsets.ModelViewSet):
         order = self.get_object()
 
         if order.expires_at and timezone.now() > order.expires_at:
-            raise ValidationError("Order expired")
+            raise ValidationError('Order expired')
+
         serializer.save()
-
-
-
 
 class TableBookingViewSet(viewsets.ModelViewSet):
     """
@@ -118,8 +118,10 @@ class TableBookingViewSet(viewsets.ModelViewSet):
         """
         if self.action in ['create', 'list', 'bulk_create']:
             return [IsAuthenticated()]
+
         elif self.action in ['update', 'partial_update', 'destroy']:
             return [IsBookingOwnerOrVenueAdmin()]
+
         return [IsAdminOrVenueAdminOrReadOnly()]
 
     def get_queryset(self):
@@ -136,6 +138,7 @@ class TableBookingViewSet(viewsets.ModelViewSet):
         qs = TableBookingModel.objects.all()
         if venue_pk:
             qs = qs.filter(table__venue_id=venue_pk)
+
         if lower and upper:
             try:
                 l_dt = datetime.fromisoformat(lower.replace('Z', '+00:00'))
@@ -166,7 +169,7 @@ class TableBookingViewSet(viewsets.ModelViewSet):
         user = self.request.user
 
         if order.user != user and not user.is_staff:
-            raise PermissionDenied("You cannot book a table for another user's order.")
+            raise PermissionDenied('You cannot book a table for another user\'s order.')
 
         serializer.save(table_id=table_id)
 
@@ -185,14 +188,13 @@ class TableBookingViewSet(viewsets.ModelViewSet):
             )
 
             return Response({
-                "status": "success",
-                "booking_ids": [b.id for b in bookings]
+                'status': 'success',
+                'booking_ids': [b.id for b in bookings]
             }, status=201)
 
         except (ValidationError, PermissionDenied) as e:
 
             raise e
-
 
 class ExchangeRateView(APIView):
     """
@@ -201,6 +203,7 @@ class ExchangeRateView(APIView):
         Accessible to all users (no authentication required).
     """
     permission_classes =(AllowAny,)
+
     def get(self, request, *args, **kwargs):
         try:
             rates = get_private_bank_exchange_rate()

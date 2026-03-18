@@ -1,14 +1,14 @@
 "use client"
 
 import React, { useState, useEffect } from "react";
-import venueServices from "@/lib/services/venueService";
 import { useUser } from "@/app/contexts/UserProvider";
-import styles from "./NewsManagerComponent.module.css";
-import { NewItemFormComponent } from "@/components/new-item-form-component/NewItemFormComponent";
+import venueServices from "@/lib/services/venueService";
 import { INewsPhoto} from "@/models/IVenue";
+import { NewItemFormComponent } from "@/components/new-item-form-component/NewItemFormComponent";
 import {PaginationNewsComponent} from "@/components/pagination-news-component/PaginationNewsComponent";
 import {NewComponent} from "@/components/new-component/NewComponent";
 import {LoaderComponent} from "@/components/loader-component/LoaderComponent";
+import styles from "./NewsManagerComponent.module.css";
 
 interface NewsItem {
     id?: number | string;
@@ -28,8 +28,8 @@ interface VenueNewsManagerProps {
     venueId: string;
 }
 
-const NewsManagerComponent: React.FC<VenueNewsManagerProps> = ({ venueId }) => {
-    const { user } = useUser();
+const NewsManagerComponent: React.FC<VenueNewsManagerProps> = ({venueId}) => {
+    const {user} = useUser();
     const [newsGeneral, setNewsGeneral] = useState<NewsItem[]>([]);
     const [newsPromotion, setNewsPromotion] = useState<NewsItem[]>([]);
     const [newsEvent, setNewsEvent] = useState<NewsItem[]>([]);
@@ -43,46 +43,50 @@ const NewsManagerComponent: React.FC<VenueNewsManagerProps> = ({ venueId }) => {
     const [loading, setLoading] = useState(false);
     const [activeTab, setActiveTab] = useState("general");
 
-  const fetchCategory = async (type: "general" | "promotion" | "event") => {
-    if (!user?.token) return;
-    const setNews = { general: setNewsGeneral, promotion: setNewsPromotion, event: setNewsEvent }[type];
-    const setTotal = { general: setTotalNewsCountGeneral, promotion: setTotalNewsCountPromotion, event: setTotalNewsCountEvent }[type];
-    const page = type === "general" ? currentPageGeneral : type === "promotion" ? currentPagePromotion : currentPageEvent;
-    try {
-        const res = await venueServices.venues.news({ accessToken: user.token })(venueId).getAll({
-            page: page,
-            limit: itemsPerPage,
-            type: type,
-            status:"",
-        });
+    const fetchCategory = async (type: "general" | "promotion" | "event") => {
+        if (!user?.token) return;
+        const setNews = {general: setNewsGeneral, promotion: setNewsPromotion, event: setNewsEvent}[type];
+        const setTotal = {
+            general: setTotalNewsCountGeneral,
+            promotion: setTotalNewsCountPromotion,
+            event: setTotalNewsCountEvent
+        }[type];
+        const page = type === "general" ? currentPageGeneral : type === "promotion" ? currentPagePromotion : currentPageEvent;
+        try {
+            const res = await venueServices.venues.news({accessToken: user.token})(venueId).getAll({
+                page: page,
+                limit: itemsPerPage,
+                type: type,
+                status: "",
+            });
 
-        if (res.data) {
-            setNews(res.data.data || []);
-            setTotal(res.data.total_items || 0);
+            if (res.data) {
+                setNews(res.data.data || []);
+                setTotal(res.data.total_items || 0);
+            }
+        } catch (error) {
+            console.error(`Error fetching ${type}:`, error);
         }
-    } catch (error) {
-        console.error(`Error fetching ${type}:`, error);
-    }
-};
-
-useEffect(() => {
-    const loadData = async () => {
-        setLoading(true);
-        await fetchCategory(activeTab as any);
-        setLoading(false);
     };
-    void loadData();
-}, [venueId, user?.token, activeTab, currentPageGeneral, currentPagePromotion, currentPageEvent, itemsPerPage]);
+
+    useEffect(() => {
+        const loadData = async () => {
+            setLoading(true);
+            await fetchCategory(activeTab as any);
+            setLoading(false);
+        };
+        void loadData();
+    }, [venueId, user?.token, activeTab, currentPageGeneral, currentPagePromotion, currentPageEvent, itemsPerPage]);
 
 
-   const handleCreateNews = (news: NewsItem) => {
-    void fetchCategory(news.type);
-};
+    const handleCreateNews = (news: NewsItem) => {
+        void fetchCategory(news.type);
+    };
 
     const handleDeleteNews = async (newsId: string | number) => {
         if (!user?.token) return;
         try {
-            await venueServices.venues.news({ accessToken: user.token })(venueId).delete(String(newsId));
+            await venueServices.venues.news({accessToken: user.token})(venueId).delete(String(newsId));
             setNewsGeneral(prev => prev.filter(n => n.id !== newsId));
             setNewsPromotion(prev => prev.filter(n => n.id !== newsId));
             setNewsEvent(prev => prev.filter(n => n.id !== newsId));
@@ -98,15 +102,15 @@ useEffect(() => {
     };
 
     const renderNews = (category: string) => {
-    const config = {
-        general: { total: totalNewsCountGeneral, page: currentPageGeneral, items: newsGeneral },
-        promotion: { total: totalNewsCountPromotion, page: currentPagePromotion, items: newsPromotion },
-        event: { total: totalNewsCountEvent, page: currentPageEvent, items: newsEvent },
-    }[category as "general" | "promotion" | "event"];
+        const config = {
+            general: {total: totalNewsCountGeneral, page: currentPageGeneral, items: newsGeneral},
+            promotion: {total: totalNewsCountPromotion, page: currentPagePromotion, items: newsPromotion},
+            event: {total: totalNewsCountEvent, page: currentPageEvent, items: newsEvent},
+        }[category as "general" | "promotion" | "event"];
 
-    const totalPages = Math.ceil(config.total / itemsPerPage);
+        const totalPages = Math.ceil(config.total / itemsPerPage);
 
-    if (loading) return <div className={styles.loaderWrapper}><LoaderComponent/></div>;
+        if (loading) return <div className={styles.loaderWrapper}><LoaderComponent/></div>;
 
         return (
             <div className={styles.itemsWrapper}>
@@ -116,7 +120,7 @@ useEffect(() => {
                     <p className={styles.smallText}>Events</p>
                 </div>
                 <div className={styles.newsSection}>
-                   {config.items.map((news) => (
+                    {config.items.map((news) => (
                         <NewComponent
                             key={news.id}
                             news={news}
@@ -136,11 +140,11 @@ useEffect(() => {
                         />
                     ))}
 
-                   <PaginationNewsComponent
-                    totalPages={totalPages}
-                    currentPage={config.page}
-                    onPageChangeAction={(p: number) => handlePageChange(category, p)}
-                />
+                    <PaginationNewsComponent
+                        totalPages={totalPages}
+                        currentPage={config.page}
+                        onPageChangeAction={(p: number) => handlePageChange(category, p)}
+                    />
                 </div>
             </div>
         );
@@ -167,7 +171,7 @@ useEffect(() => {
             <div className={styles.wrapper}>
                 {renderNews(activeTab)}
                 <h4 className={styles.titleForm}>Add News</h4>
-                <NewItemFormComponent venueId={venueId} onCreate={handleCreateNews} />
+                <NewItemFormComponent venueId={venueId} onCreate={handleCreateNews}/>
             </div>
         </div>
     );

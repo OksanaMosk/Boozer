@@ -1,10 +1,10 @@
 "use client";
 
 import React, { useEffect, useRef, useMemo, useState } from "react";
-import ChatComponent from "../chat-component/ChatComponent";
-import { IVenue } from "@/models/IVenue";
-import styles from "./VenueInfoComponent.module.css";
 import Link from "next/link";
+import { IVenue } from "@/models/IVenue";
+import ChatComponent from "../chat-component/ChatComponent";
+import styles from "./VenueInfoComponent.module.css";
 
 interface Props {
     venue: IVenue;
@@ -14,26 +14,26 @@ const VenueInfoComponent: React.FC<Props> = ({ venue }) => {
     const footerRef = useRef<HTMLDivElement>(null);
 const [isVisible, setIsVisible] = useState(false);
 
-useEffect(() => {
-  const observer = new IntersectionObserver(
-    ([entry]) => {
-      if (entry.isIntersecting) {
-        setIsVisible(true);
-      }
-    },
-    { threshold: 0.2 }
-  );
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting) {
+                    setIsVisible(true);
+                }
+            },
+            {threshold: 0.2}
+        );
 
-  if (footerRef.current) {
-    observer.observe(footerRef.current);
-  }
+        if (footerRef.current) {
+            observer.observe(footerRef.current);
+        }
 
-  return () => {
-    if (footerRef.current) {
-      observer.unobserve(footerRef.current);
-    }
-  };
-}, []);
+        return () => {
+            if (footerRef.current) {
+                observer.unobserve(footerRef.current);
+            }
+        };
+    }, []);
 
     const photos = venue.photos ?? [];
 
@@ -209,16 +209,15 @@ useEffect(() => {
                     <Link href="/boozer">
                         <p className={styles.titleMenu}>Your VIP Boozer status starts here!</p>
                         <img
-                        src="/favicon/android-chrome-512x512.png"
-                        alt="logo"
-                        width={80}
-                        height={80}
-                        className={styles.logoImage}
-                          loading="eager"
-                        // priority={true}
-                         style={{ objectFit: "contain" }}
-                    />
-                        <p  className={styles.titleJoin}>Join now</p>
+                            src="/favicon/android-chrome-512x512.png"
+                            alt="logo"
+                            width={80}
+                            height={80}
+                            className={styles.logoImage}
+                            loading="eager"
+                            style={{objectFit: "contain"}}
+                        />
+                        <p className={styles.titleJoin}>Join now</p>
                     </Link>
                 </div>
             </div>
@@ -241,7 +240,7 @@ useEffect(() => {
                 </div>
 
                 <div className={styles.footerSection}>
-                    <h3 className={styles.footerTitle} >CONTACT US</h3>
+                    <h3 className={styles.footerTitle}>CONTACT US</h3>
                     <p>ID: {venue.id}</p>
                     <div style={{margin: "20px auto", maxWidth: "400px"}}>
                         {venue.id ? (
@@ -260,16 +259,15 @@ useEffect(() => {
                             <ul className={styles.openList}>
                                 {Object.entries(venue.opening_hours).map(([day, hours]) => (
                                     <li key={day}>
-                                            {day.charAt(0).toUpperCase() + day.slice(1).toLowerCase()}: {hours.open} - {hours.close}
+                                        {day.charAt(0).toUpperCase() + day.slice(1).toLowerCase()}: {hours.open} - {hours.close}
                                     </li>
                                 ))}
                             </ul>
                         ) : (
                             <p>No opening hours available</p>
                         )}
-                       </div>
+                    </div>
                 </div>
-
             </div>
         </div>
     );

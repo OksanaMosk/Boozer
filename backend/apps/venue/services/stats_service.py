@@ -86,7 +86,7 @@ def get_venue_stats_for_user(venue_id, user):
     try:
         venue = VenueModel.objects.get(id=venue_id)
     except VenueModel.DoesNotExist:
-        raise VenueModel.DoesNotExist('Vevenue not found')
+        raise VenueModel.DoesNotExist('Venue not found')
 
     return {
         'total_views': venue.views,

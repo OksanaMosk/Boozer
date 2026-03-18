@@ -1,38 +1,51 @@
 
 import axios from "axios";
 
-const baseURL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+// const baseURL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+
+const isServer = typeof window === "undefined";
+
+// const baseURL = isServer
+//   ? (process.env.INTERNAL_API_URL || "http://localhost/api")
+//   : (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8888/api");
+
+const baseURL = isServer
+  ? process.env.INTERNAL_API_URL
+  : process.env.NEXT_PUBLIC_API_URL;
+if (!baseURL) {
+  console.warn("API URL is not defined! Check your .env files.");
+}
+console.log("CLIENT API URL:", process.env.NEXT_PUBLIC_API_URL);
+
 
 const apiService = (accessToken?: string) => {
-  const instance = axios.create({
-    baseURL
-  });
-  if (accessToken) {
-    instance.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
-  }
-
-
-  instance.interceptors.response.use(
-  r => r,
-  e => {
-    if (e.response?.status === 401) {
-        document.cookie = "authjs.session-token=; Max-Age=0; path=/";
-        document.cookie = "refresh-token=; Max-Age=0; path=/";
-        console.log(document.cookie);
-        // alert(document.cookie);
-      window.location.href = "/login";
+    const instance = axios.create({
+        baseURL
+    });
+    if (accessToken) {
+        instance.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
     }
-    return Promise.reject(e);
-  }
-);
 
 
+    instance.interceptors.response.use(
+        r => r,
+        e => {
+            if (e.response?.status === 401) {
+                document.cookie = "authjs.session-token=; Max-Age=0; path=/";
+                document.cookie = "refresh-token=; Max-Age=0; path=/";
+                console.log(document.cookie);
+                // alert(document.cookie);
+                window.location.href = "/login";
+            }
+            return Promise.reject(e);
+        }
+    );
 
-  return instance;
+
+    return instance;
 };
-export { apiService };
+export {apiService};
 
-// export const dynamic = "force-dynamic"; на сторінку якшо шо
 
 
 

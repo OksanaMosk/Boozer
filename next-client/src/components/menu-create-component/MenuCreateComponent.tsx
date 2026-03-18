@@ -1,26 +1,27 @@
 "use client"
 
 import React, {useState, ChangeEvent, SyntheticEvent} from "react";
-import styles from "./MenuCreateComponent.module.css";
-import { LoaderComponent } from "@/components/loader-component/LoaderComponent";
-import venueServices from "@/lib/services/venueService";
 import {useUser} from "@/app/contexts/UserProvider";
 import {IMenu} from "@/models/IVenue";
+import venueServices from "@/lib/services/venueService";
+import { LoaderComponent } from "@/components/loader-component/LoaderComponent";
+import styles from "./MenuCreateComponent.module.css";
 
 interface VenueMenuCreateComponentProps {
     venueId: string | number;
     onMenuCreated: (menu: IMenu) => void;
 
 }
-const MenuCreateComponent: React.FC<VenueMenuCreateComponentProps> = ({ venueId, onMenuCreated }) => {
-    const [menu, setMenu] = useState<IMenu>({ venue_id: String(venueId), title: "" });
+
+const MenuCreateComponent: React.FC<VenueMenuCreateComponentProps> = ({venueId, onMenuCreated}) => {
+    const [menu, setMenu] = useState<IMenu>({venue_id: String(venueId), title: ""});
     const [loadingMenu, setLoadingMenu] = useState(false);
-    const { user } = useUser();
+    const {user} = useUser();
     const [message, setMessage] = useState("");
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        setMenu(prev => ({ ...prev, [name]: value }));
+        const {name, value} = e.target;
+        setMenu(prev => ({...prev, [name]: value}));
         setMessage("");
     };
 
@@ -33,7 +34,7 @@ const MenuCreateComponent: React.FC<VenueMenuCreateComponentProps> = ({ venueId,
 
         setLoadingMenu(true);
         try {
-            const res = await venueServices.venues.menu({ accessToken: user.token })(String(venueId)).create({ title: menu.title });
+            const res = await venueServices.venues.menu({accessToken: user.token})(String(venueId)).create({title: menu.title});
             const menuId = res.data.id;
             if (!menuId) {
                 setMessage("Menu was not created. Please try again.");
@@ -42,7 +43,7 @@ const MenuCreateComponent: React.FC<VenueMenuCreateComponentProps> = ({ venueId,
             setMenu(prev => ({...prev, id: menuId}));
             const newMenu = {...menu, id: menuId};
             onMenuCreated(newMenu);
-            setMenu({ venue_id: String(venueId), title: "" });
+            setMenu({venue_id: String(venueId), title: ""});
         } catch (err: any) {
             setMessage(err?.response?.data?.detail || "Error creating menu.");
         } finally {

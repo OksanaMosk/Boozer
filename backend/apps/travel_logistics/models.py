@@ -39,7 +39,7 @@ class TravelLogisticsModel(BaseModel):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.venue.name} | {self.get_step_type_display()} | {self.price_per_km}/km"
+        return f'{self.venue.name} | {self.get_step_type_display()} | {self.price_per_km}/km'
 
 
 class AirportModel(BaseModel):
@@ -56,7 +56,7 @@ class AirportModel(BaseModel):
         verbose_name_plural = "Airports"
 
     def __str__(self):
-        return f"{self.name} ({self.iata_code})"
+        return f'{self.name} ({self.iata_code})'
 
 
 class ExtraServiceModel(models.Model):

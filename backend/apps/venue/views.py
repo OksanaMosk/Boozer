@@ -39,7 +39,9 @@ class VenueViewSet(viewsets.ModelViewSet):
         elif role == 'ADMIN':
             serializer.save(venue_admin=user)
         else:
-            raise PermissionDenied("You do not have permission to create a venue.")
+            raise PermissionDenied('You do not have permission to create a venue.')
+
+
 class VenuePhotoViewSet(viewsets.ModelViewSet):
     queryset = VenuePhotoModel.objects.all()
     serializer_class = VenuePhotoSerializer
@@ -53,10 +55,12 @@ class TagViewSet(viewsets.ModelViewSet):
     permission_classes = [AllowAny]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
 
+
 class VenueTagViewSet(viewsets.ModelViewSet):
     queryset = VenueTagModel.objects.all()
     serializer_class = VenueTagSerializer
     permission_classes = [IsAdminOrVenueAdminOrReadOnly]
+
 
 class TableViewSet(viewsets.ModelViewSet):
     queryset = TableModel.objects.all()
@@ -74,18 +78,18 @@ class TableViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         venue_pk = self.kwargs.get('venue_pk')
         if not venue_pk:
-            raise serializers.ValidationError({"venue": "venue_pk is required in URL"})
+            raise serializers.ValidationError({'venue': 'venue_pk is required in URL'})
         serializer.save(venue_id=venue_pk)
 
     @action(detail=False, methods=['get'], permission_classes=[permissions.AllowAny])
     def available(self, request, venue_pk=None):
         if not venue_pk:
-            return Response({"error": "venue_pk is required in URL"}, status=400)
+            return Response({'error': 'venue_pk is required in URL'}, status=400)
 
         start = request.query_params.get('start')
         end = request.query_params.get('end')
         if not start or not end:
-            return Response({"error": "start and end are required"}, status=400)
+            return Response({'error': 'start and end are required'}, status=400)
 
         start_dt = parse_datetime(start)
         end_dt = parse_datetime(end)
@@ -101,36 +105,38 @@ class TableViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(tables, many=True)
         return Response(serializer.data)
 
+
 class TablesLayoutViewSet(viewsets.ViewSet):
     permission_classes = [IsAdminOrVenueAdminOrReadOnly]
 
     @action(detail=False, methods=['get'], url_path='get_background')
     def get_background(self, request, venue_pk=None):
         if not venue_pk:
-            return Response({"error": "venue_pk is required"}, status=400)
+            return Response({'error': 'venue_pk is required'}, status=400)
         try:
             venue = VenueModel.objects.get(pk=venue_pk)
         except VenueModel.DoesNotExist:
-            return Response({"error": "Venue not found"}, status=404)
-        return Response({"url": venue.background_tables or ""})
+            return Response({'error': 'Venue not found'}, status=404)
+        return Response({'url': venue.background_tables or ''})
 
 
     @action(detail=False, methods=['post'], url_path='upload_background')
     def upload_background(self, request, venue_pk=None):
         if not venue_pk:
-            return Response({"error": "venue_pk is required"}, status=400)
+            return Response({'error': 'venue_pk is required'}, status=400)
         try:
             venue = VenueModel.objects.get(pk=venue_pk)
         except VenueModel.DoesNotExist:
-            return Response({"error": "Venue not found"}, status=404)
+            return Response({'error': 'Venue not found'}, status=404)
 
-        url = request.data.get("url")
+        url = request.data.get('url')
         if not url:
-            return Response({"error": "URL is required"}, status=400)
+            return Response({'error': 'URL is required'}, status=400)
 
         venue.background_tables = url
         venue.save()
-        return Response({"url": venue.background_tables})
+        return Response({'url': venue.background_tables})
+
 
 class VenueUserListView(APIView):
     """
@@ -145,7 +151,6 @@ class VenueUserListView(APIView):
         venues = get_user_venues(request.user, user_id)
         serializer = VenueSerializer(venues, many=True)
         return Response({'venues': serializer.data})
-
 
 
 @api_view(['GET'])
@@ -165,12 +170,12 @@ def venue_constants(request):
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def city_coordinates(request):
-    city = request.GET.get("city")
-    country = request.GET.get("country")
+    city = request.GET.get('city')
+    country = request.GET.get('country')
     if not city or not country:
-        return Response({"detail": "City and country are required"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'detail': 'City and country are required'}, status=status.HTTP_400_BAD_REQUEST)
 
     lat, lng = geocode_city(city, country)
-    return Response({"latitude": lat, "longitude": lng}, status=status.HTTP_200_OK)
+    return Response({'latitude': lat, 'longitude': lng}, status=status.HTTP_200_OK)
 
 

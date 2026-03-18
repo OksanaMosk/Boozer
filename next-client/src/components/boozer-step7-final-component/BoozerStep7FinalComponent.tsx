@@ -1,12 +1,12 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import styles from "./BoozerStep7FinalComponent.module.css";
+import { AxiosResponse } from "axios";
 import { useUser } from "@/app/contexts/UserProvider";
 import venueServices from "@/lib/services/venueService";
-import { LoaderComponent } from "@/components/loader-component/LoaderComponent";
 import { OrderStatusType, IOrder } from "@/models/IOrder";
-import { AxiosResponse } from "axios";
+import { LoaderComponent } from "@/components/loader-component/LoaderComponent";
+import styles from "./BoozerStep7FinalComponent.module.css";
 
 interface Props {
     orderId: number;
@@ -14,8 +14,8 @@ interface Props {
     venueId: string;
 }
 
-const BoozerStep7Final: React.FC<Props> = ({ orderId, venueId, onReset }) => {
-    const { user } = useUser();
+const BoozerStep7Final: React.FC<Props> = ({orderId, venueId, onReset}) => {
+    const {user} = useUser();
     const [isConfirmed, setIsConfirmed] = useState(false);
     const [loading, setLoading] = useState(false);
     const [order, setOrder] = useState<IOrder | null>(null);
@@ -25,7 +25,7 @@ const BoozerStep7Final: React.FC<Props> = ({ orderId, venueId, onReset }) => {
             if (!user?.token) return;
             try {
                 const res: AxiosResponse<IOrder> = await venueServices.venues
-                    .orders({ accessToken: user.token })(venueId)
+                    .orders({accessToken: user.token})(venueId)
                     .get(orderId);
                 setOrder(res.data);
 
@@ -41,8 +41,8 @@ const BoozerStep7Final: React.FC<Props> = ({ orderId, venueId, onReset }) => {
         try {
             if (!user?.token) return;
             await venueServices.venues
-                .orders({ accessToken: user.token })(venueId.toString())
-                .update(orderId, { status: "CONFIRMED" as OrderStatusType });
+                .orders({accessToken: user.token})(venueId.toString())
+                .update(orderId, {status: "CONFIRMED" as OrderStatusType});
 
             setIsConfirmed(true);
         } catch (err) {
@@ -53,7 +53,7 @@ const BoozerStep7Final: React.FC<Props> = ({ orderId, venueId, onReset }) => {
     };
 
     if (!user) return <p className={styles.errorText}>Please log in.</p>;
-    if (!order) return <LoaderComponent />;
+    if (!order) return <LoaderComponent/>;
 
     const rate = Number(order.exchange_rate) || 1;
 
@@ -63,7 +63,7 @@ const BoozerStep7Final: React.FC<Props> = ({ orderId, venueId, onReset }) => {
                 <div className={styles.confetti}>
                     🎊
                     <img
-                       src="/favicon/android-chrome-512x512.png"
+                        src="/favicon/android-chrome-512x512.png"
                         width={100}
                         height={100}
                         className={styles.logoImage}
@@ -74,56 +74,56 @@ const BoozerStep7Final: React.FC<Props> = ({ orderId, venueId, onReset }) => {
 
                 <h1 className={styles.title}>Cheers!</h1>
                 <h2 className={styles.title}>Your "VIP Boozer"</h2>
-                 <h2 className={styles.title}>is Ready!</h2>
+                <h2 className={styles.title}>is Ready!</h2>
                 <p className={styles.titleId}>Order <b>#{order.id}</b> is officially confirmed.</p>
 
                 <div className={styles.receiptCard}>
-                     <h3 className={styles.receiptTitle} >Official Receipt</h3>
+                    <h3 className={styles.receiptTitle}>Official Receipt</h3>
                     <div className={styles.receiptHeader}>
 
-                            {order.tables && order.tables.length > 0 && (() => {
-                                const firstBooking = order.tables[0];
-                                const range = typeof firstBooking.time_range === 'string'
-                                    ? JSON.parse(firstBooking.time_range)
-                                    : firstBooking.time_range;
+                        {order.tables && order.tables.length > 0 && (() => {
+                            const firstBooking = order.tables[0];
+                            const range = typeof firstBooking.time_range === 'string'
+                                ? JSON.parse(firstBooking.time_range)
+                                : firstBooking.time_range;
 
-                                const bookingDate = range?.lower
-                                    ? new Date(range.lower).toLocaleDateString('uk-UA', {
-                                        day: '2-digit',
-                                        month: '2-digit',
-                                        year: 'numeric'
-                                    })
-                                    : "";
+                            const bookingDate = range?.lower
+                                ? new Date(range.lower).toLocaleDateString('uk-UA', {
+                                    day: '2-digit',
+                                    month: '2-digit',
+                                    year: 'numeric'
+                                })
+                                : "";
 
-                                const startTime = range?.lower
-                                    ? new Date(range.lower).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})
-                                    : "";
-                                const endTime = range?.upper
-                                    ? new Date(range.upper).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})
-                                    : "";
+                            const startTime = range?.lower
+                                ? new Date(range.lower).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})
+                                : "";
+                            const endTime = range?.upper
+                                ? new Date(range.upper).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})
+                                : "";
 
-                                return (
-                                    <div className={styles.tablesSection}>
-                                        <h4 className={styles.receiptRow}>
-                                            Reserved Tables
-                                        </h4>
+                            return (
+                                <div className={styles.tablesSection}>
+                                    <h4 className={styles.receiptRow}>
+                                        Reserved Tables
+                                    </h4>
 
-                                        {(bookingDate || (startTime && endTime)) && (
-                                            <p className={styles.timeSpan}>
-                                                {bookingDate} {startTime && endTime && `(${startTime} — ${endTime})`}
-                                            </p>
-                                        )}
+                                    {(bookingDate || (startTime && endTime)) && (
+                                        <p className={styles.timeSpan}>
+                                            {bookingDate} {startTime && endTime && `(${startTime} — ${endTime})`}
+                                        </p>
+                                    )}
 
-                                        <ul className={styles.tableList}>
-                                            {order.tables.map((booking: any) => (
-                                                <li key={booking.id} className={styles.receiptRow}>
-                                                    <strong>Table №{booking.table}</strong>
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    </div>
-                                );
-                            })()}
+                                    <ul className={styles.tableList}>
+                                        {order.tables.map((booking: any) => (
+                                            <li key={booking.id} className={styles.receiptRow}>
+                                                <strong>Table №{booking.table}</strong>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            );
+                        })()}
                     </div>
 
                     <div className={styles.detailsGrid}>
@@ -202,7 +202,7 @@ const BoozerStep7Final: React.FC<Props> = ({ orderId, venueId, onReset }) => {
                         <div className={styles.totalRow}>
                             <span>TOTAL PAID</span>
                             <span className={styles.totalAmount}>
-                                {Number(order.total_price).toLocaleString(undefined, { minimumFractionDigits: 2 })} {order.currency}
+                                {Number(order.total_price).toLocaleString(undefined, {minimumFractionDigits: 2})} {order.currency}
                             </span>
                         </div>
                     </div>
@@ -216,7 +216,7 @@ const BoozerStep7Final: React.FC<Props> = ({ orderId, venueId, onReset }) => {
     return (
         <div className={styles.container}>
             <h2 className={styles.title}>Step 7:</h2>
-             <div className={styles.wrapperTitle}>
+            <div className={styles.wrapperTitle}>
                 <h4 className={styles.bigText}> Secure Your</h4>
                 <p className={styles.smallText}>booking</p>
 
@@ -225,7 +225,7 @@ const BoozerStep7Final: React.FC<Props> = ({ orderId, venueId, onReset }) => {
             <div className={styles.finalSummary}>
                 <p className={styles.label}>Total to Pay:</p>
                 <h1 className={styles.amount}>
-                    {Number(order.total_price).toLocaleString(undefined, { minimumFractionDigits: 2 })} {order.currency}
+                    {Number(order.total_price).toLocaleString(undefined, {minimumFractionDigits: 2})} {order.currency}
                 </h1>
                 <button
                     className={styles.payBtn}

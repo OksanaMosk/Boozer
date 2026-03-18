@@ -1,31 +1,31 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Stage, Layer } from "react-konva";
-import Table from "./Table";
-import { ITable } from "@/models/IVenue";
-import venueServices from "@/lib/services/venueService";
-import { useUser } from "@/app/contexts/UserProvider";
 import { AxiosResponse } from "axios";
+import { Stage, Layer } from "react-konva";
 import { Image as KonvaImage } from "react-konva";
-import styles from "./TableMapAdmin.module.css";
+import { useUser } from "@/app/contexts/UserProvider";
 import {supabase} from "@/lib/constants/supabaseClient";
+import venueServices from "@/lib/services/venueService";
+import { ITable } from "@/models/IVenue";
+import Table from "./Table";
+import styles from "./TableMapAdmin.module.css";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:8888";
 
 const TABLE_TYPES = [
-  { capacity: 2 },
-  { capacity: 4 },
-  { capacity: 6 },
-  { capacity: 8 },
+    {capacity: 2},
+    {capacity: 4},
+    {capacity: 6},
+    {capacity: 8},
 ];
 
 interface TableMapAdminProps {
-  venueId: string;
-  token?: string;
+    venueId: string;
+    token?: string;
 }
 
-const TableMapAdmin: React.FC<TableMapAdminProps> = ({ venueId, token }) => {
+const TableMapAdmin: React.FC<TableMapAdminProps> = ({venueId, token}) => {
     const [tables, setTables] = useState<ITable[]>([]);
     const [background, setBackground] = useState<HTMLImageElement | null>(null);
     const [backgroundFile, setBackgroundFile] = useState<File | null>(null);
@@ -42,8 +42,8 @@ const TableMapAdmin: React.FC<TableMapAdminProps> = ({ venueId, token }) => {
     const {user} = useUser();
     const accessToken = token || user?.token;
 
-  const getTableService = () => accessToken ? venueServices.venues.tables({ accessToken })(venueId) : null;
-  const getLayoutService = () => accessToken  ? venueServices.venues.background({ accessToken })(venueId) : null;
+    const getTableService = () => accessToken ? venueServices.venues.tables({accessToken})(venueId) : null;
+    const getLayoutService = () => accessToken ? venueServices.venues.background({accessToken})(venueId) : null;
 
     useEffect(() => {
         const service = getLayoutService();
@@ -68,12 +68,10 @@ const TableMapAdmin: React.FC<TableMapAdminProps> = ({ venueId, token }) => {
         service.getAll()
             .then((res: AxiosResponse) => {
                 const venueTables = res.data.data
-                console.log("Filtered tables for venue:", venueTables);
                 setTables(venueTables);
             })
             .catch(console.error);
     }, [venueId, accessToken]);
-
 
 
     useEffect(() => {
@@ -101,99 +99,107 @@ const TableMapAdmin: React.FC<TableMapAdminProps> = ({ venueId, token }) => {
         return () => window.removeEventListener("keydown", handleEsc);
     }, []);
 
-  const handleBackgroundUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files?.[0]) return;
-    const file = e.target.files[0];
-    setBackgroundFile(file);
-    const img = new Image();
-    img.src = URL.createObjectURL(file);
-    img.onload = () => setBackground(img);
-  if (file) setSelectedFileName(file.name);
+    const handleBackgroundUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (!e.target.files?.[0]) return;
+        const file = e.target.files[0];
+        setBackgroundFile(file);
+        const img = new Image();
+        img.src = URL.createObjectURL(file);
+        img.onload = () => setBackground(img);
+        if (file) setSelectedFileName(file.name);
 
-  };
+    };
 
-  const uploadToSupabase = async (file: File) => {
-  if (!supabase) return null;
+    const uploadToSupabase = async (file: File) => {
+        if (!supabase) return null;
 
-  const bucketName = process.env.NEXT_PUBLIC_SUPABASE_BUCKET_NAME!;
-  const filePath = `venues/${venueId}/background_tables.jpg`;
+        const bucketName = process.env.NEXT_PUBLIC_SUPABASE_BUCKET_NAME!;
+        const filePath = `venues/${venueId}/background_tables.jpg`;
 
-  const { error } = await supabase.storage
-    .from(bucketName)
-    .upload(filePath, file, {
-      cacheControl: "3600",
-      upsert: true,
-    });
+        const {error} = await supabase.storage
+            .from(bucketName)
+            .upload(filePath, file, {
+                cacheControl: "3600",
+                upsert: true,
+            });
 
-  if (error) {
-    console.error("Error uploading to Supabase:", error);
-    return null;
-  }
+        if (error) {
+            return null;
+        }
 
-  const { data } = supabase.storage
-    .from(bucketName)
-    .getPublicUrl(filePath);
+        const {data} = supabase.storage
+            .from(bucketName)
+            .getPublicUrl(filePath);
 
-  return `${data.publicUrl}?t=${Date.now()}`;
+        return `${data.publicUrl}?t=${Date.now()}`;
+    };
+
+    const addTable = () => {
+        const newTable: ITable = {
+            id: `temp-${venueId}-${Date.now()}`,
+            capacity: selectedTableType.capacity,
+            x: 0.5,
+            y: 0.5,
+            width: 160,
+            height: 160,
+            venue: Number(venueId),
+        };
+        setTables(prev => [...prev, newTable]);
+    };
+
+const handleDragEnd = (updatedTable: ITable) => {
+    if (stageSize.width === 0) {
+        return;
+    }
+    const relativeX = updatedTable.x / stageSize.width;
+    const relativeY = updatedTable.y / stageSize.height;
+    setTables(prev =>
+        prev.map(t => t.id === updatedTable.id
+            ? { ...t, x: relativeX, y: relativeY }
+            : t
+        )
+    );
 };
 
-  const addTable = () => {
-    const newTable: ITable = {
-       id: `temp-${venueId}-${Date.now()}`,
-      capacity: selectedTableType.capacity,
-      x: 0.5,
-      y: 0.5,
-      width: 160,
-      height: 160,
-      venue: Number(venueId),
+    const saveAll = async () => {
+        const tableService = getTableService();
+        if (!tableService) return;
+
+        if (stageSize.width === 0 || stageSize.height === 0) {
+    return <div>Calculating map size...</div>;
+}
+
+        try {
+            if (backgroundFile) {
+                const publicUrl = await uploadToSupabase(backgroundFile);
+                if (!publicUrl) return;
+                const layoutService = getLayoutService();
+                if (!layoutService) return new Error("Layout service недоступний");
+                await layoutService.uploadBackground(publicUrl);
+            }
+
+            const responses = await Promise.all(
+                tables.map(table => {
+                    if (typeof table.id === "string" && table.id.startsWith("temp-")) {
+                        return tableService.create({
+                            ...table,
+                            venue: Number(venueId),
+                        });
+                    } else {
+                        return tableService.update(String(table.id), table);
+                    }
+                })
+            );
+
+            setTables(responses.map(res => res.data));
+            setBackgroundFile(null);
+            setSaveStatus("Save successful");
+            setTimeout(() => setSaveStatus(null), 3000);
+        } catch (err) {
+            setSaveStatus("Save failed");
+            setTimeout(() => setSaveStatus(null), 3000);
+        }
     };
-    setTables(prev => [...prev, newTable]);
-  };
-
-  const handleDragEnd = (updatedTable: ITable) => {
-    setTables(prev =>
-      prev.map(t => t.id === updatedTable.id
-        ? { ...t, x: updatedTable.x / stageSize.width, y: updatedTable.y / stageSize.height }
-        : t
-      )
-    );
-  };
-
-  const saveAll = async () => {
-  const tableService = getTableService();
-  if (!tableService) return;
-
-  try {
-      if (backgroundFile) {
-          const publicUrl = await uploadToSupabase(backgroundFile);
-          if (!publicUrl) return;
-          const layoutService = getLayoutService();
-          if (!layoutService) return new Error("Layout service недоступний");
-          await layoutService.uploadBackground(publicUrl);
-      }
-
-      const responses = await Promise.all(
-          tables.map(table => {
-              if (typeof table.id === "string" && table.id.startsWith("temp-")) {
-                  return tableService.create({
-                      ...table,
-                      venue: Number(venueId),
-                  });
-              } else {
-                  return tableService.update(String(table.id), table);
-              }
-          })
-      );
-
-      setTables(responses.map(res => res.data));
-      setBackgroundFile(null);
-      setSaveStatus("Save successful");
-      setTimeout(() => setSaveStatus(null), 3000);
-  } catch (err) {
-      setSaveStatus("Save failed");
-      setTimeout(() => setSaveStatus(null), 3000);
-  }
-  };
 
     const handleDelete = async (table: ITable) => {
         setContextMenu(null);
@@ -217,8 +223,8 @@ const TableMapAdmin: React.FC<TableMapAdminProps> = ({ venueId, token }) => {
         <div className={styles.container}>
             <div className={styles.wrapperTitle}>
                 <h4 className={styles.bigText}>
-                Table
-            </h4>
+                    Table
+                </h4>
                 <div className={styles.smallText}>
                     map
                 </div>
@@ -226,7 +232,7 @@ const TableMapAdmin: React.FC<TableMapAdminProps> = ({ venueId, token }) => {
 
             <div className={styles.controls}>
 
-                <div className={styles.photoWrapper} >
+                <div className={styles.photoWrapper}>
                     <label htmlFor="background-upload" className={styles.inputFile}>
                         Choose Hall
                     </label>
@@ -237,18 +243,18 @@ const TableMapAdmin: React.FC<TableMapAdminProps> = ({ venueId, token }) => {
                         onChange={handleBackgroundUpload}
                         style={{display: "none"}}
                     />
-                    <span className={styles.photoSpan} >{selectedFileName || "No file chosen"}</span></div>
+                    <span className={styles.photoSpan}>{selectedFileName || "No file chosen"}</span></div>
                 <select
                     name="tableCapacity"
                     value={selectedTableType.capacity}
                     onChange={e =>
-                  setSelectedTableType(TABLE_TYPES.find(t => t.capacity === Number(e.target.value)) || TABLE_TYPES[0])
-                }
+                        setSelectedTableType(TABLE_TYPES.find(t => t.capacity === Number(e.target.value)) || TABLE_TYPES[0])
+                    }
                     className={styles.select}
-          >
-              {TABLE_TYPES.map(t => (
-                  <option key={t.capacity} value={t.capacity}>{t.capacity} seats</option>
-              ))}
+                >
+                    {TABLE_TYPES.map(t => (
+                        <option key={t.capacity} value={t.capacity}>{t.capacity} seats</option>
+                    ))}
                 </select>
                 <div className={styles.hintMessage}>
                     <button className={styles.button} onClick={addTable}>Add Table</button>
@@ -256,55 +262,57 @@ const TableMapAdmin: React.FC<TableMapAdminProps> = ({ venueId, token }) => {
                         💡 To delete - right-click on it
                     </p>
                 </div>
-                <div  className={styles.hintMessage}>
+                <div className={styles.hintMessage}>
                     <button className={styles.button} onClick={saveAll}>Save All</button>
                     {saveStatus && <div className={styles.saveStatus}>{saveStatus}</div>}</div>
             </div>
-            
-        <div className={styles.stageWrapper}>
-            <Stage width={stageSize.width} height={stageSize.height} className={styles.stage}>
-                <Layer>
-                    {background && <KonvaImage image={background} width={stageSize.width} height={stageSize.height}/>}
-                    {tables.map(table => (
-                        <Table
-                            key={`${venueId}-${table.id}`}
-                            table={{...table, x: table.x * stageSize.width, y: table.y * stageSize.height}}
-                            draggable
-                            onDragEnd={handleDragEnd}
-                            onContextMenu={(e, tbl) => {
-                                e.evt.preventDefault()
 
-                                setContextMenu({
-                                    x: e.evt.clientX,
-                                    y: e.evt.clientY,
-                                    table: tbl,
-                                })
-                            }}
+            <div className={styles.stageWrapper}>
+                <Stage width={stageSize.width} height={stageSize.height} className={styles.stage}>
+                    <Layer>
+                        {background &&
+                            <KonvaImage image={background} width={stageSize.width} height={stageSize.height}/>}
+                        {tables.map(table => (
+                            <Table
+                                key={`${venueId}-${table.id}`}
+                                table={{...table, x: table.x * stageSize.width, y: table.y * stageSize.height}}
+                                draggable
+                                onDragEnd={handleDragEnd}
+                                onContextMenu={(e, tbl) => {
+                                    e.evt.preventDefault()
 
-                        />
-                    ))}
-                </Layer>
-            </Stage>
-            {contextMenu && (
-                <div
-                    className={styles.contextMenu}
-                    style={{
-                        position: "fixed",
-                        top: contextMenu.y,
-                        left: contextMenu.x,
-                    }}
-                >
-                    <button
-                        className={styles.deleteButton}
-                        onClick={() => handleDelete(contextMenu.table)}
+                                    setContextMenu({
+                                        x: e.evt.clientX,
+                                        y: e.evt.clientY,
+                                        table: tbl,
+                                    })
+                                }}
+
+                            />
+                        ))}
+                    </Layer>
+                </Stage>
+                {contextMenu && (
+                    <div
+                        className={styles.contextMenu}
+                        style={{
+                            position: "fixed",
+                            top: contextMenu.y,
+                            left: contextMenu.x,
+                        }}
                     >
-                        🗑 Delete
-                    </button>
-                </div>
+                        <button
+                            className={styles.deleteButton}
+                            onClick={() => handleDelete(contextMenu.table)}
+                        >
+                            🗑 Delete
+                        </button>
+                    </div>
             )}
         </div>
     </div>
   )
+
 };
 
 export default TableMapAdmin;

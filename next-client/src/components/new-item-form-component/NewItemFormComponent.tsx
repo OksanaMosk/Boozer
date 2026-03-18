@@ -1,55 +1,55 @@
 "use client";
 
 import React, { useState, ChangeEvent } from "react";
-import styles from "./NewItemFormComponent.module.css";
-import { LoaderComponent } from "@/components/loader-component/LoaderComponent";
 import { useUser } from "@/app/contexts/UserProvider";
 import venueServices from "@/lib/services/venueService";
-import PhotoMultipleUploadComponent from "@/components/photo-multiple-upload-component/PhotoMultipleUploadComponent";
 import {NewsStatus, NewsType} from "@/models/IVenue";
+import PhotoMultipleUploadComponent from "@/components/photo-multiple-upload-component/PhotoMultipleUploadComponent";
+import { LoaderComponent } from "@/components/loader-component/LoaderComponent";
 import DatePickerComponent from "@/components/date-picker-component/DatePickerComponent";
+import styles from "./NewItemFormComponent.module.css";
 
 interface NewNews {
-  title: string;
-  content: string;
-  type: "general" | "promotion" | "event";
-  end_date?: string | null;
-  is_pinned: boolean;
-  photos: File[];
-  preview: string | null;
+    title: string;
+    content: string;
+    type: "general" | "promotion" | "event";
+    end_date?: string | null;
+    is_pinned: boolean;
+    photos: File[];
+    preview: string | null;
 }
 
 interface News {
-  id: string | number;
-  venue: string | number;
-  title: string;
-  content: string;
-  type: NewsType;
-  status: NewsStatus;
-  end_date?: string | null;
-  is_pinned: boolean;
-  photos?: string[];
-  preview?: string | null;
+    id: string | number;
+    venue: string | number;
+    title: string;
+    content: string;
+    type: NewsType;
+    status: NewsStatus;
+    end_date?: string | null;
+    is_pinned: boolean;
+    photos?: string[];
+    preview?: string | null;
 }
 
 interface NewNewsFormProps {
-  venueId: string;
-  onCreate: (news: News) => void;
+    venueId: string;
+    onCreate: (news: News) => void;
 }
 
 const NEWS_TYPE_OPTIONS = ["general", "promotion", "event"] as const;
 
-export const NewItemFormComponent: React.FC<NewNewsFormProps> = ({ venueId, onCreate }) => {
-  const { user } = useUser();
-  const [newsItem, setNewsItem] = useState<NewNews>({
-    title: "",
-    content: "",
-    type: "general",
-    end_date: null,
-    is_pinned: false,
-    photos: [],
-    preview: null,
-  });
+export const NewItemFormComponent: React.FC<NewNewsFormProps> = ({venueId, onCreate}) => {
+    const {user} = useUser();
+    const [newsItem, setNewsItem] = useState<NewNews>({
+        title: "",
+        content: "",
+        type: "general",
+        end_date: null,
+        is_pinned: false,
+        photos: [],
+        preview: null,
+    });
     const [isCalendarOpen, setIsCalendarOpen] = useState(false);
     const [loading, setLoading] = useState(false);
     const [createdNews, setCreatedNews] = useState<News | null>(null);
@@ -63,51 +63,51 @@ export const NewItemFormComponent: React.FC<NewNewsFormProps> = ({ venueId, onCr
         if (type === "checkbox" && "checked" in e.target) {
             val = e.target.checked;
         }
-        setNewsItem(prev => ({ ...prev, [name]: val }));
+        setNewsItem(prev => ({...prev, [name]: val}));
     };
 
-  const handleAddNews = async (e: React.SyntheticEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (!user?.token) return;
-    setLoading(true);
-    try {
-        const formData = new FormData();
-        formData.append("title", newsItem.title);
-        formData.append("content", newsItem.content);
-        formData.append("type", newsItem.type);
-        formData.append("is_pinned", newsItem.is_pinned ? "true" : "false");
-        if (newsItem.end_date) {
-            const dateObject = new Date(newsItem.end_date ?? "");
-            if (!isNaN(dateObject.getTime())) {
-                formData.append("end_date", dateObject.toISOString());
+    const handleAddNews = async (e: React.SyntheticEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        if (!user?.token) return;
+        setLoading(true);
+        try {
+            const formData = new FormData();
+            formData.append("title", newsItem.title);
+            formData.append("content", newsItem.content);
+            formData.append("type", newsItem.type);
+            formData.append("is_pinned", newsItem.is_pinned ? "true" : "false");
+            if (newsItem.end_date) {
+                const dateObject = new Date(newsItem.end_date ?? "");
+                if (!isNaN(dateObject.getTime())) {
+                    formData.append("end_date", dateObject.toISOString());
+                }
             }
+            const res = await venueServices
+                .venues
+                .news({accessToken: user.token})(venueId)
+                .create(formData as any);
+            const newNews: News = {
+                ...res.data,
+                id: String(res.data.id),
+                venue: Number(venueId),
+                title: res.data.title,
+                content: res.data.content || "",
+                type: res.data.type as NewsType,
+                status: res.data.status as NewsStatus,
+                is_pinned: res.data.is_pinned ?? false,
+                photos: [],
+                preview: newsItem.preview,
+                end_date: res.data.end_date ?? null,
+            };
+            setCreatedNews(newNews);
+            onCreate(newNews);
+        } catch (err) {
+            console.error("Create failed:", err);
+            alert("Failed to create news");
+        } finally {
+            setLoading(false);
         }
-        const res = await venueServices
-            .venues
-            .news({ accessToken: user.token })(venueId)
-            .create(formData as any);
-        const newNews: News = {
-            ...res.data,
-            id: String(res.data.id),
-            venue: Number(venueId),
-            title: res.data.title,
-            content: res.data.content || "",
-            type: res.data.type as NewsType,
-            status: res.data.status as NewsStatus,
-            is_pinned: res.data.is_pinned ?? false,
-            photos: [],
-            preview: newsItem.preview,
-            end_date: res.data.end_date ?? null,
-        };
-        setCreatedNews(newNews);
-        onCreate(newNews);
-    } catch (err) {
-        console.error("Create failed:", err);
-        alert("Failed to create news");
-    } finally {
-        setLoading(false);
-    }
-};
+    };
     const handleUploadComplete = (uploadedPhotos: string[]) => {
         if (!createdNews) return;
         setCreatedNews((prev) =>
@@ -124,7 +124,7 @@ export const NewItemFormComponent: React.FC<NewNewsFormProps> = ({ venueId, onCr
             photos: [],
             preview: null,
         });
-            setCreatedNews(null);
+        setCreatedNews(null);
     };
     return (
         <form className={styles.wrapper} onSubmit={handleAddNews}>
@@ -162,7 +162,8 @@ export const NewItemFormComponent: React.FC<NewNewsFormProps> = ({ venueId, onCr
                     }`}
                 >
                     {newsItem.type === "general" ? "Status: active" :
-                        <a className={styles.pending} href="/">Status: pending. Promotion will be published after payment confirmation and admin approval</a>
+                        <a className={styles.pending} href="/">Status: pending. Promotion will be published after
+                            payment confirmation and admin approval</a>
                     }
                 </span>
                 <label className={styles.label}>
@@ -175,7 +176,7 @@ export const NewItemFormComponent: React.FC<NewNewsFormProps> = ({ venueId, onCr
                     Pin News
                 </label>
 
-                 <div className={styles.inputGroup}>
+                <div className={styles.inputGroup}>
                     <div className={styles.calendarWrapper}>
                         <input
                             type="text"
@@ -183,7 +184,7 @@ export const NewItemFormComponent: React.FC<NewNewsFormProps> = ({ venueId, onCr
                             className={styles.input}
                             value={newsItem.end_date ? new Date(newsItem.end_date).toLocaleDateString("uk-UA") : ""}
                             readOnly
-                             onClick={() => setIsCalendarOpen(true)}
+                            onClick={() => setIsCalendarOpen(true)}
                             onKeyDown={(e) => {
                                 if (e.key === "Backspace" || e.key === "Delete") {
                                     setNewsItem(prev => ({...prev, end_date: null}));
@@ -193,7 +194,7 @@ export const NewItemFormComponent: React.FC<NewNewsFormProps> = ({ venueId, onCr
                         />
                         <div onClick={() => setIsCalendarOpen(!isCalendarOpen)} className={styles.icon}>
                             <img src="/images/calendar.png" alt="calendar icon" width={20} height={20}
-                                   className={styles.img}/>
+                                 className={styles.img}/>
                         </div>
                         {isCalendarOpen && (
                             <div className={styles.calendarSidebar}>
@@ -223,7 +224,7 @@ export const NewItemFormComponent: React.FC<NewNewsFormProps> = ({ venueId, onCr
                             </div>
                         )}
                     </div>
-                 </div>
+                </div>
                 {createdNews && (
                     <PhotoMultipleUploadComponent
                         venueId={venueId}

@@ -1,10 +1,10 @@
 'use client';
 
 import React from 'react';
-import {PaginationComponent} from "@/components/pagination-component/PaginationComponent";
 import {IVenue} from "@/models/IVenue";
-import styles from "./BoozerStep1VenuesComponent.module.css";
+import {PaginationComponent} from "@/components/pagination-component/PaginationComponent";
 import BoozerVenueComponent from "@/components/boozer-venue-component/BoozerVenueComponent";
+import styles from "./BoozerStep1VenuesComponent.module.css";
 
 interface VenuesComponentProps {
   venues: IVenue[];

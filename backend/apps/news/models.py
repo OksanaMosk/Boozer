@@ -42,7 +42,7 @@ class NewsModel(BaseModel):
     is_pinned = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"{self.title} ({self.venue.name})"
+        return f'{self.title} ({self.venue.name})'
 
 
 class NewsImageModel(models.Model):
@@ -65,4 +65,4 @@ class NewsImageModel(models.Model):
         ordering = ['-created_at']
 
     def __str__(self):
-        return f"Image for {self.news.title}"
+        return f'Image for {self.news.title}'

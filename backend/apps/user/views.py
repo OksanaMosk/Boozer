@@ -143,7 +143,7 @@ class ProfileViewSet(viewsets.ModelViewSet):
         instance = self.get_object()
 
         if instance.user != request.user and not (request.user.is_staff or request.user.is_superuser):
-            raise PermissionDenied("You can only update this profile.")
+            raise PermissionDenied('You can only update this profile.')
 
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
@@ -155,7 +155,7 @@ class ProfileViewSet(viewsets.ModelViewSet):
         instance = self.get_object()
 
         if instance.user != request.user and not (request.user.is_staff or request.user.is_superuser):
-            raise PermissionDenied("You can only access this profile.")
+            raise PermissionDenied('You can only access this profile.')
 
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
@@ -170,7 +170,7 @@ class UserProfileAPIView(APIView):
             serializer = ProfileSerializer(profile)
             return Response(serializer.data)
         except ProfileModel.DoesNotExist:
-            return Response({"detail": "Profile not found."}, status=404)
+            return Response({'detail': 'Profile not found.'}, status=404)
 
     def post(self, request, user_id):
         data = request.data
@@ -190,7 +190,7 @@ class UserProfileAPIView(APIView):
                 return Response(serializer.data)
             return Response(serializer.errors, status=400)
         except ProfileModel.DoesNotExist:
-            return Response({"detail": "Profile not found."}, status=404)
+            return Response({'detail': 'Profile not found.'}, status=404)
 
     def delete(self, request, user_id):
         try:
@@ -198,7 +198,7 @@ class UserProfileAPIView(APIView):
             profile.delete()
             return Response(status=204)
         except ProfileModel.DoesNotExist:
-            return Response({"detail": "Profile not found."}, status=404)
+            return Response({'detail': 'Profile not found.'}, status=404)
 
 
 class UserViewSet(viewsets.ModelViewSet):

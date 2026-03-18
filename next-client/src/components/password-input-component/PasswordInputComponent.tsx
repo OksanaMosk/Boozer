@@ -1,7 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
-import Image from "next/image";
+import React, {useState} from "react";
 import styles from "./PasswordInputComponent.module.css";
 
 export const PasswordInput = ({

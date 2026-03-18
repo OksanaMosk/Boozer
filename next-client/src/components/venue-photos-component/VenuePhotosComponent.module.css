@@ -70,17 +70,17 @@
 }
 
 .photoContainer {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
     width: 100%;
-  margin-top: 10px;
+    margin-top: 10px;
     justify-content: space-evenly;
 
 }
 
 .photoArray {
-display: flex;
+    display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
@@ -89,8 +89,8 @@ display: flex;
     width: 140px;
     height: 100px;
     box-shadow: 0 0 12px white;
-  border-radius: 6px;
-  object-fit: cover;
+    border-radius: 6px;
+    object-fit: cover;
 }
 
 .deleteButton {
@@ -107,8 +107,8 @@ display: flex;
     outline: none;
     border: none;
     transition: all 0.3s ease-in-out;
-      background-color: var(--color-container);
-     box-shadow: 0 0 12px white;
+    background-color: var(--color-container);
+    box-shadow: 0 0 12px white;
 }
 
 .submitButton {
@@ -119,12 +119,12 @@ display: flex;
     justify-content: center;
     align-items: center;
     font-size: 1rem;
-       box-shadow: 0 0 12px white;
-  border: none;
-  border-radius: 26px;
-  cursor: pointer;
-  transition: background 0.2s;
-  background: linear-gradient(
+    box-shadow: 0 0 12px white;
+    border: none;
+    border-radius: 26px;
+    cursor: pointer;
+    transition: background 0.2s;
+    background: linear-gradient(
         90deg,
         #f9f295,
         #ae8625,
@@ -137,7 +137,7 @@ display: flex;
 .submitButton:hover,
 .submitButton:focus {
     background: var(--color-text);
-    color:  var(--color-white);
+    color: var(--color-white);
 }
 
 .loaderWrapper {
@@ -148,7 +148,7 @@ display: flex;
     align-items: flex-start;
     margin: 0;
     padding: 0;
-     line-height: 1.2;
+    line-height: 1.2;
     transform: scale(0.2);
 }
 

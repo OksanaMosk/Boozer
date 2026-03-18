@@ -1,6 +1,7 @@
 "use client";
 
 import React, {useState, useEffect} from "react";
+import {AxiosResponse} from "axios";
 import {
     DndContext,
     DragOverlay,
@@ -10,16 +11,15 @@ import {
     closestCorners,
     DragEndEvent
 } from "@dnd-kit/core";
-import {SortableContext, verticalListSortingStrategy} from "@dnd-kit/sortable";
-import SortableMenuItem from "@/components/sortable-item-component/SortableItemComponent";
-import venueServices from "@/lib/services/venueService";
-import {useUser} from "@/app/contexts/UserProvider";
 import {arrayMove} from "@dnd-kit/sortable";
-import styles from "./MenuItemsCreateComponent.module.css";
-import {AxiosResponse} from "axios";
+import {SortableContext, verticalListSortingStrategy} from "@dnd-kit/sortable";
+import {useUser} from "@/app/contexts/UserProvider";
+import venueServices from "@/lib/services/venueService";
 import DroppableCategory from "../droppable-category/DroppableCategory";
 import MenuItemFormComponent from "@/components/menu-item-form-component/MenuItemFormComponent";
 import {ButtonScrollBottomComponent} from "@/components/button-scroll-bottom-component/ButtonScrollBottomComponent";
+import SortableMenuItem from "@/components/sortable-item-component/SortableItemComponent";
+import styles from "./MenuItemsCreateComponent.module.css";
 
 const CATEGORY_OPTIONS = ["mains", "desserts", "drinks", "salads", "soups"];
 
@@ -59,10 +59,10 @@ const MenuItemsCreateComponent: React.FC<VenueMenuItemsCreateComponentProps> = (
         const fetchVenueCurrency = async () => {
             if (!user?.token) return;
             try {
-                const res = await venueServices.venues.get(venueId,({accessToken: user.token}));
+                const res = await venueServices.venues.get(venueId, ({accessToken: user.token}));
                 setGlobalCurrency(res.data.currency);
             } catch (err) {
-                console.error("Помилка завантаження валюти закладу", err);
+                console.error("Error", err);
             }
         };
         void fetchVenueCurrency();
@@ -79,7 +79,7 @@ const MenuItemsCreateComponent: React.FC<VenueMenuItemsCreateComponentProps> = (
                 setItems(fetchedItems);
             } catch (err: any) {
                 const errorMsg = err?.response?.data?.detail || "Failed to load menu items";
-            setFetchError(errorMsg);
+                setFetchError(errorMsg);
             }
         };
         void fetchMenuItems();
@@ -105,44 +105,44 @@ const MenuItemsCreateComponent: React.FC<VenueMenuItemsCreateComponentProps> = (
             const oldIndex = categoryItems.findIndex(i => i.id === activeItem.id);
             const newIndex = categoryItems.findIndex(i => i.id === overItem.id);
             const movedCategoryItems = arrayMove(categoryItems, oldIndex, newIndex);
-        movedCategoryItems.forEach((item, index) => {
-            const idx = newItems.findIndex(i => i.id === item.id);
-            newItems[idx] = { ...item, position: index };
-        });
-    } else {
+            movedCategoryItems.forEach((item, index) => {
+                const idx = newItems.findIndex(i => i.id === item.id);
+                newItems[idx] = {...item, position: index};
+            });
+        } else {
 
-        newItems = newItems.map(item =>
-            item.id === activeItem.id
-                ? { ...item, category: newCategory, position: 0 }
-                : item
-        );
+            newItems = newItems.map(item =>
+                item.id === activeItem.id
+                    ? {...item, category: newCategory, position: 0}
+                    : item
+            );
 
-        CATEGORY_OPTIONS.forEach(category => {
-            newItems
-                .filter(i => i.category === category)
-                .sort((a, b) => a.position - b.position)
-                .forEach((item, index) => {
-                    const idx = newItems.findIndex(i => i.id === item.id);
-                    newItems[idx] = { ...item, position: index };
-                });
-        });
-    }
+            CATEGORY_OPTIONS.forEach(category => {
+                newItems
+                    .filter(i => i.category === category)
+                    .sort((a, b) => a.position - b.position)
+                    .forEach((item, index) => {
+                        const idx = newItems.findIndex(i => i.id === item.id);
+                        newItems[idx] = {...item, position: index};
+                    });
+            });
+        }
 
-    setItems(newItems);
+        setItems(newItems);
 
-    const service = getMenuItemsService();
-    if (service) {
-        const body = newItems.map(i => ({
-            id: String(i.id),
-            position: i.position,
-            category: i.category,
-        }));
+        const service = getMenuItemsService();
+        if (service) {
+            const body = newItems.map(i => ({
+                id: String(i.id),
+                position: i.position,
+                category: i.category,
+            }));
 
-        service.reorder(body).catch(() =>
-            postMessage("Failed to update item order.")
-        );
-    }
-};
+            service.reorder(body).catch(() =>
+                postMessage("Failed to update item order.")
+            );
+        }
+    };
 
     const groupedItems = items.reduce((acc, item) => {
         if (!acc[item.category]) acc[item.category] = [];
@@ -154,60 +154,60 @@ const MenuItemsCreateComponent: React.FC<VenueMenuItemsCreateComponentProps> = (
         groupedItems[category].sort((a, b) => a.position - b.position);
     }
 
-const handleDelete = async (menuItemId: string | number) => {
-    const service = getMenuItemsService();
-    if (!service) return;
+    const handleDelete = async (menuItemId: string | number) => {
+        const service = getMenuItemsService();
+        if (!service) return;
 
-    try {
-        await service.delete(String(menuItemId));
+        try {
+            await service.delete(String(menuItemId));
 
-        setItems(prev => {
-            const filtered = prev.filter(i => i.id !== menuItemId);
-            return filtered.map(item => {
-                const categoryItems = filtered
-                    .filter(i => i.category === item.category)
-                    .sort((a,b)=>a.position-b.position);
-                const newPosition = categoryItems.findIndex(i => i.id === item.id);
-                return {...item, position: newPosition};
+            setItems(prev => {
+                const filtered = prev.filter(i => i.id !== menuItemId);
+                return filtered.map(item => {
+                    const categoryItems = filtered
+                        .filter(i => i.category === item.category)
+                        .sort((a, b) => a.position - b.position);
+                    const newPosition = categoryItems.findIndex(i => i.id === item.id);
+                    return {...item, position: newPosition};
+                });
             });
-        });
 
-    } catch (err) {
-        console.error("Delete failed", err);
-    }
-};
-    const handleCreateOrUpdate = React.useCallback((item: MenuItem) => {
-    setItems(prev => {
-        const exists = prev.find(i => i.id === item.id);
-        if (exists) {
-            return prev.map(i => (i.id === item.id ? item : i));
+        } catch (err) {
+            console.error("Delete failed", err);
         }
-         return [...prev, { ...item, currency: globalCurrency }];
-    });
-}, [globalCurrency]);
+    };
+    const handleCreateOrUpdate = React.useCallback((item: MenuItem) => {
+        setItems(prev => {
+            const exists = prev.find(i => i.id === item.id);
+            if (exists) {
+                return prev.map(i => (i.id === item.id ? item : i));
+            }
+            return [...prev, {...item, currency: globalCurrency}];
+        });
+    }, [globalCurrency]);
 
     return (
         <div className={styles.itemsWrapper}>
-               <ButtonScrollBottomComponent/>
-             <div className={styles.wrapperTitle}>
-            <h4 className={styles.bigText}>
-                Menu
-            </h4>
-            <div className={styles.smallText}>
-               list
+            <ButtonScrollBottomComponent/>
+            <div className={styles.wrapperTitle}>
+                <h4 className={styles.bigText}>
+                    Menu
+                </h4>
+                <div className={styles.smallText}>
+                    list
+                </div>
             </div>
-             </div>
             <div className={styles.selectCurrency}>
                 {fetchError && <p className={styles.currencyDisplay}>{fetchError}</p>}
                 <div className={styles.currencyDisplay}>
-                    <label>Currency: { }</label>
-                        <span className={styles.currency}>
+                    <label>Currency: {}</label>
+                    <span className={styles.currency}>
                             {globalCurrency ? globalCurrency : "Loading..."}
                         </span>
                 </div>
-                    <p className={styles.currencyValue}>
+                <p className={styles.currencyValue}>
                     🔒 This currency is set in Venue Settings and applies to all menus.
-                    </p>
+                </p>
             </div>
 
             <DndContext collisionDetection={closestCorners} sensors={sensors}

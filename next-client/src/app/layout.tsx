@@ -1,11 +1,33 @@
-
-
 export const dynamic = "force-dynamic";
 import React from "react";
 import type { Metadata } from "next";
 import "./globals.css";
 import { Providers } from "./providers";
+import { Playfair_Display, Imperial_Script, Roboto } from "next/font/google";
 
+const playfair = Playfair_Display({
+  subsets: ["latin", "cyrillic"],
+  weight: ["600", "700"],
+  style: ["italic"],
+  variable: "--font-playfair",
+  display: "swap",
+});
+
+const imperialScript = Imperial_Script({
+  subsets: ["latin"],
+  weight: ["400"],
+  style: ["normal"],
+  variable: "--font-imperial",
+  display: "swap",
+});
+
+const roboto = Roboto({
+  subsets: ["latin", "cyrillic"],
+  weight: ["400", "500", "700"],
+  style: ["normal"],
+  variable: "--font-roboto",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "VIP Boozer — Premium Places",
@@ -23,7 +45,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
   return (
     <html lang="en" suppressHydrationWarning>
-      <body>
+        <body className={`${playfair.variable} ${imperialScript.variable} ${roboto.variable}`}>
           <Providers>
           {children}
         </Providers>

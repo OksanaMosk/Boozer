@@ -1,14 +1,15 @@
 'use client';
-import { useState, useEffect, useCallback } from "react";
+
+import {useState, useEffect, useCallback} from "react";
 import styles from "./PaginationNewsComponent.module.css";
 
 type PaginationProps = {
     totalPages: number;
     currentPage: number;
-     onPageChangeAction: (page: number) => void;
+    onPageChangeAction: (page: number) => void;
 };
 
-export const PaginationNewsComponent = ({ totalPages, currentPage,  onPageChangeAction}: PaginationProps) => {
+export const PaginationNewsComponent = ({totalPages, currentPage, onPageChangeAction}: PaginationProps) => {
     const [pageRange, setPageRange] = useState<number[]>([]);
 
     const computePageRange = useCallback(() => {
@@ -37,11 +38,10 @@ export const PaginationNewsComponent = ({ totalPages, currentPage,  onPageChange
         computePageRange();
     }, [computePageRange]);
 
-    // 2. Тепер викликаємо onPageChange замість оновлення URL
-    const handlePrevPage = () => currentPage > 1 &&  onPageChangeAction(currentPage - 1);
-    const handleNextPage = () => currentPage < totalPages &&  onPageChangeAction(currentPage + 1);
+    const handlePrevPage = () => currentPage > 1 && onPageChangeAction(currentPage - 1);
+    const handleNextPage = () => currentPage < totalPages && onPageChangeAction(currentPage + 1);
 
-    if (totalPages <= 1) return null; // Приховуємо, якщо сторінка лише одна
+    if (totalPages <= 1) return null;
 
     return (
         <div className={styles.paginationContainer}>
@@ -57,7 +57,7 @@ export const PaginationNewsComponent = ({ totalPages, currentPage,  onPageChange
             {pageRange.map((page) => (
                 <button
                     key={page}
-                    onClick={() =>  onPageChangeAction(page)}
+                    onClick={() => onPageChangeAction(page)}
                     className={`${styles.paginationButton} ${
                         currentPage === page ? styles.paginationButtonActive : styles.paginationButtonInactive
                     }`}

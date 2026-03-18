@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import styles from "./VenueSelectsComponent.module.css";
 import venueServices from "@/lib/services/venueService";
 import { fetchCoordinates } from "@/lib/services/geocodeService";
+import styles from "./VenueSelectsComponent.module.css";
 
 interface VenueSelectsProps {
     city: string;
@@ -14,19 +14,19 @@ interface VenueSelectsProps {
 }
 
 const VenueSelectsComponent: React.FC<VenueSelectsProps> = ({
-    country,
-    city,
-    setCountry,
-    setCity,
-    setCoordinates
-}) => {
+                                                                country,
+                                                                city,
+                                                                setCountry,
+                                                                setCity,
+                                                                setCoordinates
+                                                            }) => {
     const [countriesList, setCountriesList] = useState<string[]>([]);
     const [cityByCountry, setCityByCountry] = useState<Record<string, string[]>>({});
 
     useEffect(() => {
         venueServices.constants
             .getConstants()
-            .then(({ data }) => {
+            .then(({data}) => {
                 setCountriesList(data.countries);
                 setCityByCountry(data.cities_by_country);
             })
@@ -34,11 +34,10 @@ const VenueSelectsComponent: React.FC<VenueSelectsProps> = ({
     }, []);
 
     const availableCity = country ? cityByCountry[country] || [] : [];
-
     const handleCountryChange = (value: string) => {
         setCountry(value);
         setCity(""); // очищаємо місто
-        setCoordinates(0, 0); // очищаємо координати
+        setCoordinates(0, 0);
     };
 
     const handleCityChange = async (value: string) => {
@@ -64,7 +63,8 @@ const VenueSelectsComponent: React.FC<VenueSelectsProps> = ({
                 onChange={(e) => handleCountryChange(e.target.value)}
             >
                 <option
-                    value="">Select Country</option>
+                    value="">Select Country
+                </option>
                 {countriesList.map((c) => (
                     <option
                         key={c} value={c}>

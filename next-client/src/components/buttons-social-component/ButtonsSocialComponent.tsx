@@ -1,27 +1,26 @@
+"use client"
 
 import React, {useState} from "react";
 import { signIn } from "next-auth/react";
-
-import styles from "./ButtonsSocialComponent.module.css";
 import {LoaderComponent} from "@/components/loader-component/LoaderComponent";
+import styles from "./ButtonsSocialComponent.module.css";
 
 const ButtonsSocialComponent: React.FC = () => {
-  const [loading, setLoading] = useState<"google" | "facebook" | null>(null);
+    const [loading, setLoading] = useState<"google" | "facebook" | null>(null);
+    const handleSocialSignIn = (provider: "google" | "facebook") => {
+        return async (event: React.MouseEvent<HTMLButtonElement>) => {
+            event.preventDefault();
+            setLoading(provider);
 
-  const handleSocialSignIn = (provider: "google" | "facebook") => {
-    return async (event: React.MouseEvent<HTMLButtonElement>) => {
-      event.preventDefault();
-      setLoading(provider);
-
-      try {
-      await signIn(provider, { redirectTo: "/post-login" });
-    } catch (error) {
-      console.error("Social login failed:", error);
-    } finally {
-      setLoading(null);
-    }
-  };
-};
+            try {
+                await signIn(provider, {redirectTo: "/post-login"});
+            } catch (error) {
+                console.error("Social login failed:", error);
+            } finally {
+                setLoading(null);
+            }
+        };
+    };
 
     return (
         <div className={styles.socialButtons}>
@@ -36,7 +35,7 @@ const ButtonsSocialComponent: React.FC = () => {
                         <LoaderComponent/>
                     </div>) : (
                     <div className={styles.socialButtonItem}>
-                        <img className={styles.google}  src="/images/google.png" alt="Google" width={24} height={24}/>
+                        <img className={styles.google} src="/images/google.png" alt="Google" width={24} height={24}/>
                         <p>
                             Sign in with Google
                         </p>
@@ -44,7 +43,6 @@ const ButtonsSocialComponent: React.FC = () => {
                 }
 
             </button>
-
             <button
                 type="button"
                 onClick={handleSocialSignIn("facebook")}
@@ -52,13 +50,13 @@ const ButtonsSocialComponent: React.FC = () => {
                 disabled={loading === "facebook"}
             >
                 {loading === "facebook" ? (
-                    <div className={`authButton ${styles.loaderWrapper}`}>
-                        <LoaderComponent/>
-                    </div>) :
-                    ( <div className={styles.socialButtonItem}>
-                         <img src="/images/facebook.png" alt="Facebook" width={24} height={24}/>
+                        <div className={`authButton ${styles.loaderWrapper}`}>
+                            <LoaderComponent/>
+                        </div>) :
+                    (<div className={styles.socialButtonItem}>
+                        <img src="/images/facebook.png" alt="Facebook" width={24} height={24}/>
                         <p>
-                          Sign in with Facebook
+                            Sign in with Facebook
                         </p>
                     </div>)
                 }
@@ -68,42 +66,3 @@ const ButtonsSocialComponent: React.FC = () => {
 };
 
 export default ButtonsSocialComponent;
-
-
-
-
-// import React from 'react';
-// import { signIn } from "next-auth/react";
-// import styles from "./ButtonsSocialComponent.module.css"
-//
-// const ButtonsSocialComponent = () => {
-//   const handleGoogleSignIn = () => {
-//     signIn("google", {
-//       callbackUrl: "/complete-profile",
-//     });
-//   };
-//
-//   const handleFacebookSignIn = () => {
-//     signIn("facebook", {
-//       callbackUrl: "/complete-profile",
-//     });
-//   };
-//
-//   return (
-//     <div className={styles.socialButtons}>
-//       <button type="button" onClick={handleGoogleSignIn} className={styles.socialButton}>
-//         {/* eslint-disable-next-line @next/next/no-img-element */}
-//         <img src="/images/eye2.png" alt="Google" width={24} height={24}/>
-//         Sign Up with Google
-//       </button>
-//
-//       <button type="button" onClick={handleFacebookSignIn} className={styles.socialButton}>
-//         {/* eslint-disable-next-line @next/next/no-img-element */}
-//         <img src="/images/eye2.png" alt="Facebook" width={24} height={24}/>
-//         Sign Up with Facebook
-//       </button>
-//     </div>
-//   );
-// };
-//
-// export default ButtonsSocialComponent;

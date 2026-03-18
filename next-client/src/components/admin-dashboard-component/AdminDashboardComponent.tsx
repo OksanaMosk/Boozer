@@ -1,14 +1,13 @@
 "use client";
 
 import React from "react";
+import {useUser} from "@/app/contexts/UserProvider";
 import { LoaderComponent } from "@/components/loader-component/LoaderComponent";
 import AdminUserManagementComponent from "@/components/admin-user-management-component/AdminUserManagementComponent";
 import styles from './AdminDashboardComponent.module.css';
-import {useUser} from "@/app/contexts/UserProvider";
 
 const AdminDashboardComponent = () => {
     const {user} = useUser();
-
     if (!user) {
         return <div style={{display: "flex", justifyContent: "center", marginTop: 70}}>
             <LoaderComponent/>

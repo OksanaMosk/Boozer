@@ -1,10 +1,10 @@
 "use client";
 
 import React, { useState, useRef, ChangeEvent } from "react";
-import styles from "./PhotoMultipleUploadComponent.module.css";
-import { LoaderComponent } from "@/components/loader-component/LoaderComponent";
 import { useUser } from "@/app/contexts/UserProvider";
 import venueServices from "@/lib/services/venueService";
+import { LoaderComponent } from "@/components/loader-component/LoaderComponent";
+import styles from "./PhotoMultipleUploadComponent.module.css";
 
 interface Photo {
     id?: string;
@@ -23,23 +23,23 @@ interface MultiplePhotoUploadProps {
 }
 
 const PhotoMultipleUploadComponent: React.FC<MultiplePhotoUploadProps> = ({
-    venueId,
-    newsId,
-    onUploadComplete,
-    existingPhotos = [],
-    maxFiles,
-     onSetCover,
-}) => {
-    const { user } = useUser();
+                                                                              venueId,
+                                                                              newsId,
+                                                                              onUploadComplete,
+                                                                              existingPhotos = [],
+                                                                              maxFiles,
+                                                                              onSetCover,
+                                                                          }) => {
+    const {user} = useUser();
     const [loading, setLoading] = useState<boolean>(false);
     const inputRef = useRef<HTMLInputElement>(null);
     const [photos, setPhotos] = useState<Photo[]>(
-    existingPhotos.map((photo): Photo => ({
-        id: photo.id,
-        preview_url: photo.url || photo.image || "",
-        is_cover: photo.is_cover || false,
-    }))
-);
+        existingPhotos.map((photo): Photo => ({
+            id: photo.id,
+            preview_url: photo.url || photo.image || "",
+            is_cover: photo.is_cover || false,
+        }))
+    );
 
     const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
         if (!e.target.files) return;
@@ -68,21 +68,21 @@ const PhotoMultipleUploadComponent: React.FC<MultiplePhotoUploadProps> = ({
                 if (!user?.token) return;
                 await venueServices
                     .venues
-                    .news({ accessToken: user.token })(venueId)
+                    .news({accessToken: user.token})(venueId)
                     .images(newsId)
                     .delete(photoToDelete.id);
                 setPhotos(prev => prev.filter((_, i) => i !== index));
             } catch (error: any) {
-            if (error.response?.status === 404) {
-                setPhotos(prev => prev.filter((_, i) => i !== index));
-            } else {
-                console.error("Error deleting from server", error);
+                if (error.response?.status === 404) {
+                    setPhotos(prev => prev.filter((_, i) => i !== index));
+                } else {
+                    console.error("Error deleting from server", error);
+                }
+            } finally {
+                setLoading(false);
             }
-        } finally {
-            setLoading(false);
         }
-    }
-};
+    };
 
     const handleUpload = async () => {
         if (!user?.token) return;
@@ -98,14 +98,14 @@ const PhotoMultipleUploadComponent: React.FC<MultiplePhotoUploadProps> = ({
                     formData.append("is_cover", photo.is_cover ? "true" : "false");
                     const res = await venueServices
                         .venues
-                        .news({ accessToken: user.token })(venueId)
+                        .news({accessToken: user.token})(venueId)
                         .images(newsId)
                         .create(formData);
                     uploadedUrls.push(res.data.image);
                 }
             }
             onUploadComplete(uploadedUrls);
-            setPhotos(prev => prev.map(p => ({ ...p, file: undefined })));
+            setPhotos(prev => prev.map(p => ({...p, file: undefined})));
             alert("Upload successful!");
         } catch (error) {
             console.error("Error uploading photos", error);
@@ -132,41 +132,41 @@ const PhotoMultipleUploadComponent: React.FC<MultiplePhotoUploadProps> = ({
         <div className={styles.wrapper}>
             <div>
                 <div className={styles.uploadWrapper}>
-                <button
-                    type="button"
-                    onClick={openFileDialog}
-                    className={styles.inputPhoto}
-                >
-                    Upload Photos (Max 7)
-                </button>
-                <input
-                     ref={inputRef}
-                    id="fileUpload"
-                    type="file"
-                    accept="image/*"
-                    multiple
-                    disabled={loading || photos.length >= maxFiles}
-                     style={{display: "none"}}
-                    onChange={handleFileChange}
-                />
-            </div>
-                    <span className={styles.photoSpan}>
+                    <button
+                        type="button"
+                        onClick={openFileDialog}
+                        className={styles.inputPhoto}
+                    >
+                        Upload Photos (Max 7)
+                    </button>
+                    <input
+                        ref={inputRef}
+                        id="fileUpload"
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        disabled={loading || photos.length >= maxFiles}
+                        style={{display: "none"}}
+                        onChange={handleFileChange}
+                    />
+                </div>
+                <span className={styles.photoSpan}>
                     {photos.filter(p => p.file).length > 0
                         ? `${photos.filter(p => p.file).length} new files selected (not saved yet)`
                         : "No new files chosen"}
             </span>
-        </div>
+            </div>
 
-    <div className={styles.photoContainer}>
-        {photos.map((photo, index) => (
-            <div key={index} className={styles.photoArray}>
-                <img
-                    src={photo.preview_url}
-                    alt="Preview"
-                    className={styles.photoImage}
-                />
-                <div className={styles.actions}>
-                    <label className={styles.checkLabel}>
+            <div className={styles.photoContainer}>
+                {photos.map((photo, index) => (
+                    <div key={index} className={styles.photoArray}>
+                        <img
+                            src={photo.preview_url}
+                            alt="Preview"
+                            className={styles.photoImage}
+                        />
+                        <div className={styles.actions}>
+                            <label className={styles.checkLabel}>
                                 <input
                                     type="radio"
                                     name="coverPhoto"
@@ -180,8 +180,8 @@ const PhotoMultipleUploadComponent: React.FC<MultiplePhotoUploadProps> = ({
                                 type="button"
                                 className={styles.deleteButton}
                                 onClick={(e) => {
-                                     e.stopPropagation();
-                                   void handleDelete(index)
+                                    e.stopPropagation();
+                                    void handleDelete(index)
                                 }}
                             >
                                 Delete
@@ -196,7 +196,7 @@ const PhotoMultipleUploadComponent: React.FC<MultiplePhotoUploadProps> = ({
                 className={styles.submitButton}
             >
                 {loading ? (
-                     <div className={`authButton ${styles.loaderWrapper}`}><LoaderComponent/></div> ) : "Save Photos"}
+                    <div className={`authButton ${styles.loaderWrapper}`}><LoaderComponent/></div>) : "Save Photos"}
             </button>
         </div>
     );

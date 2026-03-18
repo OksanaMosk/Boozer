@@ -28,7 +28,7 @@ class TravelCalculationService:
         end_airport = self._find_closest_airport(self.venue.latitude, self.venue.longitude)
 
         if not start_airport or not end_airport:
-            return {"error": "Airports database is empty"}
+            return {'error': 'Airports database is empty'}
 
         pricing = {p.step_type: float(p.price_per_km) for p in self.venue.travel_logistics.all()}
 
@@ -37,7 +37,7 @@ class TravelCalculationService:
             res_to = self.gmaps.distance_matrix((v_lat, v_lng), (start_airport.latitude, start_airport.longitude), language='en')
 
             if res_to['rows'][0]['elements'][0]['status'] != 'OK':
-                return {"error": "Road not found to the starting airport"}
+                return {'error': 'Road not found to the starting airport'}
 
             dist_to = res_to['rows'][0]['elements'][0]['distance']['value'] / 1000
 
@@ -47,12 +47,12 @@ class TravelCalculationService:
             res_from = self.gmaps.distance_matrix((end_airport.latitude, end_airport.longitude),
                                                   (self.venue.latitude, self.venue.longitude))
             if res_from['rows'][0]['elements'][0]['status'] != 'OK':
-                return {"error": "Road not found from airport to the venue"}
+                return {'error': 'Road not found from airport to the venue'}
 
             dist_from = res_from['rows'][0]['elements'][0]['distance']['value'] / 1000
 
         except (KeyError, IndexError, Exception) as e:
-            return {"error": f"Travel service error: {str(e)}"}
+            return {'error': f'Travel service error: {str(e)}'}
 
         cost_to = dist_to * pricing.get('to_airport', 0)
         cost_flight = dist_flight * pricing.get('flight', 0)
@@ -74,38 +74,38 @@ class TravelCalculationService:
 
             total_extra += current_cost
             extra_segments.append({
-                "type": service.get_service_type_display(),
-                "name": service.name,
-                "price": round(current_cost, 2),
-                "calculation": f"{price} x {days}d" if service.price_type == 'per_day' else "Fixed"
+                'type': service.get_service_type_display(),
+                'name': service.name,
+                'price': round(current_cost, 2),
+                'calculation': f"{price} x {days}d" if service.price_type == 'per_day' else 'Fixed'
             })
         res_currency = self.venue.currency
         return {
-            "currency": res_currency,
-            "venue": {
+            'currency': res_currency,
+            'venue': {
                 "city": self.venue.city,
             },
-            "airports": {
-                "start": {
-                    "code": start_airport.iata_code,
-                    "lat": start_airport.latitude,
-                    "lng": start_airport.longitude,
-                    "city": start_airport.city,
+            'airports': {
+                'start': {
+                    'code': start_airport.iata_code,
+                    'lat': start_airport.latitude,
+                    'lng': start_airport.longitude,
+                    'city': start_airport.city,
                 },
-                "end": {
-                    "code": end_airport.iata_code,
-                    "lat": end_airport.latitude,
-                    "lng": end_airport.longitude,
-                    "city": end_airport.city,
+                'end': {
+                    'code': end_airport.iata_code,
+                    'lat': end_airport.latitude,
+                    'lng': end_airport.longitude,
+                    'city': end_airport.city,
                 }
             },
-            "travel_segments": [
-                {"type": "To Airport", "km": round(dist_to, 2), "price": round(cost_to, 2)},
-                {"type": "Flight", "km": round(dist_flight, 2), "price": round(cost_flight, 2)},
-                {"type": "From Airport", "km": round(dist_from, 2), "price": round(cost_from, 2)}
+            'travel_segments': [
+                {'type': 'To Airport', 'km': round(dist_to, 2), 'price': round(cost_to, 2)},
+                {'type': 'Flight', 'km': round(dist_flight, 2), 'price': round(cost_flight, 2)},
+                {'type': 'From Airport', 'km': round(dist_from, 2), 'price': round(cost_from, 2)}
             ],
-            "extra_services": extra_segments,
-            "total_price": round(travel_total + total_extra, 2)
+            'extra_services': extra_segments,
+            'total_price': round(travel_total + total_extra, 2)
         }
 
     def apply_to_order(self, order):
@@ -114,7 +114,7 @@ class TravelCalculationService:
 
         res = self.calculate_trip(order.user_latitude, order.user_longitude)
 
-        if "error" in res:
+        if 'error' in res:
             return
 
         seg_dict = {s.get('type'): s.get('price', 0) for s in res.get('travel_segments', []) if isinstance(s, dict)}

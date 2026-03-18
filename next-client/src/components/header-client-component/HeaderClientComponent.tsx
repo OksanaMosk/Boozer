@@ -2,23 +2,19 @@
 
 import {useEffect, useState} from "react";
 import Link from "next/link";
-import Image from "next/image";
-import { usePathname } from "next/navigation";
-
-import { BurgerMenuComponent } from "@/components/burger-menu-component/BurgerMenuComponent";
-import { UserInfoComponent } from "@/components/user-info-component/UserInfoComponent";
+import {usePathname} from "next/navigation";
+import {signOut} from "next-auth/react";
+import {useUser} from "@/app/contexts/UserProvider";
+import {BurgerMenuComponent} from "@/components/burger-menu-component/BurgerMenuComponent";
+import {UserInfoComponent} from "@/components/user-info-component/UserInfoComponent";
 import ThemesButtonComponent from "@/components/themes-button-component/ThemesButtonComponent";
 import styles from "./HeaderClientComponent.module.css";
 
-import {signOut} from "next-auth/react";
-import {useUser} from "@/app/contexts/UserProvider";
-
-
 export const HeaderClientComponent = () => {
-  const {user} = useUser()
-  const authenticated = !!user;
-  const [isOpen, setIsOpen] = useState(false);
-  const [theme, setTheme] = useState<"light" | "dark">("dark");
+    const {user} = useUser()
+    const authenticated = !!user;
+    const [isOpen, setIsOpen] = useState(false);
+    const [theme, setTheme] = useState<"light" | "dark">("dark");
     const pathname = usePathname();
 
     useEffect(() => {
@@ -28,33 +24,31 @@ export const HeaderClientComponent = () => {
 
     const menuItems = [
         {href: "/", label: "Home"},
-        {href: "/venues", label: "Venues" },
-        {href: "/boozer", label: "Boozer" },
-  ];
+        {href: "/venues", label: "Venues"},
+        {href: "/boozer", label: "Boozer"},
+    ];
 
-  const isLoginActive = pathname === "/login";
-  const isRegisterActive = pathname === "/register";
-  const from = "/";
+    const isLoginActive = pathname === "/login";
+    const isRegisterActive = pathname === "/register";
+    const from = "/";
 
     const handleLogout = async () => {
-  try {
-    localStorage.clear();
-    sessionStorage.clear();
+        try {
+            // localStorage.clear();
+            // sessionStorage.clear();
+            await signOut({
+                redirect: true,
+                redirectTo: "/",
+            });
 
-    await signOut({
-      redirect: true,
-      redirectTo: "/",
-    });
+        } catch (error) {
+            console.error("Logout failed:", error);
+            window.location.href = "/login";
+        }
+    };
 
-  } catch (error) {
-    console.error("Logout failed:", error);
-    window.location.href = "/login";
-  }
-};
-
-  const handleDark = () => setTheme("dark");
-  const handleLight = () => setTheme("light");
-
+    const handleDark = () => setTheme("dark");
+    const handleLight = () => setTheme("light");
 
     return (
         <div className={styles.header}>
@@ -66,8 +60,8 @@ export const HeaderClientComponent = () => {
                         width={80}
                         height={80}
                         className={styles.logoImage}
-                          loading="eager"
-                         style={{ objectFit: "contain" }}
+                        loading="eager"
+                        style={{objectFit: "contain"}}
                     />
                     <div className={styles.logo}>
                         <h1 className={styles.logoTitle}>Vip Boozer</h1>
@@ -112,7 +106,7 @@ export const HeaderClientComponent = () => {
 
                 <div className={styles.rightBlock}>
                     {authenticated && user ? (
-                            <UserInfoComponent onLogoutAction={handleLogout} />
+                        <UserInfoComponent onLogoutAction={handleLogout}/>
                     ) : (
                         <div className={styles.authLinks}>
                             <Link

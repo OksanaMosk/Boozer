@@ -1,7 +1,7 @@
 import React from "react";
 import styles from "./NewsGallery.module.css"
 
-export const NewsGallery = ({ images }: { images: any[] }) => {
+export const NewsGallery = ({images}: { images: any[] }) => {
     const [currentIndex, setCurrentIndex] = React.useState(0);
     const handlePhotoChange = (direction: "next" | "prev") => {
         if (direction === "next" && currentIndex < images.length - 1) {
@@ -18,7 +18,8 @@ export const NewsGallery = ({ images }: { images: any[] }) => {
                     onClick={() => handlePhotoChange("prev")}
                     disabled={currentIndex === 0}
                     className={styles.arrow}
-                > ← </button>
+                > ←
+                </button>
 
                 <img
                     src={images[currentIndex].image}
@@ -30,7 +31,8 @@ export const NewsGallery = ({ images }: { images: any[] }) => {
                     onClick={() => handlePhotoChange("next")}
                     disabled={currentIndex === images.length - 1}
                     className={styles.arrow}
-                > → </button>
+                > →
+                </button>
             </div>
         </div>
     );

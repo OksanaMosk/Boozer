@@ -1,16 +1,15 @@
 "use client";
 
 import React, {useEffect, useState, useCallback, useMemo} from "react";
-import {Stage, Layer, Image as KonvaImage, Text, Rect, Group} from "react-konva";
-import venueServices from "@/lib/services/venueService";
-import {useUser} from "@/app/contexts/UserProvider";
-import styles from "./BoozerStep4TableSelectionComponent.module.css";
-import Table from "@/components/table-map-admin-component/Table";
-import {ITable} from "@/models/IVenue";
 import {AxiosResponse} from "axios";
+import {Stage, Layer, Image as KonvaImage, Text, Rect, Group} from "react-konva";
+import {useUser} from "@/app/contexts/UserProvider";
+import venueServices from "@/lib/services/venueService";
+import {ITable} from "@/models/IVenue";
+import Table from "@/components/table-map-admin-component/Table";
 import {LoaderComponent} from "@/components/loader-component/LoaderComponent";
 import DatePickerComponent from "@/components/date-picker-component/DatePickerComponent";
-
+import styles from "./BoozerStep4TableSelectionComponent.module.css";
 
 interface Props {
     venueId: string;
@@ -118,11 +117,9 @@ const BoozerStep4TableSelectionComponent: React.FC<Props> = ({venueId, orderId, 
             const reservedIds = new Set<number>(
                 bookingsData
                     .filter((b: any) => {
-                        // 1. Відсікаємо тільки те, що точно ВІЛЬНЕ (видалені, скасовані, прострочені)
                         const inactiveStatuses = ["CANCELLED", "EXPIRED", "REFUNDED"];
-
                         if (!b.is_active || inactiveStatuses.includes(b.status)) {
-                            return false; // Ці столи малюємо ВІЛЬНИМИ
+                            return false;
                         }
                         let bookingStart, bookingEnd;
                         try {
@@ -136,22 +133,6 @@ const BoozerStep4TableSelectionComponent: React.FC<Props> = ({venueId, orderId, 
                         const selectedEnd = new Date(endTime);
                         return bookingStart < selectedEnd && bookingEnd > selectedStart;
                     })
-                    // .filter((b: any) => {
-                    //     if (!b.is_active || b.status !== "CONFIRMED") {
-                    //         return false;
-                    //     }
-                    //     let bookingStart, bookingEnd;
-                    //     try {
-                    //         const range = typeof b.time_range === 'string' ? JSON.parse(b.time_range) : b.time_range;
-                    //         bookingStart = new Date(range.lower);
-                    //         bookingEnd = new Date(range.upper);
-                    //     } catch (e) {
-                    //         return false;
-                    //     }
-                    //     const selectedStart = new Date(startTime);
-                    //     const selectedEnd = new Date(endTime);
-                    //     return bookingStart < selectedEnd && bookingEnd > selectedStart;
-                    // })
                     .map((b: any) => Number(b.table))
             );
             setReservedTableIds(reservedIds);
@@ -164,19 +145,19 @@ const BoozerStep4TableSelectionComponent: React.FC<Props> = ({venueId, orderId, 
         const timer = setTimeout(checkReserved, 500);
         return () => clearTimeout(timer);
     }, [startTime, endTime, checkReserved]);
-    //
+
 
     useEffect(() => {
-        if (!allTables.length || !reservedTableIds.size) return; // чекаємо обидва
+        if (!allTables.length || !reservedTableIds.size) return;
 
-        console.log("Таблиця столиків та статусів (актуальна після бронювань):");
+        console.log("Табл стол та стат (після бронювань):");
         console.table(
             allTables.map(table => {
                 const tid = Number(table.id);
                 return {
                     TableID: tid,
                     OrderID: orderId,
-                    Status: reservedTableIds.has(tid) ? "ЗАЙНЯТИЙ" : "ВІЛЬНИЙ"
+                    Status: reservedTableIds.has(tid) ? "Reserved" : "Free"
                 };
             })
         );
@@ -299,14 +280,18 @@ const BoozerStep4TableSelectionComponent: React.FC<Props> = ({venueId, orderId, 
 
             {selectedDate && (
                 <p className={styles.orderHint}>
-                    Booking for <span>{selectedDate.toLocaleDateString('en-US', { day: 'numeric', month: 'long' })}</span> from <span>{startTimeStr}</span> to <span>{endTimeStr}</span>
+                    Booking for <span>{selectedDate.toLocaleDateString('en-US', {
+                    day: 'numeric',
+                    month: 'long'
+                })}</span> from <span>{startTimeStr}</span> to <span>{endTimeStr}</span>
                 </p>
             )}
 
             <div className={styles.stageWrapper}>
                 <Stage width={stageSize.width} height={stageSize.height} className={styles.stage}>
                     <Layer>
-                        {background && <KonvaImage image={background} width={stageSize.width} height={stageSize.height} />}
+                        {background &&
+                            <KonvaImage image={background} width={stageSize.width} height={stageSize.height}/>}
                         {allTables.map(table => {
                             const tid = Number(table.id);
                             const isReserved = reservedTableIds.has(tid);
@@ -319,13 +304,13 @@ const BoozerStep4TableSelectionComponent: React.FC<Props> = ({venueId, orderId, 
                                     <Table table={{...table, x: tX, y: tY}} onClick={() => handleTableClick(table)}
                                            isSelected={isSelected}/>
                                     {isReserved && (
-                                        <Group x={tX+45} y={tY+65}>
+                                        <Group x={tX + 45} y={tY + 65}>
                                             <Rect
                                                 width={70}
                                                 height={22}
                                                 fill="#bf8282"
 
-                                                  cornerRadius={12}
+                                                cornerRadius={12}
                                             />
                                             <Text text="RESERVED" fill="white" fontSize={10} padding={6}
                                                   fontStyle="bold"/>
@@ -339,11 +324,11 @@ const BoozerStep4TableSelectionComponent: React.FC<Props> = ({venueId, orderId, 
             </div>
             <div className={styles.capacity}>
                 <p className={styles.orderSeats}>Seats:</p>
-                 <span className={
-                        totalSelectedCapacity >= (orderInfo?.guests || 0)
-                            ? styles.seatsOk
-                            : styles.seatsWarning
-                    }
+                <span className={
+                    totalSelectedCapacity >= (orderInfo?.guests || 0)
+                        ? styles.seatsOk
+                        : styles.seatsWarning
+                }
                 >
                     {totalSelectedCapacity} / {orderInfo?.guests || 0}
                 </span>

@@ -1,5 +1,5 @@
 CURRENCY_CHOICES = [
-    ("UAH", "Hryvnia"),
-    ("USD", "US Dollar"),
-    ("EUR", "Euro"),
+    ('UAH', 'Hryvnia'),
+    ('USD', 'US Dollar'),
+    ('EUR', 'Euro'),
 ]

@@ -1,20 +1,20 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import Link from "next/link";
+import React, { useState } from "react";
+import {useRouter} from "next/navigation";
 import axios from "axios";
+import Link from "next/link";
+import { useUser } from "@/app/contexts/UserProvider";
 import venueService from "@/lib/services/venueService";
 import {IVenueWithId} from "@/models/IVenue";
-import { useUser } from "@/app/contexts/UserProvider";
 import styles from "./VenueListingComponent.module.css";
-import {useRouter} from "next/navigation";
 
-interface VenueStats {
-  total_views: number;
-  daily_views: number;
-  weekly_views: number;
-  monthly_views: number;
-}
+// interface VenueStats {
+//   total_views: number;
+//   daily_views: number;
+//   weekly_views: number;
+//   monthly_views: number;
+// }
 
 interface Props {
     venue: IVenueWithId;
@@ -29,22 +29,22 @@ const VenueListingComponent: React.FC<Props> = ({
                                                 }) => {
     const {user} = useUser();
     const [status, setStatus] = useState<string>(venue.status || "");
-    const [stats, setStats] = useState<VenueStats | null>(null);
+    // const [stats, setStats] = useState<VenueStats | null>(null);
     const isLocked = (venue.edit_attempts ?? 0) >= 3;
     const router = useRouter();
 
-    useEffect(() => {
-        if (!user) return;
-
-        (async () => {
-            try {
-                const statsRes = await venueService.stats.getStats(venue.id);
-                setStats(statsRes.data);
-            } catch {
-                console.log("Error loading stats and prices");
-            }
-        })();
-    }, [venue.id, venue.city, user]);
+    // useEffect(() => {
+    //     if (!user) return;
+    //
+    //     (async () => {
+    //         try {
+    //             const statsRes = await venueService.stats.getStats(venue.id);
+    //             setStats(statsRes.data);
+    //         } catch {
+    //             console.error("Error loading stats and prices");
+    //         }
+    //     })();
+    // }, [venue.id, venue.city, user]);
 
     const handleStatusChange = async () => {
         if (status === "pending") {
@@ -231,25 +231,25 @@ const VenueListingComponent: React.FC<Props> = ({
                 </td>
 
 
-            <td>
-              {/*{user ? (*/}
-              {/*  stats ? (*/}
-              {/*    <>*/}
-              {/*      <p>Views: {stats.total_views}</p>*/}
-              {/*      <p>Daily: {stats.daily_views}</p>*/}
-              {/*      <p>Weekly: {stats.weekly_views}</p>*/}
-              {/*      <p>Monthly: {stats.monthly_views}</p>*/}
-              {/*    </>*/}
-              {/*  ) : (*/}
-              {/*    <p>Loading stats...</p>*/}
-              {/*  )*/}
-              {/*) : (*/}
-              {/*  <p>Premium required</p>*/}
-              {/*)}*/}
-            </td>
-          </tr>
-    </>
-  );
+                <td>
+                    {/*{user ? (*/}
+                    {/*  stats ? (*/}
+                    {/*    <>*/}
+                    {/*      <p>Views: {stats.total_views}</p>*/}
+                    {/*      <p>Daily: {stats.daily_views}</p>*/}
+                    {/*      <p>Weekly: {stats.weekly_views}</p>*/}
+                    {/*      <p>Monthly: {stats.monthly_views}</p>*/}
+                    {/*    </>*/}
+                    {/*  ) : (*/}
+                    {/*    <p>Loading stats...</p>*/}
+                    {/*  )*/}
+                    {/*) : (*/}
+                    {/*  <p>Premium required</p>*/}
+                    {/*)}*/}
+                </td>
+            </tr>
+        </>
+    );
 };
 
 export default VenueListingComponent;

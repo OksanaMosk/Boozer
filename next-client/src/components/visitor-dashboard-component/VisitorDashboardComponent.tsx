@@ -1,17 +1,16 @@
 "use client";
 
-
-import styles from "./VisitorDashboardComponent.module.css";
+import React from "react";
 import {useUser} from "@/app/contexts/UserProvider";
 import {LoaderComponent} from "@/components/loader-component/LoaderComponent";
-import React from "react";
+import styles from "./VisitorDashboardComponent.module.css";
 
 const VisitorDashboardComponent = () => {
     const {user} = useUser();
     if (!user) {
-       return <div style={{display: "flex", justifyContent: "center", marginTop: 70}}>
-        <LoaderComponent/>
-    </div>;
+        return <div style={{display: "flex", justifyContent: "center", marginTop: 70}}>
+            <LoaderComponent/>
+        </div>;
     }
 
     return (

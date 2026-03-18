@@ -1,7 +1,8 @@
 "use client";
+
 import React, {useState, ChangeEvent, SyntheticEvent} from "react";
-import styles from "./PhotoSingleUploadComponent.module.css";
 import {LoaderComponent} from "@/components/loader-component/LoaderComponent";
+import styles from "./PhotoSingleUploadComponent.module.css";
 
 interface SinglePhotoProps {
     initialPhotoUrl?: string;
@@ -11,11 +12,11 @@ interface SinglePhotoProps {
 }
 
 export const PhotoSingleUploadComponent = ({
-                                         initialPhotoUrl,
-                                         onUpload,
-                                         onChange,
-                                         label = "Upload Photo",
-                                     }: SinglePhotoProps) => {
+                                               initialPhotoUrl,
+                                               onUpload,
+                                               onChange,
+                                               label = "Upload Photo",
+                                           }: SinglePhotoProps) => {
     const [file, setFile] = useState<File | null>(null);
     const [preview, setPreview] = useState<string | null>(initialPhotoUrl || null);
     const [loading, setLoading] = useState(false);
@@ -48,7 +49,9 @@ export const PhotoSingleUploadComponent = ({
         <div className={styles.photoUploadWrapper}>
             {label && <p className={styles.label}>{label}</p>}
             <div>
-                {preview ? <img src={preview} alt="Uploaded" width={140} height={100}  className={styles.photoPreview}/> : <p>No photo</p>}
+                {preview ?
+                    <img src={preview} alt="Uploaded" width={140} height={100} className={styles.photoPreview}/> :
+                    <p>No photo</p>}
             </div>
             <input type="file" onChange={handleFileChange} className={styles.inputFile}/>
             <button
@@ -57,9 +60,8 @@ export const PhotoSingleUploadComponent = ({
                 className={styles.button}
                 onClick={handleUpload}
             >
-                {loading ? <div className={`authButton ${styles.loaderWrapper}`}><LoaderComponent/> </div>: "Upload"}
+                {loading ? <div className={`authButton ${styles.loaderWrapper}`}><LoaderComponent/></div> : "Upload"}
             </button>
-
             {message && <p className={styles.errorMessage}>{message}</p>}
         </div>
     )

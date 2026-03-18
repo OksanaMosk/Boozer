@@ -13,7 +13,7 @@
     box-shadow:
         0 0 20px rgba(255, 215, 0, 0.15),
         0 0 40px rgba(255, 200, 0, 0.08);
-  animation: float 6s ease-in-out infinite;
+    animation: float 6s ease-in-out infinite;
     overflow: hidden;
 }
 
@@ -87,8 +87,8 @@
     align-items: center;
 }
 .bigSelect{
-       cursor: pointer;
-     border-radius: 12px;
+    cursor: pointer;
+    border-radius: 12px;
     padding: 3px 8px;
     border: 1px solid var(--color-white);
     font-size: 0.7rem;
@@ -149,7 +149,7 @@
 
 
 .table tbody tr {
-       cursor: pointer;
+    cursor: pointer;
     background-color: transparent;
     border-radius: 10px;
     box-shadow: 0 0.25rem 0.75rem var(--color-text);
@@ -159,7 +159,6 @@
 .table tbody tr:hover {
     box-shadow: 0 0.25rem 0.75rem var(--color-text);
     border-radius: 10px;
-
 }
 
 .actions {
@@ -221,15 +220,14 @@
         font-size: 1rem;
     }
 
-.bigSelect{
-     border-radius: 12px;
+.bigSelect {
+    border-radius: 12px;
     padding: 3px 8px;
     border: 1px solid var(--color-white);
     font-size: 1rem;
     background-color: var(--color-badgeId);
     color: var(--color-bg-dark);
 }
-
     .viewVenuesButton, .actions button {
         width: 70px;
         height: 30px;
@@ -255,11 +253,10 @@
 }
 
 @media (min-width: 1200px) {
-
     .subtitle {
         font-size: 1.6rem;
     }
- .table{
+    .table{
          font-size: 0.9rem;
     }
 

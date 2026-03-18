@@ -31,7 +31,7 @@
     font-family: var(--font-imperial),sans-serif;
     position: absolute;
     top: 85%;
-    right:0%;
+    right:0;
     transform: translateY(-50%);
     font-size: 12rem;
     font-weight: 500;

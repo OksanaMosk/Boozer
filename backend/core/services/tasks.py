@@ -14,7 +14,7 @@ def update_exchange_rate():
     try:
         rates = get_today_rates()
         today = datetime.date.today()
-        logger.info(f"Exchange rates updated/cached for {today}: {rates}")
+        logger.info(f'Exchange rates updated/cached for {today}: {rates}')
 
     except Exception as e:
         logger.error(f'Error updating exchange rates: {e}')

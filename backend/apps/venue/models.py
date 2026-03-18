@@ -16,7 +16,6 @@ from core.models import BaseModel
 User = get_user_model()
 
 
-
 class TagModel(models.Model):
     class Meta:
         db_table = 'tags'

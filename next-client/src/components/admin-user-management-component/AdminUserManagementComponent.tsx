@@ -1,11 +1,11 @@
 "use client"
 
 import React, { useEffect, useState } from "react";
+import {useRouter} from "next/navigation";
 import { useSession } from "next-auth/react";
 import userService from "@/lib/services/userService";
-import {useRouter} from "next/navigation";
-import {LoaderComponent} from "@/components/loader-component/LoaderComponent";
 import { IUser } from "@/models/IUser";
+import {LoaderComponent} from "@/components/loader-component/LoaderComponent";
 import styles from './AdminUserManagementComponent.module.css';
 
 const AdminUserManagementComponent = () => {
@@ -17,34 +17,34 @@ const AdminUserManagementComponent = () => {
     const [sortBy, setSortBy] = useState<string>('id');
     const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
     const router = useRouter();
- const { data: session } = useSession();
+    const { data: session } = useSession();
 
 
     useEffect(() => {
-         (async () => {
-      if (!session?.user?.accessToken) {
-        console.error("No access token available!");
-        return;
-      }
+        (async () => {
+            if (!session?.user?.accessToken) {
+                console.error("No access token available!");
+                return;
+            }
 
-      try {
-        setLoading(true);
+            try {
+                setLoading(true);
                 const sortableKeys: (keyof IUser)[] = ['id', 'email', 'role', 'is_active'];
                 const keySortBy: keyof IUser | undefined = sortBy && sortableKeys.includes(sortBy as keyof IUser)
                     ? (sortBy as keyof IUser)
                     : undefined;
 
-          const filters = {
-              role,
-              is_active,
-              sort_by: keySortBy,
-              sort_order: sortOrder
-          };
-          const allUsers = await userService.getAll(filters, {accessToken: session.user.accessToken});
-          setUsers(allUsers);
+                const filters = {
+                    role,
+                    is_active,
+                    sort_by: keySortBy,
+                    sort_order: sortOrder
+                };
+                const allUsers = await userService.getAll(filters, {accessToken: session.user.accessToken});
+                setUsers(allUsers);
 
-      } catch (err: unknown) {
-          if (err instanceof Error) {
+            } catch (err: unknown) {
+                if (err instanceof Error) {
                     setError(err.message);
                 } else {
                     setError("Failed to load user data");
@@ -57,11 +57,11 @@ const AdminUserManagementComponent = () => {
 
     const handleToggleActiveUser = async (userId: string, isActive: boolean) => {
         try {
-             if (!session?.user?.accessToken) {
-        console.error("No access token available!");
-        return;
-      }
-            await userService.toggleActive(userId, isActive, { accessToken: session.user.accessToken });
+            if (!session?.user?.accessToken) {
+                console.error("No access token available!");
+                return;
+            }
+            await userService.toggleActive(userId, isActive, {accessToken: session.user.accessToken});
             setUsers(prev =>
                 prev.map(u => u.id && String(u.id) === userId ? {...u, is_active: isActive} : u)
             );
@@ -72,11 +72,11 @@ const AdminUserManagementComponent = () => {
 
     const handleChangeRole = async (userId: string, role: "visitor" | "venue_admin" | "admin") => {
         try {
-             if (!session?.user?.accessToken) {
-        console.error("No access token available!");
-        return;
-      }
-            await userService.changeRole(userId, role,{ accessToken: session.user.accessToken });
+            if (!session?.user?.accessToken) {
+                console.error("No access token available!");
+                return;
+            }
+            await userService.changeRole(userId, role, {accessToken: session.user.accessToken});
             setUsers(prev => prev.map(u =>
                 u.id !== undefined && String(u.id) === userId ? {...u, role} : u
             ));
@@ -85,8 +85,6 @@ const AdminUserManagementComponent = () => {
         }
     };
 
-
-
     const handleDeleteUser = async (userId: number | undefined) => {
         if (userId === undefined) {
             alert("User ID is undefined");
@@ -94,18 +92,17 @@ const AdminUserManagementComponent = () => {
         }
 
         try {
-             if (!session?.user?.accessToken) {
-        console.error("No access token available!");
-        return;
-      }
-            await userService.delete(String(userId), { accessToken: session.user.accessToken });
+            if (!session?.user?.accessToken) {
+                console.error("No access token available!");
+                return;
+            }
+            await userService.delete(String(userId), {accessToken: session.user.accessToken});
             setUsers(users.filter(user => String(user.id) !== String(userId)));
             alert('User deleted successfully');
         } catch {
             alert('Error deleting user');
         }
     };
-
 
     if (loading) return <div style={{display: "flex", justifyContent: "center", marginTop: 70}}>
         <LoaderComponent/>
@@ -204,7 +201,7 @@ const AdminUserManagementComponent = () => {
                                     onClick={() => router.push(`/venue-admin/${user.id}`)}
                                     className={styles.viewVenuesButton}
                                 >
-                               Venues
+                                    Venues
                                 </button>
                             </td>
                         </tr>

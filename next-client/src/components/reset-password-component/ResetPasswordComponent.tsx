@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import { LoaderComponent } from "@/components/loader-component/LoaderComponent";
 import { useRouter, useSearchParams } from "next/navigation";
+import { LoaderComponent } from "@/components/loader-component/LoaderComponent";
 import styles from "./ResetPasswordComponent.module.css";
 
 export default function ResetPasswordPage() {
@@ -10,7 +10,6 @@ export default function ResetPasswordPage() {
     const [confirmPassword, setConfirmPassword] = useState("");
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState("");
-
     const router = useRouter();
     const searchParams = useSearchParams();
     const token = searchParams.get("token");

@@ -2,10 +2,10 @@
 
 import React from 'react';
 import Link from "next/link";
+import {IVenue} from "@/models/IVenue";
 import VenueComponent from "@/components/venue-component/VenueComponent";
 import {PaginationComponent} from "@/components/pagination-component/PaginationComponent";
 import {ButtonScrollTopComponent} from "@/components/button-scroll-top-component/ButtonScrollTopComponent";
-import {IVenue} from "@/models/IVenue";
 import styles from "./VenuesComponent.module.css";
 
 interface VenuesComponentProps {
@@ -14,7 +14,7 @@ interface VenuesComponentProps {
 }
 
 
-const VenuesComponent: React.FC<VenuesComponentProps > = ({venues, totalPages}) => {
+const VenuesComponent: React.FC<VenuesComponentProps> = ({venues, totalPages}) => {
     return (
         <div className={styles.venuesListContainer}>
             <ul className={styles.list}>
@@ -29,7 +29,6 @@ const VenuesComponent: React.FC<VenuesComponentProps > = ({venues, totalPages}) 
                     </li>
                 ))}
             </ul>
-
             <PaginationComponent totalPages={totalPages}/>
             <ButtonScrollTopComponent/>
         </div>

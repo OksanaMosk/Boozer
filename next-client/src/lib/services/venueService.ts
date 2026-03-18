@@ -132,8 +132,15 @@ const venueServices = {
             create: (data: ITableBooking) => api(token).post<ITableBooking>(urls.venues.bookings(venueId, tableId), data),
             update: (bookingId: string, data: Partial<ITableBooking>) => api(token).patch<ITableBooking>(`${urls.venues.bookings(venueId, tableId)}${bookingId}/`, data),
             delete: (bookingId: string | number) => api(token).delete(`${urls.venues.bookings(venueId, tableId)}${bookingId}/`),
-            getAllByVenue: (params: { lower: string; upper: string }) => api(token).get<ITableBooking[]>(`${urls.venues.list}${venueId}/bookings/`, {params}),
-           bulkCreate: (data: { order: number; tables: number[]; time_range: any }) => api(token).post(`${urls.venues.list}${venueId}/bookings/bulk-create/`, data)
+            getAllByVenue: (params: {
+                lower: string;
+                upper: string
+            }) => api(token).get<ITableBooking[]>(`${urls.venues.list}${venueId}/bookings/`, {params}),
+            bulkCreate: (data: {
+                order: number;
+                tables: number[];
+                time_range: any
+            }) => api(token).post(`${urls.venues.list}${venueId}/bookings/bulk-create/`, data)
         }),
         menu: (token?: Token) => (venueId: string) => ({
             getAll: () => getByParent<PaginatedResponse<IMenu>>(urls.venues.menu, token)(venueId),
@@ -147,7 +154,10 @@ const venueServices = {
             create: (data: Partial<IMenuItem>) => api(token).post<IMenuItem>(urls.venues.menuItems(venueId, menuId), data),
             update: (menuItemId: string, data: Partial<IMenuItem>) => api(token).patch<IMenuItem>(`${urls.venues.menuItems(venueId, menuId)}${menuItemId}/`, data),
             delete: (menuItemId: string) => api(token).delete(`${urls.venues.menuItems(venueId, menuId)}${menuItemId}/`),
-            reorder: (data: { id: string; position: number }[]) => api(token).patch(`${urls.venues.menuItems(venueId, menuId)}reorder/`, data),
+            reorder: (data: {
+                id: string;
+                position: number
+            }[]) => api(token).patch(`${urls.venues.menuItems(venueId, menuId)}reorder/`, data),
 
         }),
         news: (token?: Token) => (venueId: string) => ({
@@ -157,29 +167,45 @@ const venueServices = {
             update: (newsId: string, data: Partial<INews>) => api(token).patch<INews>(`${urls.venues.news(venueId)}${newsId}/`, data),
             delete: (newsId: string) => api(token).delete(`${urls.venues.news(venueId)}${newsId}/`),
             images: (newsId: string) => ({
-                getAll: () => getByParent<INewsPhoto>((id: string) => urls.venues.newsImages(venueId, id), token)(newsId), get: (imageId: string) => api(token).get<INewsPhoto>(`${urls.venues.newsImages(venueId, newsId)}${imageId}/`),
-                create: (formData: FormData) => api(token).post<INewsPhoto>(urls.venues.newsImages(venueId, newsId), formData, { headers: { "Content-Type": "multipart/form-data" } }),
+                getAll: () => getByParent<INewsPhoto>((id: string) => urls.venues.newsImages(venueId, id), token)(newsId),
+                get: (imageId: string) => api(token).get<INewsPhoto>(`${urls.venues.newsImages(venueId, newsId)}${imageId}/`),
+                create: (formData: FormData) => api(token).post<INewsPhoto>(urls.venues.newsImages(venueId, newsId), formData, {headers: {"Content-Type": "multipart/form-data"}}),
                 update: (imageId: string, data: Partial<INewsPhoto>) => api(token).patch<INewsPhoto>(`${urls.venues.newsImages(venueId, newsId)}${imageId}/`, data),
                 delete: (imageId: string) => api(token).delete(`${urls.venues.newsImages(venueId, newsId)}${imageId}/`),
             }),
         }),
         travelLogistics: (token?: Token) => (venueId: string) => ({
-                getAll: () => api(token).get<ITravelLogistics[]>(urls.venues.travelLogistics(venueId)),
-                updatePrices: (data: { step_type: string; price_per_km: number }[]) => api(token).post<ITravelLogistics[]>(`${urls.venues.travelLogistics(venueId)}update-prices/`, data),
-                calculate: (lat: number, lng: number, start?: string, end?: string) => api(token).get<ITravelEstimate>(`${urls.venues.travelLogistics(venueId)}calculate/`, {params: { lat, lng, start, end }}),
-                get: (id: string) => api(token).get<ITravelLogistics>(`${urls.venues.travelLogistics(venueId)}${id}/`),
-                create: (data: Partial<ITravelLogistics>) => api(token).post<ITravelLogistics>(urls.venues.travelLogistics(venueId), data),
-                update: (id: string, data: Partial<ITravelLogistics>) => api(token).patch<ITravelLogistics>(`${urls.venues.travelLogistics(venueId)}${id}/`, data),
-                delete: (id: string) => api(token).delete(`${urls.venues.travelLogistics(venueId)}${id}/`),
+            getAll: () => api(token).get<ITravelLogistics[]>(urls.venues.travelLogistics(venueId)),
+            updatePrices: (data: {
+                step_type: string;
+                price_per_km: number
+            }[]) => api(token).post<ITravelLogistics[]>(`${urls.venues.travelLogistics(venueId)}update-prices/`, data),
+            calculate: (lat: number, lng: number, start?: string, end?: string) => api(token).get<ITravelEstimate>(`${urls.venues.travelLogistics(venueId)}calculate/`, {
+                params: {
+                    lat,
+                    lng,
+                    start,
+                    end
+                }
             }),
+            get: (id: string) => api(token).get<ITravelLogistics>(`${urls.venues.travelLogistics(venueId)}${id}/`),
+            create: (data: Partial<ITravelLogistics>) => api(token).post<ITravelLogistics>(urls.venues.travelLogistics(venueId), data),
+            update: (id: string, data: Partial<ITravelLogistics>) => api(token).patch<ITravelLogistics>(`${urls.venues.travelLogistics(venueId)}${id}/`, data),
+            delete: (id: string) => api(token).delete(`${urls.venues.travelLogistics(venueId)}${id}/`),
+        }),
         extraServices: (token?: Token) => (venueId: string) => ({
-                getAll: () => api(token).get<IExtraService[]>(urls.venues.extraServices(venueId)),
-                updatePrices: (data: { service_type: string; price: number; price_type: string; name: string }[]) =>api(token).post<IExtraService[]>(`${urls.venues.extraServices(venueId)}update-prices/`, data),
-                get: (id: string) => api(token).get<IExtraService>(`${urls.venues.extraServices(venueId)}${id}/`),
-                create: (data: Partial<IExtraService>) => api(token).post<IExtraService>(urls.venues.extraServices(venueId), data),
-                update: (id: string, data: Partial<IExtraService>) => api(token).patch<IExtraService>(`${urls.venues.extraServices(venueId)}${id}/`, data),
-                delete: (id: string) => api(token).delete(`${urls.venues.extraServices(venueId)}${id}/`),
-}),
+            getAll: () => api(token).get<IExtraService[]>(urls.venues.extraServices(venueId)),
+            updatePrices: (data: {
+                service_type: string;
+                price: number;
+                price_type: string;
+                name: string
+            }[]) => api(token).post<IExtraService[]>(`${urls.venues.extraServices(venueId)}update-prices/`, data),
+            get: (id: string) => api(token).get<IExtraService>(`${urls.venues.extraServices(venueId)}${id}/`),
+            create: (data: Partial<IExtraService>) => api(token).post<IExtraService>(urls.venues.extraServices(venueId), data),
+            update: (id: string, data: Partial<IExtraService>) => api(token).patch<IExtraService>(`${urls.venues.extraServices(venueId)}${id}/`, data),
+            delete: (id: string) => api(token).delete(`${urls.venues.extraServices(venueId)}${id}/`),
+        }),
         reviews: {
             getAllWithFilter: (filterCriteria?: ReviewFilterCriteria, token?: Token) => api(token).get<IReview[]>(urls.reviews.list, {params: buildReviewParams(filterCriteria)}),
             ...createService<IReview>(urls.reviews.list),
@@ -207,24 +233,14 @@ const venueServices = {
                 delete: (tagId: string) => api(token).delete(urls.venues.venueTags.delete(venueId, tagId)),
             }),
 
-
-        // venueTags: {
-        //     create: (venueId: string, data: Partial<IVenueTag>, token?: Token) =>
-        //         api(token).post<IVenueTag>(`/venues/${venueId}/venue_tags/`, data),
-        //
-        //     getAll: (venueId: string, token?: Token) =>
-        //         api(token).get<IVenueTag[]>(`/venues/${venueId}/venue_tags/`),
-        //
-        //     delete: (venueId: string, tagId: string, token?: Token) =>
-        //         api(token).delete(`/venues/${venueId}/venue_tags/${tagId}/`),
-        // },
-
-         orders: (token?: Token) => (venueId: string) => ({
-            getAll: (filterCriteria?: OrderFilterCriteria & { page?: number }) => api(token).get<PaginatedResponse<IOrder>>(urls.venues.orders(venueId), {params: buildOrderParams(filterCriteria)}),
+        orders: (token?: Token) => (venueId: string) => ({
+            getAll: (filterCriteria?: OrderFilterCriteria & {
+                page?: number
+            }) => api(token).get<PaginatedResponse<IOrder>>(urls.venues.orders(venueId), {params: buildOrderParams(filterCriteria)}),
             get: (orderId: string | number) => api(token).get<IOrder>(`${urls.venues.orders(venueId)}${orderId}/`),
             create: (data: Partial<IOrder>) => api(token).post<IOrder>(urls.venues.orders(venueId), data),
             update: (orderId: string | number, data: Partial<IOrder>) => api(token).patch<IOrder>(`${urls.venues.orders(venueId)}${orderId}/`, data),
-            updateStatus: (orderId: string | number, status: OrderStatusType) => api(token).patch<IOrder>(`${urls.venues.orders(venueId)}${orderId}/`, { status }),
+            updateStatus: (orderId: string | number, status: OrderStatusType) => api(token).patch<IOrder>(`${urls.venues.orders(venueId)}${orderId}/`, {status}),
             delete: (orderId: string | number) => api(token).delete(`${urls.venues.orders(venueId)}${orderId}/`),
             getActive: () => api(token).get<IOrder[]>(`${urls.venues.orders(venueId)}active/`),
         }),
@@ -247,11 +263,16 @@ const venueServices = {
         ...createService<IReview>(urls.reviews.list),
     },
 
+    // constants: {
+    //     getConstants: (token?: Token) => api(token).get(urls.constants.constantsList),
+    // },
+
     constants: {
-        getConstants: (token?: Token) => api(token).get(urls.constants.constantsList),
-    },
+        getConstants: () => api().get(urls.constants.constantsList),
+},
+
     stats: {
-       getStats: (venueId: string, token?: Token) => api(token).get (urls.venues.stats(venueId)),
+        getStats: (venueId: string, token?: Token) => api(token).get(urls.venues.stats(venueId)),
     },
     exchangeService: {
         getRates: (token?: Token) => api(token).get<{ USD: number; EUR: number }>(urls.exchangeRates),

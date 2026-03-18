@@ -2,7 +2,6 @@
 
 import { useTheme } from "next-themes";
 import {useEffect, useState} from "react";
-import Image from "next/image";
 import styles from "./ThemesButtonComponent.module.css";
 
 const ThemesButtonComponent = () => {
@@ -12,7 +11,7 @@ const ThemesButtonComponent = () => {
     useEffect(() => {
         setMounted(true);
 
-        }, []);
+    }, []);
 
     if (!mounted) return null;
 

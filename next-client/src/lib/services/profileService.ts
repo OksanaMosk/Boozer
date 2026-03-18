@@ -39,29 +39,4 @@ const profileService = {
     },
 };
 
- // createProfile: async (
-    //     userId: string,
-    //     payload: ProfilePayload,
-    //     token: string) => {
-    //     const {data} = await apiService(token).post(
-    //         urls.profile.create(userId),
-    //         payload,
-    //     );
-    //     return data;
-    // },
-
-//   getProfile: async (
-//       userId: string,
-//       token: string
-//   ) => {
-//     const { data } = await apiService(token).get(
-//         urls.profile.get(userId),
-//        );
-//     console.log("userId:", userId)
-// console.log("token:", token)
-//     return data;
-//   },
-// };
-
-
 export default profileService;

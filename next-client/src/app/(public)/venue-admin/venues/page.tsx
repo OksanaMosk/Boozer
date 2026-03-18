@@ -8,6 +8,7 @@ const VenueAdminVenuesPage = () => {
     return (
         <div>
             <ButtonGoBackComponent/>
+            <VenueCreateComponent/>
         </div>
     );
 };

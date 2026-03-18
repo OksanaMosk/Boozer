@@ -73,44 +73,6 @@ def calculate_total(order):
     order.save(update_fields=['total_price', 'services_total', 'exchange_rate'])
 
 
-# def calculate_total(order):
-#     order.refresh_from_db()
-#     from apps.orders.models import OrderExtraServiceModel
-#     rates = get_today_rates()
-#
-#     s_sum = Decimal('0.00')
-#     services = OrderExtraServiceModel.objects.filter(order=order).select_related('service')
-#
-#     for s in services:
-#         price = Decimal(str(s.price))
-#         qty = s.quantity
-#
-#         if s.service.price_type == 'per_day':
-#             s_sum += price * order.guests_count * qty
-#         elif s.service.service_type == 'insurance':
-#             s_sum += price * qty
-#         else:
-#             s_sum += price * qty
-#
-#     order.services_total = s_sum
-#
-#     total_uah = (
-#             order.menu_total +
-#             order.services_total +
-#             Decimal(str(order.flight_price or 0)) +
-#             Decimal(str(order.transfer_price or 0))
-#     )
-#
-#     if not order.currency or order.currency == 'UAH':
-#         order.total_price = total_uah
-#         order.exchange_rate = Decimal('1.00')
-#     else:
-#         rate = Decimal(str(rates.get(str(order.currency), 1.00)))
-#         order.exchange_rate = rate
-#         order.total_price = (total_uah / rate).quantize(Decimal('0.01'))
-#
-#     order.save(update_fields=['total_price', 'services_total', 'exchange_rate'])
-
 @transaction.atomic
 def confirm_order(order):
     if order.status != 'CONFIRMED':

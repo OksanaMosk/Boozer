@@ -79,13 +79,12 @@ class OrderModel(BaseModel):
     def menu_total(self):
         return sum(item.price * item.quantity for item in self.items.all())
 
-
     def __str__(self):
-        return f"Order #{self.id} — {self.venue.name}"
+        return f'Order #{self.id} — {self.venue.name}'
 
     def clean(self):
         if self.end_date < self.start_date:
-            raise ValidationError("End date must be after start date")
+            raise ValidationError('End date must be after start date')
 
     def save(self, *args, **kwargs):
         is_new = self.pk is None
@@ -148,19 +147,19 @@ class TableBookingModel(models.Model):
 
     def clean(self):
         if self.table.venue_id != self.order.venue_id:
-            raise ValidationError("Table and order must belong to same venue.")
+            raise ValidationError('Table and order must belong to same venue.')
 
         start = self.time_range.lower
         end = self.time_range.upper
 
         if start >= end:
-            raise ValidationError("Booking start must be before booking end.")
+            raise ValidationError('Booking start must be before booking end.')
 
         if not (self.order.start_date <= start.date() <= self.order.end_date):
-            raise ValidationError("Booking start must be within order period.")
+            raise ValidationError('Booking start must be within order period.')
 
         if not (self.order.start_date <= end.date() <= self.order.end_date):
-            raise ValidationError("Booking end must be within order period.")
+            raise ValidationError('Booking end must be within order period.')
 
         existing_capacity = sum(
             b.table.capacity
@@ -168,7 +167,7 @@ class TableBookingModel(models.Model):
         )
         total_capacity = existing_capacity + self.table.capacity
         if total_capacity < self.order.guests_count:
-            raise ValidationError("Not enough seats assigned for this order.")
+            raise ValidationError('Not enough seats assigned for this order.')
 
 
 class OrderItemModel(BaseModel):

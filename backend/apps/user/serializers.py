@@ -37,8 +37,6 @@ class ProfileSerializer(serializers.ModelSerializer):
         )
         read_only_fields = ('created_at', 'updated_at', 'user_id')
 
-
-
     @staticmethod
     def validate_birth_date(value):
         today = date.today()

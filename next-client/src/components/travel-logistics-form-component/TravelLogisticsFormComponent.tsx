@@ -1,71 +1,74 @@
 "use client"
-import {AxiosResponse} from "axios";
-import React, { useEffect, useState } from 'react';
 
-import venueServices from "@/lib/services/venueService";
+import React, { useEffect, useState } from 'react';
+import {AxiosResponse} from "axios";
 import { useUser } from "@/app/contexts/UserProvider";
+import venueServices from "@/lib/services/venueService";
 import {ITravelLogistics} from "@/models/ITravel";
 import {IExtraService} from "@/models/IVenue";
-import styles from "./TravelLogisticsFormComponent.module.css"
 import {LoaderComponent} from "@/components/loader-component/LoaderComponent";
+import styles from "./TravelLogisticsFormComponent.module.css"
+
 interface Props {
     venueId: string;
 }
 const TravelLogisticsFormComponent: React.FC<Props> = ({ venueId }) => {
     const { user } = useUser();
-    const token = user?.token ? { accessToken: user.token } : undefined;
+    const token = user?.token ? {accessToken: user.token} : undefined;
     const [loading, setLoading] = useState(false);
     const [savedLogistics, setSavedLogistics] = useState<ITravelLogistics[]>([]);
     const [savedExtras, setSavedExtras] = useState<IExtraService[]>([]);
     const [logistics, setLogistics] = useState<Partial<ITravelLogistics>[]>([
-        { step_type: 'to_airport', price_per_km: 0 },
-        { step_type: 'flight', price_per_km: 0 },
-        { step_type: 'from_airport', price_per_km: 0 },
+        {step_type: 'to_airport', price_per_km: 0},
+        {step_type: 'flight', price_per_km: 0},
+        {step_type: 'from_airport', price_per_km: 0},
     ]);
     const [extraServices, setExtraServices] = useState<Partial<IExtraService>[]>([
-        { service_type: 'hotel', price: 0, price_type: 'per_day', name: 'Hotel' },
-        { service_type: 'insurance', price: 0, price_type: 'fixed', name: 'Insurance' },
-        { service_type: 'decoration', price: 0, price_type: 'fixed', name: 'Decoration' },
+        {service_type: 'hotel', price: 0, price_type: 'per_day', name: 'Hotel'},
+        {service_type: 'insurance', price: 0, price_type: 'fixed', name: 'Insurance'},
+        {service_type: 'decoration', price: 0, price_type: 'fixed', name: 'Decoration'},
     ]);
 
     const fetchData = async () => {
-    if (!user?.token || !venueId) return;
-    try {
-        const [logRes, extraRes]:AxiosResponse[] = await Promise.all([
-            venueServices.venues.travelLogistics(token!)(venueId).getAll(),
-            venueServices.venues.extraServices(token!)(venueId).getAll()
-        ]);
-        const actualLogistics = logRes.data.data || [];
-        const actualExtras = extraRes.data.data || [];
-        console.log("Logistics Array:", actualLogistics);
-        console.log("Extras Array:", actualExtras);
-        setSavedLogistics(actualLogistics);
-        setSavedExtras(actualExtras);
-        if (actualLogistics.length > 0) {
-            setLogistics(actualLogistics);
-        }
-        if (actualExtras.length > 0) {
-            setExtraServices(actualExtras);
-        }
+        if (!user?.token || !venueId) return;
+        try {
+            const [logRes, extraRes]: AxiosResponse[] = await Promise.all([
+                venueServices.venues.travelLogistics(token!)(venueId).getAll(),
+                venueServices.venues.extraServices(token!)(venueId).getAll()
+            ]);
+            const actualLogistics = logRes.data.data || [];
+            const actualExtras = extraRes.data.data || [];
+            console.log("Logistics Array:", actualLogistics);
+            console.log("Extras Array:", actualExtras);
+            setSavedLogistics(actualLogistics);
+            setSavedExtras(actualExtras);
+            if (actualLogistics.length > 0) {
+                setLogistics(actualLogistics);
+            }
+            if (actualExtras.length > 0) {
+                setExtraServices(actualExtras);
+            }
 
-    } catch (err) {
-        console.error("Помилка завантаження:", err);
-    }
-};
+        } catch (err) {
+            console.error("Помилка завантаження:", err);
+        }
+    };
 
-    useEffect(() => { void fetchData(); }, [venueId, user?.token]);
+    useEffect(() => {
+        void fetchData();
+    }, [venueId, user?.token]);
 
     const handleLogisticsChange = (type: string, value: string) => {
         const numValue = Math.max(0, parseFloat(value) || 0);
         setLogistics(prev => prev.map(item =>
-            item.step_type === type ? { ...item, price_per_km: numValue } : item
+            item.step_type === type ? {...item, price_per_km: numValue} : item
         ));
     };
 
     const handleServiceChange = (type: string, field: keyof IExtraService, value: string) => {
         setExtraServices(prev => prev.map(item =>
             item.service_type === type
-                ? { ...item, [field]: field === 'price' ? Math.max(0, parseFloat(value) || 0) : value }
+                ? {...item, [field]: field === 'price' ? Math.max(0, parseFloat(value) || 0) : value}
                 : item
         ));
     };
@@ -76,7 +79,7 @@ const TravelLogisticsFormComponent: React.FC<Props> = ({ venueId }) => {
         try {
             await Promise.all([
                 venueServices.venues.travelLogistics(token)(venueId).updatePrices(
-                    logistics.map(l => ({ step_type: l.step_type!, price_per_km: l.price_per_km || 0 }))
+                    logistics.map(l => ({step_type: l.step_type!, price_per_km: l.price_per_km || 0}))
                 ),
                 venueServices.venues.extraServices(token)(venueId).updatePrices(
                     extraServices.map(s => ({
@@ -97,7 +100,7 @@ const TravelLogisticsFormComponent: React.FC<Props> = ({ venueId }) => {
     };
 
     return (
-       <div className={styles.container}>
+        <div className={styles.container}>
             <div className={styles.summaryGrid}>
                 <div className={styles.card}>
                     <h4 className={styles.cardHeader}>Current Logistics</h4>
@@ -122,7 +125,7 @@ const TravelLogisticsFormComponent: React.FC<Props> = ({ venueId }) => {
                 </div>
             </div>
 
-            <hr className={styles.divider} />
+            <hr className={styles.divider}/>
             <div className={styles.formWrapper}>
                 <h2 className={styles.mainTitle}>Update or Create Rates</h2>
 
@@ -131,7 +134,7 @@ const TravelLogisticsFormComponent: React.FC<Props> = ({ venueId }) => {
                     <div className={styles.inputList}>
                         {logistics.map((item) => (
                             <div key={item.step_type} className={styles.inputRow}>
-                                <div className={styles.rowLeft} >
+                                <div className={styles.rowLeft}>
                                     <label className={styles.label}>{item.step_type?.replace('_', ' ')}</label>
                                     <input
                                         type="number" step="0.1"
@@ -157,7 +160,7 @@ const TravelLogisticsFormComponent: React.FC<Props> = ({ venueId }) => {
                                 <div>
                                     <input
                                         type="number"
-                                        value={service.price  || ""}
+                                        value={service.price || ""}
                                         onChange={(e) => handleServiceChange(service.service_type!, 'price', e.target.value)}
                                         className={styles.inputField}
                                     />
@@ -172,7 +175,8 @@ const TravelLogisticsFormComponent: React.FC<Props> = ({ venueId }) => {
                     disabled={loading}
                     className={styles.submitBtn}
                 >
-                    {loading ? <div className={`authButton ${styles.loaderWrapper}`}><LoaderComponent/> </div> : "Save Rates"}
+                    {loading ?
+                        <div className={`authButton ${styles.loaderWrapper}`}><LoaderComponent/></div> : "Save Rates"}
                 </button>
             </div>
         </div>

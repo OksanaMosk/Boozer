@@ -3,10 +3,10 @@
 import React, {useState} from "react";
 import {useRouter} from "next/navigation"
 import {useSession} from "next-auth/react";
-import styles from "./CompleteProfileFormComponent.module.css";
+import profileService from "@/lib/services/profileService";
 import DatePickerComponent from "@/components/date-picker-component/DatePickerComponent";
 import {LoaderComponent} from "@/components/loader-component/LoaderComponent";
-import profileService from "@/lib/services/profileService";
+import styles from "./CompleteProfileFormComponent.module.css";
 
 export default function CompleteProfileFormComponent() {
     const [birthDate, setBirthDate] = useState<Date | null>(null);
@@ -33,50 +33,50 @@ export default function CompleteProfileFormComponent() {
     };
 
     const handleSubmit = async (event: React.SyntheticEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setErrorMsg("");
-    setErrorFields({});
-    const errors: Record<string, string> = {};
+        event.preventDefault();
+        setErrorMsg("");
+        setErrorFields({});
+        const errors: Record<string, string> = {};
 
-    if (!validateBirthDate(birthDate)) {
-        errors.birthDate = "You must be at least 18 years old.";
-    }
-    if (!isRulesAccepted) {
-        errors.rules = "You must accept the rules";
-    }
-    if (Object.keys(errors).length) {
-        setErrorFields(errors);
-        return;
-    }
-    if (!session) {
-        setErrorMsg("Session not found.");
-        return;
-    }
-    setIsSubmitting(true);
-    try {
-        const payload = {
-            birth_date: birthDate!.toISOString().split("T")[0],
-            is_rules_accepted: isRulesAccepted,
-        };
-        if (!session.user?.id || !session.user?.accessToken) {
-            setErrorMsg("Missing user credentials.");
+        if (!validateBirthDate(birthDate)) {
+            errors.birthDate = "You must be at least 18 years old.";
+        }
+        if (!isRulesAccepted) {
+            errors.rules = "You must accept the rules";
+        }
+        if (Object.keys(errors).length) {
+            setErrorFields(errors);
             return;
         }
+        if (!session) {
+            setErrorMsg("Session not found.");
+            return;
+        }
+        setIsSubmitting(true);
+        try {
+            const payload = {
+                birth_date: birthDate!.toISOString().split("T")[0],
+                is_rules_accepted: isRulesAccepted,
+            };
+            if (!session.user?.id || !session.user?.accessToken) {
+                setErrorMsg("Missing user credentials.");
+                return;
+            }
 
-        await profileService.updateProfile(
-            session.user.id,
-            payload,
-            session.user.accessToken
-        );
-        router.push("/visitor");
+            await profileService.updateProfile(
+                session.user.id,
+                payload,
+                session.user.accessToken
+            );
+            router.push("/visitor");
 
-    } catch (err: any) {
-    console.error("Profile save error", err);
-    setErrorMsg(`Profile save error: ${err.message}`);
-    } finally {
-        setIsSubmitting(false);
-    }
-};
+        } catch (err: any) {
+            console.error("Profile save error", err);
+            setErrorMsg(`Profile save error: ${err.message}`);
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
 
     return (
         <div className={styles.centerContainer}>
@@ -108,7 +108,7 @@ export default function CompleteProfileFormComponent() {
                         />
                         <div onClick={() => setIsCalendarOpen(!isCalendarOpen)} className={styles.icon}>
                             <img src="/images/calendar.png" alt="calendar icon" width={20} height={20}
-                                   className={styles.img}/>
+                                 className={styles.img}/>
                         </div>
 
                         {isCalendarOpen && (

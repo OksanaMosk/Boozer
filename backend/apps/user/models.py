@@ -19,10 +19,10 @@ class UserModel(AbstractBaseUser, PermissionsMixin, BaseModel):
         ADMIN = 'admin', 'Administrator'
 
     class AuthProvider(models.TextChoices):
-        EMAIL = "email", "Email"
-        GOOGLE = "google", "Google"
-        FACEBOOK = "facebook", "Facebook"
-        APPLE = "apple", "Apple"
+        EMAIL = 'email', 'Email'
+        GOOGLE = 'google', 'Google'
+        FACEBOOK = 'facebook', 'Facebook'
+        APPLE = 'apple', 'Apple'
 
     email = models.EmailField(unique=True)
     role = models.CharField(max_length=20, choices=Role.choices, default=Role.VISITOR)

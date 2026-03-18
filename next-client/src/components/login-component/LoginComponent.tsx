@@ -1,12 +1,12 @@
 "use client";
 
 import React, { useState} from "react";
+import {useRouter, useSearchParams} from "next/navigation";
 import Link from "next/link";
 import { authService } from "@/lib/services/authService";
 import { LoaderComponent } from "@/components/loader-component/LoaderComponent";
-import styles from "./LoginComponent.module.css";
 import ButtonsSocialComponent from "@/components/buttons-social-component/ButtonsSocialComponent";
-import {useRouter, useSearchParams} from "next/navigation";
+import styles from "./LoginComponent.module.css";
 
 const LoginComponent = () => {
     const [email, setEmail] = useState("");
@@ -40,18 +40,16 @@ const LoginComponent = () => {
         } catch (err: unknown) {
             if (err instanceof Error) setErrorMsg(err.message);
             else setErrorMsg("Unknown error");
-    } finally {
-      setLoading(false);
-    }
-  };
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
         <div className={styles.centerContainer}>
             <form onSubmit={handleSubmit} className={`auth ${styles.form}`}>
                 <h2 className={styles.title}>Sign In</h2>
-
                 <div className={styles.inputGroup}>
-
                     <input
                         id="email"
                         type="email"
@@ -118,7 +116,7 @@ const LoginComponent = () => {
                             Sign up
                         </Link>
                     </p>
-                        <ButtonsSocialComponent/>
+                    <ButtonsSocialComponent/>
                 </div>
             </form>
         </div>

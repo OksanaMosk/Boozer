@@ -21,9 +21,9 @@ class ExchangeService {
     }
     return this.rates;
   }
-  getRates() {
-    return this.rates;
-  }
+  // getRates() {
+  //   return this.rates;
+  // }
 }
 
 export const exchangeService = new ExchangeService();

@@ -3,7 +3,7 @@ import os
 from django.contrib.auth import get_user_model
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import get_template
-
+from django.conf import settings
 from configs.celery import app
 from core.services.jwt_service import ActivateToken, JWTService, RecoveryToken
 
@@ -38,7 +38,8 @@ class EmailService:
     @classmethod
     def recovery(cls, user):
         token=JWTService.create_token(user, RecoveryToken)
-        url =  f'http://localhost:3000/reset-password?token={token}'
+        # url =  f'http://localhost:3000/reset-password?token={token}'
+        url = f"{settings.BASE_URL}/reset-password?token={token}"
         cls.__send_email.delay(
             to=user.email,
             template_name='recovery.html',

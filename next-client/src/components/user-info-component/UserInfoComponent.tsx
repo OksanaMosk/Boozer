@@ -1,7 +1,8 @@
 'use client';
 
-import styles from "./UserInfoComponent.module.css";
 import {useUser} from "@/app/contexts/UserProvider";
+import styles from "./UserInfoComponent.module.css";
+
 type UserInfoProps = {
     onLogoutAction: () => void;
     classNames?: {
@@ -14,7 +15,6 @@ type UserInfoProps = {
 
     };
 };
-
 
 export const UserInfoComponent = ({onLogoutAction, classNames = {}}: UserInfoProps) => {
   const {user} = useUser()
@@ -34,7 +34,7 @@ export const UserInfoComponent = ({onLogoutAction, classNames = {}}: UserInfoPro
                 <p className={`${styles.user} ${classNames.user ?? ""}`}>{user.email}</p>
 
                 <button
-                   onClick={onLogoutAction}
+                    onClick={onLogoutAction}
                     className={`${styles.logoutBtn} ${classNames.logoutBtn ?? ""}`}
                 >
                     Sign out

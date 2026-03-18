@@ -1,9 +1,9 @@
-import {apiService} from "./apiService";
-import {urls} from "../constants/urls";
-import {IUser} from "@/models/IUser";
 import {AxiosError} from "axios";
 import { signIn } from "next-auth/react";
 import { getSession } from "next-auth/react";
+import {apiService} from "./apiService";
+import {urls} from "../constants/urls";
+import {IUser} from "@/models/IUser";
 
 interface IRegisterUser {
     email: string;
@@ -35,12 +35,10 @@ const authService = {
     async register(user: IRegisterUser): Promise<IUser> {
         try {
             const {data} = await apiService().post<IUser>(urls.auth.register, user);
-            // console.log("Success response:", data);
             return data;
         } catch (error) {
             if (error instanceof AxiosError) {
                 console.error("Register failed:", error.response?.status, error.response?.data);
-
             } else {
                 console.error("Unexpected error:", error);
             }

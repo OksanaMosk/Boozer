@@ -41,7 +41,7 @@ class MenuItemModel(BaseModel):
     currency = models.CharField(
         max_length=3,
         choices=CURRENCY_CHOICES,
-        default="UAH",
+        default='UAH',
         editable=False
     )
 
@@ -54,11 +54,10 @@ class MenuItemModel(BaseModel):
 
     position = models.PositiveIntegerField(default=0)
 
-
     category = models.CharField(
         max_length=20,
         choices=CATEGORY_CHOICES,
-        default="mains"
+        default='mains'
     )
 
     def save(self, *args, **kwargs):
@@ -66,4 +65,4 @@ class MenuItemModel(BaseModel):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.name} — {self.price} {self.currency}"
+        return f'{self.name} — {self.price} {self.currency}'

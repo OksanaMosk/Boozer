@@ -2,30 +2,31 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { LoaderComponent } from "@/components/loader-component/LoaderComponent";
-import { IVenue, IVenuePhoto } from "@/models/IVenue";
-import venueServices from "@/lib/services/venueService";
 import { useUser } from "@/app/contexts/UserProvider";
+import venueServices from "@/lib/services/venueService";
+import { IVenue, IVenuePhoto } from "@/models/IVenue";
+import { LoaderComponent } from "@/components/loader-component/LoaderComponent";
 import {VenueFormComponent} from "@/components/venue-form-component/VenueFormComponent";
 import {VenuePhotosComponent} from "@/components/venue-photos-component/VenuePhotosComponent";
+// import styles from "./VenueEditComponent.module.css"
 
 interface Props {
-  venueId: string;
+    venueId: string;
 }
 
 interface ILocalPhoto {
-  file: File;
-  preview_url: string;
-  is_main?: boolean;
+    file: File;
+    preview_url: string;
+    is_main?: boolean;
 }
 
-const VenueEditComponent = ({ venueId }: Props) => {
-  const router = useRouter();
-  const [form, setForm] = useState<IVenue | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [message, setMessage] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
+const VenueEditComponent = ({venueId}: Props) => {
+    const router = useRouter();
+    const [form, setForm] = useState<IVenue | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [saving, setSaving] = useState(false);
+    const [message, setMessage] = useState<string | null>(null);
+    const [error, setError] = useState<string | null>(null);
     const [existingPhotos, setExistingPhotos] = useState<IVenuePhoto[]>([]);
     const [newFiles, setNewFiles] = useState<ILocalPhoto[]>([]);
     const [loadingPhotos, setLoadingPhotos] = useState(false);
@@ -120,14 +121,14 @@ const VenueEditComponent = ({ venueId }: Props) => {
     return (
         <>
             <VenueFormComponent
-            mode="edit"
-            venueId={venueId}
-            form={form}
-            setForm={setForm}
-            onSubmit={handleSubmit}
-            saving={saving}
-            error={error}
-            message={message}
+                mode="edit"
+                venueId={venueId}
+                form={form}
+                setForm={setForm}
+                onSubmit={handleSubmit}
+                saving={saving}
+                error={error}
+                message={message}
             />
             <VenuePhotosComponent
                 existingPhotos={existingPhotos}

@@ -40,7 +40,7 @@ class TravelLogisticsViewSet(viewsets.ModelViewSet):
 
         if TravelLogisticsModel.objects.filter(venue_id=venue_id, step_type=step_type).exists():
             return Response(
-                {"error": f"Step type '{step_type}' already exists for this venue."},
+                {'error': f"Step type '{step_type}' already exists for this venue."},
                 status=status.HTTP_400_BAD_REQUEST
             )
         return super().create(request, *args, **kwargs)
@@ -55,7 +55,7 @@ class TravelLogisticsViewSet(viewsets.ModelViewSet):
         prices_data = request.data
 
         if not isinstance(prices_data, list):
-            return Response({"error": "Expected a list of price objects"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'Expected a list of price objects'}, status=status.HTTP_400_BAD_REQUEST)
 
         results = []
         for item in prices_data:
@@ -65,9 +65,9 @@ class TravelLogisticsViewSet(viewsets.ModelViewSet):
                 defaults={'price_per_km': item.get('price_per_km')}
             )
             results.append({
-                "step_type": step.step_type,
-                "price_per_km": step.price_per_km,
-                "currency": step.currency
+                'step_type': step.step_type,
+                'price_per_km': step.price_per_km,
+                'currency': step.currency
             })
 
         return Response(results, status=status.HTTP_200_OK)
@@ -82,11 +82,11 @@ class TravelLogisticsViewSet(viewsets.ModelViewSet):
         v_lng = request.query_params.get('lng')
 
         if not v_lat or not v_lng:
-            return Response({"error": "Latitude and longitude are required"}, status=400)
+            return Response({'error': 'Latitude and longitude are required'}, status=400)
         try:
             venue = VenueModel.objects.get(pk=venue_pk)
         except VenueModel.DoesNotExist:
-            return Response({"error": "Venue not found"}, status=404)
+            return Response({'error': 'Venue not found'}, status=404)
 
         service = TravelCalculationService(venue)
         result = service.calculate_trip(float(v_lat), float(v_lng))
@@ -111,7 +111,7 @@ class ExtraServiceViewSet(viewsets.ModelViewSet):
         prices_data = request.data
 
         if not isinstance(prices_data, list):
-            return Response({"error": "Expected a list of service objects"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'Expected a list of service objects'}, status=status.HTTP_400_BAD_REQUEST)
 
         results = []
         for item in prices_data:
@@ -125,10 +125,10 @@ class ExtraServiceViewSet(viewsets.ModelViewSet):
                 }
             )
             results.append({
-                "service_type": service.service_type,
-                "price": service.price,
-                "price_type": service.price_type,
-                "currency": service.currency
+                'service_type': service.service_type,
+                'price': service.price,
+                'price_type': service.price_type,
+                'currency': service.currency
             })
 
         return Response(results, status=status.HTTP_200_OK)

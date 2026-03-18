@@ -1,23 +1,23 @@
 .wrapper{
     width:80vw;
     margin: 60px auto 20px;
-  display: flex;
+    display: flex;
     flex-direction: column;
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
-      color: var(--input-color);
+    color: var(--input-color);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-  animation: float 6s ease-in-out infinite;
+    animation: float 6s ease-in-out infinite;
     overflow: hidden;
      background: rgba(255, 255, 255, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  border-radius: 2rem;
-  box-shadow:
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 2rem;
+    box-shadow:
     0 8px 32px rgba(0, 0, 0, 0.3);
-  gap: 20px;
-  padding: 20px;
+    gap: 20px;
+    padding: 20px;
 }
 
 @keyframes float {
@@ -121,7 +121,7 @@
     gap: 40px;
     justify-content: space-between;
     display: flex;
-       flex-direction: column;
+    flex-direction: column;
 
 }
 .form {
@@ -142,8 +142,8 @@
     outline: none;
     border: none;
     transition: all 0.3s ease-in-out;
-      background-color: var(--color-container);
-     box-shadow: 0 0 12px white;
+    background-color: var(--color-container);
+    box-shadow: 0 0 12px white;
 }
 .deleteButton:hover,
 .submitButton:hover,

@@ -228,4 +228,6 @@
     color: var(--color-badgeId);
 }
 
-.submitBtn:disabled { cursor: not-allowed; }
+.submitBtn:disabled {
+    cursor: not-allowed;
+}

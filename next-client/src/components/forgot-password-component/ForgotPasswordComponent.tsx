@@ -10,9 +10,7 @@ export default function ForgotPasswordComponent() {
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState("");
     const router = useRouter();
-
     const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
-
     const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
         e.preventDefault();
         setLoading(true);
@@ -27,7 +25,6 @@ export default function ForgotPasswordComponent() {
             });
 
             const data = await res.json();
-
             if (res.ok) {
                 setMessage(data.detail || "Check your email for a recovery link.");
 
@@ -65,9 +62,7 @@ export default function ForgotPasswordComponent() {
                         onChange={(e) => setEmail(e.target.value)}
                     />
                 </div>
-
                 {message && <p className={styles.success}>{message}</p>}
-
                 <button type="submit" className={styles.button} disabled={loading}>
                     {loading ? (
                         <div className={styles.loaderWrapper}>

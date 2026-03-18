@@ -1,12 +1,11 @@
 "use client";
 
 import React, { useState } from "react";
-import styles from "./NewComponent.module.css";
-import { NewsGallery } from "@/components/news-gallery-compopnent/NewsGalleryComponent";
-import venueServices from "@/lib/services/venueService";
 import { useUser } from "@/app/contexts/UserProvider";
+import venueServices from "@/lib/services/venueService";
+import { NewsGallery } from "@/components/news-gallery-compopnent/NewsGalleryComponent";
 import PhotoMultipleUploadComponent from "@/components/photo-multiple-upload-component/PhotoMultipleUploadComponent";
-
+import styles from "./NewComponent.module.css";
 
 interface VenueNewComponentProps {
     news: any;
@@ -16,8 +15,8 @@ interface VenueNewComponentProps {
     onUpdate: (updatedNews: any) => void;
 }
 
-export const NewComponent = ({ news, venueId, onDelete, onUpdate }: VenueNewComponentProps) => {
-    const { user } = useUser();
+export const NewComponent = ({news, venueId, onDelete, onUpdate}: VenueNewComponentProps) => {
+    const {user} = useUser();
     const [editMode, setEditMode] = useState(false);
     const [editNews, setEditNews] = useState(news);
     const [loading, setLoading] = useState(false);
@@ -25,41 +24,41 @@ export const NewComponent = ({ news, venueId, onDelete, onUpdate }: VenueNewComp
     const [coverMessage, setCoverMessage] = useState("");
     const coverImage = images.find((img: any) => img.is_cover)?.image || editNews.preview;
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        setEditNews({ ...editNews, [e.target.name]: e.target.value });
+        setEditNews({...editNews, [e.target.name]: e.target.value});
     };
     const handleSetCover = async (photoId: string | number) => {
         if (!user?.token || !editNews?.id) return;
         const photo = editNews.images?.find((p: any) => p.id.toString() === photoId.toString());
-    const isLocal = !photo || photo.id.toString().includes('blob');
+        const isLocal = !photo || photo.id.toString().includes('blob');
 
 
-    if (isLocal) {
-        setCoverMessage("Upload photos please!");
-        setTimeout(() => setCoverMessage(""), 3000);
-        return;
-    }
+        if (isLocal) {
+            setCoverMessage("Upload photos please!");
+            setTimeout(() => setCoverMessage(""), 3000);
+            return;
+        }
 
 
         try {
-        const res = await venueServices.venues
-            .news({ accessToken: user.token })(venueId)
-            .images(editNews.id.toString())
-            .update(photoId.toString(), { is_cover: true });
-        if (res.data && res.data.id) {
-            const serverPhotoId = res.data.id.toString();
-            const updatedImages = editNews.images.map((img: any) => ({
-                ...img,
-                is_cover: img.id.toString() === serverPhotoId
-            }));
-            const updatedNews = { ...editNews, images: updatedImages };
-            setEditNews(updatedNews);
-            onUpdate(updatedNews);
-            setCoverMessage("");
+            const res = await venueServices.venues
+                .news({accessToken: user.token})(venueId)
+                .images(editNews.id.toString())
+                .update(photoId.toString(), {is_cover: true});
+            if (res.data && res.data.id) {
+                const serverPhotoId = res.data.id.toString();
+                const updatedImages = editNews.images.map((img: any) => ({
+                    ...img,
+                    is_cover: img.id.toString() === serverPhotoId
+                }));
+                const updatedNews = {...editNews, images: updatedImages};
+                setEditNews(updatedNews);
+                onUpdate(updatedNews);
+                setCoverMessage("");
+            }
+        } catch (err) {
+            console.error("Failed to set cover:", err);
         }
-    } catch (err) {
-        console.error("Failed to set cover:", err);
-    }
-};
+    };
     const handleSave = async () => {
         if (!user?.token) return;
         setLoading(true);
@@ -67,9 +66,9 @@ export const NewComponent = ({ news, venueId, onDelete, onUpdate }: VenueNewComp
             const formData = new FormData();
             formData.append("title", editNews.title);
             formData.append("content", editNews.content);
-            const res = await venueServices.venues.news({ accessToken: user.token })(venueId)
+            const res = await venueServices.venues.news({accessToken: user.token})(venueId)
                 .update(editNews.id.toString(), formData as any);
-            setEditNews({ ...editNews, ...res.data });
+            setEditNews({...editNews, ...res.data});
             onUpdate(res.data);
             setEditMode(false);
         } finally {
@@ -155,10 +154,10 @@ export const NewComponent = ({ news, venueId, onDelete, onUpdate }: VenueNewComp
                                 ?.filter((img: any) => img.image || img.preview)
                                 .map((img: any) => ({
 
-                                id: img.id,
-                                url: img.image || img.preview || null,
-                                is_cover: img.is_cover || false
-                            })) || []}
+                                    id: img.id,
+                                    url: img.image || img.preview || null,
+                                    is_cover: img.is_cover || false
+                                })) || []}
                             maxFiles={7}
                             onSetCover={handleSetCover}
                             onUploadComplete={(uploadedPhotos: any[]) => {

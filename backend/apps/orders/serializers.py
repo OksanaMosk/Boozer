@@ -30,13 +30,13 @@ class TableBookingSerializer(serializers.ModelSerializer):
                 upper_dt = datetime.fromisoformat(upper_str.replace('Z', '+00:00'))
                 data['time_range'] = DateTimeRange(lower_dt, upper_dt)
             except (ValueError, TypeError):
-                raise serializers.ValidationError({"time_range": "Invalid date format"})
+                raise serializers.ValidationError({'time_range': 'Invalid date format'})
 
         if not table_id or table_id == 'all':
             return data
 
         if TableBookingModel.objects.filter(table_id=table_id, time_range__overlap=data['time_range']).exists():
-            raise serializers.ValidationError({"time_range": "Already booked."})
+            raise serializers.ValidationError({'time_range': 'Already booked.'})
 
         instance = TableBookingModel(
             table_id=table_id,
@@ -81,7 +81,6 @@ class OrderExtraServiceSerializer(serializers.ModelSerializer):
 class OrderSerializer(serializers.ModelSerializer):
     items = OrderItemSerializer(many=True, required=False)
     extra_services = OrderExtraServiceSerializer(many=True, required=False)
-    # tables = TableBookingSerializer(many=True, read_only=True)
     tables = TableBookingSerializer(source='table_bookings', many=True, read_only=True)
 
     menu_total = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)

@@ -1,7 +1,7 @@
 import React from "react";
 
 import {ButtonGoBackComponent} from "@/components/button-go-back-component/ButtonGoBackComponent";
-import TableMapAdmin from "@/components/table-map-admin-component/TableMapAdmin";
+import TableClientWrapperComponent from "@/components/table-client-wrapper/TableClientWrapperComponent";
 
 export default async function TablesPage({ params }: { params: Promise<{ id: string }> }) {
   const {id} = await params
@@ -14,7 +14,7 @@ export default async function TablesPage({ params }: { params: Promise<{ id: str
                 textAlign: "center"
             }}
         >
-            <TableMapAdmin venueId={id}/>
+           <TableClientWrapperComponent id={id} />
             <ButtonGoBackComponent/>
         </div>
     );

@@ -2,14 +2,12 @@
 
 import React, {useState} from "react";
 import {useRouter} from "next/navigation";
-import {IVenue, ITag} from "@/models/IVenue";
 import {useUser} from "@/app/contexts/UserProvider";
 import venueServices from "@/lib/services/venueService";
-
+import {IVenue, ITag} from "@/models/IVenue";
 import {VenuePhotosComponent} from "@/components/venue-photos-component/VenuePhotosComponent";
-
-import styles from "./VenueCreateComponent.module.css";
 import {VenueFormComponent} from "@/components/venue-form-component/VenueFormComponent";
+import styles from "./VenueCreateComponent.module.css";
 
 interface ILocalPhoto {
     file: File;
@@ -122,16 +120,15 @@ const VenueCreateComponent = () => {
                             console.log(`Тег "${tagResp.name}" без id, пропускаємо прив'язку`);
                             return;
                         }
-
                         try {
-                             if (!venueId) return;
+                            if (!venueId) return;
 
                             console.log(`Прив'язка тегу "${tagResp.name}" до venue ${venueId}`);
                             await
                                 venueServices.venues
                                     .venueTags({accessToken: token})(venueId)
                                     .create({venue: venueId, tag: tagResp.id}
-                            );
+                                    );
                             console.log(`Тег "${tagResp.name}" усп прив`);
                         } catch (err: any) {
                             console.log(`Помилка прив'язки тегу "${tagResp.name}":`, err.response?.data);
@@ -158,7 +155,6 @@ const VenueCreateComponent = () => {
         if (!user?.token) return;
         if (!newVenue.id) return setMessage("Create the venue first.");
         if (newFiles.length === 0) return setMessage("Add at least one photo.");
-
         setLoadingPhotos(true);
         try {
             const photosToUpload = newFiles.map((p, i) => ({

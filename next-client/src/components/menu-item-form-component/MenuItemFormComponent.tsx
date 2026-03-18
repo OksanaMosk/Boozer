@@ -1,11 +1,11 @@
 "use client";
 
 import React, {ChangeEvent, SyntheticEvent, useEffect, useState} from "react";
-import {LoaderComponent} from "@/components/loader-component/LoaderComponent";
-import styles from "./MenuItemFormComponent.module.css"
-import venueServices from "@/lib/services/venueService";
 import {useUser} from "@/app/contexts/UserProvider";
+import venueServices from "@/lib/services/venueService";
+import {LoaderComponent} from "@/components/loader-component/LoaderComponent";
 import {PhotoSingleUploadComponent} from "@/components/photo-single-upload-component/PhotoSingleUploadComponent";
+import styles from "./MenuItemFormComponent.module.css"
 
 interface NewMenuItem {
     name: string;
@@ -54,11 +54,11 @@ const MenuItemFormComponent: React.FC<MenuItemFormProps> = ({venueId, menuId, gl
     });
 
     useEffect(() => {
-    setMenuItem(prev => ({
-        ...prev,
-        currency: globalCurrency
-    }));
-}, [globalCurrency]);
+        setMenuItem(prev => ({
+            ...prev,
+            currency: globalCurrency
+        }));
+    }, [globalCurrency]);
 
 
     useEffect(() => {
@@ -101,7 +101,7 @@ const MenuItemFormComponent: React.FC<MenuItemFormProps> = ({venueId, menuId, gl
             setPhotoUploaded(false);
             setCreatedItem(newItem);
             onCreate(newItem);
-            } catch (error) {
+        } catch (error) {
             console.error("error:", error);
         } finally {
             setLoadingItem(false);
@@ -111,12 +111,13 @@ const MenuItemFormComponent: React.FC<MenuItemFormProps> = ({venueId, menuId, gl
     return (
         <form className={styles.wrapper} onSubmit={handleAddItem}>
             <div className={styles.form}>
-                <input type="text" name="name" placeholder="Item Name" value={menuItem.name} onChange={handleChange} required className={styles.inputCreate}/>
+                <input type="text" name="name" placeholder="Item Name" value={menuItem.name} onChange={handleChange}
+                       required className={styles.inputCreate}/>
                 <textarea name="description" placeholder="Description" value={menuItem.description}
                           onChange={handleChange} className={styles.textarea}/>
                 <div className={styles.priceInputWrapper}>
                     <input type="number" step="0.01" name="price" placeholder="Price" value={menuItem.price}
-                          onChange={handleChange} required className={styles.inputPrice}/>
+                           onChange={handleChange} required className={styles.inputPrice}/>
                     <span className={styles.currencyLabel}>{globalCurrency}</span>
                 </div>
                 <label className={styles.label} htmlFor="category">Category</label>
@@ -131,7 +132,7 @@ const MenuItemFormComponent: React.FC<MenuItemFormProps> = ({venueId, menuId, gl
                     </button>
                 ) : (
                     <PhotoSingleUploadComponent
-                         key={createdItem.id}
+                        key={createdItem.id}
                         initialPhotoUrl={createdItem.preview || ""}
                         label="Upload Menu Item Photo"
                         onUpload={async (file: File) => {

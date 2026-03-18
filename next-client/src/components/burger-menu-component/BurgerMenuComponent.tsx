@@ -1,12 +1,12 @@
 "use client"
 
 import Link from "next/link";
+import type { FC } from "react";
+import {signOut} from "next-auth/react";
+import type { IUser } from "@/models/IUser";
 import { UserInfoComponent } from "@/components/user-info-component/UserInfoComponent";
 import ThemesButtonComponent from "@/components/themes-button-component/ThemesButtonComponent";
-import type { IUser } from "@/models/IUser";
-import type { FC } from "react";
 import styles from "./BurgerMenuComponent.module.css";
-import {signOut} from "next-auth/react";
 
 type BurgerMenuProps = {
     isOpen: boolean;
@@ -64,7 +64,7 @@ export const BurgerMenuComponent: FC<BurgerMenuProps> = ({
                             user: styles.burgerUserEmail,
                             logoutBtn: styles.burgerUserLogoutBtn,
                         }}
-                         onLogoutAction={() => signOut()}
+                        onLogoutAction={() => signOut()}
                     />
                 )
             )}

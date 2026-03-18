@@ -7,12 +7,9 @@
     justify-content: center;
     align-items: center;
     gap: 24px;
-padding: 0;
+    padding: 0;
     padding-inline-start:0;
-
 }
-
-
 .link{
     cursor: pointer;
     text-decoration: none;
@@ -38,7 +35,6 @@ padding: 0;
 @media (min-width: 768px) {
     .venuesListContainer {
         width: 90%;
-
     }
 }
 

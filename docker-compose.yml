@@ -50,9 +50,17 @@ services:
   next-client:
     build:
       context: ./next-client
+      args:
+        - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+        - NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=${NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}
+        - NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
+        - NEXT_PUBLIC_SUPABASE_KEY=${NEXT_PUBLIC_SUPABASE_KEY}
+        - NEXT_PUBLIC_SUPABASE_BUCKET_NAME=${NEXT_PUBLIC_SUPABASE_BUCKET_NAME}
     container_name: next-client
     ports:
       - "3000:3000"
+    env_file:
+      - .env
     environment:
       - NODE_ENV=production
     command: npm run start
@@ -66,7 +74,7 @@ services:
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
       - ./backend/static:/drf-static
-      - ./next-client/.next:/next-static
+      - ./backend/storage:/app/storage
     depends_on:
       - app
       - next-client
