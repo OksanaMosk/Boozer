@@ -144,7 +144,7 @@ const OrderTravelCostComponent = ({
                             <div className={styles.routeRow}>
                                 <strong className={styles.title}>{title}</strong>
                                 <div className={styles.point}>
-                                    <p className={styles.cityName}>{seg.from_city}</p>
+                                    <p className={styles.cityName}>{seg.from_city}</p> ------
                                     <p className={styles.cityName}>{seg.to_city}</p>
                                 </div>
                             </div>

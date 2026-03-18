@@ -176,6 +176,11 @@
 }
 
 .confetti {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    width: 100%;
     font-size: 70px;
     margin-bottom: 20px;
     animation: bounce 3s infinite;
@@ -185,6 +190,28 @@
     50% { transform: translateY(-6px); }
 
 }
+
+.overlay {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.videoSoundToggle {
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 999px;
+    cursor: pointer;
+    backdrop-filter: blur(6px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 24px;
+    height: 24px;
+}
+
 .titleId {
     color:  var(--color-text);
 }
@@ -353,6 +380,7 @@
 }
 
 .container {
+    margin: 40px auto;
     padding: 0 20px;
     text-align: center;
     display: flex;
@@ -361,23 +389,29 @@
     flex-direction: column;
 }
 .finalSummary {
-    background: black;
+      margin: 40px auto;
+    background: var(--menu-color);
     border: 1px solid #333;
     padding: 60px;
     border-radius: 50px;
     display: inline-block;
 }
+.label {
+    font-family: var(--font-imperial),serif;
+    font-size: 2rem;
+    letter-spacing: 2px;
+    color: var(--color-text);
+}
 
 .amount {
     font-size: 72px;
-    color:var(--color-noposter);
+    color:var(--color-text);
     margin-bottom: 40px;
     font-weight: 900;
 }
 
 .payBtn {
-    background: var(--color-noposter);
-    color: #000;
+    background: var(--reverse-menu-color);
     padding: 25px 80px;
     border-radius: 100px;
     font-weight: 900;
@@ -385,4 +419,17 @@
     text-transform: uppercase;
     cursor: pointer;
     box-shadow: 0 20px 40px rgba(212, 175, 55, 0.2);
+    outline: none;
+    border: none;
+    transition: all 0.5s ease;
+    color: var(--title-color);
+}
+.payBtn:hover,
+.payBtn:focus{
+    background: var(--color-bg-dark);
+    color: var(--color-noposter);
+}
+.payBtn:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
 }

@@ -65,6 +65,14 @@ body {
    #f5e6a1,
     #7a5c1e
   );
+      --reverse-menu-color: linear-gradient(
+  90deg,
+  #000 0%,
+  #000 30%,
+  #1f2937 50%,
+  #000 70%,
+  #000 100%
+);
 }
 
 html.dark {
@@ -82,6 +90,14 @@ html.dark {
   #000 70%,
   #000 100%
 );
+    --reverse-menu-color: linear-gradient(
+    90deg,
+    #7a5c1e,
+    #f5e6a1,
+    #f5e6a1,
+    #f5e6a1,
+    #7a5c1e
+  );
 }
 
 html.light body {

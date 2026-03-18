@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useRef, useState} from "react";
 import { AxiosResponse } from "axios";
 import { useUser } from "@/app/contexts/UserProvider";
 import venueServices from "@/lib/services/venueService";
@@ -19,6 +19,10 @@ const BoozerStep7Final: React.FC<Props> = ({orderId, venueId, onReset}) => {
     const [isConfirmed, setIsConfirmed] = useState(false);
     const [loading, setLoading] = useState(false);
     const [order, setOrder] = useState<IOrder | null>(null);
+    const audioRef = useRef<HTMLAudioElement>(null);
+    const [isPlaying, setIsPlaying] = useState(true);
+
+
 
     useEffect(() => {
         const fetchOrder = async () => {
@@ -52,6 +56,15 @@ const BoozerStep7Final: React.FC<Props> = ({orderId, venueId, onReset}) => {
         }
     };
 
+    useEffect(() => {
+        if (isConfirmed && audioRef.current) {
+            audioRef.current.loop = true;
+            audioRef.current.play().catch(() => {
+                setIsPlaying(false);
+            });
+        }
+    }, [isConfirmed]);
+
     if (!user) return <p className={styles.errorText}>Please log in.</p>;
     if (!order) return <LoaderComponent/>;
 
@@ -62,13 +75,36 @@ const BoozerStep7Final: React.FC<Props> = ({orderId, venueId, onReset}) => {
             <div className={styles.successContainer}>
                 <div className={styles.confetti}>
                     🎊
-                    <img
-                        src="/favicon/android-chrome-512x512.png"
-                        width={100}
-                        height={100}
-                        className={styles.logoImage}
-                        alt="VIP Icon"
-                    />
+                    <div className={styles.overlay}>
+                        <img
+                            src="/favicon/android-chrome-512x512.png"
+                            width={100}
+                            height={100}
+                            className={styles.logoImage}
+                            alt="VIP Icon"
+                        />
+                        <button
+                            className={styles.videoSoundToggle}
+                            onClick={() => {
+                                if (!audioRef.current) return;
+                                if (isPlaying) audioRef.current.pause();
+                                else void audioRef.current.play();
+                                setIsPlaying(!isPlaying);
+                            }}
+                        >
+                            <img
+                                src={isPlaying ? "/images/audio.png" : "/images/no-audio.png"}
+                                alt={isPlaying ? "Sound On" : "Sound Off"}
+                                width={16}
+                                height={16}
+                                className={styles.soundIcon}
+                            />
+                        </button>
+                        <audio
+                            ref={audioRef}
+                            src="/videos/playboi-carti-evil-jordan.mp3"
+                        />
+                    </div>
                     🎊
                 </div>
 
