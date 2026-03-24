@@ -9,6 +9,7 @@ export interface IUser {
     name: string;
     surname: string;
     phone: string;
+    avatar?: string;
     birth_date: string;
     is_rules_accepted: boolean;
   };

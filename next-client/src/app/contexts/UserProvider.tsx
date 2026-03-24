@@ -32,6 +32,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
         phone: session.user.profile?.phone || "",
         birth_date: session.user.profile?.birth_date || "",
         is_rules_accepted: session.user.profile?.is_rules_accepted || false,
+          avatar: session.user.profile?.avatar || "",
       },
     };
     setUser(prevUser => {

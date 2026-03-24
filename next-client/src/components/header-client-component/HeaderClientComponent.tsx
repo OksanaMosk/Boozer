@@ -2,7 +2,7 @@
 
 import {useEffect, useState} from "react";
 import Link from "next/link";
-import {usePathname} from "next/navigation";
+import {usePathname, useRouter} from "next/navigation";
 import {signOut} from "next-auth/react";
 import {useUser} from "@/app/contexts/UserProvider";
 import {BurgerMenuComponent} from "@/components/burger-menu-component/BurgerMenuComponent";
@@ -16,7 +16,7 @@ export const HeaderClientComponent = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [theme, setTheme] = useState<"light" | "dark">("dark");
     const pathname = usePathname();
-
+    const router = useRouter();
     useEffect(() => {
         if (!user) {
         }
@@ -25,6 +25,7 @@ export const HeaderClientComponent = () => {
     const menuItems = [
         {href: "/", label: "Home"},
         {href: "/venues", label: "Venues"},
+        {href: "/news", label: "News"},
         {href: "/boozer", label: "Boozer"},
     ];
 
@@ -34,12 +35,15 @@ export const HeaderClientComponent = () => {
 
     const handleLogout = async () => {
         try {
-            // localStorage.clear();
-            // sessionStorage.clear();
-            await signOut({
-                redirect: true,
-                redirectTo: "/",
-            });
+            // await signOut({
+            //     redirect: true,
+            //     redirectTo: "/",
+            // });
+
+            await signOut({ redirect: false });
+
+        router.push("/");
+
 
         } catch (error) {
             console.error("Logout failed:", error);

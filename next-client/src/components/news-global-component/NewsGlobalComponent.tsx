@@ -1,0 +1,132 @@
+"use client"
+
+import React, { useState, useEffect, Suspense } from "react";
+import { useUser } from "@/app/contexts/UserProvider";
+import { useSearchParams, useRouter } from "next/navigation";
+import venueServices from "@/lib/services/venueService";
+import { INews } from "@/models/IVenue"; // Використовуємо ваш інтерфейс
+import { NewComponent } from "@/components/new-component/NewComponent";
+import { LoaderComponent } from "@/components/loader-component/LoaderComponent";
+import { PaginationComponent } from "@/components/pagination-component/PaginationComponent";
+import { ButtonScrollTopComponent } from "@/components/button-scroll-top-component/ButtonScrollTopComponent";
+import styles from "./NewsGlobalComponent.module.css";
+
+const NewsGlobalContent = () => {
+    const { user } = useUser();
+    const router = useRouter();
+    const searchParams = useSearchParams();
+
+    const [news, setNews] = useState<INews[]>([]); // Типізація масиву
+    const [activeTab, setActiveTab] = useState("all");
+    const [totalPages, setTotalPages] = useState(1);
+    const [loading, setLoading] = useState(false);
+
+    const currentPage = Number(searchParams.get("page") || "1");
+
+    const fetchAllNews = async () => {
+        if (!user?.token) return;
+        setLoading(true);
+        try {
+            const res = await venueServices.allNews.list({
+                page: currentPage,
+                type: activeTab === "all" ? "" : activeTab,
+                is_pinned: true
+            }, {accessToken: user.token});
+            if (res.data.data) {
+                const now = new Date();
+                const processedNews: INews[] = (res.data.data || [])
+                    .filter((item: INews) => !item.end_date || new Date(item.end_date) >= now)
+                    .map((item: INews) => ({
+                        ...item,
+                        displayType: item.type === 'promotion' ? 'PROMO' : item.type === 'event' ? 'EVENT' : 'NEWS'
+                    }));
+
+                setNews(processedNews);
+                setTotalPages(res.data.total_pages || 1);
+            }
+        } catch (err) {
+            console.error("Failed to fetch global news:", err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        void fetchAllNews();
+    }, [activeTab, currentPage, user?.token]);
+
+    // const handlePageChange = (page: number) => {
+    //     const params = new URLSearchParams(searchParams.toString());
+    //     params.set("page", page.toString());
+    //     router.push(`?${params.toString()}`);
+    // };
+
+    const handleTabChange = (tab: string) => {
+        setActiveTab(tab);
+        const params = new URLSearchParams(searchParams.toString());
+        params.set("page", "1");
+        router.push(`?${params.toString()}`);
+    };
+
+    return (
+        <div className={styles.container}>
+            <h1 className={styles.mainTitle}>News Feed & Promotions</h1>
+
+            <div className={styles.tabs}>
+                {["all", "general", "promotion", "event"].map(t => (
+                    <button
+                        key={t}
+                        className={activeTab === t ? styles.activeTab : styles.tab}
+                        onClick={() => handleTabChange(t)}
+                    >
+                        {t === "all" ? "All" : t === "promotion" ? "Promotions" : t === "event" ? "Events" : "General"}
+                    </button>
+                ))}
+            </div>
+            {loading ? <LoaderComponent/> : (
+                <div className={styles.list}>
+                    {news.length > 0 ? (
+                        news.map(item => (
+                            <div key={item.id} className={styles.itemWrapper}>
+                                {/* Бейдж тепер має спеціальний клас для позиціонування */}
+                                <span className={styles.newsBadge}>
+                        {item.type === 'promotion' ? 'PROMO' : item.type === 'event' ? 'EVENT' : 'NEWS'}
+                    </span>
+
+                                <NewComponent
+                                    news={item}
+                                    venueId={String(item.venue || "")}
+                                    token={user?.token || ""}
+                                    isReadOnly={true}
+                                    onDelete={() => {
+                                    }}
+                                    onUpdate={() => {
+                                    }}
+                                />
+                            </div>
+                        ))
+                    ) : (
+                        <p className={styles.emptyState}>No active news found...</p>
+                    )}
+                </div>
+            )}
+
+
+            {totalPages > 1 && (
+                <PaginationComponent
+                    totalPages={totalPages}
+                    // currentPage={currentPage}
+                    // onPageChange={handlePageChange}
+                />
+            )}
+
+            <ButtonScrollTopComponent />
+        </div>
+    );
+};
+
+export const NewsGlobalComponent = () => (
+    <Suspense fallback={<LoaderComponent />}>
+        <NewsGlobalContent />
+    </Suspense>
+);

@@ -1,0 +1,178 @@
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 2rem;
+    border: 1px solid rgba(212, 175, 55, 0.15);
+    position: relative;
+    border-radius: 2rem;
+    background: var(--menu-color);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow:
+        0 0 20px rgba(255, 215, 0, 0.15),
+        0 0 40px rgba(255, 200, 0, 0.08);
+    animation: float 6s ease-in-out infinite;
+    overflow: hidden;
+}
+
+.header::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    padding: 3px;
+    border-radius: 2rem;
+    background: linear-gradient(
+        90deg,
+        #f9f295,
+        #ae8625,
+        #faf398,
+        #b88a44
+    );
+    -webkit-mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+            mask-composite: exclude;
+    pointer-events: none;
+}
+
+.profileMain {
+    display: flex;
+    gap: 2rem;
+}
+
+
+.avatarPlaceholder {
+    width: 110px;
+    height: 110px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    background-image: var(--menu-color),
+    linear-gradient(90deg, #f9f295, #ae8625, #faf398, #b88a44);
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+   color: var(--input-color);
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    filter: grayscale(30%);
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+
+.avatarImage {
+    width: 110px;
+    height: 110px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+     object-fit: cover;
+}
+
+.infoContent {
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+.ageBadge {
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+
+.userName {
+    font-size: 2rem;
+    margin: 0;
+   color: var(--logo-hover-color);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+}
+
+.nameRow {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.roleBadge {
+    width: 120px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    background: var(--menu-color);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.venue_admin {
+    color: var(--logo-hover-color);
+    border-color: rgba(212, 175, 55, 0.3);
+}
+.admin {
+    background: #d4af37;
+    color: #000; }
+
+.contactRow {
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+    gap: 0.2rem;
+    color: var(--logo-hover-color);
+    font-size: 0.95rem;
+}
+.ageBadge,
+.email {
+    padding: 0;
+    margin: 0;
+}
+
+.dot { color: #333; }
+
+.statsGrid {
+    display: flex;
+    gap: 2.5rem;
+    border-top: 1px solid var(--logo-hover-color);
+}
+
+.statBox {
+    display: flex;
+    flex-direction: column;
+}
+
+.statValue {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--logo-hover-color);
+}
+
+.statLabel {
+    font-size: 0.7rem;
+    color: #555;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.actionsWrapper {
+    display: flex;
+    gap: 1rem;
+}
+.loader{
+    display: flex;
+    justify-content: center;
+    margin: 70px auto 100px;
+}

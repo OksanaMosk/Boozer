@@ -65,6 +65,10 @@ const userService = {
         const {data} = await apiService(token.accessToken).delete(urls.users.delete(userId));
         return data;
     },
+    updateProfile: async (userId: string, formData: FormData, token: { accessToken: string }) => {
+        const { data } = await apiService(token.accessToken).patch(urls.users.updateProfile(userId), formData);
+        return data;
+    },
     getUserVenues(userId: string, token: { accessToken: string }) {
         return apiService(token.accessToken).get<GetUserVenuesResponse>(urls.users.userVenues(userId));
     },

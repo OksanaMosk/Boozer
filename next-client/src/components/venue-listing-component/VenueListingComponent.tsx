@@ -1,20 +1,20 @@
 "use client";
 
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import {useRouter} from "next/navigation";
-import axios from "axios";
 import Link from "next/link";
 import { useUser } from "@/app/contexts/UserProvider";
 import venueService from "@/lib/services/venueService";
 import {IVenueWithId} from "@/models/IVenue";
 import styles from "./VenueListingComponent.module.css";
+import GoldChartComponent from "@/components/gold-chart-component/GoldChartComponent";
 
-// interface VenueStats {
-//   total_views: number;
-//   daily_views: number;
-//   weekly_views: number;
-//   monthly_views: number;
-// }
+interface VenueStats {
+  total_views: number;
+  daily_views: number;
+  weekly_views: number;
+  monthly_views: number;
+}
 
 interface Props {
     venue: IVenueWithId;
@@ -29,7 +29,7 @@ const VenueListingComponent: React.FC<Props> = ({
                                                 }) => {
     const {user} = useUser();
     const [status, setStatus] = useState<string>(venue.status || "");
-    // const [stats, setStats] = useState<VenueStats | null>(null);
+    const [stats, setStats] = useState<VenueStats | null>(null);
     const isLocked = (venue.edit_attempts ?? 0) >= 3;
     const router = useRouter();
 
@@ -66,13 +66,8 @@ const VenueListingComponent: React.FC<Props> = ({
             setStatus(newStatus);
             onStatusChange?.(venue.id, newStatus);
         } catch (err) {
-            if (axios.isAxiosError(err)) {
-                console.error("BACKEND ERROR:", err.response?.data);
-            } else {
-                console.error("UNKNOWN ERROR:", err);
-            }
+                console.error("BACKEND ERROR:", err);
 
-            alert("Error updating status");
         }
     };
 
@@ -107,148 +102,153 @@ const VenueListingComponent: React.FC<Props> = ({
     };
 
     return (
-        <>
-            <tr
+        <ul className={styles.list}>
+            <li
                 key={venue.id}
                 className={styles.tableRow}
                 onClick={goToInfo}
             >
-                <td className={styles.tableRowTitle}>{venue.id}</td>
-                <td className={styles.tableRowTitle}>{venue.name}</td>
-                <td className={styles.tableRowTitle}>
+                <div className={styles.tablePhoto}>
                     <img
                         src={getPhotoUrl(mainPhoto?.photo)}
                         alt={`${venue.name} ${venue.city}`}
-                        width={280}
-                        height={300}
+                        width={380}
+                        height={200}
                         className={styles.venuePoster}
                     />
-                </td>
-                <td>{venue.city}</td>
-                <td>{venue.country}</td>
-
-                <td
-                    className={
-                        status === "active"
-                            ? styles.statusActive
-                            : styles.statusInactive
-                    }
-                >
-                    {status}
-                </td>
-
-                <td className={styles.a}>
-                    <div className={styles.actions}>
-                        <button
-
-                            className={styles.button}
-                            onClick={async (e) => {
-                                e.stopPropagation();
-                                try {
-                                    await handleStatusChange();
-                                } catch (error) {
-                                    console.error(error);
-                                }
-                            }}
-                            disabled={isLocked}
-                        >
-                            {status === "active" ? "Deactivate" : "Activate"}
-                        </button>
-                        <Link href={isLocked ? "#" : `/venue-admin/venues/${venue.id}/edit/`}>
+            </div>
+                <div className={styles.row} >
+                    <div  className={styles.titleBlock}>
+                        <div className={styles.info}>
+                            <p className={styles.tableRowTitle}>
+                                {venue.name}
+                                <span
+                                    className={`${styles.status} ${
+                                        status === "active" ? styles.statusActive : styles.statusInactive
+                                    }`}
+                                >
+                                {status}
+                                </span>
+                            </p>
+                            <p className={styles.address}>({venue.city}, {venue.country})</p>
+                        </div>
+                        <div className={styles.stats}>
+                            <GoldChartComponent/>
+                        </div>
+                        <div className={styles.a}>
+                        <div className={styles.actions}>
                             <button
-                                className={styles.editButton}
+
+                                className={styles.button}
+                                onClick={async (e) => {
+                                    e.stopPropagation();
+                                    try {
+                                        await handleStatusChange();
+                                    } catch (error) {
+                                        console.error(error);
+                                    }
+                                }}
                                 disabled={isLocked}
+                            >
+                                {status === "active" ? "Deactivate" : "Activate"}
+                            </button>
+                            <Link href={isLocked ? "#" : `/venue-admin/venues/${venue.id}/edit/`}>
+                                <button
+                                    className={styles.editButton}
+                                    disabled={isLocked}
+                                    onClick={(e) => e.stopPropagation()}
+                                >
+                                    Edit
+                                </button>
+                            </Link>
+
+                            <button
+                                onClick={async (e) => {
+                                    e.stopPropagation();
+                                    await handleDelete();
+                                }}
+                                className={styles.deleteButton}
+                            >
+                                Delete
+                            </button>
+
+                            {isLocked && (
+                                <p style={{color: "#ef4444", marginTop: 4, fontSize: 10}}>
+                                    Locked!
+                                </p>
+                            )}
+                        </div>
+                    </div>
+                    </div>
+
+                    <div className={styles.bottom}>
+                        <div className={styles.actionsLink}>
+
+                            <Link
+                                href={`/venue-admin/venues/${venue.id}/menu/`}
+                                className={`${styles.buttonLink} ${styles.primary}`}
                                 onClick={(e) => e.stopPropagation()}
                             >
-                                Edit
-                            </button>
-                        </Link>
-
-                        <button
-                            onClick={async (e) => {
-                                e.stopPropagation();
-                                await handleDelete();
-                            }}
-                            className={styles.deleteButton}
-                        >
-                            Delete
-                        </button>
-
-                        {isLocked && (
-                            <p style={{color: "#ef4444", marginTop: 4, fontSize: 10}}>
-                                Locked!
+                                Menu
+                            </Link>
+                            <Link
+                                href={`/venue-admin/venues/${venue.id}/tables/`}
+                                className={`${styles.buttonLink} ${styles.primary}`}
+                                onClick={(e) => e.stopPropagation()}
+                            >
+                                Tables
+                            </Link>
+                            <Link
+                                href={`/venue-admin/venues/${venue.id}/travel-extra-services/`}
+                                className={`${styles.buttonLink} ${styles.primary}`}
+                                onClick={(e) => e.stopPropagation()}
+                            >
+                                Services
+                            </Link>
+                            <Link
+                                href={`/venue-admin/venues/${venue.id}/orders/`}
+                                className={`${styles.buttonLink} ${styles.outline}`}
+                                onClick={(e) => e.stopPropagation()}
+                            >
+                                Orders
+                            </Link>
+                            <Link
+                                href={`/venue-admin/venues/${venue.id}/news/`}
+                                className={`${styles.buttonLink} ${styles.outline}`}
+                                onClick={(e) => e.stopPropagation()}
+                            >
+                                News
+                            </Link>
+                            <Link
+                                href={`/venue-admin/venues/${venue.id}/reviews/`}
+                                className={`${styles.buttonLink} ${styles.outline}`}
+                                onClick={(e) => e.stopPropagation()}
+                            >
+                                Reviews
+                            </Link>
+                            <p>
+                                {/*{user ? (*/}
+                                {/*  stats ? (*/}
+                                {/*    <>*/}
+                                {/*      <p>Views: {stats.total_views}</p>*/}
+                                {/*      <p>Daily: {stats.daily_views}</p>*/}
+                                {/*      <p>Weekly: {stats.weekly_views}</p>*/}
+                                {/*      <p>Monthly: {stats.monthly_views}</p>*/}
+                                {/*    </>*/}
+                                {/*  ) : (*/}
+                                {/*    <p>Loading stats...</p>*/}
+                                {/*  )*/}
+                                {/*) : (*/}
+                                {/*  <p>Premium required</p>*/}
+                                {/*)}*/}
                             </p>
-                        )}
+
+                        </div>
+                        <p className={styles.address}>ID:{venue.id}</p>
                     </div>
-                </td>
-
-                <td className={styles.a}>
-                    <div className={styles.actions}>
-
-                        <Link
-                            href={`/venue-admin/venues/${venue.id}/menu/`}
-                            className={styles.buttonLink}
-                            onClick={(e) => e.stopPropagation()}
-                        >
-                            Menu
-                        </Link>
-                        <Link
-                            href={`/venue-admin/venues/${venue.id}/tables/`}
-                            className={styles.buttonLink}
-                            onClick={(e) => e.stopPropagation()}
-                        >
-                            Tables
-                        </Link>
-                        <Link
-                            href={`/venue-admin/venues/${venue.id}/travel-extra-services/`}
-                            className={styles.buttonLink}
-                            onClick={(e) => e.stopPropagation()}
-                        >
-                            Services
-                        </Link>
-                        <Link
-                            href={`/venue-admin/venues/${venue.id}/orders/`}
-                            className={styles.buttonLink}
-                            onClick={(e) => e.stopPropagation()}
-                        >
-                            Orders
-                        </Link>
-                        <Link
-                            href={`/venue-admin/venues/${venue.id}/news/`}
-                            className={styles.buttonLink}
-                            onClick={(e) => e.stopPropagation()}
-                        >
-                            News
-                        </Link>
-                        <Link
-                            href={`/venue-admin/venues/${venue.id}/reviews/`}
-                            className={styles.buttonLink}
-                            onClick={(e) => e.stopPropagation()}
-                        >
-                            Reviews
-                        </Link>
-                    </div>
-                </td>
-
-
-                <td>
-                    {/*{user ? (*/}
-                    {/*  stats ? (*/}
-                    {/*    <>*/}
-                    {/*      <p>Views: {stats.total_views}</p>*/}
-                    {/*      <p>Daily: {stats.daily_views}</p>*/}
-                    {/*      <p>Weekly: {stats.weekly_views}</p>*/}
-                    {/*      <p>Monthly: {stats.monthly_views}</p>*/}
-                    {/*    </>*/}
-                    {/*  ) : (*/}
-                    {/*    <p>Loading stats...</p>*/}
-                    {/*  )*/}
-                    {/*) : (*/}
-                    {/*  <p>Premium required</p>*/}
-                    {/*)}*/}
-                </td>
-            </tr>
-        </>
+                </div>
+            </li>
+        </ul>
     );
 };
 

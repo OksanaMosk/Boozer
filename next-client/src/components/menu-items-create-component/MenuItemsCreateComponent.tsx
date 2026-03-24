@@ -75,7 +75,8 @@ const MenuItemsCreateComponent: React.FC<VenueMenuItemsCreateComponentProps> = (
             setFetchError(null);
             try {
                 const result: AxiosResponse = await service.getAll();
-                const fetchedItems = result.data.data;
+                const fetchedItems = result.data;
+                console.log("ADMIN:", fetchedItems);
                 setItems(fetchedItems);
             } catch (err: any) {
                 const errorMsg = err?.response?.data?.detail || "Failed to load menu items";

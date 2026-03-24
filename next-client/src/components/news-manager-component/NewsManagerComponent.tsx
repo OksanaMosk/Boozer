@@ -126,6 +126,7 @@ const NewsManagerComponent: React.FC<VenueNewsManagerProps> = ({venueId}) => {
                             news={news}
                             venueId={venueId}
                             token={user?.token || ""}
+                            isReadOnly={false}
                             onDelete={handleDeleteNews}
                             onUpdate={updatedNews => {
                                 if (!updatedNews.type) return;

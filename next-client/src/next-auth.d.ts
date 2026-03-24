@@ -42,7 +42,7 @@ export interface UserProfile {
     name: string;
     surname: string;
     age: number;
-    avatarUrl: string | null;
+    avatar: string | null;
     phone: string;
     birth_date: string;
     is_rules_accepted: boolean;

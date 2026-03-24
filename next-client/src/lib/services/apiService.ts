@@ -15,8 +15,6 @@ const baseURL = isServer
 if (!baseURL) {
   console.warn("API URL is not defined! Check your .env files.");
 }
-console.log("CLIENT API URL:", process.env.NEXT_PUBLIC_API_URL);
-
 
 const apiService = (accessToken?: string) => {
     const instance = axios.create({
@@ -33,9 +31,8 @@ const apiService = (accessToken?: string) => {
             if (e.response?.status === 401) {
                 document.cookie = "authjs.session-token=; Max-Age=0; path=/";
                 document.cookie = "refresh-token=; Max-Age=0; path=/";
-                console.log(document.cookie);
-                // alert(document.cookie);
-                window.location.href = "/login";
+                // console.log(document.cookie);
+                // window.location.href = "/login";
             }
             return Promise.reject(e);
         }

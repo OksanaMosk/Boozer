@@ -3,15 +3,16 @@ from django_filters.rest_framework import DjangoFilterBackend
 from .models import NewsModel, NewsImageModel
 from .serializers import NewsSerializer, NewsImageSerializer
 from ..user.permissions import IsAdminOrVenueAdminOrReadOnly
+from rest_framework import viewsets, permissions
 
 
 class NewsViewSet(viewsets.ModelViewSet):
     serializer_class = NewsSerializer
     permission_classes = [IsAdminOrVenueAdminOrReadOnly]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    filterset_fields = ['venue', 'status', 'type']
+    filterset_fields = ['venue', 'status', 'type', 'is_pinned']
     search_fields = ['title', 'content']
-    ordering_fields = ['is_pinned', 'created_at', 'title']
+    ordering_fields = [ 'created_at', 'title']
     ordering = ['-created_at', '-is_pinned']
 
     def get_queryset(self):

@@ -30,6 +30,7 @@ export const urls = {
         delete: (id: string) => `${paths.users}/${id}/delete/`,
         reviews: (userId: string) => `${paths.users}/${userId}/reviews/`,
         // favorites: (userId: string) => `${paths.users}/${userId}/favorites/`,
+        updateProfile:(userId: string) => `${paths.users}/${userId}/profile/`,
         userVenues: (userId: string) => `${paths.users}/${userId}/venues/`,
     },
     profile: {
@@ -53,7 +54,6 @@ export const urls = {
         newsImages: (venueId: string, newsId: string) => `${paths.venues}/${venueId}/news/${newsId}/images/`,
         travelLogistics:(venueId: string) => `${paths.venues}/${venueId}/travel_logistics/`,
         extraServices:(venueId: string) => `${paths.venues}/${venueId}/extra_services/`,
-        reviews: (venueId: string) => `${paths.venues}/${venueId}/reviews/`,
         favorites: (venueId: string) => `${paths.venues}/${venueId}/favorites/`,
         orders: (venueId: string) => `${paths.venues}/${venueId}/orders/`,
         stats: (venueId: string) => `${paths.venues}/${venueId}/stats/`,
@@ -71,18 +71,24 @@ export const urls = {
             update: (venueId: string, id: string) => `${paths.venues}/${venueId}/venue_tags/${id}/`,
             delete: (venueId: string, id: string) => `${paths.venues}/${venueId}/venue_tags/${id}/`,
         },
-
+        reviews: {
+            list: (venueId: string) => `${paths.venues}/${venueId}/reviews/`,
+            detail: (venueId: string, id: string) => `${paths.venues}/${venueId}/reviews/${id}/`,
+            create: (venueId: string) => `${paths.venues}/${venueId}/reviews/`,
+            update: (venueId: string, id: string) => `${paths.venues}/${venueId}/reviews/${id}/`,
+            delete: (venueId: string, id: string) => `${paths.venues}/${venueId}/reviews/${id}/`,
+        },
     },
-
     venuePhotos: {
         list: `${paths.photos}/`,
         detail: (id: string) => `${paths.photos}/${id}/`,
         create: `${paths.photos}/`,
-        delete: (id: string) => `${paths.photos}/${id}/`,
-        // byVenue: (venueId: string) => `${paths.photos}/?venue=${venueId}`,
-        // mainForVenue: (venueId: string) => `${paths.photos}/?venue=${venueId}&is_main=true`,
+        delete: (id: string) => `${paths.photos}/${id}/`
     },
-
+    allNews: {
+        list: `${paths.news}/`,
+        detail: (id: string) => `${paths.news}/${id}/`,
+    },
     bookings: {
         list: `${paths.bookings}/`,
         detail: (id: string) => `${paths.bookings}/${id}/`,

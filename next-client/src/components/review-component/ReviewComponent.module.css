@@ -1,0 +1,331 @@
+.newsCard {
+    margin: 10px auto;
+    text-align: center;
+    overflow: hidden;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    width: 70%;
+    height:210px;
+    flex-wrap: wrap;
+    color: var(--input-color);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    animation: float 6s ease-in-out infinite;
+    background: rgba(255, 255, 255, 0.2);
+    border: 3px solid var(--color-noposter);
+    border-radius: 2rem;
+    box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.3);
+    gap: 20px;
+
+}
+
+@keyframes float {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0); }
+}
+.top {
+    height: 180px;
+    width: 100%;
+    gap: 4px;
+    display: flex;
+    justify-content: space-between;
+
+}
+.topStatus {
+    display: flex;
+    gap: 1rem;
+}
+.subTitle {
+    display: flex;
+    justify-content:flex-start;
+    align-items: center;
+    font-size: 1.6rem;
+    color: var(--title-color);
+    font-family: var(--font-imperial),serif;
+    letter-spacing: 4px;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    gap: 10px;
+    font-weight: 600;
+}
+.about {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin: 0;
+    padding: 0;
+    height: 178px;
+    width: 38%;
+}
+.text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-between;
+}
+.statusWrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 12px;
+    height: 12px;
+}
+
+.statusDot {
+    width: 8px;
+    height: 8px;
+    background-color: #2ecc71;
+    border-radius: 50%;
+    z-index: 2;
+}
+
+.statusPulse {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(46, 204, 113, 0.7);
+    border-radius: 50%;
+    z-index: 1;
+    animation: pulseAnimation 2s infinite ease-in-out;
+}
+
+@keyframes pulseAnimation {
+    0% {
+        transform: scale(0.8);
+        opacity: 0.8;
+    }
+    70% {
+        transform: scale(2.5);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(2.5);
+        opacity: 0;
+    }
+}
+
+.buttonGroup {
+    width: 100%;
+    display: flex;
+    gap: 1rem;
+}
+.sendReportBtn,
+.cancelReportBtn,
+.editButton,
+.deleteButton {
+    color: var(--title-color);
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    width: 70px;
+    height: 30px;
+}
+
+.sendReportBtn,
+.cancelReportBtn {
+    width: 70px;
+    height: 25px;
+      font-size: 0.6rem;
+}
+
+.cancelReportBtn:hover,
+.editButton:hover {
+    background-color: var(--logo-hover-color);
+}
+
+.cancelReportBtn,
+.editButton {
+    background-color: var(--menu-color);
+    border: 1px solid var(--logo-hover-color);
+}
+.sendReportBtn,
+.deleteButton {
+    background-color: #bf8282;
+        color: var(--color-container);
+}
+.sendReportBtn:hover,
+.deleteButton:hover {
+    background-color: #a94444;
+}
+
+.cardInfo {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items:flex-start;
+    gap: 0.5rem;
+}
+.contentText {
+    padding: 0;
+    margin: 0;
+    color: var(--logo-hover-color);
+    font-size: 1rem;
+    text-align: justify;
+}
+
+.error {
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(90deg, #7a5c1e, #d4af37, #f5e6a1, #d4af37, #7a5c1e);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
+    font-size: 0.6rem;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.overallLabel {
+    color: var(--title-color);
+    font-family: var(--font-imperial),serif;
+    margin: 0 8px 0 0;
+    font-weight: 600;
+    font-size: 1.2rem;
+}
+
+.subRatings {
+    box-sizing: border-box;
+    width: 200px;
+    height: 180px;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex-direction: column;
+    background: var(--menu-color);
+    gap: 0;
+    border-radius: 12px;
+    box-shadow: 0 0 8px white;
+}
+
+.subRatingItem {
+    width: 100%;
+     text-align: left;
+    height: 34px;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+     transform: scale(0.6);
+    transform-origin: left;
+}
+
+.ratingLabel {
+   width: 100%;
+     text-align: left;
+     margin: 0;
+    padding: 0 20px;
+    font-size: 16px;
+    color: var(--logo-hover-color);
+    letter-spacing: 1px;
+}
+
+.galleryWrapper {
+    margin-top: 8rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.activeLike {
+    color:var(--logo-hover-color);
+    background: var(--menu-color);
+}
+
+.selectWrapper {
+    margin-top:0.5rem;
+    border-top: 3px solid var(--logo-hover-color);
+    color: var(--color-text);
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 4px;
+    width: 100%;
+}
+.labelSelect {
+    margin: 0;
+    padding: 0;
+    color: var(--logo-hover-color);
+    text-align: left;
+    font-size: 0.6rem;
+}
+.reason {
+     margin: 0;
+    padding: 0;
+      font-size: 0.6rem;
+    width: 25%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+ }
+.send {
+     margin: 0;
+    padding: 0;
+       width: 75%;
+    display: flex;
+    flex-direction: column;
+     gap: 0.4rem;
+}
+.select {
+     margin: 0;
+    padding: 0;
+     color: var(--input-color);
+    font-size: 0.6rem;
+    cursor: pointer;
+    outline: none;
+    width: 100%;
+    border-radius: 1.5rem;
+    border: 1px solid var(--input-color);
+    background-color: transparent;
+    box-sizing: border-box;
+    justify-content: flex-start;
+     height: 25px;
+}
+.select option {
+     margin: 0;
+    padding: 0;
+    outline: none;
+    background: var(--title-color);
+    color: var(--color-badgeId);
+    border: none;
+}
+.reportTextarea {
+    font-size: 0.6rem;
+    width: 100%;
+    padding: 0.5rem 2.5rem 0.5rem 1rem;
+    border-radius: 1.5rem;
+    color: var(--color-white);
+    outline: none;
+    background-color: transparent;
+    box-sizing: border-box;
+    resize: vertical;
+    border: 1px solid var(--input-color);
+    justify-content: flex-start;
+    height: 60px;
+}
+.reportTextarea:focus {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+.reportActionButtons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    align-items: center;
+}

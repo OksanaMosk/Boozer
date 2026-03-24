@@ -84,11 +84,13 @@ const buildOrderParams = (criteria?: OrderFilterCriteria) => {
 
 export interface ReviewFilterCriteria {
     venue?: string;
+    user?:string;
 }
 
 const buildReviewParams = (criteria?: ReviewFilterCriteria) => {
     const params: Record<string, string> = {};
     if (criteria?.venue) params.venue = criteria.venue;
+    if (criteria?.user) params.user = criteria.user;
     return params;
 };
 
@@ -206,12 +208,13 @@ const venueServices = {
             update: (id: string, data: Partial<IExtraService>) => api(token).patch<IExtraService>(`${urls.venues.extraServices(venueId)}${id}/`, data),
             delete: (id: string) => api(token).delete(`${urls.venues.extraServices(venueId)}${id}/`),
         }),
-        reviews: {
-            getAllWithFilter: (filterCriteria?: ReviewFilterCriteria, token?: Token) => api(token).get<IReview[]>(urls.reviews.list, {params: buildReviewParams(filterCriteria)}),
-            ...createService<IReview>(urls.reviews.list),
-            favoritesList: (token?: Token) => api(token).get<IReview[]>(urls.reviews.favoritesList),
-            favoritesDetail: (id: string, token?: Token) => api(token).get<IReview>(urls.reviews.favoritesDetail(id)),
-        },
+        reviews: (token?: Token) => (venueId: string) => ({
+            getAll: () => api(token).get<IReview[]>(urls.venues.reviews.list(venueId)),
+            get: (id: string) => api(token).get<IReview>(urls.venues.reviews.detail(venueId, id)),
+            create: (data: Partial<IReview>) => api(token).post<IReview>(urls.venues.reviews.create(venueId), data),
+            update: (id: string, data: Partial<IReview>) => api(token).patch<IReview>(urls.venues.reviews.update(venueId, id), data),
+            delete: (id: string) => api(token).delete(urls.venues.reviews.delete(venueId, id)),
+        }),
         favorites: {
             getAll: (filterCriteria?: FavoriteFilterCriteria, token?: Token) => {
                 if (!filterCriteria?.venueId) throw new Error("venueId is required for favorites");
@@ -242,7 +245,6 @@ const venueServices = {
             update: (orderId: string | number, data: Partial<IOrder>) => api(token).patch<IOrder>(`${urls.venues.orders(venueId)}${orderId}/`, data),
             updateStatus: (orderId: string | number, status: OrderStatusType) => api(token).patch<IOrder>(`${urls.venues.orders(venueId)}${orderId}/`, {status}),
             delete: (orderId: string | number) => api(token).delete(`${urls.venues.orders(venueId)}${orderId}/`),
-            getActive: () => api(token).get<IOrder[]>(`${urls.venues.orders(venueId)}active/`),
         }),
     },
     venuePhotos: (token?: Token) => ({
@@ -253,23 +255,30 @@ const venueServices = {
         delete: (venueId: string, photoId: string) => api(token).delete(`${urls.venues.photos(venueId)}${photoId}/`),
     }),
 
+    allNews: {
+        list: (params?: { page?: number; limit?: number; type?: string; status?: string }, token?: Token) =>
+            api(token).get<PaginatedResponse<INews>>(urls.allNews.list, {params}),
+        get: (newsId: string | number, token?: Token) =>
+            api(token).get<INews>(`${urls.allNews.detail}${newsId}/`),
+    },
+
     bookings: {
         ...createService<IOrder>(urls.bookings.list),
         byTable: getByParent<IOrder>(urls.bookings.byTable),
         active: (token?: Token) => api(token).get<IOrder[]>(urls.bookings.active),
     },
 
-    reviews: {
+  reviews: {
+        getAllWithFilter: (filterCriteria?: ReviewFilterCriteria, token?: Token) =>
+            api(token).get<IReview[]>(urls.reviews.list, {params: buildReviewParams(filterCriteria)}),
         ...createService<IReview>(urls.reviews.list),
+        favoritesList: (token?: Token) => api(token).get<IReview[]>(urls.reviews.favoritesList),
+        favoritesDetail: (id: string, token?: Token) => api(token).get<IReview>(urls.reviews.favoritesDetail(id)),
     },
-
-    // constants: {
-    //     getConstants: (token?: Token) => api(token).get(urls.constants.constantsList),
-    // },
 
     constants: {
         getConstants: () => api().get(urls.constants.constantsList),
-},
+    },
 
     stats: {
         getStats: (venueId: string, token?: Token) => api(token).get(urls.venues.stats(venueId)),

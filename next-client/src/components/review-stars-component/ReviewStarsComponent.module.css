@@ -1,0 +1,33 @@
+.starsWrapper {
+    margin: 0 auto;
+    display: inline-flex;
+    gap: 4px;
+    align-items: flex-start;
+    width:50%;
+
+}
+.starRating {
+    margin-right: 8px;
+    font-size: 1.2rem;
+    color: var(--logo-hover-color);
+}
+.star {
+    font-size: 1.6rem;
+    transition: transform 0.2s ease, color 0.2s ease;
+    cursor: default;
+    user-select: none;
+}
+
+.filled {
+    color:var(--logo-hover-color);
+}
+
+.empty {
+    color: transparent;
+    -webkit-text-stroke: 1px var(--logo-hover-color);
+}
+
+.interactive .star:hover {
+    transform: scale(1.2);
+    -webkit-text-stroke: 1px var(--color-noposter);
+}

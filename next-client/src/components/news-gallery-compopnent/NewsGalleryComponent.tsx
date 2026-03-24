@@ -1,7 +1,9 @@
-import React from "react";
-import styles from "./NewsGallery.module.css"
+"use client"
 
-export const NewsGallery = ({images}: { images: any[] }) => {
+import React from "react";
+import styles from "./NewsGalleryComponent.module.css"
+
+export const NewsGalleryComponent = ({images}: { images: any[] }) => {
     const [currentIndex, setCurrentIndex] = React.useState(0);
     const handlePhotoChange = (direction: "next" | "prev") => {
         if (direction === "next" && currentIndex < images.length - 1) {

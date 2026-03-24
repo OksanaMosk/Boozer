@@ -248,6 +248,7 @@ class SocialLoginJWTAPIView(APIView):
                     'phone': profile.phone,
                     'birth_date': profile.birth_date,
                     'is_rules_accepted': profile.is_rules_accepted,
+                    'avatar': profile.avatar.url if profile.avatar else None,
                 }
             }
         }
@@ -351,7 +352,7 @@ class CurrentUserAPIView(APIView):
                 'name': getattr(profile, 'name', None),
                 'surname': getattr(profile, 'surname', None),
                 'age': getattr(profile, 'age', None),
-                'avatarUrl': profile.avatar.url if getattr(profile, 'avatar', None) else None,
+                'avatar': profile.avatar.url if getattr(profile, 'avatar', None) else None,
             } if profile else None
         }
         return Response(data)

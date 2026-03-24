@@ -85,6 +85,9 @@ const [isVisible, setIsVisible] = useState(false);
                             <h2 className={styles.title}>
                                 Welcome to {venue.name} in {venue.city}
                             </h2>
+                            <Link href={`/venues/${venue.id}/reviews`} className={styles.reviewsBtn}>
+                                ✸ Reviews
+                            </Link>
 
                             {venue.description && (
                                 <p className={styles.overview}>
@@ -134,14 +137,13 @@ const [isVisible, setIsVisible] = useState(false);
                             )}
                         </div>
                         <div className={styles.contentHero}>
-                            <h2 className={styles.title}>
-                                What’s New
-                            </h2>
-
-                            {venue.description && (
-                                <p className={styles.overview}>
-                                    {venue.description}
-                                </p>
+                            {venue.id && (
+                                <Link
+                                    href={`/venues/${venue.id}/news/`}
+                                    className={styles.titleMenu}
+                                >
+                                    What’s New
+                                </Link>
                             )}
                         </div>
                     </div>
@@ -206,7 +208,7 @@ const [isVisible, setIsVisible] = useState(false);
                             </div>
                         )}
                     </div>
-                    <Link href="/boozer">
+                    <Link href={`/boozer?venueId=${venue.id}`}>
                         <p className={styles.titleMenu}>Your VIP Boozer status starts here!</p>
                         <img
                             src="/favicon/android-chrome-512x512.png"

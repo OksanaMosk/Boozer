@@ -1,7 +1,5 @@
 import React from "react";
 
-import {ButtonGoBackComponent} from "@/components/button-go-back-component/ButtonGoBackComponent";
-import VenueAdminDashboardComponent from "@/components/venue-admin-dashboard-component/VenueAdminDashboardComponent";
 
 export default async function VenueAdminVenueIdPage() {
     return (
@@ -12,8 +10,7 @@ export default async function VenueAdminVenueIdPage() {
                 textAlign: "center"
             }}
         >
-            <VenueAdminDashboardComponent/>
-            <ButtonGoBackComponent/>
+            видалити
         </div>
     );
 }

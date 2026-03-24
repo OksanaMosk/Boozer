@@ -46,6 +46,27 @@ export const BoozerVenuesClientComponent = () => {
         if (step === 1) void fetchVenues(currentPageFromURL, filters);
     }, [currentPageFromURL, filters, fetchVenues, step]);
 
+    useEffect(() => {
+    const venueIdFromURL = searchParams.get("venueId");
+    if (step === 1 && venueIdFromURL && !selectedVenue) {
+        const autoSelect = async () => {
+            setIsLoading(true);
+            try {
+                const response = await venueService.venues.get(venueIdFromURL);
+                if (response.data) {
+                    setSelectedVenue(response.data);
+                    setStep(2);
+                }
+            } catch (error) {
+                console.error("Auto-select failed:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        void autoSelect();
+    }
+}, [searchParams, step, selectedVenue]);
+
     const handleSelectVenue = (venue: IVenue) => {
         setSelectedVenue(venue);
         setStep(2);

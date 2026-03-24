@@ -20,7 +20,7 @@ class ProfileSerializer(serializers.ModelSerializer):
         validators=[phone_validator],
         style={'placeholder': '+xx (xxx) xxx-xx-xx'}
     )
-
+    avatar = serializers.ImageField(required=False, allow_null=True)
     class Meta:
         model = ProfileModel
         fields = (
@@ -28,6 +28,7 @@ class ProfileSerializer(serializers.ModelSerializer):
             'user_id',
             'name',
             'surname',
+            'avatar',
             'phone',
             'birth_date',
             'is_rules_accepted',

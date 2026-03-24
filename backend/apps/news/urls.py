@@ -3,7 +3,7 @@ from rest_framework_nested import routers
 from .views import NewsViewSet
 
 router = routers.DefaultRouter()
-router.register(r'news', NewsViewSet, basename='news')
+router.register(r'', NewsViewSet, basename='news')
 
 urlpatterns = [
     path('', include(router.urls)),

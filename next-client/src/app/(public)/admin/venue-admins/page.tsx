@@ -1,7 +1,5 @@
 "use client";
 
-import {ButtonGoBackComponent} from "@/components/button-go-back-component/ButtonGoBackComponent";
-
 const VenueAdminsPage = () => {
   return (
     <div style={{
@@ -10,7 +8,7 @@ const VenueAdminsPage = () => {
       textAlign: 'center',
       width: '100%'
     }}>
-      <ButtonGoBackComponent/>
+    видалити
     </div>
   );
 };

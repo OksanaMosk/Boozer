@@ -62,6 +62,9 @@ class UpdateUserActiveAPIView(RetrieveUpdateAPIView, UserUpdateMixin):
     lookup_field = 'pk'
 
     def patch(self, request, *args, **kwargs):
+        if self.get_object() == request.user and request.data.get('is_active') is False:
+            raise ValidationError("You cannot block yourself.")
+
         user = self.get_object()
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -74,6 +77,9 @@ class UpdateUserRoleAPIView(APIView, UserUpdateMixin):
     permission_classes = [IsAuthenticated, IsAdmin]
 
     def patch(self, request, user_id):
+        if int(user_id) == request.user.id and request.data.get('role') != 'admin':
+            raise ValidationError("You cannot demote yourself from admin role.")
+
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = UserService.change_user_role(request.user, user_id, serializer.validated_data['role'])
@@ -95,6 +101,10 @@ class DeleteUserAPIView(DestroyAPIView):
     permission_classes = [IsAdmin]
     lookup_field = 'pk'
 
+    def perform_destroy(self, instance):
+        if instance == self.request.user:
+            raise ValidationError("You cannot delete yourself.")
+        instance.delete()
 
 class ProfileViewSet(viewsets.ModelViewSet):
     serializer_class = ProfileSerializer

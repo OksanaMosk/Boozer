@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { useUser } from "@/app/contexts/UserProvider";
 import venueServices from "@/lib/services/venueService";
-import { NewsGallery } from "@/components/news-gallery-compopnent/NewsGalleryComponent";
+import { NewsGalleryComponent } from "@/components/news-gallery-compopnent/NewsGalleryComponent";
 import PhotoMultipleUploadComponent from "@/components/photo-multiple-upload-component/PhotoMultipleUploadComponent";
 import styles from "./NewComponent.module.css";
 
@@ -13,9 +13,10 @@ interface VenueNewComponentProps {
     token: string;
     onDelete: (id: string | number) => void;
     onUpdate: (updatedNews: any) => void;
+    isReadOnly?: boolean;
 }
 
-export const NewComponent = ({news, venueId, onDelete, onUpdate}: VenueNewComponentProps) => {
+export const NewComponent = ({news, venueId, onDelete, onUpdate, isReadOnly = false}: VenueNewComponentProps) => {
     const {user} = useUser();
     const [editMode, setEditMode] = useState(false);
     const [editNews, setEditNews] = useState(news);
@@ -89,10 +90,13 @@ export const NewComponent = ({news, venueId, onDelete, onUpdate}: VenueNewCompon
                 ) : (
                     <div className={styles.subTitle}>{editNews.title}</div>
                 )}
-                <div className={styles.topStatus}>
-                    <p className={styles.topP}><strong>Type:</strong> {editNews.type}</p>
-                    <p className={styles.topP}><strong>Status:</strong> {editNews.status}</p>
-                </div>
+                {!isReadOnly && (
+                    <div className={styles.topStatus}>
+                        <p className={styles.topP}><strong>Type:</strong> {editNews.type}</p>
+                        <p className={styles.topP}><strong>Status:</strong> {editNews.status}</p>
+                    </div>
+                )}
+                {!isReadOnly && (
                 <div className={styles.buttonGroup}>
                     {editMode ? (
                         <>
@@ -114,6 +118,7 @@ export const NewComponent = ({news, venueId, onDelete, onUpdate}: VenueNewCompon
                         </>
                     )}
                 </div>
+                    )}
             </div>
 
             <div className={styles.cardInfo}>
@@ -143,7 +148,7 @@ export const NewComponent = ({news, venueId, onDelete, onUpdate}: VenueNewCompon
             <div className={styles.bottom}>
                 {coverImage && <img src={coverImage} alt="Cover" className={styles.coverImage}/>}
 
-                {editMode && (
+               {!isReadOnly && editMode && (
                     <div className={styles.photoWrapper}>
                         {coverMessage && <div className={styles.error}>{coverMessage}</div>}
                         <PhotoMultipleUploadComponent
@@ -178,7 +183,7 @@ export const NewComponent = ({news, venueId, onDelete, onUpdate}: VenueNewCompon
                         />
                     </div>
                 )}
-                {images.length > 0 && <NewsGallery images={images}/>}
+                {images.length > 0 && <NewsGalleryComponent images={images}/>}
             </div>
         </div>
     );

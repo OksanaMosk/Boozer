@@ -1,0 +1,166 @@
+.itemsWrapper{
+    font-family: var(--font-playfair),sans-serif;
+    text-align: center;
+    width: 70vw;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 110px;
+
+}
+.wrapperTitle {
+    width: 100%;
+    text-align: left;
+    margin: 0 auto 60px;
+    padding: 0;
+    position: relative;
+    display: inline-block;
+}
+.mediumText,
+.bigText {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    text-align: left;
+    font-family: Sans,sans-serif;
+    color:var(--title-color);
+    font-size: 16rem;
+    font-style: italic;
+    font-weight: 800;
+    position: relative;
+    z-index: 1;
+    text-shadow:
+    2px 2px 0 #000,
+    4px 4px 6px rgba(0,0,0,0.5);
+
+}
+
+.mediumText {
+    color:var(--title-color);
+    position: absolute;
+    top: 90%;
+    left:30%;
+    font-size: 16rem;
+    transform: translateY(-50%);
+    z-index: 2;
+    text-shadow: 1px 1px 1px var(--title-primary-color);
+}
+
+.smallText {
+    font-family: var(--font-imperial),sans-serif;
+    position: absolute;
+    top: 30%;
+    left:60%;
+    transform: translateY(-50%);
+    font-size: 16rem;
+    font-weight: 500;
+    z-index: 3;
+    color: var(--title-primary-color);
+    letter-spacing: 10px;
+}
+
+.editButton{
+    color: var(--color-white);
+    background-color: var(--color-bg-dark);
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.4rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    width: 70px;
+    height: 30px;
+}
+
+
+.editButton:hover {
+    background-color: var(--color-text);
+}
+
+.titleForm {
+    padding-left: 30px;
+    font-weight: 700;
+    font-size: 4rem;
+    color: var(--color-text);
+    margin: 0.5rem 0;
+    font-family: var(--font-imperial),serif;
+    letter-spacing: 3px;
+    display: flex;
+    width: 80vw;
+    align-items: flex-start;
+    justify-content: center;
+}
+.tabsContainer {
+     position: fixed;
+    margin-top: 70px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 2rem;
+    width: 250px;
+    height: auto;
+    flex-direction: column;
+    left: 10px;
+    top: 150px;
+    z-index: 4;
+}
+.tabButton {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    width: 120px;
+    height: 45px;
+    padding: 0.5rem 1rem;
+    color: #30240b;
+    background: linear-gradient(90deg, #30240b, white, #30240b);
+    cursor: pointer;
+    outline: none;
+    transition: all 0.3s ease-in-out;
+    border: 1px solid rgba(255,255,255,0.5);
+    font-weight: bold;
+    border-radius: 0 1.5rem 1.5rem 0;
+    text-align: center;
+
+}
+.tabButton:hover {
+   background: linear-gradient(90deg, white, #30240b, white);
+    color: white;
+}
+
+
+.tabButton.active {
+    background-color: #3e8e41;
+    color: white;
+}
+.typesWrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.newsSection {
+    margin: 0 auto;
+    text-align: center;
+    width:70vw;
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+    gap: 2rem;
+}
+
+.emptyState {
+    font-family: var(--font-imperial),sans-serif;
+    font-size: 2rem;
+    color: var(--title-primary-color);
+    letter-spacing: 2px;
+}
+.loaderWrapper {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    margin: 70px auto;
+
+}

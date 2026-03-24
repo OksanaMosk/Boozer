@@ -215,6 +215,14 @@
     background-color: var(--color-bg-dark);
 }
 
+.blockButton:disabled,
+.unblockButton:disabled,
+.deleteButton:disabled,
+.select:disabled {
+    opacity: 0.5;
+     cursor: not-allowed !important;
+}
+
 @media (min-width: 768px) {
     .subtitle {
         font-size: 1rem;

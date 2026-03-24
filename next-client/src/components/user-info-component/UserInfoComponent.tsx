@@ -23,10 +23,31 @@ export const UserInfoComponent = ({onLogoutAction, classNames = {}}: UserInfoPro
 
     const avatarLetter = user.email ? user.email[0].toUpperCase() : "?";
 
+
+    const getPhotoUrl = (avatarUrl?: string | null) => {
+        if (!avatarUrl || avatarUrl === "" || avatarUrl === "EMPTY") return null;
+        if (avatarUrl.startsWith("http")) return avatarUrl;
+        const cleanPath = avatarUrl.replace(/^\/?(api\/media\/)?/, "");
+        return `http://localhost:8888/api/media/${cleanPath}?t=${Date.now()}`;
+    };
+
+    const photoUrl = getPhotoUrl(user.profile?.avatar);
+
     return (
         <div className={`${styles.container} ${classNames.container ?? ""}`}>
             <div className={`${styles.avatar} ${classNames.avatar ?? ""}`}>
-                {avatarLetter}
+                {photoUrl ? (
+                    <img
+                        src={photoUrl}
+                        alt="Avatar"
+                        className={styles.avatarImage} // Додай цей клас у CSS для borderRadius: 50%
+                        onError={(e) => {
+                            (e.target as HTMLImageElement).style.display = "none";
+                        }}
+                    />
+                ) : (
+                    <span>{avatarLetter}</span>
+                )}
             </div>
 
             <div className={`${styles.info} ${classNames.info ?? ""}`}>

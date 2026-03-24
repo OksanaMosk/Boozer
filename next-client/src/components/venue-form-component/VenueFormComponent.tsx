@@ -37,6 +37,7 @@ export const VenueFormComponent = ({
                                        setTagsInput,
                                    }: VenueFormProps) => {
     const isCreate = mode === "create";
+
     const handleInputChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
     ) => {

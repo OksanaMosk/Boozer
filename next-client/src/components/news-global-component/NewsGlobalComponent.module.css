@@ -1,0 +1,27 @@
+.list {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+.itemWrapper {
+    position: relative;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.newsBadge {
+    position: absolute;
+    right: 70%;
+    z-index: 5;
+    font-size: 9px !important;
+    line-height: 1 !important;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--logo-hover-color);
+    background: var(--reverse-menu-color);
+    padding: 3px 6px;
+    border-radius: 4px;
+    pointer-events: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}

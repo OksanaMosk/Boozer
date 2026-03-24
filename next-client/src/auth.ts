@@ -19,7 +19,6 @@ export const {handlers, auth, signIn, signOut} = NextAuth({
             name: "authjs.session-token",
             options: {
                 httpOnly: true,
-                // sameSite: "none",
                 secure: false,
                 path: "/",
             },
@@ -50,8 +49,6 @@ export const {handlers, auth, signIn, signOut} = NextAuth({
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) return null;
           try {
-              // const res = await fetch("http://127.0.0.1:8888/api/auth/login/", {
-              // const res = await fetch("http://app:8000/api/auth/login/", {
                 const res = await fetch(`${apiUrl}/auth/login/`, {
                   method: "POST",
                   headers: {"Content-Type": "application/json"},
@@ -87,17 +84,27 @@ export const {handlers, auth, signIn, signOut} = NextAuth({
     }),
   ],
 
-  callbacks: {
-  async jwt({ token, user, account }: { token: JWT; user?: User;   account?: Account | null; }) {
-    // console.log("JWT", { token, user, account });
+    callbacks: {
+        async jwt({token, user, account, trigger, session}: {
+            token: JWT;
+            user?: User;
+            account?: Account | null;
+            trigger?: string;
+            session?: any
+        }) {
+            if (trigger === "update" && session?.user?.profile) {
+                token.profile = {...token.profile, ...session.user.profile};
+                return token;
+            }
 
-      if (user && account) {
-          token.id = user.id;
+          if (user && account) {
+              token.id = user.id;
           token.accessToken = user.accessToken;
           token.refreshToken = user.refreshToken;
           token.role = user.role ?? "visitor";
           token.profile = user.profile;
-          token.needsProfile =
+
+              token.needsProfile =
               !user?.profile?.birth_date || user?.profile?.birth_date === '' ||
               user?.profile?.is_rules_accepted === false;
           token.accessTokenExpires = Date.now() + ((user.expiresIn ?? 3600) - 60) * 1000;
@@ -105,8 +112,6 @@ export const {handlers, auth, signIn, signOut} = NextAuth({
           if (account.provider !== "credentials") {
 
         try {
-          // const res = await fetch("http://127.0.0.1:8888/api/auth/social_jwt/", {
-          //   const res = await fetch("http://app:8000/api/auth/social_jwt/", {
             const res = await fetch(`${apiUrl}/auth/social_jwt/`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -118,18 +123,15 @@ export const {handlers, auth, signIn, signOut} = NextAuth({
 
           if (res.ok) {
             const data = await res.json();
-            // console.log("DATA FROM BACKEND:", data);
-
             token.profile = {
               name: data.user?.profile?.name || "",
               surname: data.user?.profile?.surname || "",
               age: data.user?.profile?.age || 0,
-              avatarUrl: data.user?.profile?.avatarUrl || null,
+              avatar: data.user?.profile?.avatar || null,
               phone: data.user?.profile?.phone || "",
               birth_date: data.user?.profile?.birth_date || "",
               is_rules_accepted: data.user?.profile?.is_rules_accepted || false,
             };
-
               token.accessToken = data.access_token;
               token.refreshToken = data.refresh_token;
               token.id = String(data.user.id);
@@ -152,8 +154,6 @@ export const {handlers, auth, signIn, signOut} = NextAuth({
     }
 
     try {
-      // const response = await fetch("http://127.0.0.1:8888/api/auth/refresh/", {
-      // const response = await fetch("http://app:8888/api/auth/refresh/", {
         const response = await fetch(`${apiUrl}/auth/refresh/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -165,9 +165,7 @@ export const {handlers, auth, signIn, signOut} = NextAuth({
       if (!response.ok) {
         return { ...token, error: "RefreshAccessTokenError" };
       }
-
       const newExpiresIn = data.expires_in || data.lifetime || 3600;
-
       return {
         ...token,
         accessToken: data.access,
@@ -206,8 +204,6 @@ export const {handlers, auth, signIn, signOut} = NextAuth({
     },
 
   },
-
-
   pages: { signIn: "/login", error: "/auth/error" },
 });
 

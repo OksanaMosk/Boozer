@@ -53,9 +53,11 @@ const MenuVisitorComponent = ({venueId}: Props) => {
                     .menu({accessToken: user?.token})(String(venueId))
                     .getAll();
                 const menus = response.data?.data ?? [];
+
                 const publishedMenus = menus.filter((menu: any) => menu.is_published);
 
                 const allItems = publishedMenus.flatMap((menu: any) => menu.items || []);
+                console.log("VISITOR:", response.data);
                 const grouped = allItems.reduce(
                     (acc: Record<string, IMenuItem[]>, item: IMenuItem) => {
                         const category = item.category || "other";
@@ -96,7 +98,7 @@ const MenuVisitorComponent = ({venueId}: Props) => {
             </div>
             <div className={styles.group}>
                 {menuList.length === 0 ? (
-                    <p className={styles.empty}>
+                    <p className={styles.emptyState}>
                         Unfortunately, the menu is not available for viewing.
                     </p>
                 ) : (

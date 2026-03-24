@@ -56,6 +56,7 @@ class MenuItemViewSet(viewsets.ModelViewSet):
     search_fields = ['name', 'description']
     ordering_fields = ['name', 'price', 'position', 'category']
     ordering = ['category', 'position', 'id']
+    pagination_class = None
 
     def get_queryset(self):
         venue_pk = self.kwargs.get('venue_pk')
