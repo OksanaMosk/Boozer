@@ -5,7 +5,7 @@ import venueServices from "@/lib/services/venueService";
 import {ReviewFormComponent} from "@/components/review-form-component/ReviewFormComponent";
 import {ReviewComponent} from "@/components/review-component/ReviewComponent";
 import {useUser} from "@/app/contexts/UserProvider";
-import {IReview, PaginatedResponse} from "@/models/IVenue";
+import styles from "./ReviewsVisitorComponent.module.css"
 
 export const ReviewsVisitorComponent = ({ venueId}: { venueId: string, token?: any }) => {
     const [reviews, setReviews] = useState<any[]>([]);
@@ -17,29 +17,37 @@ export const ReviewsVisitorComponent = ({ venueId}: { venueId: string, token?: a
         if (!user?.token || !venueId) return;
 
         const loadData = async () => {
-            try {
-                setLoading(true);
-                const auth = { accessToken: user.token! };
-                const [reviewsRes, ordersRes] = await Promise.all([
-                    venueServices.reviews.getAllWithFilter({ venue: venueId }, auth),
-                    venueServices.venues.orders(auth)(venueId).getAll()
-                ]);
-                const rData = reviewsRes.data;
-                const finalReviews = Array.isArray(rData) ? rData : (rData.data|| []);
-                setReviews(finalReviews);
-                const oData:PaginatedResponse<any> = ordersRes.data;
-                const rawOrders = Array.isArray(oData) ? oData : (oData.data || []);
-                setOrders(rawOrders.filter((o: any) => o && o.id));
+    try {
+        setLoading(true);
+        const auth = { accessToken: user.token! };
 
-            } catch (e: any) {
-                console.error("Fetch error:", e.response?.status, e.message);
-            } finally {
-                setLoading(false);
-            }
-        };
+        const [reviewsRes, ordersRes] = await Promise.all([
+            venueServices.reviews.getAllWithFilter({ venue: venueId }, auth),
+            venueServices.venues.orders(auth)(venueId).getAll()
+        ]);
 
+        const responseData = reviewsRes.data as any;
+        const finalReviews = Array.isArray(responseData.data.data)
+            ? responseData.data
+            : (Array.isArray(responseData) ? responseData : []);
+        setReviews(finalReviews);
+        const ordersData = ordersRes.data.data;
+        const rawOrders = Array.isArray(ordersData) ? ordersData : (ordersData || []);
+        setOrders(rawOrders.filter((o: any) => o && o.id));
+
+    } catch (e: any) {
+        console.error("Fetch error:", e);
+        setReviews([]);
+    } finally {
+        setLoading(false);
+    }
+};
         void loadData();
     }, [venueId, user?.token]);
+
+
+    // НЕ ЗРОБИЛА ЩЕ В ПРОЦЕСІ
+
     //  const handleLikeReview = async (reviewId: string | number) => {
     //     if (!user?.token) return alert("Please login to like reviews");
     //
@@ -80,7 +88,11 @@ export const ReviewsVisitorComponent = ({ venueId}: { venueId: string, token?: a
     //     }
     // };
 
-    if (loading) return <div>Loading...</div>;
+
+      if (!user?.token) {
+        return <div className={styles.title}>Please login</div>;
+    }
+
 
     return (
         <div>
@@ -92,13 +104,12 @@ export const ReviewsVisitorComponent = ({ venueId}: { venueId: string, token?: a
                         <ReviewComponent isPlaceholder placeholderIndex={2}/>
                     </>
                 ) : (
-                    /* 2. Якщо дані є — рендеримо реальні відгуки */
                     reviews.map((r) => (
                         <ReviewComponent
                             key={r.id}
                             review={r}
-                            onLike={handleLikeReview}
-                        onReport={handleReportReview}
+                        //     onLike={handleLikeReview}
+                        // onReport={handleReportReview}
                         />
                     ))
                 )}

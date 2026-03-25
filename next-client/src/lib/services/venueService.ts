@@ -209,7 +209,7 @@ const venueServices = {
             delete: (id: string) => api(token).delete(`${urls.venues.extraServices(venueId)}${id}/`),
         }),
         reviews: (token?: Token) => (venueId: string) => ({
-            getAll: () => api(token).get<IReview[]>(urls.venues.reviews.list(venueId)),
+            getAll: () => api(token).get<PaginatedResponse<IReview>>(urls.venues.reviews.list(venueId)),
             get: (id: string) => api(token).get<IReview>(urls.venues.reviews.detail(venueId, id)),
             create: (data: Partial<IReview>) => api(token).post<IReview>(urls.venues.reviews.create(venueId), data),
             update: (id: string, data: Partial<IReview>) => api(token).patch<IReview>(urls.venues.reviews.update(venueId, id), data),
@@ -256,7 +256,7 @@ const venueServices = {
     }),
 
     allNews: {
-        list: (params?: { page?: number; limit?: number; type?: string; status?: string }, token?: Token) =>
+        list: (params?: { page?: number; limit?: number; type?: string; status?: string; is_pinned?: boolean; }, token?: Token) =>
             api(token).get<PaginatedResponse<INews>>(urls.allNews.list, {params}),
         get: (newsId: string | number, token?: Token) =>
             api(token).get<INews>(`${urls.allNews.detail}${newsId}/`),

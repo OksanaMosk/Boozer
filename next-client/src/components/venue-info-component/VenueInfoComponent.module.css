@@ -57,6 +57,7 @@
     letter-spacing: 2px;
     line-height: 1.25;
 }
+
 .title {
     margin: 0;
     padding: 0;
@@ -66,6 +67,7 @@
 .titleMenu {
     width: 100%;
     text-align: center;
+    text-decoration: underline;
 }
 .titleJoin {
     font-size: 1rem;

@@ -76,7 +76,7 @@ const DashboardComponent: React.FC = () => {
 
 
     if (userLoading) return <div className={styles.loaderWrapper}><LoaderComponent /></div>;
-    if (!user) return <p className={styles.errorText}>Please log in to access your dashboard.</p>;
+    if (!user) return <p className={styles.titleLog}>Please log in to access your dashboard.</p>;
 
     const DashboardActions = (
         <div className={styles.actionsProfile}>

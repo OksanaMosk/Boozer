@@ -1,222 +1,92 @@
 🎊 VIP Boozer
 <img src="next-client/public/favicon/android-chrome-512x512.png" width="120" />
 
-🚀 Getting Started
-1. Clone the Repository
-git clone https://github.com/OksanaMosk/Boozer.git
-2. Environment Setup (BASE_URL) (.env, settings.py)
-The BASE_URL variable is used for redirects (e.g., account activation, password recovery). Please configure it based on your setup:
-Full Docker Deployment (Recommended)**  
-    If you are running the entire project via Docker Compose (using Nginx on port 80), ensure your `.env` file has:  
-    BASE_URL=http://localhost
+🚀 Getting Started.
 
-Hybrid Setup (Local Next.js + Docker Backend):**  
-    If you are running the Next.js client locally (`npm run dev` on port 3000) while the backend is in Docker, set:  
-    BASE_URL=http://localhost:3000
+Clone the Repository. git clone https://github.com/OksanaMosk/Boozer.git
+Environment Setup (BASE_URL) (.env, settings.py). The BASE_URL variable is used for redirects (e.g., account activation, password recovery). Please configure it based on your setup: Full Docker Deployment (Recommended)
+If you are running the entire project via Docker Compose (using Nginx on port 80), ensure your .env file has:
+BASE_URL=http://localhost
+Hybrid Setup (Local Next.js + Docker Backend): If you are running the Next.js client locally (npm run dev on port 3000) while the backend is in Docker, set:
+BASE_URL=http://localhost:3000
 
-3. Running the Project
-docker-compose up --build
+Run Project: Docker: docker-compose up --build.
+Or
 
-4. Access & Credentials
-Once the containers are running, you can log in with:
-Admin Email: admin@gmail.com
-Password: 111111
+Local Next: npm install, npm run dev or npm run build
 
-VIP Boozer is a modern platform for discovering venues, booking tables, planning events, and creating personalized “Boozer” orders with additional services like transfers, hotels, decor, and more.
-🚀 Core Features
-👤 Authentication
+Docker Backend docker compose up --build app redis celery celery-beat
+Access & Credentials. Once the containers are running, you can log in with: Admin Email: admin@gmail.com. Password: 111111.
 
-Email registration (with activation link)
-Login via:
-Google
-Facebook
-Only authenticated users can:
-Create orders
-View real prices
-Requirements:
-Provide date of birth
-Confirm legal age
-Accept platform rules
+🧪 API Testing (Postman).
+The project includes a pre-configured Postman collection and environment to help you start testing the API immediately.
+**Location:** Files are stored in the `/postman` folder.
 
-🏢 Venue Management
-For all users:
-Browse venues
+**How to use:**.
+1. **Import Collection:** Open Postman, click **Import**, and select `postman/postman_collection.json`.
+2. **Import Environment:** Click **Import** again and select `postman/environment.json`.
+3. **Select Environment:** In the top-right corner of Postman, select **Local Dev** from the dropdown menu.
+4. **Base URL:** The environment is pre-set to `http://localhost:8888/api` (standard Docker backend port).
+**Note:** For requests requiring authentication, ensure you run the **Login** request first to obtain a JWT token.
+"key": "adminToken",
+ "value": "".
 
-🧑‍💼 Venue Admin
-Can:
+🎊VIP Boozer is a modern platform for discovering venues, booking tables, planning events, and creating personalized “Boozer” orders with additional services like transfers, hotels, decor, and more. Core Features.
 
-Create venues:
-country, city, currency
-photos
-description
-Edit / delete venues
+👤 Authentication. Email registration (with activation link). Login via: Google Facebook. Only authenticated users can: Create orders, View real prices, Requirements: Provide date of birth, Confirm legal age, Accept platform rules.
 
-Create menus:
-multiple menus
-one public menu
-drag & drop categories and items
+🏢 Venue Management. For all users: Browse venues.
 
-Configure venue layout:
-hall background (canvas)
-table positioning (coordinates)
+🧑‍💼 Venue Admin. Can: Create venues: country, city, currency, photos, description. Edit / delete venues.
 
-Add:
-news (text + images)
-additional services:
-transfer (airport → flight → venue)
-hotel
-insurance
-decor
+Create menus: multiple menus, one public menu, drag & drop categories and items.
 
-Set pricing
-View statistics
+Configure venue layout: hall background (canvas), table positioning (coordinates).
 
-🍽️ Menu (Drag & Drop)
-Built with React Drag & Drop
-Supports:
-moving items between categories
-reordering categories
+Add: news (text + images), additional services: transfer (airport → flight → venue), hotel, insurance, decor.
 
-🪑 Table Booking
-Canvas-based layout (coordinates)
-User selects table visually
-Availability:
-no time overlaps
-Database: PostgreSQL / Supabase
+Set pricing, View statistics,
 
-💸 Boozer (Order System)
-Order Flow (7 steps):
+🍽️ Menu (Drag & Drop). Built with React Drag & Drop. Supports: moving items between categories, reordering categories.
 
-Travel dates
-Number of people
-Budget
-Gender
-Comment
-Menu selection (optional)
-Table selection (if available)
-Additional services
-Route preview
-Price calculation & payment
-All prices and amounts are available at each selection step, but for visual reference only.
-Once the order is confirmed, a confirmation email is sent.
+🪑🪑 Table Booking. Canvas-based layout (coordinates), User selects table visually. Availability: no time overlaps. Database: PostgreSQL / Supabase.
 
-💱 Currency Logic
-This means that:
-Venue revenue is calculated in the venue’s own currency
-Visitor expenses are calculated in the visitor’s own currency
+✈️Boozer (Order System). Order Flow (7 steps): Country, City, Venue, Travel dates, Number of people, Budget, Gender, Comment, Menu selection (optional), Table selection (if available), Additional services, Route preview, Price calculation & payment. All prices and amounts are available at each selection step, but for visual reference only. Once the order is confirmed, a confirmation email is sent.
 
-Real conversion happens only at checkout
+💵 Currency Logic. This means that: Venue revenue is calculated in the venue’s own currency. Visitor expenses are calculated in the visitor’s own currency.
 
-⏳ Automation
-Incomplete orders:
-marked as expired via Celery
-reserved tables are released
+Real conversion happens only at checkout.
 
-🗺️ Routing
-Integrated with Google Maps API
-Automatic calculation:
-distance
-transfer cost
+⏳ Automation. Incomplete orders: marked as expired via Celery, reserved tables are released.
 
-📰 News
-Categories:
-General
-Promotions
-Events
-Promotions and events may require payment to be published
+🗺️ Routing. Integrated with Google Maps API. Automatic calculation: distance, transfer cost.
 
-👥 Roles
-Visitor
-Browse platform
-Create Boozer orders
-Book menus, tables, transfer, and more
-Make payments
+📰 News. Categories: General, Promotions, Events, Promotions and events may require payment to be published.
 
-Venue Admin
-Manage own venues
-Menus, tables, services
+Roles. 👫Visitor: Browse platform, Create Boozer orders, Book menus, tables, transfer, and more, Make payments.
 
-Admin
-Manage:
-users
-venues
-Moderation
-Analytics
+🤵Venue Admin: Manage own venues, Menus, tables, services.
 
-⚙️ Tech Stack
-Backend
-Python
-Django
-Celery
-Redis
-Supabase
+👨‍⚖️Admin: Manage: users, venues, Moderation, Analytics.
 
-Frontend
-Next.js
-React
-Drag & Drop
-React Canvas
+⚙️ Tech Stack: Backend: Python, Django, Celery, Redis, Supabase.
 
-Infrastructure
-Nginx
-Docker
-Google Maps API
-OAuth (Google, Facebook)
+Frontend: Next.js, React, Drag & Drop, React Canvas.
 
-Authentication Architecture
-The authentication system is built using a custom social login implementation based on OAuth and JWT.
+Infrastructure: Nginx, Docker, Google Maps API, OAuth (Google, Facebook).
 
-🔑 Core Principles:
-OAuth is used to obtain access tokens from providers (Google, Facebook)
-The backend uses its own JWT tokens for application-level authorization
+Authentication Architecture: The authentication system is built using a custom social login implementation based on OAuth and JWT.
 
-The frontend (built with NextAuth) initiates OAuth authentication via Google or Facebook
-After successful login, a provider access token is obtained
-This token is sent to the backend
+🔑 Core Principles: OAuth is used to obtain access tokens from providers (Google, Facebook). The backend uses its own JWT tokens for application-level authorization.
 
-The backend:
-validates the token with the provider retrieves user data
-After successful verification, the backend:
-creates or updates the user
-generates an application-specific JWT token
-The JWT token is then used for all subsequent API requests
+The frontend (built with NextAuth) initiates OAuth authentication via Google or Facebook. After successful login, a provider access token is obtained. This token is sent to the backend.
 
-🔒 Advantages:
-No password storage required
-Secure integration with external providers
-Scalable and stateless authentication via JWT
-Unified authorization system across frontend and backend
+The backend: validates the token with the provider retrieves user data. After successful verification, the backend: creates or updates the user, generates an application-specific JWT token. The JWT token is then used for all subsequent API requests.
 
-🐳 Run Project
-Local:
-npm install
-npm run dev
-Docker:
-docker-compose up --build
+🔒 Advantages: No password storage required. Secure integration with external providers. Scalable and stateless authentication via JWT. Unified authorization system across frontend and backend.
 
-🔒 Access Rules
-Browsing — public
-Orders & real pricing — authenticated users only
+🔒 Access Rules: Browsing — public, Orders & real pricing — authenticated users only.
 
-🚧 In Progress
-Search & Filtering
-Reviews system
-Favorites
-Discounts & бонус system
-User dashboards
-Notifications
-Profile editing
-Extended news system
-Admin panel (partial)
-Statistics
-Tags system
-Average check calculations
-Chat
+🚧 In Progress: Search & Filtering, Reviews system, Favorites, Discounts & bonus system,  Notifications, Extended news system, Admin panel (partial), Statistics, Tags system, Average check calculations, Chat.
 
-💡 Product Vision
-VIP Boozer is more than booking — it’s a full experience:
-travel
-entertainment
-comfort
-personalization
-
+🎊 Product Vision VIP Boozer is more than booking — it’s a full experience: travel, entertainment, comfort, personalization.

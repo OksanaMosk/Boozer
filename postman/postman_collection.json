@@ -1,0 +1,2219 @@
+{
+  "info": {
+    "_postman_id": "21814d2a-00cd-4bea-9df8-addd2ac66a7d",
+    "name": "Boozer Project API",
+    "description": "Collection for testing Boozer project API. Contains endpoints for users, profile, venues, menu, orders, reviews, exchange, etc.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "46844194"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Auth / Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n \"email\": \"newuser1@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseURL}}/auth/login/",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "auth",
+                "login",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Auth / Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"newuser1@example.com\",\n  \"password\": \"password123\",\n  \"role\": \"visitor\",\n  \"profile\": {\n    \"name\": \"Oksana\",\n    \"surname\": \"Moskalova\",\n    \"phone\": \"+38 (050) 123-45-67\",\n    \"birth_date\": \"2000-01-01\",\n    \"is_rules_accepted\": true\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseURL}}/auth/register/",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "auth",
+                "register",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Auth / Refresh Token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refresh\": \"{{refreshToken}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseURL}}/auth/refresh/",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "auth",
+                "refresh",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Auth / Social JWT",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"provider\": \"google\",\n  \"access_token\": \"{{providerAccessToken}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseURL}}/auth/social_jwt/",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "auth",
+                "social_jwt",
+                ""
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Users / Get All",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseURL}}/users/",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "users",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Users / Get By ID",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseURL}}/users/{{userId}}/profile/",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "users",
+                "{{userId}}",
+                "profile",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Users / Toggle Active",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"is_active\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseURL}}/users/{{userId}}/active/",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "users",
+                "{{userId}}",
+                "active",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Users / Change Role",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"role\": \"venue_admin\"\n}"
+            },
+            "url": {
+              "raw": "{{baseURL}}/users/change-role/{{userId}}/",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "users",
+                "change-role",
+                "{{userId}}",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Users / Delete",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseURL}}/users/{{userId}}/delete/",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "users",
+                "{{userId}}",
+                "delete",
+                ""
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Profile",
+      "item": [
+        {
+          "name": "Profile / Get",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseURL}}/users/{{userId}}/profile/",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "users",
+                "{{userId}}",
+                "profile",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Profile / Update",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Oks\",\n  \"surname\": \"Mos\"\n}"
+            },
+            "url": {
+              "raw": "{{baseURL}}/users/{{userId}}/profile/",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "users",
+                "{{userId}}",
+                "profile",
+                ""
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "User Venues",
+      "item": [
+        {
+          "name": "User Venues / Get",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseURL}}/users/{{userId}}/venues/",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "users",
+                "{{userId}}",
+                "venues",
+                ""
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Venues",
+      "item": [
+        {
+          "name": "Venues / Get All",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseURL}}/venues",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "venues"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Venues / Get By ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseURL}}/venues/{{venueId}}",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "venues",
+                "{{venueId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Venues / Create",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Boozer Club\",\n  \"city\": \"Dubai\",\n  \"country\": \"UAE\",\n  \"address\": \"Burjuman\",\n  \"venue_admin\":1\n}"
+            },
+            "url": {
+              "raw": "{{baseURL}}/venues/",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "venues",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Venues / Update",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Boozer Ukraine\"\n}"
+            },
+            "url": {
+              "raw": "{{baseURL}}/venues/{{venueId}}/",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "venues",
+                "{{venueId}}",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Venues / Delete",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseURL}}/venues/{{venueId}}/",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "venues",
+                "{{venueId}}",
+                ""
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Menu",
+      "item": [
+        {
+          "name": "Menu / Get All",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseURL}}/venues/{{venueId}}/menu/",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "venues",
+                "{{venueId}}",
+                "menu",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Menu / Get By ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseURL}}/venues/{{venueId}}/menu/{{menuId}}/",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "venues",
+                "{{venueId}}",
+                "menu",
+                "{{menuId}}",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Menu / Create",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Main Menu\"\n}"
+            },
+            "url": {
+              "raw": "{{baseURL}}/venues/{{venueId}}/menu/",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "venues",
+                "{{venueId}}",
+                "menu",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Menu / Update",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Summer 2026\"\n}"
+            },
+            "url": {
+              "raw": "{{baseURL}}/venues/{{venueId}}/menu/{{menuId}}/",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "venues",
+                "{{venueId}}",
+                "menu",
+                "{{menuId}}",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Menu / Delete",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/venues/{{venueId}}/menu/{{menuId}}/",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "venues",
+                "{{venueId}}",
+                "menu",
+                "{{menuId}}",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "MenuItems / Get All",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseURL}}/venues/{{venueId}}/menu/{{menuId}}/items/",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "venues",
+                "{{venueId}}",
+                "menu",
+                "{{menuId}}",
+                "items",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "MenuItems / Create",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"menu\": 44,\n  \"name\": \"Kovbasa\",\n  \"price\": 5.5,\n  \"category\": \"drinks\"\n}"
+            },
+            "url": {
+              "raw": "{{baseURL}}/venues/{{venueId}}/menu/{{menuId}}/items/",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "venues",
+                "{{venueId}}",
+                "menu",
+                "{{menuId}}",
+                "items",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "MenuItems / Delete",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseURL}}/venues/{{venueId}}/menu/{{menuId}}/items/{{menuItemId}}/",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "venues",
+                "{{venueId}}",
+                "menu",
+                "{{menuId}}",
+                "items",
+                "{{menuItemId}}",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "MenuItems / Reorder",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "[\n  { \"id\": \"259\", \"position\": 1 },\n  { \"id\": \"260\", \"position\": 0,\n  \"category\": \"soups\" }\n]"
+            },
+            "url": {
+              "raw": "{{baseURL}}/venues/{{venueId}}/menu/{{menuId}}/items/reorder/",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "venues",
+                "{{venueId}}",
+                "menu",
+                "{{menuId}}",
+                "items",
+                "reorder",
+                ""
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Tables",
+      "item": [
+        {
+          "name": "Tables / Get All",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/venues/{{venueId}}/tables/",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "venues",
+                "{{venueId}}",
+                "tables",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Tables / Create (with coordinates)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"venue\":110,\n  \"capacity\": 6,\n  \"x\": 15,\n  \"y\": 20\n}"
+            },
+            "url": {
+              "raw": "{{baseURL}}/venues/{{venueId}}/tables/",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "venues",
+                "{{venueId}}",
+                "tables",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Tables / Update (with coordinates)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"x\": 30,\n  \"y\": 50\n}"
+            },
+            "url": {
+              "raw": "{{baseURL}}/venues/{{venueId}}/tables/{{tableId}}/",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "venues",
+                "{{venueId}}",
+                "tables",
+                "{{tableId}}",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Tables / Delete",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseURL}}/venues/{{venueId}}/tables/{{tableId}}/",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "venues",
+                "{{venueId}}",
+                "tables",
+                "{{tableId}}",
+                ""
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Extra_Services",
+      "item": [
+        {
+          "name": "Extra Services / Get All",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseURL}}/venues/{{venueId}}/extra_services/",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "venues",
+                "{{venueId}}",
+                "extra_services",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Extra Services / Create (Unique)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"hotel\",\n    \"price\": 50,\n    \"service_type\": \"hotel\"\n}"
+            },
+            "url": {
+              "raw": "{{baseURL}}/venues/{{venueId}}/extra_services/",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "venues",
+                "{{venueId}}",
+                "extra_services",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Extra Services / Update Prices",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "[\n    {\n        \"name\": \"hotel\",\n        \"service_type\": \"hotel\",\n        \"price\": \"150.00\"\n    }  \n       \n]\n"
+            },
+            "url": {
+              "raw": "{{baseURL}}/venues/{{venueId}}/extra_services/update-prices/",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "venues",
+                "{{venueId}}",
+                "extra_services",
+                "update-prices",
+                ""
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "News",
+      "item": [
+        {
+          "name": "News / Get All",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseURL}}/venues/{{venueId}}/news/",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "venues",
+                "{{venueId}}",
+                "news",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "News / Get By ID",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseURL}}/venues/{{venueId}}/news/{{newsId}}/",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "venues",
+                "{{venueId}}",
+                "news",
+                "{{newsId}}",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "News / Create",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Grand Opening\",\n   \"content\":\"Join us for the grand opening party!\",\n   \"type\": \"general\"\n}"
+            },
+            "url": {
+              "raw": "{{baseURL}}/venues/{{venueId}}/news/",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "venues",
+                "{{venueId}}",
+                "news",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "News / Update",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Updated Title\"\n}"
+            },
+            "url": {
+              "raw": "{{baseURL}}/venues/{{venueId}}/news/{{newsId}}/",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "venues",
+                "{{venueId}}",
+                "news",
+                "{{newsId}}",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "News / Delete",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseURL}}/venues/{{venueId}}/news/{{newsId}}/",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "venues",
+                "{{venueId}}",
+                "news",
+                "{{newsId}}",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "News Images / Get All",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseURL}}/venues/{{venueId}}/news/{{newsId}}/images/",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "venues",
+                "{{venueId}}",
+                "news",
+                "{{newsId}}",
+                "images",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "News Images / Get By ID",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseURL}}/venues/{{venueId}}/news/{{newsId}}/images/{{imageId}}/",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "venues",
+                "{{venueId}}",
+                "news",
+                "{{newsId}}",
+                "images",
+                "{{imageId}}",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "News Images / Upload",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "image",
+                  "type": "file",
+                  "src": "/C:/Users/fast/Downloads/16.jpg"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseURL}}/venues/{{venueId}}/news/{{newsId}}/images/",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "venues",
+                "{{venueId}}",
+                "news",
+                "{{newsId}}",
+                "images",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "News Images / Update",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "image",
+                  "type": "file",
+                  "uuid": "a0e48daf-4e81-4b8f-9f17-f94605007e88",
+                  "src": "/C:/Users/fast/Downloads/images17.jpg"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseURL}}/venues/{{venueId}}/news/{{newsId}}/images/{{imageId}}/",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "venues",
+                "{{venueId}}",
+                "news",
+                "{{newsId}}",
+                "images",
+                "{{imageId}}",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "News Images / Delete",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseURL}}/venues/{{venueId}}/news/{{newsId}}/images/{{imageId}}/",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "venues",
+                "{{venueId}}",
+                "news",
+                "{{newsId}}",
+                "images",
+                "{{imageId}}",
+                ""
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "NewsGlobal",
+      "item": [
+        {
+          "name": "NewsGlobal / Get All",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseURL}}/news/",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "news",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "NewsGlobal / Get By ID",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseURL}}/news/{{newsId}}/",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "news",
+                "{{newsId}}",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "NewsGlobal / Delete",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseURL}}/news/{{newsId}}/",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "news",
+                "{{newsId}}",
+                ""
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Exchange",
+      "item": [
+        {
+          "name": "Exchange / Get Rates",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseURL}}/exchange-rates/",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "exchange-rates",
+                ""
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Orders",
+      "item": [
+        {
+          "name": "Orders / Get All",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseURL}}/venues/{{venueId}}/orders/",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "venues",
+                "{{venueId}}",
+                "orders",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Orders / Get By ID",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseURL}}/venues/{{venueId}}/orders/{{orderId}}/",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "venues",
+                "{{venueId}}",
+                "orders",
+                "{{orderId}}",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Orders / Create",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user\": \"{{userId}}\",\n  \"venue\": \"{{venueId}}\",\n  \"start_date\": \"2026-04-01\",\n    \"end_date\": \"2026-04-04\",\n    \"guests_count\":5,\n    \"user_city\": \"Ternopil\",\n    \"user_latitude\": 49.5257541674804,\n    \"user_longitude\": 25.7675895945086,\n    \"venue_latitude\": 25.2048493,\n    \"venue_longitude\": 55.2707828,\n  \"items\": []\n}"
+            },
+            "url": {
+              "raw": "{{baseURL}}/venues/{{venueId}}/orders/",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "venues",
+                "{{venueId}}",
+                "orders",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Orders / Update",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"CONFIRMED\"\n}"
+            },
+            "url": {
+              "raw": "{{baseURL}}/venues/{{venueId}}/orders/{{orderId}}/",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "venues",
+                "{{venueId}}",
+                "orders",
+                "{{orderId}}",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Orders / Delete",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseURL}}/venues/{{venueId}}/orders/{{orderId}}/",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "venues",
+                "{{venueId}}",
+                "orders",
+                "{{orderId}}",
+                ""
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Reviews",
+      "item": [
+        {
+          "name": "Reviews / Get All",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseURL}}/venues/{{venueId}}/reviews/",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "venues",
+                "{{venueId}}",
+                "reviews",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Reviews / Get By ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseURL}}/reviews/{{reviewId}}",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "reviews",
+                "{{reviewId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Reviews / Create",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"venue\": \"{{venueId}}\",\n  \"user\": \"{{userId}}\",\n  \"rating\": 5,\n  \"comment\": \"Great place!\"\n}"
+            },
+            "url": {
+              "raw": "{{baseURL}}/venues/{{venueId}}/reviews/",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "venues",
+                "{{venueId}}",
+                "reviews",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Reviews / Update",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rating\": 4,\n  \"comment\": \"Updated comment\"\n}"
+            },
+            "url": {
+              "raw": "{{baseURL}}/venues/{{venueId}}/reviews/{{reviewId}}/",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "venues",
+                "{{venueId}}",
+                "reviews",
+                "{{reviewId}}",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Reviews / Delete",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseURL}}/venues/{{venueId}}/reviews/{{reviewId}}/",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "venues",
+                "{{venueId}}",
+                "reviews",
+                "{{reviewId}}",
+                ""
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

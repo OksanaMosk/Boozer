@@ -4,7 +4,7 @@ import React, { useState, useEffect, Suspense } from "react";
 import { useUser } from "@/app/contexts/UserProvider";
 import { useSearchParams, useRouter } from "next/navigation";
 import venueServices from "@/lib/services/venueService";
-import { INews } from "@/models/IVenue"; // Використовуємо ваш інтерфейс
+import { INews } from "@/models/IVenue";
 import { NewComponent } from "@/components/new-component/NewComponent";
 import { LoaderComponent } from "@/components/loader-component/LoaderComponent";
 import { PaginationComponent } from "@/components/pagination-component/PaginationComponent";
@@ -15,13 +15,12 @@ const NewsGlobalContent = () => {
     const { user } = useUser();
     const router = useRouter();
     const searchParams = useSearchParams();
-
-    const [news, setNews] = useState<INews[]>([]); // Типізація масиву
+    const [news, setNews] = useState<INews[]>([]);
     const [activeTab, setActiveTab] = useState("all");
     const [totalPages, setTotalPages] = useState(1);
     const [loading, setLoading] = useState(false);
-
     const currentPage = Number(searchParams.get("page") || "1");
+
 
     const fetchAllNews = async () => {
         if (!user?.token) return;
@@ -31,7 +30,8 @@ const NewsGlobalContent = () => {
                 page: currentPage,
                 type: activeTab === "all" ? "" : activeTab,
                 is_pinned: true
-            }, {accessToken: user.token});
+            }, {accessToken: user?.token});
+
             if (res.data.data) {
                 const now = new Date();
                 const processedNews: INews[] = (res.data.data || [])
@@ -52,14 +52,9 @@ const NewsGlobalContent = () => {
     };
 
     useEffect(() => {
+        if (!user?.token) return;
         void fetchAllNews();
     }, [activeTab, currentPage, user?.token]);
-
-    // const handlePageChange = (page: number) => {
-    //     const params = new URLSearchParams(searchParams.toString());
-    //     params.set("page", page.toString());
-    //     router.push(`?${params.toString()}`);
-    // };
 
     const handleTabChange = (tab: string) => {
         setActiveTab(tab);
@@ -67,6 +62,10 @@ const NewsGlobalContent = () => {
         params.set("page", "1");
         router.push(`?${params.toString()}`);
     };
+
+    if (!user?.token) {
+        return <div className={styles.title}>Please login</div>;
+    }
 
     return (
         <div className={styles.container}>
@@ -88,7 +87,6 @@ const NewsGlobalContent = () => {
                     {news.length > 0 ? (
                         news.map(item => (
                             <div key={item.id} className={styles.itemWrapper}>
-                                {/* Бейдж тепер має спеціальний клас для позиціонування */}
                                 <span className={styles.newsBadge}>
                         {item.type === 'promotion' ? 'PROMO' : item.type === 'event' ? 'EVENT' : 'NEWS'}
                     </span>
@@ -115,8 +113,6 @@ const NewsGlobalContent = () => {
             {totalPages > 1 && (
                 <PaginationComponent
                     totalPages={totalPages}
-                    // currentPage={currentPage}
-                    // onPageChange={handlePageChange}
                 />
             )}
 

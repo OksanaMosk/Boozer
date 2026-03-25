@@ -1,0 +1,77 @@
+{
+	"id": "1d3193ef-93c7-4880-adea-f6053eef0b75",
+	"name": "Local Dev",
+	"values": [
+		{
+			"key": "baseURL",
+			"value": "http://localhost:8888/api",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "adminToken",
+			"value": "",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "userId",
+			"value": "57",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "venueId",
+			"value": "108",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "menuId",
+			"value": "44",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "menuItemId",
+			"value": "260",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "tableId",
+			"value": "177",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "newsId",
+			"value": "46",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "imageId",
+			"value": "196",
+			"type": "default",
+			"description": "News",
+			"enabled": true
+		},
+		{
+			"key": "orderId",
+			"value": "270",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "reviewId",
+			"value": "0",
+			"type": "default",
+			"enabled": true
+		}
+	],
+	"color": null,
+	"_postman_variable_scope": "environment",
+	"_postman_exported_at": "2026-03-24T18:26:57.251Z",
+	"_postman_exported_using": "Postman/11.89.1"
+}

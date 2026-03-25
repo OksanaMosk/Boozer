@@ -119,6 +119,9 @@
     transition: all 0.3s ease;
     overflow: hidden;
 }
+.overlay{
+    cursor: pointer;
+}
 .inputWrapper {
     width: 70%;
   display: flex;

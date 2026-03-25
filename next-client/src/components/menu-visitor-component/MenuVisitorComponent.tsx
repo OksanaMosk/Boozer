@@ -4,7 +4,6 @@ import React, {useEffect, useState} from "react";
 import {AxiosResponse} from "axios";
 import {useUser} from "@/app/contexts/UserProvider";
 import venueServices from "@/lib/services/venueService";
-import {LoaderComponent} from "@/components/loader-component/LoaderComponent";
 import {ButtonScrollBottomComponent} from "@/components/button-scroll-bottom-component/ButtonScrollBottomComponent";
 import styles from "./MenuVisitorComponent.module.css"
 
@@ -83,11 +82,10 @@ const MenuVisitorComponent = ({venueId}: Props) => {
         void fetchMenu();
     }, [venueId, user?.token]);
 
-    if (loading) return (<div className={styles.loader}>
-        <LoaderComponent/>
-    </div>)
     if (error) return <p className={styles.error}>{error}</p>;
-
+ if (!user?.token) {
+        return <div className={styles.titleLog}>Please login</div>;
+    }
     return (
         <div>
             <p className={styles.error}>{message}</p>

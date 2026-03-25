@@ -70,6 +70,10 @@ const NewsVisitorComponent: React.FC<ClientNewsProps> = ({ venueId }) => {
 
     const totalPages = Math.ceil(totalItems / itemsPerPage);
 
+    if (!user?.token) {
+        return <div className={styles.titleLog}>Please login</div>;
+    }
+
     return (
         <div className={styles.typesWrapper}>
             <div className={styles.tabsContainer}>
