@@ -134,15 +134,8 @@ const venueServices = {
             create: (data: ITableBooking) => api(token).post<ITableBooking>(urls.venues.bookings(venueId, tableId), data),
             update: (bookingId: string, data: Partial<ITableBooking>) => api(token).patch<ITableBooking>(`${urls.venues.bookings(venueId, tableId)}${bookingId}/`, data),
             delete: (bookingId: string | number) => api(token).delete(`${urls.venues.bookings(venueId, tableId)}${bookingId}/`),
-            getAllByVenue: (params: {
-                lower: string;
-                upper: string
-            }) => api(token).get<ITableBooking[]>(`${urls.venues.list}${venueId}/bookings/`, {params}),
-            bulkCreate: (data: {
-                order: number;
-                tables: number[];
-                time_range: any
-            }) => api(token).post(`${urls.venues.list}${venueId}/bookings/bulk-create/`, data)
+            getAllByVenue: (params: { lower: string; upper: string }) => api(token).get<ITableBooking[]>(`${urls.venues.list}${venueId}/bookings/`, {params}),
+            bulkCreate: (data: { order: number; tables: number[]; time_range: any }) => api(token).post(`${urls.venues.list}${venueId}/bookings/bulk-create/`, data)
         }),
         menu: (token?: Token) => (venueId: string) => ({
             getAll: () => getByParent<PaginatedResponse<IMenu>>(urls.venues.menu, token)(venueId),
@@ -156,10 +149,7 @@ const venueServices = {
             create: (data: Partial<IMenuItem>) => api(token).post<IMenuItem>(urls.venues.menuItems(venueId, menuId), data),
             update: (menuItemId: string, data: Partial<IMenuItem>) => api(token).patch<IMenuItem>(`${urls.venues.menuItems(venueId, menuId)}${menuItemId}/`, data),
             delete: (menuItemId: string) => api(token).delete(`${urls.venues.menuItems(venueId, menuId)}${menuItemId}/`),
-            reorder: (data: {
-                id: string;
-                position: number
-            }[]) => api(token).patch(`${urls.venues.menuItems(venueId, menuId)}reorder/`, data),
+            reorder: (data: { id: string; position: number }[]) => api(token).patch(`${urls.venues.menuItems(venueId, menuId)}reorder/`, data),
 
         }),
         news: (token?: Token) => (venueId: string) => ({
@@ -178,18 +168,8 @@ const venueServices = {
         }),
         travelLogistics: (token?: Token) => (venueId: string) => ({
             getAll: () => api(token).get<ITravelLogistics[]>(urls.venues.travelLogistics(venueId)),
-            updatePrices: (data: {
-                step_type: string;
-                price_per_km: number
-            }[]) => api(token).post<ITravelLogistics[]>(`${urls.venues.travelLogistics(venueId)}update-prices/`, data),
-            calculate: (lat: number, lng: number, start?: string, end?: string) => api(token).get<ITravelEstimate>(`${urls.venues.travelLogistics(venueId)}calculate/`, {
-                params: {
-                    lat,
-                    lng,
-                    start,
-                    end
-                }
-            }),
+            updatePrices: (data: { step_type: string; price_per_km: number }[]) => api(token).post<ITravelLogistics[]>(`${urls.venues.travelLogistics(venueId)}update-prices/`, data),
+            calculate: (lat: number, lng: number, start?: string, end?: string) => api(token).get<ITravelEstimate>(`${urls.venues.travelLogistics(venueId)}calculate/`, {params: {lat, lng, start, end}}),
             get: (id: string) => api(token).get<ITravelLogistics>(`${urls.venues.travelLogistics(venueId)}${id}/`),
             create: (data: Partial<ITravelLogistics>) => api(token).post<ITravelLogistics>(urls.venues.travelLogistics(venueId), data),
             update: (id: string, data: Partial<ITravelLogistics>) => api(token).patch<ITravelLogistics>(`${urls.venues.travelLogistics(venueId)}${id}/`, data),

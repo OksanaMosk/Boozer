@@ -28,7 +28,7 @@ const VenueManagementComponent: React.FC<Props> = ({userId}) => {
             try {
                 setVenuesLoading(true);
                 const response = await userService.getUserVenues(String(userId), { accessToken: user.token! });
-                setVenues(response.data.venues.map((v) => ({ ...v, id: v.id! })));
+                setVenues(response.venues.map((v) => ({ ...v, id: v.id! })));
             } catch (err) {
                 setVenues([]);
                 setError("Failed to load venues.");

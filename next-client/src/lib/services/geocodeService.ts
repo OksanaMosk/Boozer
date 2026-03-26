@@ -11,11 +11,9 @@ export const fetchCoordinates = async (city: string, country: string) => {
             const location = data.results[0].geometry.location;
             return {latitude: location.lat, longitude: location.lng};
         } else {
-            console.error(`Geocode API Error: ${data.status}`);
             throw new Error(`Geocode failed with status: ${data.status}`);
         }
     } catch (error) {
-        console.error("Error fetching coordinates:", error);
         throw error;
     }
 };

@@ -87,6 +87,6 @@ The backend: validates the token with the provider retrieves user data. After su
 
 🔒 Access Rules: Browsing — public, Orders & real pricing — authenticated users only.
 
-🚧 In Progress: Search & Filtering, Reviews system, Favorites, Discounts & bonus system,  Notifications, Extended news system, Admin panel (partial), Statistics, Tags system, Average check calculations, Chat.
+🚧 In Progress: Reviews system, Favorites, Discounts & bonus system,  Notifications, Extended news system, Admin panel (partial), Statistics, Tags system, Average check calculations, Chat.
 
 🎊 Product Vision VIP Boozer is more than booking — it’s a full experience: travel, entertainment, comfort, personalization.

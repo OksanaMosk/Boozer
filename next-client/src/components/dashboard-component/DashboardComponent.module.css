@@ -224,6 +224,16 @@
     font-size: 2rem;
     color: var(--input-color);
 }
+.errorTitle {
+    padding: 0;
+    font-family: var(--font-imperial),serif;
+    font-weight: 700;
+    font-size: 2rem;
+    letter-spacing: 2px;
+    color: var(--color-text);
+    line-height: 1;
+}
+
 .loaderWrapper {
     box-sizing: border-box;
     height: 45px;

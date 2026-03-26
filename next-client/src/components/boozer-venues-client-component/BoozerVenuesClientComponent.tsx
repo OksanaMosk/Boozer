@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { useSearchParams } from "next/navigation";
+import {useRouter, useSearchParams} from "next/navigation";
 import venueService from "@/lib/services/venueService";
 import { IVenue } from "@/models/IVenue";
 import VenueFilterComponent from "@/components/venue-filter-component/VenueFilterComponent";
@@ -18,21 +18,61 @@ import BoozerStep1VenuesComponent from "@/components/boozer-step1-venues-compone
 import styles from "./BoozerVenuesClientComponent.module.css";
 
 export const BoozerVenuesClientComponent = () => {
-    const [step, setStep] = useState(1);
+     const router = useRouter();
+    const searchParams = useSearchParams();
+    const [step, setStep] = useState<number>(Number(searchParams.get("step")) || 1);
+    const [confirmedOrderId, setConfirmedOrderId] = useState<number | null>(
+        searchParams.get("orderId") ? Number(searchParams.get("orderId")) : null
+    );
     const [selectedVenue, setSelectedVenue] = useState<IVenue | null>(null);
-    const [confirmedOrderId, setConfirmedOrderId] = useState<number | null>(null);
-    const [filters, setFilters] = useState<any>({});
     const [venuesData, setVenuesData] = useState<IVenue[]>([]);
     const [totalPagesState, setTotalPagesState] = useState(1);
     const [isLoading, setIsLoading] = useState(false);
-    const searchParams = useSearchParams();
+    const [error, setError] = useState<string | null>(null);
     const currentPageFromURL = Number(searchParams.get("page") || "1");
+    const [filters, setFilters] = useState<any>({
+        country: searchParams.get("country") || undefined,
+        city: searchParams.get("city") || undefined,
+        sort_by: searchParams.get("sort_by") || "rating",
+        sort_order: searchParams.get("sort_order") || "desc",
+    });
+
+    useEffect(() => {
+        const params = new URLSearchParams(searchParams.toString());
+        params.set("step", String(step));
+        if (confirmedOrderId) params.set("orderId", String(confirmedOrderId));
+        else params.delete("orderId");
+        if (selectedVenue?.id) params.set("venueId", String(selectedVenue.id));
+        if (step === 1) {
+            params.delete("venueId");
+            params.delete("orderId");
+            Object.entries(filters).forEach(([key, value]) => {
+                if (value !== undefined && value !== "" && (!Array.isArray(value) || value.length > 0)) {
+                    params.set(key, String(value));
+                } else {
+                    params.delete(key);
+                }
+            });
+            if (currentPageFromURL > 1) params.set("page", String(currentPageFromURL));
+            else params.delete("page");
+        } else {
+            ["country", "city", "sort_by", "sort_order", "page"].forEach(k => params.delete(k));
+        }
+
+        router.push(`?${params.toString()}`, {scroll: false});
+    }, [step, confirmedOrderId, selectedVenue?.id, filters, currentPageFromURL, router]);
+
 
     const fetchVenues = useCallback(async (page: number, filters: any) => {
         setIsLoading(true);
         setVenuesData([]);
         try {
-            const response = await venueService.venues.getAllWithFilter({...filters, page});
+            const ordering = filters.sort_order === "desc" ? `-${filters.sort_by}` : filters.sort_by;
+            const response = await venueService.venues.getAllWithFilter({
+                ...filters,
+                ordering,
+                page
+            });
             setVenuesData(response.data.data ?? []);
             setTotalPagesState(response.data.total_pages ?? 1);
         } catch (error) {
@@ -47,15 +87,15 @@ export const BoozerVenuesClientComponent = () => {
     }, [currentPageFromURL, filters, fetchVenues, step]);
 
     useEffect(() => {
-    const venueIdFromURL = searchParams.get("venueId");
-    if (step === 1 && venueIdFromURL && !selectedVenue) {
+        const venueIdFromURL = searchParams.get("venueId");
+    if (venueIdFromURL && !selectedVenue) {
         const autoSelect = async () => {
             setIsLoading(true);
             try {
                 const response = await venueService.venues.get(venueIdFromURL);
                 if (response.data) {
                     setSelectedVenue(response.data);
-                    setStep(2);
+                    if (step === 1) setStep(2);
                 }
             } catch (error) {
                 console.error("Auto-select failed:", error);
@@ -65,11 +105,16 @@ export const BoozerVenuesClientComponent = () => {
         };
         void autoSelect();
     }
-}, [searchParams, step, selectedVenue]);
+}, [searchParams, selectedVenue]);
 
     const handleSelectVenue = (venue: IVenue) => {
         setSelectedVenue(venue);
         setStep(2);
+
+        const params = new URLSearchParams();
+        params.set("step", "2");
+        params.set("venueId", String(venue.id));
+        router.push(`?${params.toString()}`, {scroll: false});
         window.scrollTo(0, 0);
     };
 
@@ -134,8 +179,17 @@ export const BoozerVenuesClientComponent = () => {
 
         return (
             <>
+                {error && (
+                <div className={styles.titleLog}>
+                    ⚠️ {error}
+                </div>
+            )}
                 <h1 className={styles.title}>Step 1: Choose Venue</h1>
-                <VenueFilterComponent onFilterChange={(newFilters) => setFilters(newFilters)}/>
+
+                <VenueFilterComponent onFilterChange={(newFilters) => {
+                    setFilters(newFilters);
+                    setError(null);
+                }}/>
                 {isLoading ? (
                     <div className={styles.loaderWrapper}><LoaderComponent/></div>
                 ) : (
@@ -154,6 +208,18 @@ export const BoozerVenuesClientComponent = () => {
                 currentStep={step}
                 orderId={confirmedOrderId ?? 0}
                 venueId={selectedVenue?.id ?? 0}
+                onExpire={() => {
+                    setIsLoading(false);
+                    setStep(1);
+                    setSelectedVenue(null);
+                    setConfirmedOrderId(null);
+                    setError("Your booking time has expired. Please select a venue and start again.");
+                    const params = new URLSearchParams();
+                    params.set("step", "1");
+                    params.set("error", "expired");
+                    router.replace(`?${params.toString()}`);
+                    window.scrollTo(0, 0);
+                }}
             />
             <div className={styles.stepContent}>
                 {renderStepContent()}

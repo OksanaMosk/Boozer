@@ -45,7 +45,7 @@ const BoozerStep4TableSelectionComponent: React.FC<Props> = ({venueId, orderId, 
     const [stageSize, setStageSize] = useState({width: 0, height: 0});
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [message, setMessage] = useState("");
-    if (!user) return <p className={styles.errorText}>Please log in.</p>;
+    if (!user) return <p className={styles.titleLog}>Please log in.</p>;
 
     useEffect(() => {
         if (!accessToken) return;

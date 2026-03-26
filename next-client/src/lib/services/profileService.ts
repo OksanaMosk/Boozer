@@ -17,7 +17,6 @@ const profileService = {
         return data;
     },
 
-
     getProfile: async (
         userId: string,
         token: string

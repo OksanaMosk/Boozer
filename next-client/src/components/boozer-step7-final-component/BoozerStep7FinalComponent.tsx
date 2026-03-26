@@ -7,6 +7,7 @@ import venueServices from "@/lib/services/venueService";
 import { OrderStatusType, IOrder } from "@/models/IOrder";
 import { LoaderComponent } from "@/components/loader-component/LoaderComponent";
 import styles from "./BoozerStep7FinalComponent.module.css";
+import {useRouter} from "next/navigation";
 
 interface Props {
     orderId: number;
@@ -14,14 +15,14 @@ interface Props {
     venueId: string;
 }
 
-const BoozerStep7Final: React.FC<Props> = ({orderId, venueId, onReset}) => {
+const BoozerStep7Final: React.FC<Props> = ({orderId, venueId}) => {
     const {user} = useUser();
     const [isConfirmed, setIsConfirmed] = useState(false);
     const [loading, setLoading] = useState(false);
     const [order, setOrder] = useState<IOrder | null>(null);
     const audioRef = useRef<HTMLAudioElement>(null);
     const [isPlaying, setIsPlaying] = useState(true);
-
+    const router = useRouter();
 
 
     useEffect(() => {
@@ -33,6 +34,10 @@ const BoozerStep7Final: React.FC<Props> = ({orderId, venueId, onReset}) => {
                     .get(orderId);
                 setOrder(res.data);
 
+                 if (res.data.status === "CONFIRMED") {
+                setIsConfirmed(true);
+            }
+
             } catch (e) {
                 console.error("Failed to fetch final order data", e);
             }
@@ -41,6 +46,7 @@ const BoozerStep7Final: React.FC<Props> = ({orderId, venueId, onReset}) => {
     }, [orderId, venueId, user?.token]);
 
     const handleFinalConfirm = async () => {
+        if (order?.status === "CONFIRMED") return;
         setLoading(true);
         try {
             if (!user?.token) return;
@@ -65,7 +71,14 @@ const BoozerStep7Final: React.FC<Props> = ({orderId, venueId, onReset}) => {
         }
     }, [isConfirmed]);
 
-    if (!user) return <p className={styles.errorText}>Please log in.</p>;
+    const handleGoToOrders = () => {
+        let path = "/visitor";
+        if (user?.role === "admin") path = "/admin";
+        if (user?.role === "venue_admin") path = "/venue-admin";
+         router.push(`${path}?tab=my_activity`);
+    };
+
+    if (!user) return <p className={styles.titleLog}>Please log in.</p>;
     if (!order) return <LoaderComponent/>;
 
     const rate = Number(order.exchange_rate) || 1;
@@ -174,7 +187,7 @@ const BoozerStep7Final: React.FC<Props> = ({orderId, venueId, onReset}) => {
                             <h4>Menu Selection</h4>
                             {order.items.map((item) => (
                                 <div key={item.id} className={styles.receiptRow}>
-                                    <span>{item.menu_item_name} x{item.quantity}</span>
+                                    <span>{item.menu_item_name} x {item.quantity} pcs</span>
                                     <span>{(Number(item.menu_item_price) * rate * item.quantity).toFixed(2)} {order.currency}</span>
                                 </div>
                             ))}
@@ -244,7 +257,7 @@ const BoozerStep7Final: React.FC<Props> = ({orderId, venueId, onReset}) => {
                     </div>
                 </div>
 
-                <button onClick={onReset} className={styles.homeBtn}>Go to My Orders</button>
+                <button onClick={handleGoToOrders} className={styles.homeBtn}>Go to My Orders</button>
             </div>
         );
     }
@@ -266,7 +279,7 @@ const BoozerStep7Final: React.FC<Props> = ({orderId, venueId, onReset}) => {
                 <button
                     className={styles.payBtn}
                     onClick={handleFinalConfirm}
-                    disabled={loading}
+                    disabled={loading || order.status === "CONFIRMED"}
                 >
                     {loading ? "Processing..." : `Pay Now ${order.currency}`}
                 </button>

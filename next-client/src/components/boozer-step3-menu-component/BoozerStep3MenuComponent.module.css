@@ -362,3 +362,12 @@ line-height: 1;
     color: var(--color-badgeId);
     border: none;
 }
+.titleLog {
+    padding: 0;
+    font-family: var(--font-imperial),serif;
+    font-weight: 700;
+    font-size: 2rem;
+    letter-spacing: 2px;
+    color: var(--color-text);
+    line-height: 1;
+}

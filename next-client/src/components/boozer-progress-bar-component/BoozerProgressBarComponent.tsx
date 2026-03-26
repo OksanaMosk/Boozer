@@ -10,6 +10,7 @@ interface Props {
     venueId: number | string;
     currentStep: number;
     orderId?: number | null;
+     onExpire?: () => void;
 }
 
 const steps = [
@@ -22,7 +23,7 @@ const steps = [
     {id: 7, label: "Finish"},
 ];
 
-export const BoozerProgressBarComponent: React.FC<Props> = ({currentStep, orderId, venueId}) => {
+export const BoozerProgressBarComponent: React.FC<Props> = ({currentStep, orderId, venueId, onExpire}) => {
     const [seconds, setSeconds] = useState<number | null>(null);
     const {user} = useUser()
 
@@ -42,13 +43,19 @@ export const BoozerProgressBarComponent: React.FC<Props> = ({currentStep, orderI
                 if (dataRes.remaining_seconds) {
                     setSeconds(dataRes.remaining_seconds);
                 }
-            } catch (error) {
-                console.error("Не вдалося завантажити таймер:", error);
+            } catch (error: any) {
+               const isAuthError = error?.message === "Please log in" || error?.status === 401;
+                const isExpiredError = error.response?.status === 410;
+
+                if ((isAuthError || isExpiredError) && onExpire) {
+                    onExpire();
+                }
+
             }
         };
 
         void fetchTimer();
-    }, [orderId, venueId, user?.token])
+    }, [orderId, venueId, user?.token, onExpire])
 
     useEffect(() => {
         if (seconds === null || seconds <= 0) return;

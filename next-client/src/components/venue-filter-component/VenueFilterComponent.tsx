@@ -3,24 +3,28 @@
 import React, { useState, useEffect } from "react";
 import venueServices, { VenueFilterCriteria } from "@/lib/services/venueService";
 import styles from "./VenueFilterComponent.module.css";
+import {useSearchParams} from "next/navigation";
 
 interface FilterProps {
     onFilterChange: (filters: VenueFilterCriteria) => void;
 }
 
 const VenueFilterComponent: React.FC<FilterProps> = ({onFilterChange}) => {
+    const searchParams = useSearchParams();
     const [filters, setFilters] = useState<VenueFilterCriteria>({
-        country: "",
-        city: "",
-        rating_min: undefined,
-        rating_max: undefined,
-        sort_by: "rating",
-        sort_order: "desc",
-        tags: [],
+        country: searchParams.get("country") || "",
+        city: searchParams.get("city") || "",
+        sort_by: (searchParams.get("sort_by") as any) || "rating",
+        sort_order: (searchParams.get("sort_order") as any) || "desc",
+        rating_min: searchParams.get("rating_min") ? Number(searchParams.get("rating_min")) : undefined,
+        rating_max: searchParams.get("rating_max") ? Number(searchParams.get("rating_max")) : undefined,
+        tags: searchParams.get("tags")?.split(",").map(t => t.trim()).filter(t => t !== "") || [],
     });
-
     const [countriesList, setCountriesList] = useState<string[]>([]);
     const [citiesByCountry, setCitiesByCountry] = useState<Record<string, string[]>>({});
+    const [tagsInput, setTagsInput] = useState<string>(
+        Array.isArray(filters.tags) ? filters.tags.join(", ") : ""
+    );
 
     useEffect(() => {
         venueServices.constants
@@ -63,6 +67,22 @@ const VenueFilterComponent: React.FC<FilterProps> = ({onFilterChange}) => {
         onFilterChange(updatedFilters);
     };
 
+    const handleTagsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+        setTagsInput(value);
+    };
+
+    const handleTagsBlur = () => {
+        const tagsArray = tagsInput
+            .split(",")
+            .map((t) => t.trim())
+            .filter((t) => t !== "");
+
+        const updatedFilters = {...filters, tags: tagsArray};
+        setFilters(updatedFilters);
+        onFilterChange(updatedFilters);
+    };
+
     return (
         <div className={styles.filterContainer}>
             <div className={styles.row}>
@@ -98,8 +118,9 @@ const VenueFilterComponent: React.FC<FilterProps> = ({onFilterChange}) => {
                     type="text"
                     name="tags"
                     placeholder="Search by tags (comma-separated)"
-                    value={filters.tags || ""}
-                    onChange={handleChange}
+                    value={tagsInput}
+                    onChange={handleTagsChange}
+                    onBlur={handleTagsBlur}
                     className={styles.input}
                 />
                 <input
