@@ -6,9 +6,8 @@ import { useUser } from "@/app/contexts/UserProvider";
 import venueServices from "@/lib/services/venueService";
 import { IVenue, IVenuePhoto } from "@/models/IVenue";
 import { LoaderComponent } from "@/components/loader-component/LoaderComponent";
-import {VenueFormComponent} from "@/components/venue-form-component/VenueFormComponent";
-import {VenuePhotosComponent} from "@/components/venue-photos-component/VenuePhotosComponent";
-// import styles from "./VenueEditComponent.module.css"
+import { VenueFormComponent } from "@/components/venue-form-component/VenueFormComponent";
+import { VenuePhotosComponent } from "@/components/venue-photos-component/VenuePhotosComponent";
 
 interface Props {
     venueId: string;
@@ -20,9 +19,10 @@ interface ILocalPhoto {
     is_main?: boolean;
 }
 
-const VenueEditComponent = ({venueId}: Props) => {
+const VenueEditComponent = ({ venueId }: Props) => {
     const router = useRouter();
     const [form, setForm] = useState<IVenue | null>(null);
+    const [tagsInput, setTagsInput] = useState("");
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [message, setMessage] = useState<string | null>(null);
@@ -30,15 +30,20 @@ const VenueEditComponent = ({venueId}: Props) => {
     const [existingPhotos, setExistingPhotos] = useState<IVenuePhoto[]>([]);
     const [newFiles, setNewFiles] = useState<ILocalPhoto[]>([]);
     const [loadingPhotos, setLoadingPhotos] = useState(false);
-    const {user} = useUser();
+    const { user } = useUser();
 
     useEffect(() => {
         if (!venueId) return;
         (async () => {
             try {
                 const response = await venueServices.venues.get(venueId);
-                setForm(response.data);
-                setExistingPhotos(response.data.photos || []);
+                const venueData = response.data;
+                setForm(venueData);
+                setExistingPhotos(venueData.photos || []);
+
+                if (venueData.tags && Array.isArray(venueData.tags)) {
+                    setTagsInput(venueData.tags.map((t: any) => t.name).join(", "));
+                }
             } catch (err) {
                 setError("Failed to load venue");
             } finally {
@@ -52,15 +57,25 @@ const VenueEditComponent = ({venueId}: Props) => {
         if (!form || !user?.token) return;
         setSaving(true);
         setError(null);
+        setMessage(null);
+
+        const tagsArray = tagsInput
+            .split(",")
+            .map(t => t.trim().toLowerCase())
+            .filter(t => t !== "");
 
         try {
             await venueServices.venues.update(
                 venueId,
-                form,
-                {accessToken: user.token}
+                {
+                    ...form,
+                    input_tags: tagsArray
+                } as any,
+                { accessToken: user.token }
             );
+
             setMessage("Venue updated successfully!");
-            router.push(`/venue-admin/venues/${venueId}`);
+            setTimeout(() => router.push(`/venue-admin/venues/${venueId}`), 1500);
         } catch (err: any) {
             setError(err?.response?.data?.detail || "Update failed");
         } finally {
@@ -70,13 +85,8 @@ const VenueEditComponent = ({venueId}: Props) => {
 
     const handleDeleteExistingPhoto = async (id: string) => {
         if (!user?.token) return;
-
         try {
-            await venueServices
-                .venuePhotos({accessToken: user.token})
-                .delete(venueId, id);
-
-
+            await venueServices.venuePhotos({ accessToken: user.token }).delete(venueId, id);
             setExistingPhotos((prev) => prev.filter((p) => p.id !== id));
         } catch {
             setError("Failed to delete photo");
@@ -86,20 +96,14 @@ const VenueEditComponent = ({venueId}: Props) => {
     const handleAddPhotos = async (e: React.SyntheticEvent) => {
         e.preventDefault();
         if (!user?.token || newFiles.length === 0) return;
-
         setLoadingPhotos(true);
-
         try {
             for (const p of newFiles) {
                 const formData = new FormData();
                 formData.append("photo", p.file);
                 formData.append("venue", venueId);
-
-                await venueServices
-                    .venuePhotos({accessToken: user.token})
-                    .create(venueId, formData);
+                await venueServices.venuePhotos({ accessToken: user.token }).create(venueId, formData);
             }
-
             const updated = await venueServices.venues.get(venueId);
             setExistingPhotos(updated.data.photos ?? []);
             setNewFiles([]);
@@ -113,8 +117,8 @@ const VenueEditComponent = ({venueId}: Props) => {
 
     if (loading || !form)
         return (
-            <div style={{display: "flex", justifyContent: "center", marginTop: 70}}>
-                <LoaderComponent/>
+            <div style={{ display: "flex", justifyContent: "center", marginTop: 70 }}>
+                <LoaderComponent />
             </div>
         );
 
@@ -129,6 +133,8 @@ const VenueEditComponent = ({venueId}: Props) => {
                 saving={saving}
                 error={error}
                 message={message}
+                tagsInput={tagsInput}
+                setTagsInput={setTagsInput}
             />
             <VenuePhotosComponent
                 existingPhotos={existingPhotos}
@@ -143,4 +149,3 @@ const VenueEditComponent = ({venueId}: Props) => {
 };
 
 export default VenueEditComponent;
-

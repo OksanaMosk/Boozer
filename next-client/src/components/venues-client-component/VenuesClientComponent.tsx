@@ -24,48 +24,64 @@ export const VenuesClientComponent = () => {
     const [isLoading, setIsLoading] = useState(false);
     const searchParams = useSearchParams();
     const currentPageFromURL = Number(searchParams.get("page") || "1");
-
     const router = useRouter();
 
-
     const [filters, setFilters] = useState<VenueFilters>({
-    country: searchParams.get("country") || undefined,
-    city: searchParams.get("city") || undefined,
-    name: searchParams.get("name") || undefined,
-    sort_by: (searchParams.get("sort_by") as any) || "rating",
-    sort_order: (searchParams.get("sort_order") as any) || "desc",
-});
+        country: searchParams.get("country") || undefined,
+        city: searchParams.get("city") || undefined,
+        name: searchParams.get("name") || undefined,
+        sort_by: (searchParams.get("sort_by") as any) || "rating",
+        sort_order: (searchParams.get("sort_order") as any) || "desc",
+        tags: searchParams.get("tags")?.split(",").filter(t => t !== "") || [],
+    });
 
-useEffect(() => {
+    useEffect(() => {
     const params = new URLSearchParams();
+
     Object.entries(filters).forEach(([key, value]) => {
-        if (value !== undefined && value !== "" && (!Array.isArray(value) || value.length > 0)) {
-            params.set(key, String(value));
+        if (value !== undefined && value !== "" && value !== null) {
+            if (Array.isArray(value)) {
+                if (value.length > 0) params.set(key, value.join(","));
+            } else {
+                params.set(key, String(value));
+            }
         }
     });
+
     if (currentPageFromURL > 1) params.set("page", String(currentPageFromURL));
 
-    router.push(`?${params.toString()}`, { scroll: false });
+    const queryString = params.toString();
+    router.push(queryString ? `?${queryString}` : "/venues", { scroll: false });
 }, [filters, currentPageFromURL, router]);
 
     const fetchVenues = useCallback(async (page: number, filters: VenueFilters) => {
         setIsLoading(true);
         setVenuesData([]);
         try {
-            const response = await venueService.venues.getAllWithFilter({
-    ...filters,
-    ordering: filters.sort_order === "desc" ? `-${filters.sort_by}` : filters.sort_by,
-    page
-} as any);
-            const resData = response.data;
-            setVenuesData(resData.data ?? []);
-            setTotalPagesState(resData.total_pages ?? 1);
-        } catch (error) {
-            console.error("Error fetching venues:", error);
-        } finally {
-            setIsLoading(false);
-        }
-    }, []);
+            const apiParams = {
+                ...filters,
+                tags: Array.isArray(filters.tags)
+                    ? filters.tags.join(",")
+                    : filters.tags || undefined,
+                ordering: filters.sort_order === "desc" ? `-${filters.sort_by}` : filters.sort_by,
+                page
+        };
+
+        const response = await venueService.venues.getAllWithFilter(apiParams as any);
+        const resData = response.data;
+        const venues = resData.data ?? [];
+
+        venues.forEach((v: any) => {
+            const tagNames = v.tags?.map((t: any) => t.name).join(", ");
+           });
+        setVenuesData(venues);
+        setTotalPagesState(resData.total_pages ?? 1);
+    } catch (error) {
+        console.error("Error fetching venues:", error);
+    } finally {
+        setIsLoading(false);
+    }
+}, []);
 
     const handleFilterChange = (newFilters: VenueFilterCriteria) => {
     setFilters(newFilters);

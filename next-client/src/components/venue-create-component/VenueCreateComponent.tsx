@@ -1,12 +1,12 @@
 "use client";
 
-import React, {useState} from "react";
-import {useRouter} from "next/navigation";
-import {useUser} from "@/app/contexts/UserProvider";
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useUser } from "@/app/contexts/UserProvider";
 import venueServices from "@/lib/services/venueService";
-import {IVenue, ITag} from "@/models/IVenue";
-import {VenuePhotosComponent} from "@/components/venue-photos-component/VenuePhotosComponent";
-import {VenueFormComponent} from "@/components/venue-form-component/VenueFormComponent";
+import { IVenue } from "@/models/IVenue";
+import { VenuePhotosComponent } from "@/components/venue-photos-component/VenuePhotosComponent";
+import { VenueFormComponent } from "@/components/venue-form-component/VenueFormComponent";
 import styles from "./VenueCreateComponent.module.css";
 
 interface ILocalPhoto {
@@ -16,7 +16,7 @@ interface ILocalPhoto {
 }
 
 const VenueCreateComponent = () => {
-    const {user} = useUser();
+    const { user } = useUser();
     const router = useRouter();
 
     const [tagsInput, setTagsInput] = useState("");
@@ -54,6 +54,7 @@ const VenueCreateComponent = () => {
     const handleCreateVenue = async (e: React.SyntheticEvent) => {
         e.preventDefault();
         setMessage("");
+
         const requiredFields: (keyof IVenue)[] = ["name", "country", "city", "description"];
         for (const field of requiredFields) {
             if (!newVenue[field]) {
@@ -61,86 +62,28 @@ const VenueCreateComponent = () => {
                 return;
             }
         }
+
         const tagsArray = tagsInput
             .split(",")
-            .map(name => ({name: name.trim()}))
-            .filter(t => t.name !== "");
+            .map(t => t.trim().toLowerCase())
+            .filter(t => t !== "");
 
         const venueData = {
             ...newVenue,
             venue_admin: user?.id,
-            opening_hours: newVenue.opening_hours,
-            tags: tagsArray,
+            input_tags: tagsArray,
         };
-
         setLoadingVenue(true);
-
         try {
             if (!user?.token) {
                 setMessage("You must be logged in to create a venue.");
                 return;
             }
-
-            const createdVenue = await venueServices.venues.create(venueData, {accessToken: user.token});
+            const createdVenue = await venueServices.venues.create(venueData, { accessToken: user.token });
             const venueId = createdVenue.data.id;
-            setNewVenue(prev => ({...prev, id: venueId}));
-            const token = user.token;
+            setNewVenue(prev => ({ ...prev, id: venueId }));
 
-            if (tagsArray.length) {
-                const createdTags = await Promise.all(
-                    tagsArray.map(async (tag) => {
-                        try {
-                            console.log(`Спроба створити тег: "${tag.name}"`);
-                            const res = await venueServices.venues.tags(venueId!).create(
-                                {name: tag.name},
-                                {accessToken: token}
-                            );
-                            console.log(`Тег створено:`, res.data);
-                            return res.data;
-                        } catch (err: any) {
-                            console.log(`Помилка створення тегу "${tag.name}":`, err);
-                            const msg =
-                                err.response?.data?.name?.[0] ||
-                                err.response?.data?.detail ||
-                                err.message || '';
-
-                            if (msg.includes("already exists")) {
-                                console.log(`Тег "${tag.name}" вже існує. Пропускаємо створення.`);
-                                return {name: tag.name, id: null};
-                            }
-                            throw err;
-                        }
-                    })
-                );
-
-                console.log("Всі теги підготовлені для прив:", createdTags);
-                await Promise.all(
-                    createdTags.map(async (tagResp: ITag) => {
-                        if (!tagResp.id) {
-                            console.log(`Тег "${tagResp.name}" без id, пропускаємо прив'язку`);
-                            return;
-                        }
-                        try {
-                            if (!venueId) return;
-
-                            console.log(`Прив'язка тегу "${tagResp.name}" до venue ${venueId}`);
-                            await
-                                venueServices.venues
-                                    .venueTags({accessToken: token})(venueId)
-                                    .create({venue: venueId, tag: tagResp.id}
-                                    );
-                            console.log(`Тег "${tagResp.name}" усп прив`);
-                        } catch (err: any) {
-                            console.log(`Помилка прив'язки тегу "${tagResp.name}":`, err.response?.data);
-                            if (!err.response?.data?.some((e: string) => e.includes("already exists"))) {
-                                throw err;
-                            }
-                        }
-                    })
-                );
-                console.log("Всі теги оброблені.");
-            }
-            setMessage("Venue created successfully! You can now upload photos.");
+            setMessage("Venue created successfully! Now you can upload photos.");
         } catch (err: any) {
             setMessage(err?.response?.data?.detail || "Error creating venue.");
         } finally {
@@ -152,27 +95,23 @@ const VenueCreateComponent = () => {
         e.preventDefault();
         setMessage("");
 
-        if (!user?.token) return;
-        if (!newVenue.id) return setMessage("Create the venue first.");
+        if (!user?.token || !newVenue.id) return setMessage("Create the venue first.");
         if (newFiles.length === 0) return setMessage("Add at least one photo.");
+
         setLoadingPhotos(true);
         try {
-            const photosToUpload = newFiles.map((p, i) => ({
-                ...p,
-                is_main: p.is_main ?? i === 0,
-            }));
-
-            for (const p of photosToUpload) {
+            for (const [index, p] of newFiles.entries()) {
                 const formData = new FormData();
                 formData.append("photo", p.file);
-                formData.append("venue", newVenue.id!);
-                formData.append("is_main", p.is_main ? "true" : "false");
-                await venueServices.venuePhotos({accessToken: user.token}).create(newVenue.id, formData);
+                formData.append("venue", String(newVenue.id));
+                formData.append("is_main", (p.is_main ?? index === 0) ? "true" : "false");
+
+                await venueServices.venuePhotos({ accessToken: user.token }).create(newVenue.id, formData);
             }
+
             setMessage("Photos uploaded successfully!");
-            setNewFiles([]);
             router.push(`/venue-admin/venues/${newVenue.id}`);
-        } catch {
+        } catch (err) {
             setMessage("Error uploading photos.");
         } finally {
             setLoadingPhotos(false);

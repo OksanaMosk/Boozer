@@ -91,21 +91,20 @@ export const VenueFormComponent = ({
                                 />
                             </div>
 
-                            {isCreate && (
-                                <div className={styles.inputWrapper}>
-                                    <label className={styles.label}>
-                                        Tags (comma-separated)
-                                    </label>
-                                    <input
-                                        type="text"
-                                        value={tagsInput}
-                                        onChange={(e) =>
-                                            setTagsInput?.(e.target.value)
-                                        }
-                                        className={styles.inputCreate}
-                                    />
-                                </div>
-                            )}
+                            <div className={styles.inputWrapper}>
+                                <label className={styles.label}>
+                                    Tags (comma-separated)
+                                </label>
+                                <input
+                                    type="text"
+                                    placeholder="e.g. beach, night, club"
+                                    value={tagsInput || ""}
+                                    onChange={(e) =>
+                                        setTagsInput?.(e.target.value)
+                                    }
+                                    className={styles.inputCreate}
+                                />
+                            </div>
 
                             <div className={styles.inputWrapper}>
                                 <label className={styles.label}>Address *</label>

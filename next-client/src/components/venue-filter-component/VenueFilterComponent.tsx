@@ -50,8 +50,6 @@ const VenueFilterComponent: React.FC<FilterProps> = ({onFilterChange}) => {
 
         if (name.includes("rating")) {
             newValue = value ? Number(value) : undefined;
-        } else if (name === "tags") {
-            newValue = value.split(",").map((t) => t.trim()).filter((t) => t !== "");
         }
 
         const updatedFilters: VenueFilterCriteria = {
@@ -82,6 +80,12 @@ const VenueFilterComponent: React.FC<FilterProps> = ({onFilterChange}) => {
         setFilters(updatedFilters);
         onFilterChange(updatedFilters);
     };
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+        handleTagsBlur();
+    }
+};
 
     return (
         <div className={styles.filterContainer}>
@@ -116,10 +120,10 @@ const VenueFilterComponent: React.FC<FilterProps> = ({onFilterChange}) => {
                 </select>
                 <input
                     type="text"
-                    name="tags"
-                    placeholder="Search by tags (comma-separated)"
+                    placeholder="By tags (e.g. beach, night, club)"
                     value={tagsInput}
                     onChange={handleTagsChange}
+                    onKeyDown={handleKeyDown}
                     onBlur={handleTagsBlur}
                     className={styles.input}
                 />

@@ -233,6 +233,12 @@
   font-size: 16px;
 }
 
+.inputCreate::placeholder {
+    color: dimgrey;
+    font-size: 0.9rem;
+    font-style: italic;
+    opacity: 0.7;
+}
 .photoContainer {
   display: flex;
   flex-wrap: wrap;

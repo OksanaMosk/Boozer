@@ -53,7 +53,15 @@ const buildVenueParams = (criteria?: VenueFilterCriteria & { page?: number }) =>
     if (criteria.rating_max !== undefined) params.rating_max = criteria.rating_max;
     if (criteria.reviews_count_min !== undefined) params.reviews_count_min = criteria.reviews_count_min;
     if (criteria.reviews_count_max !== undefined) params.reviews_count_max = criteria.reviews_count_max;
-    if (criteria.tags?.length) params.tags = criteria.tags.join(",");
+    if (criteria.tags) {
+        const tagValue = Array.isArray(criteria.tags)
+            ? criteria.tags.join(",")
+            : criteria.tags;
+        if (tagValue.length > 0) {
+            params.tags__name = tagValue;
+        }
+    }
+
     if (criteria.sort_by) {
         params.ordering = criteria.sort_order === "desc" ? `-${criteria.sort_by}` : criteria.sort_by;
     }

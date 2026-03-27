@@ -28,6 +28,14 @@ class VenueViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         qs = super().get_queryset()
+        tags_param = self.request.query_params.get('tags__name')
+
+        if tags_param:
+            tags_list = [t.strip().lower() for t in tags_param.split(',') if t.strip()]
+            if tags_list:
+                qs = qs.filter(tags__name__in=tags_list).distinct()
+
+
         return qs.order_by('id', '-rating')
 
 
