@@ -14,6 +14,29 @@
     display: flex;
     flex-direction: column;
 }
+.photoContainer {
+    position: relative;
+}
+.buttonGoBack {
+    position: absolute;
+    width: 100%;
+    top:-70px;
+}
+.titleGuest {
+    padding: 0;
+    position: absolute;
+    width: 100%;
+    top:-0px;
+    font-family: var(--font-imperial),serif;
+    font-weight: 700;
+    font-size: 2rem;
+    letter-spacing: 2px;
+    color: var(--color-text);
+    line-height: 1;
+}
+.loginLink {
+      color: var(--input-color);
+}
 
 .posterImage,
 .noPoster,
@@ -32,6 +55,27 @@
     color: var(--color-badgeId);
     font-size: 1rem;
 }
+.titleGuest {
+    padding: 0;
+    font-family: var(--font-imperial),serif;
+    font-weight: 700;
+    font-size: 2rem;
+    letter-spacing: 2px;
+    color: var(--color-text);
+    line-height: 1;
+}
+.heartBtn {
+    position: absolute;
+    top: 24px;
+    right: 20px;
+    z-index: 10;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: inherit;
+    border: none;
+}
 
 .content {
     display: flex;
@@ -48,6 +92,8 @@
     align-items: flex-start;
     width: 25rem;
 }
+
+
 .titleJoin,
 .title,
 .titleMenu {
@@ -62,6 +108,25 @@
     margin: 0;
     padding: 0;
     text-align: left;
+}
+.tagsWrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 15px;
+    margin-bottom: 20px;
+}
+
+.tagBadge {
+    color: #3b82f6;
+    font-size: 1.2rem;
+    text-decoration: none;
+    font-style: italic;
+    transition: all 0.2s ease-in-out;
+}
+
+.tagBadge:hover {
+    color: blueviolet;
 }
 
 .titleMenu {

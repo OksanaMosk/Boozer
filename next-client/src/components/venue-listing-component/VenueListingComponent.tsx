@@ -29,22 +29,8 @@ const VenueListingComponent: React.FC<Props> = ({
                                                 }) => {
     const {user} = useUser();
     const [status, setStatus] = useState<string>(venue.status || "");
-    const [stats, setStats] = useState<VenueStats | null>(null);
     const isLocked = (venue.edit_attempts ?? 0) >= 3;
-    const router = useRouter();
-
-    // useEffect(() => {
-    //     if (!user) return;
-    //
-    //     (async () => {
-    //         try {
-    //             const statsRes = await venueService.stats.getStats(venue.id);
-    //             setStats(statsRes.data);
-    //         } catch {
-    //             console.error("Error loading stats and prices");
-    //         }
-    //     })();
-    // }, [venue.id, venue.city, user]);
+    const router = useRouter()
 
     const handleStatusChange = async () => {
         if (status === "pending") {
@@ -102,8 +88,8 @@ const VenueListingComponent: React.FC<Props> = ({
     };
 
     return (
-        <ul className={styles.list}>
-            <li
+        <div className={styles.list}>
+            <div
                 key={venue.id}
                 className={styles.tableRow}
                 onClick={goToInfo}
@@ -247,8 +233,8 @@ const VenueListingComponent: React.FC<Props> = ({
                         <p className={styles.address}>ID:{venue.id}</p>
                     </div>
                 </div>
-            </li>
-        </ul>
+            </div>
+        </div>
     );
 };
 

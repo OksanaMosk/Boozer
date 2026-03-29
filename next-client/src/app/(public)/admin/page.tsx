@@ -1,22 +1,11 @@
-"use client";
-
-import {ButtonGoBackComponent} from "@/components/button-go-back-component/ButtonGoBackComponent";
-import DashboardComponent from "@/components/dashboard-component/DashboardComponent";
-
+import React from 'react';
 
 const AdminPage = () => {
-  return (
-    <div style={{
-      fontWeight: 'bolder',
-      margin: '40px auto',
-      textAlign: 'center',
-      width: '100%'
-    }}>
-      <ButtonGoBackComponent/>
-      <DashboardComponent />
+    return (
+        <div>
 
-    </div>
-  );
+        </div>
+    );
 };
 
 export default AdminPage;

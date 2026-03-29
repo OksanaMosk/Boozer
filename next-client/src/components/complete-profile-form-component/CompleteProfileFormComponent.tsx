@@ -68,7 +68,7 @@ export default function CompleteProfileFormComponent() {
                 payload,
                 session.user.accessToken
             );
-            router.push("/visitor");
+            router.push("/dashboard");
 
         } catch (err: any) {
             console.error("Profile save error", err);

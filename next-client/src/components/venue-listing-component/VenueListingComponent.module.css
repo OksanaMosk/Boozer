@@ -2,7 +2,7 @@
 .tableRow {
     margin: 0 auto;
     display: flex;
-    gap: 1rem;
+    gap: 2rem;
 }
 .list {
        padding: 0;
@@ -11,6 +11,8 @@
     padding: 1rem;
     width: 100%;
     justify-content: space-between;
+        background:var(--menu-color);
+    border-radius: 2rem;
 }
 .tablePhoto{
   text-align: left;

@@ -8,6 +8,7 @@ import VenuesComponent from "@/components/venues-component/VenuesComponent";
 import VenueFilterComponent from "@/components/venue-filter-component/VenueFilterComponent";
 import { LoaderComponent } from "@/components/loader-component/LoaderComponent";
 import styles from "./VenuesClientComponent.module.css";
+import {useUser} from "@/app/contexts/UserProvider";
 
 interface VenueFilters {
     name?: string;
@@ -22,10 +23,11 @@ export const VenuesClientComponent = () => {
     const [venuesData, setVenuesData] = useState<IVenue[]>([]);
     const [totalPagesState, setTotalPagesState] = useState(1);
     const [isLoading, setIsLoading] = useState(false);
+    const [isUnauthorized, setIsUnauthorized] = useState(false);
     const searchParams = useSearchParams();
     const currentPageFromURL = Number(searchParams.get("page") || "1");
     const router = useRouter();
-
+    const {user} = useUser();
     const [filters, setFilters] = useState<VenueFilters>({
         country: searchParams.get("country") || undefined,
         city: searchParams.get("city") || undefined,
@@ -36,56 +38,56 @@ export const VenuesClientComponent = () => {
     });
 
     useEffect(() => {
-    const params = new URLSearchParams();
+        const params = new URLSearchParams();
 
-    Object.entries(filters).forEach(([key, value]) => {
-        if (value !== undefined && value !== "" && value !== null) {
-            if (Array.isArray(value)) {
-                if (value.length > 0) params.set(key, value.join(","));
-            } else {
-                params.set(key, String(value));
+        Object.entries(filters).forEach(([key, value]) => {
+            if (value !== undefined && value !== "" && value !== null) {
+                if (Array.isArray(value)) {
+                    if (value.length > 0) params.set(key, value.join(","));
+                } else {
+                    params.set(key, String(value));
+                }
             }
-        }
-    });
+        });
 
-    if (currentPageFromURL > 1) params.set("page", String(currentPageFromURL));
+        if (currentPageFromURL > 1) params.set("page", String(currentPageFromURL));
 
-    const queryString = params.toString();
-    router.push(queryString ? `?${queryString}` : "/venues", { scroll: false });
-}, [filters, currentPageFromURL, router]);
+        const queryString = params.toString();
+        router.push(queryString ? `?${queryString}` : "/venues", {scroll: false});
+    }, [filters, currentPageFromURL, router]);
 
     const fetchVenues = useCallback(async (page: number, filters: VenueFilters) => {
         setIsLoading(true);
-        setVenuesData([]);
-        try {
-            const apiParams = {
-                ...filters,
-                tags: Array.isArray(filters.tags)
-                    ? filters.tags.join(",")
-                    : filters.tags || undefined,
-                ordering: filters.sort_order === "desc" ? `-${filters.sort_by}` : filters.sort_by,
-                page
+        setIsUnauthorized(false);
+        const apiParams = {
+            ...filters,
+            tags: Array.isArray(filters.tags) ? filters.tags.join(",") : filters.tags || undefined,
+            ordering: filters.sort_order === "desc" ? `-${filters.sort_by}` : filters.sort_by,
+            page
         };
+        try {
+            const auth = (user?.token && user.token.length > 0)
+                ? {accessToken: user.token}
+                : undefined;
+            const response = await venueService.venues.getAllWithFilter(apiParams as any, auth);
+            setVenuesData(response.data.data ?? []);
+            setTotalPagesState(response.data.total_pages ?? 1);
+        } catch (error: any) {
+            if (error.message === "Please Sign In") {
+                setIsUnauthorized(true);
+                const res = await venueService.venues.getAllWithFilter(apiParams as any);
+                setVenuesData(res.data.data ?? []);
+            }
+            console.error("Error fetching venues:", error);
+        } finally {
+            setIsLoading(false);
+        }
+    }, [user?.token]);
 
-        const response = await venueService.venues.getAllWithFilter(apiParams as any);
-        const resData = response.data;
-        const venues = resData.data ?? [];
-
-        venues.forEach((v: any) => {
-            const tagNames = v.tags?.map((t: any) => t.name).join(", ");
-           });
-        setVenuesData(venues);
-        setTotalPagesState(resData.total_pages ?? 1);
-    } catch (error) {
-        console.error("Error fetching venues:", error);
-    } finally {
-        setIsLoading(false);
-    }
-}, []);
 
     const handleFilterChange = (newFilters: VenueFilterCriteria) => {
-    setFilters(newFilters);
-};
+        setFilters(newFilters);
+    };
 
     useEffect(() => {
         void fetchVenues(currentPageFromURL, filters);
@@ -101,6 +103,7 @@ export const VenuesClientComponent = () => {
                 <VenuesComponent
                     venues={venuesData}
                     totalPages={totalPagesState}
+                    isUnauthorized={isUnauthorized}
                 />
             )}
         </div>

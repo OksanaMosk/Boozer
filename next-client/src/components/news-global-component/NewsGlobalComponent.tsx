@@ -64,7 +64,7 @@ const NewsGlobalContent = () => {
     };
 
     if (!user?.token) {
-        return <div className={styles.title}>Please login</div>;
+        return <div className={styles.title}>Please Sign In</div>;
     }
 
     return (

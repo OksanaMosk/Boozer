@@ -3,6 +3,7 @@
 import {useUser} from "@/app/contexts/UserProvider";
 import styles from "./UserInfoComponent.module.css";
 
+
 type UserInfoProps = {
     onLogoutAction: () => void;
     classNames?: {
@@ -35,21 +36,20 @@ export const UserInfoComponent = ({onLogoutAction, classNames = {}}: UserInfoPro
 
     return (
         <div className={`${styles.container} ${classNames.container ?? ""}`}>
-            <div className={`${styles.avatar} ${classNames.avatar ?? ""}`}>
-                {photoUrl ? (
-                    <img
-                        src={photoUrl}
-                        alt="Avatar"
-                        className={styles.avatarImage} // Додай цей клас у CSS для borderRadius: 50%
-                        onError={(e) => {
-                            (e.target as HTMLImageElement).style.display = "none";
-                        }}
-                    />
-                ) : (
-                    <span>{avatarLetter}</span>
-                )}
-            </div>
-
+                <div className={`${styles.avatar} ${classNames.avatar ?? ""}`}>
+                    {photoUrl ? (
+                        <img
+                            src={photoUrl}
+                            alt="Avatar"
+                            className={styles.avatarImage}
+                            onError={(e) => {
+                                (e.target as HTMLImageElement).style.display = "none";
+                            }}
+                        />
+                    ) : (
+                        <span>{avatarLetter}</span>
+                    )}
+                </div>
             <div className={`${styles.info} ${classNames.info ?? ""}`}>
                 <p className={`${styles.welcome} ${classNames.welcome ?? ""}`}>Welcome,</p>
                 <p className={`${styles.user} ${classNames.user ?? ""}`}>{user.email}</p>

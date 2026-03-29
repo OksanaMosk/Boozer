@@ -1,0 +1,149 @@
+.grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 20px;
+    justify-content: center;
+}
+
+.collectionCard {
+    display: flex;
+    flex-direction: column;
+    width: 320px;
+    min-height: 220px;
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(212, 175, 55, 0.4);
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    color: #fff;
+    transition: transform 0.2s ease;
+}
+
+.cardHeader {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.cardHeader h3 {
+    margin: 8px 0 4px 0;
+    font-size: 1.25rem;
+    color: #d4af37;
+    text-transform: capitalize;
+}
+
+.badge {
+    align-self: flex-start;
+    background: #d4af37;
+    color: #000;
+    padding: 2px 10px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.venueCount {
+    font-size: 13px;
+    color: #aaa;
+    margin: 0;
+}
+
+.actions {
+    display: flex;
+    gap: 8px;
+    margin-top: auto;
+}
+
+.actions button {
+    flex: 1;
+    padding: 10px 5px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    transition: opacity 0.2s;
+}
+
+.actions button:hover {
+    opacity: 0.8;
+}
+
+.openBtn { background: #f5f5f5; color: #111; }
+.candidateBtn { background: #ff5722; color: #fff; }
+.deleteBtn { background: #b71c1c; color: #fff; }
+
+.candidatesPanel {
+    display: flex;
+    flex-direction: column;
+    margin-top: 15px;
+    padding: 12px;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.candidatesPanel h4 {
+    margin: 0 0 10px 0;
+    font-size: 12px;
+    color: #d4af37;
+    text-align: center;
+}
+
+.candidateRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.candidateRow:last-child {
+    border-bottom: none;
+}
+
+.canInfo {
+    display: flex;
+    flex-direction: column;
+}
+
+.canName {
+    font-size: 13px;
+    font-weight: 600;
+    color: #eee;
+}
+
+.canVotes {
+    font-size: 11px;
+    color: #888;
+}
+
+.smallAddBtn {
+    background: #4caf50;
+    color: white;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: none;
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.smallAddBtn:hover {
+    background: #45a049;
+    transform: scale(1.1);
+}
+
+.expanded {
+    border-color: #ff5722;
+    box-shadow: 0 0 15px rgba(255, 87, 34, 0.2);
+}

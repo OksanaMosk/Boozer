@@ -1,0 +1,101 @@
+.venueWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 310px;
+  height: 380px;
+  padding: 16px;
+  align-items:center;
+  justify-content:space-between;
+  background: var(--menu-color);
+  border: 1px solid  var(--color-disabled);
+  border-radius: 2rem;
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.3);
+
+}
+
+.venuePoster,
+.placeholder {
+  border-radius: 2rem;
+  width: 280px;
+  height: 240px;
+  object-fit: cover;
+  transition: all 0.4s ease;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+  filter: brightness(0.9) contrast(1.05);
+}
+
+.noImageText {
+  font-size: 0.9rem;
+  color: var(--input-color);
+}
+
+.venueInfoWrapper {
+    height: 140px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+    align-items: flex-start;
+    font-size: 0.8rem;
+}
+.venueInfo {
+    text-align: left;
+    padding-left: 8px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+.venueTitle {
+    width: 100%;
+  margin: 0 0 0.5rem;
+  font-size: 1rem;
+  color: var(--input-color);
+}
+.tagline {
+  height: 1px;
+  background-color: var(--input-color);
+  transform-origin: top;
+  width: 280px;
+}
+
+.footerRow{
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.value {
+  color: var(--input-color);
+      margin: 0;
+    padding: 0;
+}
+
+.img {
+    width: 40px;
+    height: 40px;
+
+}
+.imageContainer{
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 1px;
+}
+
+.imgText{
+    color: var(--input-color);
+}
+.about {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.2rem;
+    column-gap: 0.5rem;
+
+}
+.addressWrapper {
+    display: flex;
+    justify-content: space-between;
+}

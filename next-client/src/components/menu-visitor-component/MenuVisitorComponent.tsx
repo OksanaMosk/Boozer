@@ -84,7 +84,7 @@ const MenuVisitorComponent = ({venueId}: Props) => {
 
     if (error) return <p className={styles.error}>{error}</p>;
  if (!user?.token) {
-        return <div className={styles.titleLog}>Please login</div>;
+        return <div className={styles.titleLog}>Please Sign In</div>;
     }
     return (
         <div>

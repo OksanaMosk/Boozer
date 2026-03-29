@@ -17,7 +17,7 @@ const userService = {
       const response = await apiService(token.accessToken).get(`${urls.users.list}?${params.toString()}`);
       return Array.isArray(response.data) ? response.data : response.data.data || [];
     } catch (err: any) {
-      if (err.isUnauthorized) throw new Error("Please log in");
+      if (err.isUnauthorized) throw new Error("Please Sign In");
       throw err;
     }
   },
@@ -27,7 +27,7 @@ const userService = {
       const { data } = await apiService(token.accessToken).patch(urls.users.active(userId), { is_active: isActive });
       return data;
     } catch (err: any) {
-      if (err.isUnauthorized) throw new Error("Please log in");
+      if (err.isUnauthorized) throw new Error("Please Sign In");
       throw err;
     }
   },
@@ -37,7 +37,7 @@ const userService = {
       const { data } = await apiService(token.accessToken).patch(urls.users.changeRole(userId), { role });
       return data;
     } catch (err: any) {
-      if (err.isUnauthorized) throw new Error("Please log in");
+      if (err.isUnauthorized) throw new Error("Please Sign In");
       throw err;
     }
   },
@@ -47,7 +47,7 @@ const userService = {
       const { data } = await apiService(token.accessToken).delete(urls.users.delete(userId));
       return data;
     } catch (err: any) {
-      if (err.isUnauthorized) throw new Error("Please log in");
+      if (err.isUnauthorized) throw new Error("Please Sign In");
       throw err;
     }
   },
@@ -57,7 +57,7 @@ const userService = {
       const { data } = await apiService(token.accessToken).patch(urls.users.updateProfile(userId), formData);
       return data;
     } catch (err: any) {
-      if (err.isUnauthorized) throw new Error("Please log in");
+      if (err.isUnauthorized) throw new Error("Please Sign In");
       throw err;
     }
   },
@@ -67,7 +67,7 @@ const userService = {
       const response = await apiService(token.accessToken).get<GetUserVenuesResponse>(urls.users.userVenues(userId));
       return response.data;
     } catch (err: any) {
-      if (err.isUnauthorized) throw new Error("Please log in");
+      if (err.isUnauthorized) throw new Error("Please Sign In");
       throw err;
     }
   },

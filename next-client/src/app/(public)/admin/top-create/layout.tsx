@@ -5,18 +5,18 @@ import type {Metadata} from "next";
 import React from "react";
 
 export const metadata: Metadata = {
-    title: "Venue Admins | Boozer",
+    title: "Top Create| Boozer",
 };
 
 type Props = {
     children: React.ReactNode;
 }
 
-const VenueAdminsLayout = ({children}: Props) => {
+const TopCreatePageLayout = ({children}: Props) => {
     return (
         <>
             {children}
         </>
     );
 }
-export default VenueAdminsLayout;
+export default TopCreatePageLayout;

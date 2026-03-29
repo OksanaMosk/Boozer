@@ -28,7 +28,7 @@ const apiService = (accessToken?: string) => {
                 document.cookie = "authjs.session-token=; Max-Age=0; path=/";
                 document.cookie = "refresh-token=; Max-Age=0; path=/";
             e.isUnauthorized = true;
-             return Promise.reject(new Error("Please log in"));
+             return Promise.reject(new Error("Please Sign In"));
             }
             return Promise.reject(e);
         }

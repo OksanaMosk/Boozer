@@ -39,7 +39,7 @@ const BoozerStep3MenuComponent: React.FC<Props> = ({venueId, orderId, onNext, on
     const [venueCurrency, setVenueCurrency] = useState<"UAH" | "USD" | "EUR">("UAH");
     const [rates, setRates] = useState<{ USD: number; EUR: number }>({USD: 1, EUR: 1});
     if (!user) {
-        return <p className={styles.titleLog}>Please log in.</p>;
+        return <p className={styles.titleLog}>Please Sign In.</p>;
     }
 
     const getConverted = (amount: number, itemCurrency: string) => {

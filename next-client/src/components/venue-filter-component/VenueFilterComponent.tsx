@@ -86,6 +86,12 @@ const VenueFilterComponent: React.FC<FilterProps> = ({onFilterChange}) => {
         handleTagsBlur();
     }
 };
+    useEffect(() => {
+    const urlTags = searchParams.get("tags") || "";
+    setTagsInput(urlTags);
+    const tagsArray = urlTags.split(",").map(t => t.trim()).filter(t => t !== "");
+    setFilters(prev => ({ ...prev, tags: tagsArray }));
+}, [searchParams]);
 
     return (
         <div className={styles.filterContainer}>

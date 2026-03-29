@@ -11,14 +11,14 @@ export interface ITag {
     id?: number | string | null;
     name: string;
 }
-
-export interface IVenueTag {
-    id?: number | string;
-    venue_id?: number | string;
-    tag_id?: number | string;
-     tag?: number | string;
-    venue?: number | string;
-}
+//
+// export interface IVenueTag {
+//     id?: number | string;
+//     venue_id?: number | string;
+//     tag_id?: number | string;
+//      tag?: number | string;
+//     venue?: number | string;
+// }
 
 export interface IVenuePhoto {
     id: string;
@@ -147,6 +147,7 @@ export interface IVenue {
     favorite_by?: any[];
     news?: INews[];
     background_tables?: string;
+    is_favorite?: boolean;
 }
 
 export interface IVenueWithId extends Omit<IVenue, "id"> {

@@ -20,22 +20,24 @@ const AdminUserManagementComponent: React.FC<AdminUserManagementProps> = ({activ
     const [users, setUsers] = useState<IUserWithMessage[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string>("");
-    const [role, setRole] = useState<string | undefined>();
-    const [is_active, setIsActive] = useState<boolean | undefined>();
-    const [sortBy, setSortBy] = useState<string>("id");
-    const [sortOrder, setSortOrder] = useState<string>("asc");
+    const params = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : "");
+    const [role, setRole] = useState<string | undefined>(params.get("role") || undefined);
+    const [is_active, setIsActive] = useState<boolean | undefined>(params.get("is_active") === "true" ? true : params.get("is_active") === "false" ? false : undefined);
+    const [sortBy, setSortBy] = useState<string>(params.get("ordering")?.replace('-', '') || "id");
+    const [sortOrder, setSortOrder] = useState<string>(params.get("ordering")?.startsWith('-') ? "desc" : "asc");
+
     const router = useRouter();
     const {data: session} = useSession();
     const accessToken = session?.user?.accessToken;
 
     const handleApiError = (err: any, userId?: string, fallbackMsg?: string) => {
         const isAuthError =
-            err?.message === "Please log in" ||
+            err?.message === "Please Sign In" ||
             err?.status === 401 ||
             err?.response?.status === 401;
 
         if (isAuthError) {
-            setGlobalError("Your session expired. Please log in again.");
+            setGlobalError("Your session expired. Please Sign In again.");
             return;
         }
 

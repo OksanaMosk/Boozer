@@ -34,7 +34,7 @@ const BoozerStep2OrderBaseInfoComponent: React.FC<Props> = ({venueId, onNext, on
     });
     const {user} = useUser()
     if (!user) {
-        return <p className={styles.titleLog}>Please log in.</p>;
+        return <p className={styles.titleLog}>Please Sign In.</p>;
     }
 
     useEffect(() => {

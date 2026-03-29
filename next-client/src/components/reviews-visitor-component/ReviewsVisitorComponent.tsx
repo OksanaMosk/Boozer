@@ -7,121 +7,124 @@ import {ReviewComponent} from "@/components/review-component/ReviewComponent";
 import {useUser} from "@/app/contexts/UserProvider";
 import styles from "./ReviewsVisitorComponent.module.css"
 
-export const ReviewsVisitorComponent = ({ venueId}: { venueId: string, token?: any }) => {
+export const ReviewsVisitorComponent = ({venueId}: { venueId: string, token?: any }) => {
     const [reviews, setReviews] = useState<any[]>([]);
     const [orders, setOrders] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
-    const { user } = useUser();
-
-    useEffect(() => {
+    const [message, setMessage] = useState<{ text: string; type: 'success' | 'error' } | null>(null);
+    const {user} = useUser();
+    const auth = {accessToken: user?.token || ""};
+    const loadData = async () => {
         if (!user?.token || !venueId) return;
-
-        const loadData = async () => {
-    try {
-        setLoading(true);
-        const auth = { accessToken: user.token! };
-
-        const [reviewsRes, ordersRes] = await Promise.all([
-            venueServices.reviews.getAllWithFilter({ venue: venueId }, auth),
-            venueServices.venues.orders(auth)(venueId).getAll()
-        ]);
-
-        const responseData = reviewsRes.data as any;
-        const finalReviews = Array.isArray(responseData.data.data)
-            ? responseData.data
-            : (Array.isArray(responseData) ? responseData : []);
-        setReviews(finalReviews);
-        const ordersData = ordersRes.data.data;
-        const rawOrders = Array.isArray(ordersData) ? ordersData : (ordersData || []);
-        setOrders(rawOrders.filter((o: any) => o && o.id));
-
-    } catch (e: any) {
-        console.error("Fetch error:", e);
-        setReviews([]);
-    } finally {
-        setLoading(false);
-    }
-};
+        try {
+            setLoading(true);
+            const [reviewsRes, ordersRes] = await Promise.all([
+                venueServices.venues.reviews(auth)(venueId).getAll(),
+                venueServices.venues.orders(auth)(venueId).getAll()
+            ]);
+            const normalize = (res: any) => {
+                if (Array.isArray(res)) return res;
+                if (res.results) return res.results;
+                if (res.data) return res.data;
+                return [];
+            };
+            const rData = normalize(reviewsRes.data);
+            const oData = normalize(ordersRes.data);
+            console.log("oData:", oData)
+            setReviews(Array.isArray(rData) ? rData : []);
+            setOrders(Array.isArray(oData) ? oData.filter((o: any) => o?.id) : []);
+        } catch (e) {
+            console.error("Fetch error:", e);
+        } finally {
+            setLoading(false);
+        }
+    };
+    useEffect(() => {
         void loadData();
     }, [venueId, user?.token]);
 
+    useEffect(() => {
+        if (message) {
+            const timer = setTimeout(() => setMessage(null), 3000);
+            return () => clearTimeout(timer);
+        }
+    }, [message]);
+    const handleLikeReview = async (reviewId: string | number) => {
+        if (!user?.token) return setMessage({text: "Please Sign In to like reviews", type: 'error'});
+        try {
+            const res = await venueServices.venues.reviews(auth)(venueId).like(reviewId);
+            setReviews(prev => prev.map(r =>
+                r.id === reviewId ? {...r, likes_count: res.data.likes_count, is_liked: !r.is_liked} : r
+            ));
+        } catch (e) {
+            console.error("Like failed", e);
+        }
+    };
+    const handleReportReview = async (reviewId: string | number, reportData: { reason: string, comment: string }) => {
+        if (!user?.token) return;
+        try {
+            await venueServices.venues.reviews(auth)(venueId).report(reviewId, reportData);
+            setMessage({text: "Report submitted for moderation", type: 'success'});
+        } catch (e) {
+            setMessage({text: "Failed to send report", type: 'error'});
+        }
+    };
 
-    // НЕ ЗРОБИЛА ЩЕ В ПРОЦЕСІ
+    const handleSubmitReview = async (data: any) => {
+        try {
+            if (!user?.token || !venueId) return;
+            const formData = new FormData();
+            formData.append("rating", String(data.rating));
+            formData.append("comment", data.comment || "");
 
-    //  const handleLikeReview = async (reviewId: string | number) => {
-    //     if (!user?.token) return alert("Please login to like reviews");
-    //
-    //     try {
-    //         const auth = { accessToken: user.token };
-    //         await venueServices.reviews.like(reviewId, auth);
-    //         setReviews(prev => prev.map(r =>
-    //             r.id === reviewId ? { ...r, likes: (r.likes || 0) + 1 } : r
-    //         ));
-    //     } catch (e) {
-    //         console.error("Like failed", e);
-    //     }
-    // };
+            if (data.orderId) formData.append("order", data.orderId);
 
-    // const handleReportReview = async (reviewId: string | number) => {
-    //     if (!user?.token) return alert("Please login to report");
-    //
-    //     const reason = window.prompt("Why are you reporting this review?");
-    //     if (!reason) return;
-    //
-    //     try {
-    //         const auth = { accessToken: user.token };
-    //         await venueServices.reviews.report(reviewId, { reason }, auth);
-    //         alert("Report submitted for moderation.");
-    //     } catch (e) {
-    //         alert("Failed to send report.");
-    //     }
-    // };
+            if (data.photos && data.photos.length > 0) {
+                data.photos.forEach((file: File) => formData.append("photo", file));
+            }
 
-    // const handleSubmitReview = async (data: any) => {
-    //     try {
-    //         await venueServices.reviews.create({ ...data, venue: venueId }, { accessToken: user.token });
-    //         const updated:AxiosResponse = await venueServices.reviews.getAllWithFilter({ venue: venueId }, { accessToken: user.token });
-    //
-    //         setReviews(Array.isArray(updated.data) ? updated.data : updated.data.data);
-    //     } catch (e) {
-    //         alert("Error submitting review");
-    //     }
-    // };
+            const res = await venueServices.venues.reviews(auth)(venueId).create(formData);
+            await loadData();
+            return res;
+        } catch (e) {
+            setMessage({text: "Error submitting review", type: 'error'});
+            console.error(e);
+        }
+    };
 
-
-      if (!user?.token) {
-        return <div className={styles.title}>Please login</div>;
+    if (!user?.token) {
+        return <div className={styles.title}>Please Sign In</div>;
     }
-
-
     return (
         <div>
-            <div style={{ marginTop: "20px" }}>
-                {loading || reviews.length === 0 ? (
-                    <>
-                        <ReviewComponent isPlaceholder placeholderIndex={0}/>
-                        <ReviewComponent isPlaceholder placeholderIndex={1}/>
-                        <ReviewComponent isPlaceholder placeholderIndex={2}/>
-                    </>
-                ) : (
+            {message && (
+                <div className={`${styles.message} ${styles[message.type]}`}>
+                    {message.text}
+                </div>
+            )}
+
+            <div style={{marginTop: "20px"}}>
+                {loading ? (
+                    <div className={styles.loader}>Loading reviews...</div>
+                ) : reviews.length > 0 ? (
                     reviews.map((r) => (
                         <ReviewComponent
                             key={r.id}
                             review={r}
-                        //     onLike={handleLikeReview}
-                        // onReport={handleReportReview}
+                            onLike={handleLikeReview}
+                            onReport={handleReportReview}
                         />
                     ))
+                ) : (
+                    <p className={styles.noReviews}>No reviews yet.</p>
                 )}
             </div>
-             <ReviewFormComponent
+
+            <ReviewFormComponent
                 orders={orders}
                 venueId={venueId}
-                // onSubmit={handleSubmitReview}
+                onSubmit={handleSubmitReview}
             />
-            {/*(*/}
-            {/*         <p>No reviews of this Venue</p>*/}
-            {/*     )*/}
         </div>
     );
-};
+}

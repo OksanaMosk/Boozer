@@ -72,13 +72,10 @@ const BoozerStep7Final: React.FC<Props> = ({orderId, venueId}) => {
     }, [isConfirmed]);
 
     const handleGoToOrders = () => {
-        let path = "/visitor";
-        if (user?.role === "admin") path = "/admin";
-        if (user?.role === "venue_admin") path = "/venue-admin";
-         router.push(`${path}?tab=my_activity`);
+         router.push("/dashboard?tab=my_activity")
     };
 
-    if (!user) return <p className={styles.titleLog}>Please log in.</p>;
+    if (!user) return <p className={styles.titleLog}>Please Sign In.</p>;
     if (!order) return <LoaderComponent/>;
 
     const rate = Number(order.exchange_rate) || 1;

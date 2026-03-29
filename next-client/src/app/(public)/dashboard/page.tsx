@@ -3,7 +3,7 @@
 import {ButtonGoBackComponent} from "@/components/button-go-back-component/ButtonGoBackComponent";
 import DashboardComponent from "@/components/dashboard-component/DashboardComponent";
 
-const VisitorPage = () => {
+const DashboardPage = () => {
 
     return (
         <div style={{
@@ -18,4 +18,4 @@ const VisitorPage = () => {
     );
 };
 
-export default VisitorPage;
+export default DashboardPage;

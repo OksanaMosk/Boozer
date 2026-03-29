@@ -74,7 +74,7 @@ const TravelLogisticsFormComponent: React.FC<Props> = ({ venueId }) => {
     };
 
     const handleSave = async () => {
-        if (!token) return alert("Log In please");
+        if (!token) return alert("Please Sign In");
         setLoading(true);
         try {
             await Promise.all([

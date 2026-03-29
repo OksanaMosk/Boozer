@@ -18,7 +18,7 @@
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 1px;
-    color: var(--logo-hover-color);
+    color: var(--badge-color);
     background: var(--reverse-menu-color);
     padding: 3px 6px;
     border-radius: 4px;

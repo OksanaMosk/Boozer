@@ -2,6 +2,7 @@ from rest_framework import serializers
 from .models import VenueModel, VenuePhotoModel, TableModel, TagModel, VenueTagModel
 from ..orders.serializers import TableBookingSerializer
 from django.db import transaction
+from .models import VenueModel
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -40,11 +41,12 @@ class VenueSerializer(serializers.ModelSerializer):
     photos = VenuePhotoSerializer(many=True, read_only=True)
     tables = TableSerializer(many=True, read_only=True)
     background_tables = serializers.URLField(required=False, allow_null=True)
+    is_favorite = serializers.BooleanField(read_only=True, default=False)
 
     class Meta:
         model = VenueModel
         fields = [
-            'id', 'name', 'venue_admin', 'country', 'city', 'address',
+            'id', 'name', 'is_favorite', 'venue_admin', 'country', 'city', 'address',
             'latitude', 'longitude', 'phone', 'description',
             'opening_hours', 'photos', 'tables', 'features', 'average_check',  'currency', 'rating', 'reviews_count',
             'status', 'views', 'daily_views', 'weekly_views', 'monthly_views',
@@ -82,3 +84,4 @@ class VenueSerializer(serializers.ModelSerializer):
                         instance.tags.add(tag)
 
             return instance
+

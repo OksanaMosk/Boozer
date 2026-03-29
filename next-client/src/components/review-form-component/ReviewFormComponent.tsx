@@ -5,7 +5,7 @@ import PhotoMultipleUploadComponent from "@/components/photo-multiple-upload-com
 import { LoaderComponent } from "@/components/loader-component/LoaderComponent";
 import styles from "./ReviewFormComponent.module.css";
 
-export const ReviewFormComponent = ({ venueId, onSubmit }: any) => {
+export const ReviewFormComponent = ({ venueId, onSubmit, orders }: any) => {
     const [subRatings, setSubRatings] = useState({
         food: 0,
         service: 0,
@@ -15,8 +15,8 @@ export const ReviewFormComponent = ({ venueId, onSubmit }: any) => {
     });
     const [text, setText] = useState("");
     const [loading, setLoading] = useState(false);
-    const [createdReview, setCreatedReview] = useState<any>(null); // Тут зберігаємо створений відгук
-
+    const [createdReview, setCreatedReview] = useState<any>(null);
+    const [showSuccess, setShowSuccess] = useState(false);
     const overallRating = Object.values(subRatings).reduce((a, b) => a + b, 0) / 5;
 
     const handleStarClick = (category: string, value: number) => {
@@ -25,9 +25,13 @@ export const ReviewFormComponent = ({ venueId, onSubmit }: any) => {
 
     const handleUploadComplete = (uploadedPhotos: string[]) => {
         console.log("Photos uploaded:", uploadedPhotos);
+        setShowSuccess(true);
         setCreatedReview(null);
         setText("");
-        setSubRatings({ food: 5, service: 5, atmosphere: 5, cleanliness: 5, value: 5 });
+        setSubRatings({food: 0, service: 0, atmosphere: 0, cleanliness: 0, value: 0});
+        setTimeout(() => {
+            setShowSuccess(false);
+        }, 5000);
     };
 
     const handleAddReview = async () => {
@@ -55,22 +59,28 @@ export const ReviewFormComponent = ({ venueId, onSubmit }: any) => {
             <span className={styles.starsLabel}>{label}</span>
             <ReviewStarsComponent
                 rating={value}
-                interactive={!createdReview} // Блокуємо зірки після відправки
+                interactive={!createdReview}
                 onStarClick={(val: number) => handleStarClick(category, val)}
             />
         </div>
     );
+console.log("DEBUG: venueId =", venueId);
+    console.log("DEBUG: current orders =", orders);
+    const hasOrder = orders?.some(
+        (o: any) => o.venue.toString() === venueId.toString() && o.status === "CONFIRMED"
+    );
 
-    // const hasOrder = orders?.some(
-    //     (o: any) => o.venue_id.toString() === venueId.toString() && o.status === "CONFIRMED"
-    // );
-
-    // if (!hasOrder) {
-    //     return <p style={{opacity: 0.6, fontSize: '14px'}}>Submit a review after your confirmed visit.</p>;
-    // }
+    if (!hasOrder) {
+        return <p style={{opacity: 0.6, fontSize: '14px'}}>Submit a review after your confirmed visit.</p>;
+    }
 
     return (
         <div className={styles.wrapper}>
+            {showSuccess && (
+                <div className={styles.successMessage}>
+                    Thank you! Your review and photos have been successfully published.
+                </div>
+            )}
             <h3 className={styles.title}>Average Rating: {overallRating.toFixed(1)} ✸ </h3>
 
             <div className={styles.subRatings}>
@@ -117,75 +127,3 @@ export const ReviewFormComponent = ({ venueId, onSubmit }: any) => {
     );
 };
 
-
-
-
-
-// "use client";
-// import { useState } from "react";
-// import {ReviewStarsComponent} from "@/components/review-stars-component/ReviewStarsComponent";
-// import  styles from "./ReviewFormComponent.module.css"
-//
-// export const ReviewFormComponent = ({ orders, venueId, onSubmit }: any) => {
-//  const [subRatings, setSubRatings] = useState({
-//         food: 5,
-//         service: 5,
-//         atmosphere: 5,
-//         cleanliness: 5,
-//         value: 5
-//     });
-//     const [text, setText] = useState("");
-//     const [rating, setRating] = useState(5);
-//    const overallRating = Object.values(subRatings).reduce((a, b) => a + b, 0) / 5;
-//
-//     const handleStarClick = (category: string, value: number) => {
-//         setSubRatings(prev => ({ ...prev, [category]: value }));
-//     };
-//     const RatingRow = ({ label, category, value }: any) => (
-//         <div className={styles.starsRating}>
-//             <span className={styles.starsLabel}>{label}</span>
-//             <ReviewStarsComponent
-//                 rating={value}
-//                 interactive={true}
-//                 onStarClick={(val: number) => handleStarClick(category, val)}
-//             />
-//         </div>
-//     );
-//
-//      // const hasOrder = orders?.some(
-//     //     (o: any) => o.venue_id.toString() === venueId.toString() && o.status === "CONFIRMED"
-//     // );
-//
-//     // if (!hasOrder) {
-//     //     return <p style={{opacity: 0.6, fontSize: '14px'}}>Submit a review after your confirmed visit.</p>;
-//     // }
-//
-//     return (
-//          <div className={styles.wrapper}>
-//             <h3 className={styles.title}>Average Rating: {overallRating.toFixed(1)} ✸ </h3>
-//
-//             <div className={styles.subRatings}>
-//                 <RatingRow label="Food" category="food" value={subRatings.food} />
-//                 <RatingRow label="Service" category="service" value={subRatings.service} />
-//                 <RatingRow label="Atmosphere" category="atmosphere" value={subRatings.atmosphere} />
-//                 <RatingRow label="Cleanliness" category="cleanliness" value={subRatings.cleanliness} />
-//                 <RatingRow label="Value for money" category="value" value={subRatings.value} />
-//             </div>
-//
-//              <div className={styles.section}>
-//                  <textarea className={styles.textarea}
-//                  placeholder="Share your experience..."
-//                  value={text}
-//                  onChange={(e) => setText(e.target.value)}
-//              />
-//                  <button className={styles.saveBtn}
-//                          onClick={() => {
-//                              onSubmit({rating: overallRating, sub_ratings: subRatings, text});
-//                              setText("");
-//                          }}>
-//                      Submit Review
-//                  </button>
-//              </div>
-//         </div>
-//     )
-// };

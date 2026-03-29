@@ -31,6 +31,33 @@
     padding-top: 3rem;
     font-size: 3rem;
 }
+.item {
+    position: relative;
+}
+.titleGuest {
+    padding: 0;
+    font-family: var(--font-imperial),serif;
+    font-weight: 700;
+    font-size: 2rem;
+    letter-spacing: 2px;
+    color: var(--color-text);
+    line-height: 1;
+}
+.loginLink {
+      color: var(--input-color);
+}
+.heartBtn {
+    position: absolute;
+    top: 24px;
+    right: 20px;
+    z-index: 10;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: inherit;
+    border: none;
+}
 
 @media (min-width: 768px) {
     .venuesListContainer {

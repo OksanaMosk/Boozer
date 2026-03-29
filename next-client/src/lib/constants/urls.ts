@@ -74,10 +74,13 @@ export const urls = {
         reviews: {
             list: (venueId: string) => `${paths.venues}/${venueId}/reviews/`,
             detail: (venueId: string, id: string) => `${paths.venues}/${venueId}/reviews/${id}/`,
+            like: (venueId: string, id: string | number) => `${paths.venues}/${venueId}/reviews/${id}/like/`,
+            report: (venueId: string, id: string | number) => `${paths.venues}/${venueId}/reviews/${id}/report/`,
             create: (venueId: string) => `${paths.venues}/${venueId}/reviews/`,
             update: (venueId: string, id: string) => `${paths.venues}/${venueId}/reviews/${id}/`,
             delete: (venueId: string, id: string) => `${paths.venues}/${venueId}/reviews/${id}/`,
         },
+
     },
     venuePhotos: {
         list: `${paths.photos}/`,
@@ -105,8 +108,19 @@ export const urls = {
         create: `${paths.reviews}/reviews/`,
         update: (id: string) => `${paths.reviews}/reviews/${id}/`,
         delete: (id: string) => `${paths.reviews}/reviews/${id}/`,
+        like: (id: string | number) => `${paths.reviews}/reviews/${id}/like/`,
+        report: (id: string | number) => `${paths.reviews}/reviews/${id}/report/`,
         favoritesList: `${paths.reviews}/favorites/`,
         favoritesDetail: (id: string) => `${paths.reviews}/favorites/${id}/`,
+    },
+
+    collections: {
+        list: `${paths.reviews}/collections/`,
+        detail: (id: string | number) => `${paths.reviews}/collections/${id}/`,
+    },
+    favorites: {
+        list: `${paths.reviews}/favorites/`,
+        detail: (id: string | number) => `${paths.reviews}/favorites/${id}/`,
     },
     constants: {
         constantsList: `${paths.constants}/`

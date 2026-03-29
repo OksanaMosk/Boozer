@@ -9,7 +9,8 @@ export type TabType =
     | "venues_control"
     | "news"
     | "stats"
-    | "users_control";
+    | "users_control"
+    | "manage_tops";
 
 const VALID_TABS: TabType[] = [
     "profile",
@@ -19,6 +20,7 @@ const VALID_TABS: TabType[] = [
     "news",
     "stats",
     "users_control",
+    "manage_tops"
 ];
 
 export const useDashboardTabs = () => {
@@ -35,8 +37,8 @@ export const useDashboardTabs = () => {
         const params = new URLSearchParams();
         params.set("tab", tab);
 
-        router.push(`${window.location.pathname}?${params.toString()}`, {
-            scroll: false,
+         router.replace(`?${params.toString()}`, {
+        scroll: false,
         });
     };
 

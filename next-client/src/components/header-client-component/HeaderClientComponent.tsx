@@ -27,6 +27,8 @@ export const HeaderClientComponent = () => {
         {href: "/venues", label: "Venues"},
         {href: "/news", label: "News"},
         {href: "/boozer", label: "Boozer"},
+        {href: "/dashboard", label: "Dashboard"},
+
     ];
 
     const isLoginActive = pathname === "/login";

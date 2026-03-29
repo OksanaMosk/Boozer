@@ -5,14 +5,68 @@ import Link from "next/link";
 import { IVenue } from "@/models/IVenue";
 import ChatComponent from "../chat-component/ChatComponent";
 import styles from "./VenueInfoComponent.module.css";
+import {ButtonGoBackComponent} from "@/components/button-go-back-component/ButtonGoBackComponent";
+import {HeartIcon} from "@/components/HeartIcon";
+import {AddToFavoriteModalComponent} from "@/components/add-toFavorite-modal-component/AddToFavoriteModalComponent";
+import {useUser} from "@/app/contexts/UserProvider";
+import venueServices from "@/lib/services/venueService";
 
 interface Props {
     venue: IVenue;
 }
 
-const VenueInfoComponent: React.FC<Props> = ({ venue }) => {
+const VenueInfoComponent: React.FC<Props> = ({venue}) => {
     const footerRef = useRef<HTMLDivElement>(null);
-const [isVisible, setIsVisible] = useState(false);
+    const [isVisible, setIsVisible] = useState(false);
+    const [mounted, setMounted] = useState(false);
+    const [isFavorite, setIsFavorite] = useState(!!venue.is_favorite);
+    const [showModal, setShowModal] = useState(false);
+    const [isUnauthorized, setIsUnauthorized] = useState(false);
+    const {user} = useUser();
+
+    useEffect(() => {
+        setMounted(true);
+        setIsFavorite(!!venue.is_favorite);
+        setIsUnauthorized(false);
+        if (user?.token) {
+            const auth = {accessToken: user.token};
+            const checkFavoriteStatus = async () => {
+                try {
+                    const res = await venueServices.venues.favorites(auth)(String(venue.id)).getAll();
+                    const favorites = res.data?.data || res.data || [];
+                    const exists = Array.isArray(favorites) ? favorites.length > 0 : !!favorites.id;
+                    setIsFavorite(exists);
+                } catch (error:any) {
+                     if (error.message === "Please Sign In") {
+                           setIsUnauthorized(true);
+                     }
+                    console.error("Sync favorite error:", error);
+                }
+            };
+            void checkFavoriteStatus();
+        }
+    }, [venue.id, user?.token]);
+
+    const handleToggleFavorite = async () => {
+        if (!user?.token) return;
+        const auth = {accessToken: user.token};
+
+        if (isFavorite) {
+            try {
+                await venueServices.venues.favorites(auth)(String(venue.id)).delete();
+                setIsFavorite(false);
+            } catch (error) {
+                console.error("Error removing from favorites:", error);
+            }
+        } else {
+            setShowModal(true);
+        }
+    };
+
+    const handleSuccess = () => {
+        setIsFavorite(true);
+        setShowModal(false);
+    };
 
     useEffect(() => {
         const observer = new IntersectionObserver(
@@ -58,33 +112,71 @@ const [isVisible, setIsVisible] = useState(false);
     return (
         <div>
             <div className={styles.container}>
-
                 <div className={styles.mainContainer}>
-                    {mainPhoto ? (
-                        <img
-                            src={mainPhoto.photo}
-                            alt={venue.name}
-                            width={500}
-                            height={400}
-                            className={styles.venuePoster}
-                        />
-                    ) : (
-                        <div className={styles.noPoster}>
+                    <div className={styles.photoContainer}>
+                        <div className={styles.buttonGoBack}><ButtonGoBackComponent/></div>
+                       {mounted && (!user?.token  || isUnauthorized) && (
+                            <div className={styles.authBanner}>
+                                <p className={styles.titleGuest}>
+                                    You are a guest. <Link href="/login" className={styles.loginLink}>Sign In</Link> to
+                                    save
+                                    this venue.
+                                </p>
+                            </div>
+                        )}
+                        <button
+                            className={styles.heartBtn}
+                            onClick={handleToggleFavorite}
+                            aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
+                        >
+                            <HeartIcon filled={mounted ? isFavorite : !!venue.is_favorite}/>
+                        </button>
+                        {showModal && (
+                            <AddToFavoriteModalComponent
+                                venueId={venue.id!}
+                                token={user?.token}
+                                onClose={() => setShowModal(false)}
+                                onSuccess={handleSuccess}
+                            />
+                        )}
+                        {mainPhoto ? (
                             <img
-                                src="/images/noPosterVenue.webp"
-                                alt="No poster"
+                                src={mainPhoto.photo}
+                                alt={venue.name}
                                 width={500}
                                 height={400}
-                                className={styles.placeholder}
+                                className={styles.venuePoster}
                             />
-                        </div>
-                    )}
+                        ) : (
+                            <div className={styles.noPoster}>
+                                <img
+                                    src="/images/noPosterVenue.webp"
+                                    alt="No poster"
+                                    width={500}
+                                    height={400}
+                                    className={styles.placeholder}
+                                />
+                            </div>
+                        )}</div>
 
                     <div className={styles.content}>
                         <div className={styles.contentHero}>
                             <h2 className={styles.title}>
                                 Welcome to {venue.name} in {venue.city}
                             </h2>
+                            {venue.tags && venue.tags.length > 0 && (
+                                <div className={styles.tagsWrapper}>
+                                    {venue.tags.map((tag) => (
+                                        <Link
+                                            key={tag.id}
+                                            href={`/venues?tags=${tag.name}`}
+                                            className={styles.tagBadge}
+                                        >
+                                            #{tag.name}
+                                        </Link>
+                                    ))}
+                                </div>
+                            )}
                             <Link href={`/venues/${venue.id}/reviews`} className={styles.reviewsBtn}>
                                 ✸ Reviews
                             </Link>

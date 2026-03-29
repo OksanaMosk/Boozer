@@ -50,35 +50,38 @@ const MOCK_REVIEWS = [
 export const ReviewComponent = ({review, onLike, onReport, isPlaceholder, placeholderIndex = 0}: any) => {
     const data = isPlaceholder ? MOCK_REVIEWS[placeholderIndex] : review;
     const s = data.sub_ratings || {};
-    const [likesCount, setLikesCount] = useState(data?.likes || 0);
-    const [isLiked, setIsLiked] = useState(false);
+    const [likesCount, setLikesCount] = useState(data?.likes_count || 0);
+    const [isLiked, setIsLiked] = useState(data?.is_liked || false);
     const [showReportForm, setShowReportForm] = useState(false);
-    const [reportReason, setReportReason] = useState("spam");
-    const [isReported, setIsReported] = useState(false);
-
+    const [reportReason, setReportReason] = useState("Spam");
     const [reportComment, setReportComment] = useState("");
+    const [isReported, setIsReported] = useState(false);
     if (!data) return null;
 
-    const images = (data.photos || []).map((p: any) => ({
-        image: typeof p === 'string' ? p : (p.url || p.image || p)
+    const images = (data.review_photos || []).map((p: any) => ({
+        image: p.photo
     }));
 
-
-     const handleLike = async () => {
+    const handleLike = async () => {
         try {
             if (onLike) await onLike(data.id);
-            setLikesCount((prev: number) => isLiked ? prev - 1 : prev + 1);
+              setLikesCount((prev: number) => isLiked ? prev - 1 : prev + 1);
             setIsLiked(!isLiked);
         } catch (error) {
             console.error("Like failed", error);
         }
     };
 
-    const handleReport = () => {
-        const confirmReport = window.confirm("Do you want to report this review for inappropriate content?");
-        if (confirmReport && onReport) {
-            onReport(data.id);
-            alert("Thank you. The report has been sent to moderation.");
+    const handleSendReport = () => {
+        if (onReport) {
+            onReport(data.id, {
+                reason: reportReason,
+                comment: reportComment
+            });
+            setShowReportForm(false);
+            setIsReported(true);
+            setReportComment("");
+            setTimeout(() => setIsReported(false), 3000);
         }
     };
 
@@ -89,7 +92,7 @@ export const ReviewComponent = ({review, onLike, onReport, isPlaceholder, placeh
                 <div className={styles.about}>
                     <div className={styles.text}>
                         <div className={styles.subTitle}>
-                            {data.user?.name || "Anonymous Guest"}
+                            {data.author_name || "Anonymous Guest"}
                             {(data.status === "is_active" || data.status === "active") && (
                                 <div className={styles.statusWrapper}>
                                     <span className={styles.statusDot} title="Online"/>
@@ -99,9 +102,15 @@ export const ReviewComponent = ({review, onLike, onReport, isPlaceholder, placeh
                         </div>
                         <div className={styles.contentWrapper}>
                             <p className={styles.contentText}>
-                                {data.text || data.description || "No comment provided."}
+                                {data.comment || "No comment provided."}
                             </p>
                         </div>
+                        {data.owner_reply && (
+                            <div className={styles.ownerReply}>
+                                <strong>Owner's reply:</strong>
+                                <p>{data.owner_reply}</p>
+                            </div>
+                        )}
                     </div>
 
                     <div className={styles.buttonGroup}>
@@ -124,19 +133,14 @@ export const ReviewComponent = ({review, onLike, onReport, isPlaceholder, placeh
                                         onChange={(e) => setReportReason(e.target.value)}
                                         className={styles.select}
                                     >
-                                        <option value="спам">Spam</option>
-                                        <option value="фейк">Fake</option>
-                                        <option value="образи">Abuse</option>
-                                        <option value="інше">Other</option>
+                                        <option value="Spam">Spam</option>
+                                        <option value="Fake">Fake</option>
+                                        <option value="Abuse">Abuse</option>
+                                        <option value="Other">Other</option>
                                     </select>
                                     <div className={styles.reportActionButtons}>
-                                        <button onClick={() => {
-                                            onReport(data.id, {reason: reportReason, comment: reportComment});
-                                            setShowReportForm(false);
-                                            setIsReported(true);
-                                            setReportComment("");
-                                            setTimeout(() => setIsReported(false), 3000);
-                                        }} className={styles.sendReportBtn}>Send
+                                        <button onClick={handleSendReport}
+                                                className={styles.sendReportBtn}>Send
                                         </button>
 
                                         <button onClick={() => setShowReportForm(false)}
@@ -145,18 +149,19 @@ export const ReviewComponent = ({review, onLike, onReport, isPlaceholder, placeh
                                     </div>
                                 </div>
 
-                                <div className={styles.send} >
+                                <div className={styles.send}>
                                     <label className={styles.labelSelect}>Add more details (optional)...</label>
                                     <textarea
-                                    className={styles.reportTextarea}
-                                    value={reportComment}
-                                    onChange={(e) => setReportComment(e.target.value)}
-                                />
+                                        placeholder="Tell us more..."
+                                        className={styles.reportTextarea}
+                                        value={reportComment}
+                                        onChange={(e) => setReportComment(e.target.value)}
+                                    />
                                 </div>
                             </div>
                         )}
                     </div>
-                    {isReported && <div className={styles.bottomAlert}>✅ Report sent</div>}
+                    {isReported && <div className={styles.bottomAlert}>Report sent</div>}
                 </div>
 
                 {images.length > 0 && (

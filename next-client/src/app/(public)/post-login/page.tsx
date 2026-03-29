@@ -34,16 +34,7 @@ export default function PostLoginPage() {
         return;
       }
 
-      switch (session.user.role) {
-        case "admin":
-          router.replace("/admin");
-          break;
-        case "venue_admin":
-          router.replace("/venue-admin");
-          break;
-        default:
-          router.replace("/visitor");
-      }
+       router.replace("/dashboard");
     };
 
     redirectUser().finally(() => {

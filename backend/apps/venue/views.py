@@ -13,6 +13,7 @@ from .services.geocode import geocode_city
 from .services.venue_constants_service import get_venue_constants
 from .services.venue_service import get_user_venues
 from ..user.permissions import IsAdminOrVenueAdminOrReadOnly
+from django.db.models import Exists, OuterRef
 
 
 class VenueViewSet(viewsets.ModelViewSet):
@@ -26,15 +27,24 @@ class VenueViewSet(viewsets.ModelViewSet):
 
     permission_classes = [IsAdminOrVenueAdminOrReadOnly]
 
-    def get_queryset(self):
-        qs = super().get_queryset()
-        tags_param = self.request.query_params.get('tags__name')
 
+    def get_queryset(self):
+        from apps.reviews_feedback.models import FavoriteVenue
+        qs = VenueModel.objects.all()
+        user = self.request.user
+
+        if user.is_authenticated:
+            is_favorite_subquery = FavoriteVenue.objects.filter(
+                user=user,
+                venue_id=OuterRef('pk')
+            )
+            qs = qs.annotate(is_favorite=Exists(is_favorite_subquery))
+
+        tags_param = self.request.query_params.get('tags__name')
         if tags_param:
             tags_list = [t.strip().lower() for t in tags_param.split(',') if t.strip()]
             if tags_list:
                 qs = qs.filter(tags__name__in=tags_list).distinct()
-
 
         return qs.order_by('id', '-rating')
 

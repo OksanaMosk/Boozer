@@ -22,21 +22,13 @@ const LoginComponent = () => {
         setErrorMsg("");
 
         try {
-            const user = await authService.login({email, password});
+            await authService.login({email, password});
             const callbackUrl = searchParams.get('callbackUrl');
             if (callbackUrl) {
                 return router.push(callbackUrl);
             }
-            switch (user.role) {
-                case "admin":
-                    router.push("/admin");
-                    break;
-                case "venue_admin":
-                    router.push("/venue-admin");
-                    break;
-                default:
-                    router.push("/visitor");
-            }
+            router.push("/dashboard");
+
         } catch (err: unknown) {
             if (err instanceof Error) setErrorMsg(err.message);
             else setErrorMsg("Unknown error");

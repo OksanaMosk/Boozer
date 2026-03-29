@@ -110,7 +110,7 @@
     linear-gradient(90deg, #f9f295, #ae8625, #faf398, #b88a44);
     background-origin: border-box;
     background-clip: padding-box, border-box;
-   color: var(--input-color);
+    color: var(--input-color);
     font-size: 1.5rem;
     font-weight: 700;
     text-transform: uppercase;

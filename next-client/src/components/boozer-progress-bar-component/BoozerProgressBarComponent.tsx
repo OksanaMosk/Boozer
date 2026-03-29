@@ -44,7 +44,7 @@ export const BoozerProgressBarComponent: React.FC<Props> = ({currentStep, orderI
                     setSeconds(dataRes.remaining_seconds);
                 }
             } catch (error: any) {
-               const isAuthError = error?.message === "Please log in" || error?.status === 401;
+               const isAuthError = error?.message === "Please Sign In" || error?.status === 401;
                 const isExpiredError = error.response?.status === 410;
 
                 if ((isAuthError || isExpiredError) && onExpire) {

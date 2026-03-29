@@ -44,7 +44,6 @@ export default function VenuePageClientComponent({venueId}: VenuePageClientProps
 
     return (
         <div>
-            <ButtonGoBackComponent/>
             <VenueInfoComponent venue={venue}/>
             <ButtonScrollTopComponent/>
         </div>
