@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, {useCallback, useEffect, useMemo, useState} from "react";
 import {
     DndContext,
     DragOverlay,
@@ -31,24 +31,35 @@ const TopManagerComponent = () => {
     const { user } = useUser();
     const searchParams = useSearchParams();
     const sourceCategory = searchParams.get("category");
-
+    const targetColId = searchParams.get("colId");
     const [collections, setCollections] = useState<any[]>([]);
     const [items, setItems] = useState<any[]>([]);
     const [activeId, setActiveId] = useState<string | number | null>(null);
-
     const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 8 } }));
 
-    const loadData = async () => {
+      const loadData = useCallback(async () => {
         if (!user?.token || !user?.id) return;
         const auth = { accessToken: user.token };
+
         try {
-            const resCols = await venueServices.collections(auth).getAll();
-            const cols = resCols.data?.data || resCols.data || [];
-            setCollections(cols);
+            const [resCols, resStaff] = await Promise.all([
+                venueServices.collections(auth).getAll(),
+                venueServices.collections(auth).staffTop()
+            ]);
+
+            const userCols = resCols.data?.data || resCols.data || [];
+            const staffCols = resStaff.data || resStaff.data || [];
+            const combined = [...userCols, ...staffCols];
+            const filteredCols = combined.filter((col: any) =>
+                String(col.id) === String(targetColId) || col.is_staff_top === true
+            );
+
+            const uniqueCols = Array.from(new Map(filteredCols.map(c => [c.id, c])).values());
+            setCollections(uniqueCols);
 
             let allItems: any[] = [];
             if (sourceCategory) {
-                const resCan = await venueServices.favorites.getCandidates(sourceCategory, {accessToken: user.token});
+                const resCan = await venueServices.favorites.getCandidates(sourceCategory, auth);
                 const candidates = (resCan.data || []).map((can: any) => ({
                     id: `can-${can.venue_id}`,
                     venue: {
@@ -64,19 +75,18 @@ const TopManagerComponent = () => {
                 }));
                 allItems = [...candidates];
             }
-
-            const res:AxiosResponse = await venueServices.venues.favorites({accessToken: user.token})(user.id).getAll();
-            const existing = Array.isArray(res.data) ? res.data : (res.data?.data || []);
+            const resExisting: AxiosResponse = await venueServices.venues.favorites(auth)(user.id).getAll();
+            const existing = Array.isArray(resExisting.data) ? resExisting.data : (resExisting.data?.data || []);
             setItems([...allItems, ...existing]);
 
         } catch (e) {
-            console.error(e);
+            console.error("Error load", e);
         }
-    };
+    }, [user?.token, user?.id, sourceCategory, targetColId]);
 
     useEffect(() => {
         if (user?.token) void loadData();
-    }, [user?.token, sourceCategory]);
+    }, [loadData]);
 
     const grouped = useMemo(() => {
         const map: Record<string, any[]> = { "pool": [] };
@@ -150,7 +160,7 @@ const TopManagerComponent = () => {
         setItems(newItems);
         if (targetCollectionId !== "pool") {
             try {
-                const auth = { accessToken: user.token };
+
                 const collectionItems = newItems
                     .filter(i => String(i.collection_id) === targetCollectionId)
                     .map((i, idx) => ({
@@ -172,6 +182,7 @@ const TopManagerComponent = () => {
 
     return (
         <div className={styles.wrapper}>
+            НЕ ДОРОБИЛА
             <TopCreateComponent
                 role={user.role}
                 viewMode={user.role === 'admin' ? 'official' : 'personal'}

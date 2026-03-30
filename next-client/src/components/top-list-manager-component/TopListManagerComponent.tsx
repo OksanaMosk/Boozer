@@ -2,42 +2,42 @@
 import styles from "./TopListManagerComponent.module.css";
 import React, { useEffect, useState, useCallback } from "react";
 import venueServices from "@/lib/services/venueService";
-import { AxiosResponse } from "axios";
 import { useRouter } from "next/navigation";
 import { LoaderComponent } from "@/components/loader-component/LoaderComponent";
 import { useUser } from "@/app/contexts/UserProvider";
 
 interface Props {
-    token: string;
     userId: string;
 }
 
-export const TopListManagerComponent: React.FC<Props> = ({ token }) => {
+export const TopListManagerComponent: React.FC<Props> = () => {
     const router = useRouter();
     const { user } = useUser();
     const [collections, setCollections] = useState<any[]>([]);
     const [candidates, setCandidates] = useState<any[]>([]);
     const [loadingCandidates, setLoadingCandidates] = useState(false);
     const [activeCandidateColId, setActiveCandidateColId] = useState<string | null>(null);
-    const auth = { accessToken: token };
+
     const loadData = useCallback(async () => {
-        try {
-            const res: AxiosResponse = await venueServices.collections(auth).getAll();
-            setCollections(res.data.data || res.data || []);
-        } catch (e) {
-            console.error("Load error:", e);
-            setCollections([]);
-        }
-    }, [token]);
+    try {
+        if (!user?.token) return
+        const res = await venueServices.collections({accessToken: user.token}).mostHearted();
+        setCollections(res.data || []);
+        console.log('Top:', res.data);
 
-    useEffect(() => {
-        void loadData();
-    }, [loadData]);
+    } catch (e) {
+        console.error("Load error:", e);
+        setCollections([]);
+    }
+}, [user?.token]);
 
-    const handleShowCandidates = async (colId: string, category: string) => {
+useEffect(() => {
+    void loadData();
+}, [loadData]);
+
+    const handleShowCandidates = async ( category: string) => {
         if (!user?.token) return;
-
-        if (activeCandidateColId === colId) {
+        if (activeCandidateColId === category) {
             setActiveCandidateColId(null);
             setCandidates([]);
             return;
@@ -45,9 +45,9 @@ export const TopListManagerComponent: React.FC<Props> = ({ token }) => {
 
         try {
             setLoadingCandidates(true);
-            setActiveCandidateColId(colId);
+            setCandidates([]);
+            setActiveCandidateColId(category);
             const res = await venueServices.favorites.getCandidates(category, { accessToken: user.token });
-
             if (res.data && Array.isArray(res.data)) {
                 setCandidates(res.data);
             } else {
@@ -59,55 +59,64 @@ export const TopListManagerComponent: React.FC<Props> = ({ token }) => {
             setLoadingCandidates(false);
         }
     };
+    const normalize = (s?: string) => s?.toLowerCase().trim() || "";
+    const formatCategory = (s?: string) => {
+        const n = normalize(s);
+        if (!n) return "Other";
+        return n.charAt(0).toUpperCase() + n.slice(1);
+    };
 
     return (
         <div className={styles.container}>
-            <div className={styles.header}>
-            </div>
-
-            <div className={styles.grid}>
-                {collections.map(col => (
-                    <div key={col.id} className={styles.collectionCard}>
-                        <div className={styles.cardInfo}>
-                            <h3 className={styles.collectionName}>{col.name || col.category}</h3>
-                            <p className={styles.categoryLabel}>Category: {col.category}</p>
-                        </div>
-
+            <div className={styles.wrapper}>
+                <h2 className={styles.title}>Most Hearted by users to form TOP collections</h2>
+                <ul className={styles.list} >
+                    {collections.map(col => (
+                    <li key={col.category} className={styles.collectionCard}>
+                            <h3 className={styles.categoryLabel}>
+                                Category: {formatCategory(col.category)}
+                            </h3>
+                            <p className={styles.total}>{col.total_hearts} 💛</p>
                         <div className={styles.buttonGroup}>
                             <button
                                 className={styles.openBtn}
-                                   onClick={() => router.push(`/admin/top-create?colId=${col.id}&category=${col.category}`)}
+                                onClick={() => router.push(`/admin/top-create?colId=${col.id}&category=${col.category}`)}
                             >
                                 Open & Sort
                             </button>
                             <button
                                 className={styles.candidateBtn}
-                                onClick={() => handleShowCandidates(col.id, col.category)}
+                                onClick={() => handleShowCandidates( col.category)}
                             >
                                 Candidates Venue
                             </button>
                         </div>
 
-                        {activeCandidateColId === col.id && (
+                       {activeCandidateColId === col.category && (
                             <div className={styles.candidatesDropdown}>
-                                <h4>Top Candidates:</h4>
-                                {loadingCandidates ? <LoaderComponent /> : (
-                                    <div className={styles.candidatesList}>
+                                <h4 className={styles.candidatesTitle}>TOP Candidates:</h4>
+
+                                {loadingCandidates ?
+                                   ( <div className={styles.loader}>
+                                        <LoaderComponent/>
+                                    </div>): (
+                                    <ul className={styles.candidatesList}>
                                         {candidates.length > 0 ? (
                                             candidates.map(can => (
-                                                <div key={can.venue_id} className={styles.candidateRow}>
-                                                    <span>{can.venue__name} ({can.total_votes} 🗳️)</span>
-                                                </div>
+                                                <li key={can.venue_id} className={styles.candidate}>
+                                                    <p className={styles.candidateP}>{can.venue__name} </p>
+                                                    <p className={styles.candidateP}> {can.total_votes} 💛</p>
+                                                </li>
                                             ))
                                         ) : (
                                             <p>No candidates found for this category.</p>
                                         )}
-                                    </div>
+                                    </ul>
                                 )}
                             </div>
                         )}
-                    </div>
-                ))}
+                    </li>
+                ))}</ul>
             </div>
         </div>
     );

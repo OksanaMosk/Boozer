@@ -260,13 +260,16 @@ const venueServices = {
             is_staff_top?: boolean
         }) => api(token).post(urls.collections.list, data),
         delete: (id: string | number) => api(token).delete(urls.collections.detail(id)),
-        reorderItems: (id: string | number, items: any[]) => api(token).patch(`${urls.collections.detail(id.toString())}reorder/`, items),
+        reorderItems: (id: string | number, items: any[]) => api(token).patch(urls.collections.reorder(id), items),
+        // reorderItems: (id: string | number, items: any[]) => api(token).patch(`${urls.collections.detail(id.toString())}reorder/`, items),
+        staffTop: () => api(token).get<IFavoriteCollection[]>(urls.collections.staffTop),
+        mostHearted: () => api(token).get<any[]>(urls.collections.mostHearted),
     }),
 
     favorites: {
         list: (token?: Token) => api(token).get<any>(urls.favorites.list),
         detail: (id: string | number, token?: Token) => api(token).get<any>(urls.favorites.detail(id)),
-        getCandidates: (category: string, token?: Token) => api(token).get(`${urls.favorites.list}candidates/`, { params: { category } }),
+        getCandidates: (category: string, token?: Token) => api(token).get(`${urls.favorites.candidates}`, { params: { category } }),
     },
     constants: {
         getConstants: () => api().get(urls.constants.constantsList),

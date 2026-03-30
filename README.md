@@ -16,7 +16,7 @@ Or
 Local Next: npm install, npm run dev or npm run build
 
 Docker Backend docker compose up --build app redis celery celery-beat
-Access & Credentials. Once the containers are running, you can log in with: Admin Email: admin@gmail.com. Password: 111111.
+Access & Credentials. Once the containers are running, you can log in with: Admin Email: admin@gmail.com. Password: 111111(kkkkkk).
 
 🧪 API Testing (Postman).
 The project includes a pre-configured Postman collection and environment to help you start testing the API immediately.
@@ -87,6 +87,7 @@ The backend: validates the token with the provider retrieves user data. After su
 
 🔒 Access Rules: Browsing — public, Orders & real pricing — authenticated users only.
 
-🚧 In Progress: Reviews system, Favorites, Discounts & bonus system,  Notifications, Extended news system, Admin panel (partial), Statistics, Tags system, Average check calculations, Chat.
+🚧 In Progress: Reviews, TOPs, Discounts & bonus system,  News (partial), Admin panel (partial), Statistics,  Average check calculations, Chat.
+Postman collection is not tested for the Favorites, Review.
 
 🎊 Product Vision VIP Boozer is more than booking — it’s a full experience: travel, entertainment, comfort, personalization.

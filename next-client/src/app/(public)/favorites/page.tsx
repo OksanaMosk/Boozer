@@ -17,16 +17,9 @@ const FavoritesPage = () => {
             margin: '80px auto'
         }}>
             <ButtonGoBackComponent />
-
-            <h1 style={{ marginBottom: '20px' }}>
-                {user.role === 'admin' ? "Manage Official TOPs" : "My Favorite Lists"}
-            </h1>
             <FavoriteManagerComponent
-                role={user.role}
                 userId={String(user.id)}
-                token={user.token || ""}
             />
-
             <ButtonScrollTopComponent />
         </div>
     )

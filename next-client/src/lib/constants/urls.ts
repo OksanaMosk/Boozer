@@ -111,16 +111,19 @@ export const urls = {
         like: (id: string | number) => `${paths.reviews}/reviews/${id}/like/`,
         report: (id: string | number) => `${paths.reviews}/reviews/${id}/report/`,
         favoritesList: `${paths.reviews}/favorites/`,
-        favoritesDetail: (id: string) => `${paths.reviews}/favorites/${id}/`,
     },
 
     collections: {
         list: `${paths.reviews}/collections/`,
         detail: (id: string | number) => `${paths.reviews}/collections/${id}/`,
+        reorder: (id: string | number) => `${paths.reviews}/collections/${id}/reorder/`,
+        staffTop: `${paths.reviews}/collections/staff_top/`,
+        mostHearted: `${paths.reviews}/collections/most_hearted/`,
     },
     favorites: {
         list: `${paths.reviews}/favorites/`,
         detail: (id: string | number) => `${paths.reviews}/favorites/${id}/`,
+        candidates: `${paths.reviews}/favorites/candidates/`,
     },
     constants: {
         constantsList: `${paths.constants}/`

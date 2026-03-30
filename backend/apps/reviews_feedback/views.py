@@ -2,13 +2,12 @@ from rest_framework import viewsets, filters, status, permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
-from django.db.models import Q
 from .models import ReviewModel, FavoriteVenue, FavoriteCollection
 from .serializers import (
     ReviewSerializer, FavoriteVenueSerializer,
     ReviewReportSerializer, FavoriteCollectionSerializer
 )
-from .services.favorite_service import FavoriteService
+from .services.favorite_service import FavoriteService, FavoriteCollectionService
 from .services.review_service import ReviewService
 
 from ..user.permissions import IsAdmin, IsVisitorOrReadOnly, IsGuestReadOnly
@@ -63,11 +62,13 @@ class ReviewViewSet(viewsets.ModelViewSet):
 class FavoriteCollectionViewSet(viewsets.ModelViewSet):
     serializer_class = FavoriteCollectionSerializer
     permission_classes = [permissions.IsAuthenticated]
+    pagination_class = None
 
     def get_queryset(self):
         return FavoriteCollection.objects.filter(
-            Q(user=self.request.user) | Q(is_staff_top=True)
-        ).distinct()
+            user=self.request.user,
+            is_staff_top=False
+        )
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
@@ -89,10 +90,22 @@ class FavoriteCollectionViewSet(viewsets.ModelViewSet):
 
         return Response({'status': 'order updated'})
 
+    @action(detail=False, methods=['get'])
+    def staff_top(self, request):
+        qs = FavoriteCollectionService.get_staff_top_collections()
+        serializer = self.get_serializer(qs, many=True)
+        return Response(serializer.data)
+
+    @action(detail=False, methods=['get'], permission_classes=[permissions.AllowAny])
+    def most_hearted(self, request):
+        data = FavoriteCollectionService.get_most_hearted_collections(limit=5)
+        return Response(list(data))
+
 class FavoriteVenueViewSet(viewsets.ModelViewSet):
     queryset = FavoriteVenue.objects.all()
     serializer_class = FavoriteVenueSerializer
     permission_classes = [permissions.IsAuthenticated]
+    pagination_class = None
 
     def get_queryset(self):
         queryset = FavoriteVenue.objects.filter(user=self.request.user)

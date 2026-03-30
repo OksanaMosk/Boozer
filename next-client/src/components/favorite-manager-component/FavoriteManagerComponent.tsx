@@ -1,55 +1,46 @@
 "use client";
-
 import React, { useEffect, useMemo, useState } from "react";
-import Link from "next/link";
 import venueServices from "@/lib/services/venueService";
-import { HeartIcon } from "@/components/HeartIcon";
 import { LoaderComponent } from "@/components/loader-component/LoaderComponent";
-
 import styles from "./FavoriteManagerComponent.module.css";
-import {
+import {CATEGORY_LABELS,
     IFavoriteCollection,
     IFavoriteCollectionDetail,
-    IFavoriteItem, TopCategoryType
+    INITIAL_CATEGORIES,
+    TopCategoryType
 } from "@/models/IReviewFeedback";
-import {IVenue} from "@/models/IVenue";
 import VenuesComponent from "@/components/venues-component/VenuesComponent";
+import {useUser} from "@/app/contexts/UserProvider";
 
 interface Props {
-    token: string;
     userId: string;
-    role: string;
 }
 
-const INITIAL_CATEGORIES = [
-    { value: "wedding", label: "Wedding" },
-    { value: "corporate", label: "Corporate" },
-    { value: "birthday", label: "Birthday" },
-];
+const normalize = (s?: string) => s?.toLowerCase().trim() || "";
 
-const normalize = (s?: string) => s?.toLowerCase().trim();
-
-export const FavoriteManagerComponent: React.FC<Props> = ({ token }) => {
+export const FavoriteManagerComponent: React.FC<Props> = () => {
     const [collections, setCollections] = useState<IFavoriteCollection[]>([]);
     const [selectedCollection, setSelectedCollection] = useState<IFavoriteCollectionDetail | null>(null);
     const [selectedCategory, setSelectedCategory] = useState<string>("");
-
     const [loading, setLoading] = useState(true);
-    const [isCreating, setIsCreating] = useState(false);
-    const [newListName, setNewListName] = useState("");
-    const [mounted, setMounted] = useState(false);
-
-    const auth = {accessToken: token};
+    const [listLoading, setListLoading] = useState(false);
+    const {user} = useUser()
+    useEffect(() => {
+        if (user?.token) {
+            void fetchCollections();
+        }
+    }, [user?.token])
 
     const fetchCollections = async () => {
+        if (!user?.token) return
         try {
-            const res = await venueServices.collections(auth).getAll();
+            const res = await venueServices.collections({accessToken: user.token}).getAll();
             const data = (res.data as any)?.data || res.data || [];
             setCollections(data);
-
             if (!selectedCategory && data.length > 0) {
-                setSelectedCategory(normalize(data[0].category) || "");
+                setSelectedCategory(normalize(data[0]?.category) || "");
             }
+
         } catch (e) {
             console.error(e);
         } finally {
@@ -59,14 +50,14 @@ export const FavoriteManagerComponent: React.FC<Props> = ({ token }) => {
 
     const allCategories = useMemo(() => {
         const base = [...INITIAL_CATEGORIES];
-
         collections.forEach(col => {
             const val = normalize(col.category);
             if (val && !base.find(c => c.value === val)) {
-                base.push({
-                    value: val,
-                    label: col.category_display || col.category
-                });
+                const displayLabel = col.category_display || (CATEGORY_LABELS as any)[val] || col.category;
+            base.push({
+                    value: val as TopCategoryType,
+                label: displayLabel
+            });
             }
         });
 
@@ -75,17 +66,22 @@ export const FavoriteManagerComponent: React.FC<Props> = ({ token }) => {
 
     const fetchCollectionDetails = async () => {
         if (!selectedCategory) return;
-
+        setSelectedCollection(null);
+         setListLoading(true);
         const found = collections.find(
             c => normalize(c.category) === normalize(selectedCategory)
         );
 
         if (found && found.id != null) {
             try {
-                const res = await venueServices.collections(auth).get(found.id);
+                if (!user?.token) return
+                const res = await venueServices.collections({accessToken: user.token}).get(found.id);
                 setSelectedCollection(res.data as IFavoriteCollectionDetail);
             } catch (e) {
                 console.error(e);
+
+            } finally {
+                setListLoading(false);
             }
         } else {
             setSelectedCollection({
@@ -97,55 +93,16 @@ export const FavoriteManagerComponent: React.FC<Props> = ({ token }) => {
                 items: [],
                 venues: []
             });
+             setListLoading(false);
         }
-    };
 
-    useEffect(() => {
-        setMounted(true);
-        void fetchCollections();
-    }, []);
+    };
 
     useEffect(() => {
         if (selectedCategory) {
             void fetchCollectionDetails();
         }
-    }, [selectedCategory]);
-
-    const handleCreateList = async () => {
-        if (!newListName.trim()) return;
-
-        try {
-            await venueServices.collections(auth).create({
-                name: newListName,
-                category: newListName
-            });
-
-            setNewListName("");
-            setIsCreating(false);
-
-            await fetchCollections();
-            setSelectedCategory(normalize(newListName) || "");
-        } catch (e) {
-            console.error(e);
-        }
-    };
-
-    const handleUnfavorite = async (venueId: string) => {
-        try {
-            await venueServices.venues.favorites(auth)(venueId).delete();
-
-            if (selectedCollection) {
-                setSelectedCollection({
-                    ...selectedCollection,
-                    items: selectedCollection.items.filter(
-                        item => String(item.venue.id) !== venueId
-                    )
-                });
-            }
-        } catch (error) {
-            console.error(error);
-        }
-    };
+      }, [selectedCategory, collections]);
 
     useEffect(() => {
     const handleVenueDeleted = (event: any) => {
@@ -169,64 +126,44 @@ export const FavoriteManagerComponent: React.FC<Props> = ({ token }) => {
 
     return (
         <div className={styles.container}>
-            <div className={styles.header}>
-                <div className={styles.topRow}>
-                    <div className={styles.selectWrapper}>
-                        <label className={styles.label}>Select list:</label>
-                        <select
-                            value={selectedCategory}
-                            onChange={(e) => setSelectedCategory(e.target.value)}
-                            className={styles.select}
-                        >
-                            {allCategories.map(cat => (
-                                <option key={cat.value} value={cat.value}>
-                                    {cat.label}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
+            <div className={styles.selectWrapper}>
+                <h2 className={styles.title}>My Favorite Places</h2>
+                <img className={styles.image} alt="logo" src="/favicon/android-chrome-192x192.png"/>
+                <label className={styles.label}>Select list:</label>
+                <select
+                    value={selectedCategory}
+                    onChange={(e) => setSelectedCategory(e.target.value)}
+                    className={styles.select}
+                >
+                    {allCategories.map(cat => (
+                        <option key={cat.value} value={cat.value}>
+                            {cat.label}
+                        </option>
+                    ))}
+                </select>
+            </div>
 
-                    <button
-                        className={styles.createBtn}
-                        onClick={() => setIsCreating(!isCreating)}
-                    >
-                        {isCreating ? "Cancel" : "+ Create list"}
-                    </button>
+            {listLoading ? (
+                <div className={styles.listLoader}>
+                    <LoaderComponent/>
                 </div>
-
-                {isCreating && (
-                    <div className={styles.createBox}>
-                        <input
-                            className={styles.input}
-                            placeholder="New list name..."
-                            value={newListName}
-                            onChange={(e) => setNewListName(e.target.value)}
-                            autoFocus
-                        />
-                        <button className={styles.saveBtn} onClick={handleCreateList}>
-                            Save
-                        </button>
-                    </div>
-                )}
-
-                <div className={styles.infoRow}>
-                    <h1 className={styles.title}>{selectedCategoryLabel}</h1>
-                    <p className={styles.stats}>
-                        ❤️ {selectedCollection?.venues?.length || 0} saved properties
+            ) : (
+                <>
+                    <p className={styles.infoRow}>
+                        {selectedCollection?.venues?.length || 0} saved venues in category "{selectedCategoryLabel}"
                     </p>
-                </div>
-            </div>
-            <div className={styles.grid}>
-                {selectedCollection?.venues?.length ? (
-                    <VenuesComponent
-                        venues={selectedCollection.venues.map(v => ({
-                            ...v,
-                            is_favorite: true
-                        }))}
-                        totalPages={1}
-                    />) : (<div className={styles.empty}>This list is empty.</div>
-                )}
-            </div>
+                    <div className={styles.list}>
+                        {selectedCollection?.venues?.length ? (
+                            <VenuesComponent
+                                venues={selectedCollection.venues.map(v => ({
+                                    ...v,
+                                    is_favorite: true
+                                }))}
+                                totalPages={1}/>) : (<div className={styles.empty}>This list is empty.</div>
+                        )}
+                    </div>
+                </>
+            )}
         </div>
     );
 }

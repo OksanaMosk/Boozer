@@ -54,6 +54,28 @@ class FavoriteCollectionSerializer(serializers.ModelSerializer):
         model = FavoriteCollection
         fields = ['id', 'name', 'category', 'category_display', 'is_staff_top', 'order', 'items_count', 'venues']
 
+    def validate(self, attrs):
+        # 1. List of system categories that cannot be marked as Staff Top
+        SYSTEM_CATEGORIES = ['wedding', 'corporate', 'birthday', 'general']
+
+        # 2. Get current values (handling both POST and PATCH requests)
+        # Use existing instance data if fields are missing in the request
+        name = attrs.get('name', self.instance.name if self.instance else "")
+        category = attrs.get('category', self.instance.category if self.instance else "")
+        is_staff_top = attrs.get('is_staff_top', self.instance.is_staff_top if self.instance else False)
+
+        # 3. Validation logic
+        if is_staff_top:
+            if name.lower() in SYSTEM_CATEGORIES or category.lower() in SYSTEM_CATEGORIES:
+                raise serializers.ValidationError({
+                    "is_staff_top": (
+                        f"System category '{name}' cannot be marked as Staff Top. "
+                        f"These names are reserved for base user collections to prevent logic conflicts."
+                    )
+                })
+
+        return attrs
+
     def get_venues(self, obj):
         items = obj.items.select_related('venue').all().order_by('position')
         venues_list = [item.venue for item in items]

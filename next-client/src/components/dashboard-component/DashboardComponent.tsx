@@ -12,7 +12,6 @@ import ProfileComponent from "@/components/profile-component/ProfileComponent";
 import { FavoriteManagerComponent } from "@/components/favorite-manager-component/FavoriteManagerComponent";
 import VenueListingComponent from "@/components/venue-listing-component/VenueListingComponent";
 import AdminUserManagementComponent from "@/components/admin-user-management-component/AdminUserManagementComponent";
-import ChatComponent from "@/components/chat-component/ChatComponent";
 import { getCurrentLevelDiscount, getNextLevelDiscount } from "@/lib/services/getCurrentLevelDiscount";
 import styles from "./DashboardComponent.module.css";
 import {LoaderComponent} from "@/components/loader-component/LoaderComponent";
@@ -38,7 +37,7 @@ const DashboardComponent: React.FC = () => {
     const DASHBOARD_TABS = useMemo(() => [
         { id: "profile", label: "My Profile", show: true },
         { id: "favorites", label: "My Favorites", show: true },
-        { id: "manage_tops", label: "🌟 Manage Tops", show: isAdmin },
+        { id: "manage_tops", label: "🎊 Manage Tops", show: isAdmin },
         { id: "venues_control", label: "My Venues", show: isVenueAdmin },
         { id: "users_control", label: "Users", show: isAdmin },
         { id: "my_activity", label: "Orders & Activity", show: true },
@@ -86,12 +85,12 @@ const DashboardComponent: React.FC = () => {
         setVenues((prev) => prev.filter((v) => v.id !== venueId));
     };
 
-    if (userLoading) return <div className={styles.loaderWrapper}><LoaderComponent /></div>;
+    if (userLoading) return <div className={styles.loaderWrapper}><LoaderComponent/></div>;
     if (!user) return <p className={styles.titleLog}>Please Sign In to access your dashboard.</p>;
 
     const dashboardStats = isVenueAdmin
-        ? [{ label: "My Venues", value: venues.length }, { label: "Total Views", value: "1.2k" }]
-        : [{ label: "Reviews", value: reviewCount }, { label: "Discount", value: `${currentLevel.discount}%` }];
+        ? [{label: "My Venues", value: venues.length}, {label: "Total Views", value: "1.2k"}]
+        : [{label: "Reviews", value: reviewCount}, {label: "Discount", value: `${currentLevel.discount}%`}];
 
     return (
         <div className={styles.wrapper}>
@@ -111,61 +110,69 @@ const DashboardComponent: React.FC = () => {
             <div className={styles.mainContent}>
                 {activeTab === "favorites" && (
                     <section className={styles.section}>
-                        <h2>My Favorite Places</h2>
                         <FavoriteManagerComponent
-                            role={user.role}
                             userId={String(user.id)}
-                            token={user.token!}
                         />
                     </section>
                 )}
 
                 {activeTab === "manage_tops" && isAdmin && (
                     <section className={styles.section}>
-                        <h2>🌟 Global Staff Picks & Top Collections</h2>
                         <TopListManagerComponent
                             userId={String(user.id)}
-                            token={user.token!}
                         />
                     </section>
                 )}
 
                 {activeTab === "profile" && (
                     <div className={styles.profileSection}>
+                        {nextLevel && (
+                            <div className={styles.loyaltyProgress}>
+                                <p>Write <strong>{nextLevel.minReviews - reviewCount}</strong> more reviews to
+                                    unlock <strong>{nextLevel.discount}%</strong>!</p>
+                            </div>
+                        )}
                         <ProfileComponent
                             user={user}
                             stats={[
                                 ...dashboardStats,
-                                { label: "Loyalty Level", value: currentLevel.label }
+                                {label: "Loyalty Level", value: currentLevel.label}
                             ]}
                             actions={
                                 <div className={styles.actionsProfile}>
-                                   {!isAdmin && <Link href="/profile-edit" className={styles.outline}>Edit Profile</Link>}
-                                    {isVenueAdmin && <Link href="/venue-admin/create-venue" className={styles.primary}>+ Add Venue</Link>}
+                                    {!isAdmin &&
+                                        <Link href="/profile-edit" className={styles.outline}>Edit Profile</Link>}
+                                    {isVenueAdmin &&
+                                        <Link href="/venue-admin/create-venue" className={styles.primary}>+ Add
+                                            Venue</Link>}
                                 </div>
                             }
                         />
-                        {nextLevel && (
-                            <div className={styles.loyaltyProgress}>
-                                <p>Write <strong>{nextLevel.minReviews - reviewCount}</strong> more reviews to unlock <strong>{nextLevel.discount}%</strong>!</p>
-                            </div>
-                        )}
                     </div>
                 )}
                 {isVenueAdmin && activeTab === "venues_control" && (
                     <section className={styles.section}>
-                        <h2>Manage Venue Listings</h2>
+                        <h2 className={styles.titleManage}>Manage Venue Listings</h2>
                         <div className={styles.table}>
-                            {venuesLoading ? <LoaderComponent /> : venues.length > 0 ? (
-                                venues.map((v) => <VenueListingComponent key={v.id} venue={v} onDelete={() => handleDelete(v.id)} />)
-                            ) : <p>No venues added yet.</p>}
+                            {venuesLoading ? <LoaderComponent/> : venues.length > 0 ? (
+                                venues.map((v) =>
+                                    <VenueListingComponent
+                                        key={v.id} venue={v}
+                                        onDelete={() =>
+                                            handleDelete(v.id)}
+                                    />)
+                            ) : <p>No venues added yet.</p>
+                            }
                         </div>
                     </section>
                 )}
                 {isAdmin && activeTab === "users_control" && (
                     <AdminUserManagementComponent
                         activeTab={activeTab}
-                        setGlobalError={(msg) => { setError(msg); setTab("profile"); }}
+                        setGlobalError={(msg) => {
+                            setError(msg);
+                            setTab("profile");
+                        }}
                     />
                 )}
                 {activeTab === "my_activity" && (
@@ -178,9 +185,6 @@ const DashboardComponent: React.FC = () => {
                 )}
             </div>
 
-            <div className={styles.chatWrapper}>
-                <ChatComponent ownerId={String(user.id)} />
-            </div>
         </div>
     );
 };

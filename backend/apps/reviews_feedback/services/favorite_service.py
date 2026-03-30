@@ -1,6 +1,6 @@
 from django.core.exceptions import ValidationError
 from apps.reviews_feedback.models import FavoriteCollection, FavoriteVenue
-from django.db.models import Count, OuterRef, Subquery, Case, When, IntegerField
+from django.db.models import F, Count, OuterRef, Subquery, Case, When, IntegerField
 from apps.venue.models import VenuePhotoModel
 
 class FavoriteService:
@@ -81,3 +81,19 @@ class FavoriteService:
 
                 FavoriteVenue.objects.filter(**filter_kwargs).update(**update_fields)
         return True
+
+class FavoriteCollectionService:
+    @staticmethod
+    def get_staff_top_collections():
+        return FavoriteCollection.objects.filter(is_staff_top=True)
+
+    @staticmethod
+    def get_most_hearted_collections(limit=5):
+        TOP_CATEGORIES_KEYS = ['wedding', 'corporate', 'birthday', 'date', 'party', 'meeting', 'general']
+        return FavoriteVenue.objects.filter(
+            collection__category__in=TOP_CATEGORIES_KEYS
+        ).values(
+            category=F('collection__category')
+        ).annotate(
+            total_hearts=Count('id')
+        ).order_by('-total_hearts')[:limit]

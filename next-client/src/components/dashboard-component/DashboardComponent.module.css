@@ -95,7 +95,7 @@
     font-size: 12px;
     cursor: pointer;
     background:var(--menu-color);
-    color: var(--color-text);
+    color: var(--logo-hover-color);
     transition: background-color 0.2s, color 0.2s;
 }
 
@@ -257,6 +257,15 @@
     line-height: 1;
 }
 
+.titleManage {
+    padding: 0;
+    font-family: var(--font-imperial),serif;
+    font-weight: 700;
+    font-size: 3rem;
+    letter-spacing: 2px;
+    color: var(--color-text);
+    line-height: 1;
+}
 @media (min-width: 768px) {
     .table {
         font-size: 0.75rem;

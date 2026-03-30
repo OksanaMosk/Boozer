@@ -16,6 +16,7 @@ interface Props {
 }
 
 const VenueInfoComponent: React.FC<Props> = ({venue}) => {
+    const [userCollections, setUserCollections] = useState<any[]>([]);
     const footerRef = useRef<HTMLDivElement>(null);
     const [isVisible, setIsVisible] = useState(false);
     const [mounted, setMounted] = useState(false);
@@ -46,6 +47,20 @@ const VenueInfoComponent: React.FC<Props> = ({venue}) => {
             void checkFavoriteStatus();
         }
     }, [venue.id, user?.token]);
+
+    useEffect(() => {
+        const fetchCollections = async () => {
+              if (!user?.token) return
+            try {
+                const res = await venueServices.collections({ accessToken: user.token }).getAll();
+                setUserCollections(res.data.data || res.data || []);
+            } catch (e) {
+                console.error("Failed to fetch collections:", e);
+            }
+        };
+        void fetchCollections();
+
+}, [user?.token]);
 
     const handleToggleFavorite = async () => {
         if (!user?.token) return;
@@ -137,6 +152,8 @@ const VenueInfoComponent: React.FC<Props> = ({venue}) => {
                                 token={user?.token}
                                 onClose={() => setShowModal(false)}
                                 onSuccess={handleSuccess}
+                                initialCollections={userCollections}
+                                onCollectionsUpdate={setUserCollections}
                             />
                         )}
                         {mainPhoto ? (

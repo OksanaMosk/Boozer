@@ -17,6 +17,8 @@
     align-items: center;
 }
 .list {
+    height: auto;
+    min-height: 30vh;
     gap: 1rem;
     display: flex;
     flex-direction: row;
