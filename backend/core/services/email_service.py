@@ -62,3 +62,42 @@ class EmailService:
             context=context,
             subject=f'Order #{order.id} Confirmed - VIP Boozer'
         )
+
+    @classmethod
+    def venue_approval(cls, venue):
+        admin_name = getattr(venue.venue_admin, 'username', venue.venue_admin.email)
+
+        context = {
+            'name': admin_name,
+            'venue_name': venue.name,
+        }
+
+        cls.__send_email.delay(
+            to=venue.venue_admin.email,
+            template_name='venue_approved.html',
+            context=context,
+            subject=f"Your venue '{venue.name}' is now ACTIVE - VIP Boozer"
+        )
+
+    @classmethod
+    def refund_request(cls, user, order):
+        display_name = (
+            user.profile.name if hasattr(user, 'profile') and user.profile.name
+            else user.get_full_name() or user.username or user.email
+        )
+
+        context = {
+            'name': display_name,
+            'email': user.email,
+            'order_id': order.id,
+            'total_price': order.total_price,
+            'currency': order.currency,
+            'admin_name': "Administrator"
+        }
+
+        cls.__send_email.delay(
+            to=os.environ.get('EMAIL_HOST_USER'),
+            template_name='refund_request.html',
+            context=context,
+            subject=f"🚨 URGENT: Refund Request #{order.id} - {display_name}"
+        )

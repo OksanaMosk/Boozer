@@ -1,0 +1,419 @@
+
+.receiptCard {
+    text-align: center;
+    margin: 0 auto;
+    width: 40vw;
+    background: var(--menu-color);
+    border-radius: 30px;
+    padding: 40px;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 0 12px white;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.receiptCard.active {
+    border-color: var(--color-noposter);
+    box-shadow: 0 0 25px var(--color-noposter);
+}
+
+.receiptCard:hover {
+    transform: translateY(-4px) scale(1.01);
+}
+
+.cardHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    padding-bottom: 10px;
+}
+
+.headerInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.goldId {
+    text-align: left;
+    font-size: 0.8rem;
+    color:dimgrey;
+}
+
+.venueTitle {
+    text-align: left;
+    margin: 0;
+    padding: 0;
+    color: var(--logo-hover-color);
+    font-size: 1.5rem;
+}
+.venueCity {
+    text-align: left;
+    margin: 0;
+    padding: 0;
+    color: var(--logo-hover-color);
+}
+
+.headerStatus {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.arrow {
+    color: var(--logo-hover-color);
+    font-size: 1.2rem;
+    transition: transform 0.3s ease;
+}
+
+.active .arrow {
+    transform: rotate(180deg);
+}
+
+.receiptContent {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.active .receiptContent {
+    max-height: 3000px;
+    opacity: 1;
+    padding-top: 30px;
+}
+
+.detailsGrid {
+   display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+    margin-bottom: 30px;
+    color: var(--logo-hover-color);
+}
+
+.detailsGrid p {
+    margin: 0;
+    font-size: 14px;
+    color: dimgray;
+}
+
+.detailsGrid  {
+    color: var(--logo-hover-color);
+    margin-right: 5px;
+}
+
+.divider {
+    height: 1px;
+    background: var(--logo-hover-color);
+    margin: 30px 0;
+}
+.subTotal {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    font-size: 1rem;
+    color: var(--logo-hover-color);
+}
+.serviceInfo{
+   text-align: left;
+}
+.orderSection h4 {
+    color: var(--logo-hover-color);
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 20px;
+    border-left: 4px solid var(--logo-hover-color);
+    padding-left: 15px;
+}
+.logistics {
+    color: var(--logo-hover-color);
+    font-size: 1rem;
+}
+.receiptRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 15px;
+    font-size: 14px;
+    color: var(--color-white);
+}
+
+.totalBlock {
+    margin-top: 40px;
+    padding: 30px;
+    background: black;
+    border-radius: 2rem;
+    border: 1px solid var(--color-noposter);
+    position: relative;
+}
+
+.totalRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--color-noposter);
+}
+
+.totalAmount {
+    font-size: 34px;
+    font-weight: 900;
+    color: var(--color-noposter);
+    text-shadow: 0 0 25px rgba(212, 175, 55, 0.4);
+}
+
+.statusBadge {
+    padding: 6px 15px;
+    border-radius: 8px;
+    font-weight: 900;
+    font-size: 13px;
+    text-transform: uppercase;
+    border: 1px solid transparent;
+}
+
+.confirmed {
+    color:mediumseagreen;
+    background: rgba(34, 197, 94, 0.1);
+    border-color: rgba(34, 197, 94, 0.3);
+
+}
+.pending {
+    background: rgba(255, 165, 0, 0.1);
+    color: var(--color-noposter);
+    border-color:var(--color-noposter);
+}
+.cancelled {
+    /*background: rgba(255, 0, 0, 0.1);*/
+    /*color: #ff4444; */
+    /*border-color: #ff4444;*/
+    color: var(--color-border);
+    background: rgba(239, 68, 68, 0.1);
+    border-color: rgba(239, 68, 68, 0.3);
+}
+
+.actionBlock {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px dashed rgba(255,255,255,0.1);
+}
+
+.buttonGroup {
+    display: flex;
+    gap: 15px;
+    width: 100%;
+}
+
+.adminCancelBtn {
+    flex: 2;
+    background: var(--color-noposter);
+    color: black;
+    border: none;
+    padding: 12px;
+    border-radius: 12px;
+    font-weight: 900;
+    cursor: pointer;
+    text-transform: uppercase;
+}
+
+.adminDeleteBtn {
+    flex: 1;
+    background: transparent;
+    color: #ff4444;
+    border: 1px solid #ff4444;
+    padding: 12px;
+    border-radius: 12px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.visitorRefundBtn {
+    width: 100%;
+    background: transparent;
+    color: var(--logo-hover-color);
+    border: 1px solid var(--color-noposter);
+    padding: 15px;
+    border-radius: 50px;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: 0.4s;
+    letter-spacing: 1px;
+}
+
+.visitorRefundBtn:hover {
+    background: var(--color-noposter);
+    color: black;
+    box-shadow: 0 0 30px rgba(212, 175, 55, 0.4);
+}
+
+.inlineMessage {
+    color: var(--color-noposter);
+    text-align: center;
+    font-weight: 700;
+    font-size: 16px;
+    letter-spacing: 1px;
+}
+
+.waitText {
+    color: #888;
+    font-size: 14px;
+    text-align: center;
+    font-style: italic;
+    width: 100%;
+}
+
+
+.statusNotification {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    color: var(--color-noposter);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 14px;
+    padding: 10px;
+}
+
+.pulse {
+    width: 8px;
+    height: 8px;
+    background: #f5e6a1;
+    border-radius: 50%;
+    box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.7);
+    animation: pulsing 1.5s infinite;
+}
+
+@keyframes pulsing {
+    70% { box-shadow: 0 0 0 10px rgba(212, 175, 55, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); }
+}
+
+.processingState {
+    color: dimgray;
+    font-style: italic;
+    font-size: 13px;
+    text-align: center;
+    letter-spacing: 1px;
+}
+
+.buttonLayout {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.managementGroup {
+    display: flex;
+    gap: 10px;
+}
+
+.secondaryBtn {
+    flex: 1;
+    background: transparent;
+    border: 1px solid var(--logo-hover-color);
+    color:var(--logo-hover-color);
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.secondaryBtn:hover {
+      background: #ff4444;
+    color: white;
+}
+
+.dangerBtn {
+    flex: 0.4;
+    background: rgba(255, 0, 0, 0.05);
+    border: 1px solid #ff4444;
+    color: #ff4444;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    cursor: pointer;
+}
+
+.dangerBtn:hover {
+    background: #ff4444;
+    color: white;
+}
+
+.premiumActionBtn {
+    background: transparent;
+    border: 1px solid var(--color-noposter);
+    padding: 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+    color: var(--logo-hover-color);
+}
+
+.premiumActionBtn:hover {
+    background: var(--color-noposter);
+    box-shadow: 0 0 30px rgba(212, 175, 55, 0.3);
+}
+
+.btnLabel {
+    color: var(--color-noposter);
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 14px;
+}
+
+.premiumActionBtn:hover .btnLabel {
+    color: black;
+}
+
+.btnSub {
+    font-size: 10px;
+    color: dimgray;
+    text-transform: uppercase;
+    margin-top: 4px;
+    letter-spacing: 1px;
+}
+
+.premiumActionBtn:hover .btnSub {
+    color: rgba(0,0,0,0.6);
+}
+
+.pendingIndicator {
+    background: rgba(255, 255, 255, 0.03);
+    padding: 15px;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.shimmer {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    background: linear-gradient(90deg, var(--logo-hover-color) 0%, #fff 50%, #d4af37 100%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shine 2s linear infinite;
+}
+
+@keyframes shine {
+    to { background-position: 200% center; }
+}

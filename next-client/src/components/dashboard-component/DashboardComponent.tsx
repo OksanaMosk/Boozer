@@ -16,6 +16,7 @@ import { getCurrentLevelDiscount, getNextLevelDiscount } from "@/lib/services/ge
 import styles from "./DashboardComponent.module.css";
 import {LoaderComponent} from "@/components/loader-component/LoaderComponent";
 import {TopListManagerComponent} from "@/components/top-list-manager-component/TopListManagerComponent";
+import {OrdersVisitorComponent} from "@/components/orders-visitor-component/OrdersVisitorComponent";
 
 interface IVenueWithId extends Omit<IVenue, 'id'> {
     id: string;
@@ -30,7 +31,6 @@ const DashboardComponent: React.FC = () => {
     const [reviewCount, setReviewCount] = useState(0);
     const isAdmin = user?.role === "admin";
     const isVenueAdmin = user?.role === "venue_admin";
-    const isVisitor = user?.role === "visitor" && user?.profile?.name?.toLowerCase().includes("critic");
     const currentLevel = getCurrentLevelDiscount(reviewCount);
     const nextLevel = getNextLevelDiscount(reviewCount);
 
@@ -166,6 +166,7 @@ const DashboardComponent: React.FC = () => {
                         </div>
                     </section>
                 )}
+
                 {isAdmin && activeTab === "users_control" && (
                     <AdminUserManagementComponent
                         activeTab={activeTab}
@@ -177,10 +178,8 @@ const DashboardComponent: React.FC = () => {
                 )}
                 {activeTab === "my_activity" && (
                     <section className={styles.section}>
-                        <h2>{isVisitor ? "Critic's Column" : "Orders & Activity"}</h2>
-                        <div className={styles.ordersContainer}>
-                            <p>Recent activity map and history...</p>
-                        </div>
+                        <h2  className={styles.titleManage}>Orders & Activity</h2>
+                       <OrdersVisitorComponent/>
                     </section>
                 )}
             </div>

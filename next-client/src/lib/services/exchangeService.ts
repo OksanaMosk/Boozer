@@ -16,7 +16,7 @@ class ExchangeService {
       this.initialized = true;
       console.log("💱 Exchange rates loaded:", this.rates);
     } catch (err) {
-      console.error("Failed to fetch exchange rates", err);
+      // console.error("Failed to fetch exchange rates", err);
       this.rates = { USD: 1, EUR: 1 };
     }
     return this.rates;

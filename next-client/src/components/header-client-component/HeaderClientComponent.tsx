@@ -26,9 +26,9 @@ export const HeaderClientComponent = () => {
         {href: "/", label: "Home"},
         {href: "/venues", label: "Venues"},
         {href: "/news", label: "News"},
+        {href: "/tops", label: "TOPs"},
         {href: "/boozer", label: "Boozer"},
         {href: "/dashboard", label: "Dashboard"},
-
     ];
 
     const isLoginActive = pathname === "/login";
@@ -40,7 +40,7 @@ export const HeaderClientComponent = () => {
             await signOut({redirect: false});
             router.push("/");
         } catch (error) {
-            console.error("Logout failed:", error);
+            // console.error("Logout failed:", error);
             window.location.href = "/login";
         }
     };

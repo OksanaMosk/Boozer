@@ -71,7 +71,7 @@ export default function CompleteProfileFormComponent() {
             router.push("/dashboard");
 
         } catch (err: any) {
-            console.error("Profile save error", err);
+            // console.error("Profile save error", err);
             setErrorMsg(`Profile save error: ${err.message}`);
         } finally {
             setIsSubmitting(false);

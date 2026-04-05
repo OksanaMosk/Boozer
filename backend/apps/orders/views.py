@@ -9,6 +9,7 @@ from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
 from rest_framework.views import APIView
 
+from core.services.email_service import EmailService
 from .models import OrderModel, TableBookingModel
 from .serializers import OrderSerializer, TableBookingSerializer
 from .services.exchange_service import get_private_bank_exchange_rate
@@ -49,22 +50,25 @@ class OrderViewSet(viewsets.ModelViewSet):
         return [IsAdminOrVenueAdminOrReadOnly()]
 
     def get_queryset(self):
-        """
-        Queryset filtering logic:
-        1. Regular users see only their own orders.
-        2. Staff/Admins see all orders in the system.
-        3. If accessed via nested URL, filter by specific venue_id.
-        """
         user = self.request.user
-        venue_id = self.kwargs.get('venue_pk')
+        if not user.is_authenticated:
+            return OrderModel.objects.none()
 
-        if user.is_staff:
+        venue_id = self.kwargs.get('venue_pk')
+        user_role = getattr(user, 'role', '').lower()
+        from django.db.models import Q
+
+        query = Q(user=user)
+        if user.is_staff or user_role == 'admin':
             qs = OrderModel.objects.all()
+        elif user_role == 'venue_admin':
+            query |= Q(venue__in=user.venues.all())
+            qs = OrderModel.objects.filter(query)
         else:
-            qs = OrderModel.objects.filter(user=user)
+            qs = OrderModel.objects.filter(query)
+
         if venue_id:
             qs = qs.filter(venue_id=venue_id)
-
         return qs.select_related('user', 'venue').prefetch_related('items', 'extra_services')
 
     def perform_create(self, serializer):
@@ -93,11 +97,18 @@ class OrderViewSet(viewsets.ModelViewSet):
         Prevent updating expired orders.
         """
         order = self.get_object()
+        new_comment = serializer.validated_data.get('comment', '')
+
+        if "[REFUND]" in new_comment:
+            updated_order = serializer.save()
+            EmailService.refund_request(user=updated_order.user, order=updated_order)
+            return
 
         if order.expires_at and timezone.now() > order.expires_at:
             raise ValidationError('Order expired')
 
         serializer.save()
+
 
 class TableBookingViewSet(viewsets.ModelViewSet):
     """

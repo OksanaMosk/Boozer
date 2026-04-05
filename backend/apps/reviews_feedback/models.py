@@ -4,8 +4,19 @@ from apps.venue.models import User
 from core.models import BaseModel
 from core.services.file_service import upload_review_photo
 
+from django.core.validators import MaxValueValidator
 
-class ReviewModel(BaseModel):
+class SubRatingsMixin(models.Model):
+    food_rating = models.PositiveSmallIntegerField(default=0, validators=[MaxValueValidator(5)])
+    service_rating = models.PositiveSmallIntegerField(default=0, validators=[MaxValueValidator(5)])
+    atmosphere_rating = models.PositiveSmallIntegerField(default=0, validators=[MaxValueValidator(5)])
+    cleanliness_rating = models.PositiveSmallIntegerField(default=0, validators=[MaxValueValidator(5)])
+    value_rating = models.PositiveSmallIntegerField(default=0, validators=[MaxValueValidator(5)])
+
+    class Meta:
+        abstract = True
+
+class ReviewModel(SubRatingsMixin, BaseModel):
     class Meta:
         db_table = 'reviews'
         ordering = ['-created_at']
@@ -126,3 +137,4 @@ class FavoriteVenue(BaseModel):
     def __str__(self):
         full_name = f"{self.user.name or ''} {self.user.surname or ''}".strip()
         return f"{full_name or self.user.username} → {self.venue.name}"
+

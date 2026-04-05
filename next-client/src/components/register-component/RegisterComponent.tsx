@@ -120,7 +120,7 @@ const RegisterComponent = () => {
         } catch (err: unknown) {
             if (err instanceof AxiosError) {
                 const status = err.response?.status;
-                const data = err.response?.data;
+                // const data = err.response?.data;
 
                 if (status === 400) {
                     setErrorMsg("A user with this email already exists. Try logging in.");
@@ -131,7 +131,7 @@ const RegisterComponent = () => {
                 } else {
                     setErrorMsg("An unknown error occurred. Please try again.");
                 }
-                console.error("Register failed:", status, data);
+                // console.error("Register failed:", status, data);
             } else if (err instanceof Error) {
 
                 setErrorMsg(err.message || "An unexpected error occurred.");

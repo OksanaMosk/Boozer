@@ -1,4 +1,5 @@
-import {CurrencyCodeType, IExtraService, PriceType, ServiceType} from "@/models/IVenue";
+import {CurrencyCodeType, IExtraService, IVenue, PriceType, ServiceType} from "@/models/IVenue";
+import {IUser} from "@/models/IUser";
 
 export type PaymentType = "Each pays for themselves" | "I pay" | "Someone else pays";
 export type BudgetRangeType = "0-1000" | "1000-3000" | "3000-5000" | "5000+";
@@ -30,8 +31,11 @@ export interface IOrderExtraService {
 
 export interface IOrder {
     id?: string;
-    venue_id: string;
-    user_id: string;
+    venue?:IVenue;
+    venue_name?: string;
+    user?:IUser;
+    venue_id?: string;
+    user_id?: string;
     start_date: string;
     end_date: string;
     guests_count: number;
@@ -60,6 +64,7 @@ export interface IOrder {
     };
     extra_services?: IOrderExtraService[];
     total_price?: string | number;
+    venue_impact?: number | string;
     menu_total?: string;
     services_total?: string;
     flight_price: string;
@@ -82,4 +87,27 @@ export interface ITableBooking {
         lower: string;
         upper: string;
     };
+}
+
+export interface IStatItem {
+    count: number;
+    budget_range?: BudgetRangeType;
+    gender_preference?: GenderPreferenceType;
+    payment_type?: PaymentType;
+}
+
+export interface IVenueStats {
+    average_check: number;
+    total_revenue: number;
+    success_orders_count: number;
+    total_orders_count: number;
+    currency: string;
+    budget_distribution: IStatItem[];
+    gender_distribution: IStatItem[];
+    payment_distribution: IStatItem[];
+}
+
+export interface IVenueStatsResponse {
+    stats: IVenueStats;
+    orders: IOrder[];
 }

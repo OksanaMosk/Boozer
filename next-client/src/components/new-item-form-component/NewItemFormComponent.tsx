@@ -102,7 +102,7 @@ export const NewItemFormComponent: React.FC<NewNewsFormProps> = ({venueId, onCre
             setCreatedNews(newNews);
             onCreate(newNews);
         } catch (err) {
-            console.error("Create failed:", err);
+            // console.error("Create failed:", err);
             alert("Failed to create news");
         } finally {
             setLoading(false);

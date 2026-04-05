@@ -82,17 +82,17 @@ class OrderSerializer(serializers.ModelSerializer):
     items = OrderItemSerializer(many=True, required=False)
     extra_services = OrderExtraServiceSerializer(many=True, required=False)
     tables = TableBookingSerializer(source='table_bookings', many=True, read_only=True)
-
+    venue_impact = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
     menu_total = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
     services_total = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
-
+    venue_name = serializers.ReadOnlyField(source='venue.name')
     remaining_seconds = serializers.SerializerMethodField()
     is_expired = serializers.SerializerMethodField()
 
     class Meta:
         model = OrderModel
         fields = [
-            'id', 'status', 'total_price', 'currency',  'menu_total', 'services_total', 'is_expired', 'remaining_seconds','exchange_rate',
+            'id', 'venue_name', 'status', 'total_price', 'currency', 'venue_impact',  'menu_total', 'services_total', 'is_expired', 'remaining_seconds','exchange_rate',
 
              'user_city', 'user_latitude', 'user_longitude', 'venue_latitude', 'venue_longitude', 'distance_km',
 
@@ -102,7 +102,7 @@ class OrderSerializer(serializers.ModelSerializer):
 
             'items', 'extra_services', 'tables', 'user', 'venue',
         ]
-        read_only_fields = ['total_price', 'user', 'venue', 'venue_latitude', 'venue_longitude']
+        read_only_fields = ['total_price', 'venue_impact', 'user', 'venue', 'venue_latitude', 'venue_longitude']
 
     def create(self, validated_data):
         items_data = validated_data.pop('items', [])

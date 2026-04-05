@@ -1,4 +1,5 @@
 from django.core.exceptions import PermissionDenied
+from django.db.models.query_utils import Q
 from django.utils.dateparse import parse_datetime
 from rest_framework import viewsets, filters, status, permissions, serializers
 from django_filters.rest_framework import DjangoFilterBackend
@@ -11,8 +12,8 @@ from .models import VenueModel, TagModel, TableModel, VenuePhotoModel, VenueTagM
 from .serializers import VenueSerializer, TagSerializer, TableSerializer, VenuePhotoSerializer, VenueTagSerializer
 from .services.geocode import geocode_city
 from .services.venue_constants_service import get_venue_constants
-from .services.venue_service import get_user_venues
-from ..user.permissions import IsAdminOrVenueAdminOrReadOnly
+from .services.venue_service import get_user_venues, approve_venue_service, get_venue_orders_statistics
+from ..user.permissions import IsAdminOrVenueAdminOrReadOnly, IsAdmin
 from django.db.models import Exists, OuterRef
 
 
@@ -27,16 +28,24 @@ class VenueViewSet(viewsets.ModelViewSet):
 
     permission_classes = [IsAdminOrVenueAdminOrReadOnly]
 
-
     def get_queryset(self):
         from apps.reviews_feedback.models import FavoriteVenue
         qs = VenueModel.objects.all()
         user = self.request.user
+        role = getattr(user, 'role', '').upper()
+
+        if role == 'ADMIN' or user.is_staff:
+            pass
+        elif role == 'VENUE_ADMIN':
+            qs = qs.filter(Q(status='active') | Q(venue_admin=user))
+        else:
+            qs = qs.filter(status='active')
 
         if user.is_authenticated:
             is_favorite_subquery = FavoriteVenue.objects.filter(
                 user=user,
-                venue_id=OuterRef('pk')
+                venue_id=OuterRef('pk'),
+                collection__is_staff_top = False
             )
             qs = qs.annotate(is_favorite=Exists(is_favorite_subquery))
 
@@ -53,12 +62,38 @@ class VenueViewSet(viewsets.ModelViewSet):
         user = self.request.user
         role = getattr(user, 'role', '').upper()
         if role == 'VENUE_ADMIN':
-            serializer.save(venue_admin=user)
+            serializer.save(venue_admin=user, status='pending')
         elif role == 'ADMIN':
-            serializer.save(venue_admin=user)
+            serializer.save(venue_admin=user, status='active')
         else:
             raise PermissionDenied('You do not have permission to create a venue.')
 
+    @action(detail=True, methods=['post'], permission_classes=[IsAdmin])
+    def approve(self, request, pk=None):
+        venue = self.get_object()
+
+        approve_venue_service(venue)
+
+        return Response({
+            'status': 'success',
+            'message': 'Venue approved and email sent.'
+        }, status=200)
+
+    @action(detail=True, methods=['get'], permission_classes=[IsAdminOrVenueAdminOrReadOnly])
+    def orders_stats(self, request, pk=None):
+        """
+        Custom endpoint to fetch venue-specific financial statistics and order history.
+        URL: GET /api/venues/{id}/orders_stats/
+        """
+        venue = self.get_object()
+        data = get_venue_orders_statistics(venue)
+        from apps.orders.serializers import OrderSerializer
+        serializer = OrderSerializer(data['orders'], many=True)
+
+        return Response({
+            'stats': data['stats'],
+            'orders': serializer.data
+        })
 
 class VenuePhotoViewSet(viewsets.ModelViewSet):
     queryset = VenuePhotoModel.objects.all()

@@ -16,6 +16,7 @@ interface Photo {
 interface MultiplePhotoUploadProps {
     venueId: string;
     newsId: string;
+    type?: "news" | "reviews";
     onUploadComplete: (photos: string[]) => void;
     existingPhotos?: { id: string; url?: string; image?: string; is_cover: boolean }[];
     maxFiles: number;
@@ -25,6 +26,7 @@ interface MultiplePhotoUploadProps {
 const PhotoMultipleUploadComponent: React.FC<MultiplePhotoUploadProps> = ({
                                                                               venueId,
                                                                               newsId,
+                                                                              type = "news",
                                                                               onUploadComplete,
                                                                               existingPhotos = [],
                                                                               maxFiles,
@@ -66,9 +68,12 @@ const PhotoMultipleUploadComponent: React.FC<MultiplePhotoUploadProps> = ({
             setLoading(true);
             try {
                 if (!user?.token) return;
-                await venueServices
-                    .venues
-                    .news({accessToken: user.token})(venueId)
+                // await venueServices
+                //     .venues
+                //     .news({accessToken: user.token})(venueId)
+
+                await (venueServices.venues as any)
+                    [type]({accessToken: user.token})(venueId)
                     .images(newsId)
                     .delete(photoToDelete.id);
                 setPhotos(prev => prev.filter((_, i) => i !== index));
@@ -94,14 +99,25 @@ const PhotoMultipleUploadComponent: React.FC<MultiplePhotoUploadProps> = ({
             for (const photo of photos) {
                 if (photo.file) {
                     const formData = new FormData();
-                    formData.append("image", photo.file);
-                    formData.append("is_cover", photo.is_cover ? "true" : "false");
-                    const res = await venueServices
-                        .venues
-                        .news({accessToken: user.token})(venueId)
+                    // formData.append("image", photo.file);
+                    const fieldName = type === "reviews" ? "photo" : "image";
+                    formData.append(fieldName, photo.file);
+                    // formData.append("is_cover", photo.is_cover ? "true" : "false");
+
+                    if (type === "news") {
+                        formData.append("is_cover", photo.is_cover ? "true" : "false");
+                    }
+
+                    // const res = await venueServices
+                    //     .venues
+                    //     .news({accessToken: user.token})(venueId)
+
+                    const res = await (venueServices.venues as any)
+                        [type]({accessToken: user.token})(venueId)
                         .images(newsId)
                         .create(formData);
-                    uploadedUrls.push(res.data.image);
+                    // uploadedUrls.push(res.data.image);
+                    uploadedUrls.push(res.data.photo || res.data.image);
                 }
             }
             onUploadComplete(uploadedUrls);
@@ -166,16 +182,27 @@ const PhotoMultipleUploadComponent: React.FC<MultiplePhotoUploadProps> = ({
                             className={styles.photoImage}
                         />
                         <div className={styles.actions}>
-                            <label className={styles.checkLabel}>
-                                <input
-                                    type="radio"
-                                    name="coverPhoto"
-                                    checked={photo.is_cover}
-                                    onChange={() => handleCoverChange(index)}
+                            {/*<label className={styles.checkLabel}>*/}
+                            {/*    <input*/}
+                            {/*        type="radio"*/}
+                            {/*        name="coverPhoto"*/}
+                            {/*        checked={photo.is_cover}*/}
+                            {/*        onChange={() => handleCoverChange(index)}*/}
 
-                                />
-                                Cover
-                            </label>
+                            {/*    />*/}
+                            {/*    Cover*/}
+                            {/*</label>*/}
+                            {type === "news" && (
+                                <label className={styles.checkLabel}>
+                                    <input
+                                        type="radio"
+                                        name="coverPhoto"
+                                        checked={photo.is_cover}
+                                        onChange={() => handleCoverChange(index)}
+                                    />
+                                    Cover
+                                </label>
+                            )}
                             <button
                                 type="button"
                                 className={styles.deleteButton}

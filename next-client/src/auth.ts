@@ -54,13 +54,7 @@ export const {handlers, auth, signIn, signOut} = NextAuth({
                   headers: {"Content-Type": "application/json"},
                   body: JSON.stringify(credentials),
               });
-              console.log("DEBUG AUTH_URL:", process.env.AUTH_URL);
-              console.log("DEBUG NEXTAUTH_URL:", process.env.NEXTAUTH_URL);
-
               const data = await res.json();
-
-              console.log("Parsed data:", data)
-
               if (res.ok && data.access) {
                   return {
                       id: String(data.user?.id || data.id || data.user_id),
@@ -69,6 +63,7 @@ export const {handlers, auth, signIn, signOut} = NextAuth({
                       refreshToken: data.refresh,
                       role: data.user?.role,
                       expiresIn: data.expires_in || data.lifetime || 3600,
+                      managed_venue_ids: data.user?.managed_venue_ids || [],
                       needsProfile:
                           !data.user?.profile?.birth_date ||
                           !data.user?.profile?.is_rules_accepted,
@@ -77,7 +72,6 @@ export const {handlers, auth, signIn, signOut} = NextAuth({
               }
               return null;
           } catch (error) {
-              console.error("Login error:", error);
               return null;
           }
       },
@@ -101,12 +95,12 @@ export const {handlers, auth, signIn, signOut} = NextAuth({
               token.id = user.id;
           token.accessToken = user.accessToken;
           token.refreshToken = user.refreshToken;
-          token.role = user.role ?? "visitor";
-          token.profile = user.profile;
-
+              token.role = user.role ?? "visitor";
+              token.profile = user.profile;
+              token.managed_venue_ids = user.managed_venue_ids;
               token.needsProfile =
-              !user?.profile?.birth_date || user?.profile?.birth_date === '' ||
-              user?.profile?.is_rules_accepted === false;
+                  !user?.profile?.birth_date || user?.profile?.birth_date === '' ||
+                  user?.profile?.is_rules_accepted === false;
           token.accessTokenExpires = Date.now() + ((user.expiresIn ?? 3600) - 60) * 1000;
 
           if (account.provider !== "credentials") {
@@ -140,6 +134,7 @@ export const {handlers, auth, signIn, signOut} = NextAuth({
               token.needsProfile =
                   !data.user?.profile?.birth_date || data.user?.profile?.birth_date === '' ||
                   data.user?.profile?.is_rules_accepted === false;
+              token.managed_venue_ids = data.user?.managed_venue_ids || [];
           }
         } catch (e) {
           console.error("Social sync error:", e);
@@ -199,6 +194,7 @@ export const {handlers, auth, signIn, signOut} = NextAuth({
         session.user.role = token.role;
         session.user.error = token.error;
         session.user.profile = token.profile;
+        session.user.managed_venue_ids = token.managed_venue_ids;
       }
       return session;
     },

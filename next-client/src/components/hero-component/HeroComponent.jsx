@@ -7,6 +7,9 @@ const HeroComponent = () => {
     const videoRef = useRef(null);
     const containerRef = useRef(null);
     const [muted, setMuted] = useState(true);
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
 
     useEffect(() => {
         const video = videoRef.current;

@@ -1,0 +1,338 @@
+.container {
+    margin: 40px auto 20px;
+    text-align: center;
+    width: 70vw;
+    background:var(--menu-color);
+    color: var(--color-text);
+    padding: 20px;
+    border-radius: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.statsFlex {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    text-align: center;
+    width: 100%;
+    flex-wrap: wrap;
+    margin: 20px auto;
+}
+.titleManage {
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-imperial),serif;
+    font-size: 2.5rem;
+    letter-spacing: 4px;
+    color: var(--color-text);
+    line-height: 1;
+}
+.statCard {
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    width: 300px;
+    height: 80px;
+    background:var(--reverse-menu-color);
+    border-radius: 20px;
+    box-sizing: border-box;
+}
+
+.statLabel {
+    margin: 0;
+    padding: 0;
+    color: var(--badge-color);
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.statValue {
+    font-size: 32px;
+    font-weight: 600;
+    margin: 0;
+    padding: 0;
+}
+
+.analyticsFlex {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.budgetBox,
+.audienceBox {
+    height: 160px;
+    background: var(--menu-color);
+    border: 1px solid var(--color-noposter);
+    padding: 10px 30px;
+    border-radius: 20px;
+    box-sizing: border-box;
+     display: flex;
+    justify-content: center;
+    align-items: flex-start;
+   flex-direction: column;
+}
+
+.budgetBox {
+    width: 50%;
+}
+.audienceBox {
+    width: 40%;
+
+}
+
+.boxTitle {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    color: var(--logo-hover-color);
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.progressList {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.progressItem {
+    width: 100%;
+}
+
+.progressInfo {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    padding-bottom: 5px;
+    color: var(--logo-hover-color);
+}
+
+.progressTrack {
+    background: var(--color-container);
+    height: 2px;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.progressFill {
+    background: linear-gradient(90deg, #8a6d3b, #d4af37);
+    height: 100%;
+    border-radius: 2px;
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+}
+
+.genderFlex {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.genderCard {
+    margin-top: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--menu-color);
+    padding: 8px 20px;
+    border-radius: 12px;
+    border: 1px solid var(--color-container);
+}
+
+.gLabel {
+    color:var(--logo-hover-color);
+    font-size: 16px;
+    text-transform: uppercase;
+}
+.gValue {
+    color: var(--logo-hover-color);
+    font-size: 18px;
+
+}
+
+.ordersWrapper {
+    width: 100%;
+}
+
+.sectionTitle {
+    color:var(--logo-hover-color);
+}
+
+.listHeaderFlex {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    padding: 0 30px 15px;
+    color: var(--logo-hover-color);
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.ordersUl {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.orderLi {
+    display: flex;
+    align-items: center;
+    background:var(--reverse-menu-color);
+    border: 1px solid var(--color-noposter);
+    padding: 8px 30px;
+    border-radius: 10px;
+    transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.orderPeriod {
+    color:var(--badge-color);
+}
+.orderLi:hover {
+    border-color: rgba(212, 175, 55, 0.4);
+    transform: translateX(8px);
+}
+
+.colDetails {
+    flex: 2;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+.colStatus {
+    flex: 1;
+    display: flex;
+    justify-content: flex-start;
+}
+.colPrefs  {
+    flex: 1.5;
+    display: flex;
+    gap: 8px;
+}
+.colImpact {
+    flex: 1.2;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.goldId {
+    color: var(--badge-color);
+    font-weight: 800;
+    font-size: 0.8rem;
+}
+.guestMeta {
+    display: flex;
+    flex-direction: column;
+}
+.guestCity {
+    margin: 0;
+    padding: 0;
+    font-size: 1rem;
+    color:var(--badge-color);
+}
+
+.orderPeriod {
+    margin: 0;
+    padding: 0;
+    font-size: 0.8rem;
+    color: #444;
+}
+
+.tagFlex {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+.miniTag {
+    background: var(--menu-color);
+    color: var(--logo-hover-color);
+    font-size: 14px;
+    width: 120px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+    border: 1px solid var(--color-container);
+}
+
+.statusBadge {
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.confirmed {
+    background: var(--color-container);
+    color: var(--color-noposter);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+.pending {
+    background: #1a1a1a;
+    color: #555;
+}
+
+.priceFlex {
+    text-align: right;
+}
+.mainPrice {
+    margin: 0;
+    font-size: 1rem;
+    color: var(--badge-color);
+}
+.altPrice {
+    margin: 0;
+    font-size: 0.7rem;
+    color: #444;
+}
+
+.noData {
+    text-align: center;
+    color: #444;
+    padding: 100px 0;
+}
+.chartContainer {
+    margin: 40px 0;
+    background: #0a0a0a;
+    padding: 20px;
+    border-radius: 24px;
+    border: 1px solid #111;
+}
+
+@media (max-width: 768px) {
+    .analyticsFlex {
+        flex-direction: column;
+    }
+    .listHeaderFlex {
+        display: none;
+    }
+    .orderLi {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+    .colImpact {
+        width: 100%;
+        justify-content: flex-start;
+        border-top: 1px solid #222;
+        padding-top: 15px;
+    }
+}

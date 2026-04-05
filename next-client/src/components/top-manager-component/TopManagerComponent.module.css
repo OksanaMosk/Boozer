@@ -1,6 +1,6 @@
 .wrapper {
-    width: 70vw;
-    margin: 0 auto;
+    width: 60vw;
+    margin: 0 auto 100px;
     text-align: center;
     display: flex;
     flex-direction: column;
@@ -9,6 +9,9 @@
     gap: 1rem;
 }
 .columnsLayout {
+    width: 100%;
+    margin: 0 auto;
+    text-align: center;
     gap: 1rem;
     display: flex;
     flex-direction: column;
@@ -18,11 +21,40 @@
 }
 .list {
     height: auto;
-    min-height: 30vh;
+    min-height: 40vh;
     gap: 1rem;
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
+}
+.dragPoolMessage {
+    color: var(--logo-hover-color);
+    font-size: 2rem;
+    font-weight: bold;
+    font-family: var(--font-imperial),serif;
+}
+
+.title {
+    text-align: center;
+    width: 300px;
+    height: 46px;
+    display: flex;
+    align-items: center;
+    justify-content:center;
+    background: var(--menu-color);
+    border-radius: 20px;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin: 0 auto;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--logo-hover-color);
+
+}
+
+.title:hover {
+  color: var(--color-bg-dark);
 }

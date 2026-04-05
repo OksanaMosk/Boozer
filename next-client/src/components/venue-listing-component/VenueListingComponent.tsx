@@ -1,20 +1,13 @@
 "use client";
 
-import React, {useEffect, useState} from "react";
-import {useRouter} from "next/navigation";
+import React, { useEffect, useState, useMemo } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useUser } from "@/app/contexts/UserProvider";
 import venueService from "@/lib/services/venueService";
-import {IVenueWithId} from "@/models/IVenue";
+import { IVenueWithId } from "@/models/IVenue";
 import styles from "./VenueListingComponent.module.css";
 import GoldChartComponent from "@/components/gold-chart-component/GoldChartComponent";
-
-interface VenueStats {
-  total_views: number;
-  daily_views: number;
-  weekly_views: number;
-  monthly_views: number;
-}
 
 interface Props {
     venue: IVenueWithId;
@@ -22,215 +15,133 @@ interface Props {
     onStatusChange?: (venueId: string, status: string) => void;
 }
 
-const VenueListingComponent: React.FC<Props> = ({
-                                                    venue,
-                                                    onDelete,
-                                                    onStatusChange,
-                                                }) => {
-    const {user} = useUser();
+const VenueListingComponent: React.FC<Props> = ({ venue, onDelete, onStatusChange }) => {
+    const { user } = useUser();
+    const router = useRouter();
     const [status, setStatus] = useState<string>(venue.status || "");
+    const [message, setMessage] = useState<{ text: string; isError: boolean } | null>(null);
+
+    const isAdmin = user?.role?.toUpperCase() === 'ADMIN';
     const isLocked = (venue.edit_attempts ?? 0) >= 3;
-    const router = useRouter()
 
-    const handleStatusChange = async () => {
-        if (status === "pending") {
-            alert("You cannot change status while venue is pending review.");
-            return;
+    const quickLinks = useMemo(() => [
+        { href: 'menu', label: 'Menu', className: styles.primary },
+        { href: 'tables', label: 'Tables', className: styles.primary },
+        { href: 'travel-extra-services', label: 'Services', className: styles.primary },
+        { href: 'orders', label: 'Orders', className: styles.outline },
+        { href: 'analytics', label: 'Analytics', className: styles.outline },
+        { href: 'news', label: 'News', className: styles.outline },
+        { href: 'reviews', label: 'Reviews', className: styles.outline },
+    ], []);
+
+    useEffect(() => {
+        if (message) {
+            const timer = setTimeout(() => setMessage(null), 3000);
+            return () => clearTimeout(timer);
         }
+    }, [message]);
 
+    const handleStatusChange = async (e: React.MouseEvent) => {
+        e.stopPropagation();
         if (!user?.token) return;
 
         try {
-            const newStatus = status === "active" ? "inactive" : "active";
-
-            await venueService.venues.update(
-                venue.id,
-                {status: newStatus},
-                {accessToken: user.token}
-            );
-
+            let newStatus = "";
+            if (status === "pending") {
+                if (!isAdmin) {
+                    setMessage({ text: "Only admins can approve venues", isError: true });
+                    return;
+                }
+                await venueService.venues.approve(venue.id, { accessToken: user.token });
+                newStatus = "active";
+                setMessage({ text: "Venue approved!", isError: false });
+            } else {
+                newStatus = status === "active" ? "inactive" : "active";
+                await venueService.venues.update(venue.id, { status: newStatus }, { accessToken: user.token });
+                setMessage({ text: `Status: ${newStatus}`, isError: false });
+            }
             setStatus(newStatus);
             onStatusChange?.(venue.id, newStatus);
-        } catch (err) {
-                console.error("BACKEND ERROR:", err);
-
-        }
-    };
-
-    const handleDelete = async () => {
-        if (!user?.token) return;
-
-        try {
-            await venueService.venues.delete(venue.id, {
-                accessToken: user.token,
-            });
-
-            onDelete?.(venue.id);
         } catch {
-            alert("Error deleting venue");
+            setMessage({ text: "Action failed", isError: true });
         }
     };
 
+    const handleDelete = async (e: React.MouseEvent) => {
+        e.stopPropagation();
+        if (!user?.token) return;
+        try {
+            await venueService.venues.delete(venue.id, { accessToken: user.token });
+            setMessage({ text: "Deleted", isError: false });
+            setTimeout(() => onDelete?.(venue.id), 1000);
+        } catch {
+            setMessage({ text: "Error deleting", isError: true });
+        }
+    };
 
-    const photos = venue.photos ?? [];
-    const mainPhoto = photos.find(p => p.is_main) || photos[0] || null;
-
-    const getPhotoUrl = (photo: string) => {
+    const photoUrl = useMemo(() => {
+        const photo = venue.photos?.find(p => p.is_main)?.photo || venue.photos?.[0]?.photo;
         if (!photo) return '/images/noPosterVenue.webp';
         return photo.startsWith('http') ? photo : `http://localhost:8888${photo}`;
-    };
-
-
-    const goToInfo = () => {
-        if (!isLocked) {
-            router.push(`/venues/${venue.id}`);
-        }
-    };
+    }, [venue.photos]);
 
     return (
         <div className={styles.list}>
-            <div
-                key={venue.id}
-                className={styles.tableRow}
-                onClick={goToInfo}
-            >
+            <div className={styles.tableRow} onClick={() => !isLocked && router.push(`/venues/${venue.id}`)}>
                 <div className={styles.tablePhoto}>
-                    <img
-                        src={getPhotoUrl(mainPhoto?.photo)}
-                        alt={`${venue.name} ${venue.city}`}
-                        width={380}
-                        height={200}
-                        className={styles.venuePoster}
-                    />
-            </div>
-                <div className={styles.row} >
-                    <div  className={styles.titleBlock}>
+                    <img src={photoUrl} alt={venue.name} className={styles.venuePoster} width={380} height={200} />
+                </div>
+
+                <div className={styles.row}>
+                    <div className={styles.titleBlock}>
                         <div className={styles.info}>
-                            <p className={styles.tableRowTitle}>
-                                {venue.name}
-                                <span
-                                    className={`${styles.status} ${
-                                        status === "active" ? styles.statusActive : styles.statusInactive
-                                    }`}
-                                >
+                            <p className={styles.tableRowTitle}>{venue.name}</p>
+                            <p className={`${styles.status} ${status === "active" ? styles.statusActive : styles.statusInactive}`}>
                                 {status}
-                                </span>
                             </p>
                             <p className={styles.address}>({venue.city}, {venue.country})</p>
                         </div>
-                        <div className={styles.stats}>
-                            <GoldChartComponent/>
-                        </div>
-                        <div className={styles.a}>
-                        <div className={styles.actions}>
-                            <button
 
-                                className={styles.button}
-                                onClick={async (e) => {
-                                    e.stopPropagation();
-                                    try {
-                                        await handleStatusChange();
-                                    } catch (error) {
-                                        console.error(error);
-                                    }
-                                }}
-                                disabled={isLocked}
-                            >
-                                {status === "active" ? "Deactivate" : "Activate"}
-                            </button>
-                            <Link href={isLocked ? "#" : `/venue-admin/venues/${venue.id}/edit/`}>
+                        <div className={styles.rightWrapper}>
+                            <div className={styles.stats}><GoldChartComponent /></div>
+
+                            <div className={styles.actions}>
                                 <button
-                                    className={styles.editButton}
-                                    disabled={isLocked}
-                                    onClick={(e) => e.stopPropagation()}
+                                    className={styles.button}
+                                    onClick={handleStatusChange}
+                                    disabled={isLocked || (status === "pending" && !isAdmin)}
                                 >
-                                    Edit
+                                    {status === "pending" ? (isAdmin ? "Approve" : "Pending") : (status === "active" ? "Deactivate" : "Activate")}
                                 </button>
-                            </Link>
 
-                            <button
-                                onClick={async (e) => {
-                                    e.stopPropagation();
-                                    await handleDelete();
-                                }}
-                                className={styles.deleteButton}
-                            >
-                                Delete
-                            </button>
+                                <Link href={isLocked ? "#" : `/venue-admin/venues/${venue.id}/edit/`}>
+                                    <button className={styles.editButton} disabled={isLocked} onClick={e => e.stopPropagation()}>
+                                        Edit
+                                    </button>
+                                </Link>
 
-                            {isLocked && (
-                                <p style={{color: "#ef4444", marginTop: 4, fontSize: 10}}>
-                                    Locked!
-                                </p>
-                            )}
+                                <button className={styles.deleteButton} onClick={handleDelete}>Delete</button>
+
+                                {message && <p className={message.isError ? styles.error : styles.success}>{message.text}</p>}
+                                {isLocked && <p className={styles.lockHint}>Locked (Max attempts)</p>}
+                            </div>
                         </div>
-                    </div>
                     </div>
 
                     <div className={styles.bottom}>
                         <div className={styles.actionsLink}>
-
-                            <Link
-                                href={`/venue-admin/venues/${venue.id}/menu/`}
-                                className={`${styles.buttonLink} ${styles.primary}`}
-                                onClick={(e) => e.stopPropagation()}
-                            >
-                                Menu
-                            </Link>
-                            <Link
-                                href={`/venue-admin/venues/${venue.id}/tables/`}
-                                className={`${styles.buttonLink} ${styles.primary}`}
-                                onClick={(e) => e.stopPropagation()}
-                            >
-                                Tables
-                            </Link>
-                            <Link
-                                href={`/venue-admin/venues/${venue.id}/travel-extra-services/`}
-                                className={`${styles.buttonLink} ${styles.primary}`}
-                                onClick={(e) => e.stopPropagation()}
-                            >
-                                Services
-                            </Link>
-                            <Link
-                                href={`/venue-admin/venues/${venue.id}/orders/`}
-                                className={`${styles.buttonLink} ${styles.outline}`}
-                                onClick={(e) => e.stopPropagation()}
-                            >
-                                Orders
-                            </Link>
-                            <Link
-                                href={`/venue-admin/venues/${venue.id}/news/`}
-                                className={`${styles.buttonLink} ${styles.outline}`}
-                                onClick={(e) => e.stopPropagation()}
-                            >
-                                News
-                            </Link>
-                            <Link
-                                href={`/venue-admin/venues/${venue.id}/reviews/`}
-                                className={`${styles.buttonLink} ${styles.outline}`}
-                                onClick={(e) => e.stopPropagation()}
-                            >
-                                Reviews
-                            </Link>
-                            <p>
-                                {/*{user ? (*/}
-                                {/*  stats ? (*/}
-                                {/*    <>*/}
-                                {/*      <p>Views: {stats.total_views}</p>*/}
-                                {/*      <p>Daily: {stats.daily_views}</p>*/}
-                                {/*      <p>Weekly: {stats.weekly_views}</p>*/}
-                                {/*      <p>Monthly: {stats.monthly_views}</p>*/}
-                                {/*    </>*/}
-                                {/*  ) : (*/}
-                                {/*    <p>Loading stats...</p>*/}
-                                {/*  )*/}
-                                {/*) : (*/}
-                                {/*  <p>Premium required</p>*/}
-                                {/*)}*/}
-                            </p>
-
+                            {quickLinks.map(link => (
+                                <Link
+                                    key={link.href}
+                                    href={`/venue-admin/venues/${venue.id}/${link.href}/`}
+                                    className={`${styles.buttonLink} ${link.className}`}
+                                    onClick={e => e.stopPropagation()}
+                                >
+                                    {link.label}
+                                </Link>
+                            ))}
                         </div>
-                        <p className={styles.address}>ID:{venue.id}</p>
+                        <p className={styles.venueId}>ID: {venue.id}</p>
                     </div>
                 </div>
             </div>

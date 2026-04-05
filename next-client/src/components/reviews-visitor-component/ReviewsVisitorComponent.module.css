@@ -5,5 +5,11 @@
     font-size: 2rem;
     letter-spacing: 2px;
     color: var(--color-text);
-line-height: 1;
+    line-height: 1;
+}
+.loaderWrapper {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    margin: 70px auto;
 }

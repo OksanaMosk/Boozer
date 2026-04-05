@@ -6,7 +6,8 @@ declare module "next-auth" {
         id: string;
         accessToken?: string;
         refreshToken?: string;
-        role?:UserRole;
+        role?:UserRole
+        managed_venue_ids?: number[];
         needsProfile?: boolean;
         expiresIn?: number;
         profile?: UserProfile;
@@ -18,6 +19,7 @@ declare module "next-auth" {
             accessToken?: string;
             refreshToken?: string;
             role?: UserRole;
+            managed_venue_ids?: number[];
             needsProfile?: boolean;
             error?: string;
             profile?: UserProfile;
@@ -31,6 +33,7 @@ declare module "next-auth/jwt" {
         accessToken?: string;
         refreshToken?: string;
         role?: UserRole;
+        managed_venue_ids?: number[];
         needsProfile?: boolean;
         accessTokenExpires?: number;
         error?: string;

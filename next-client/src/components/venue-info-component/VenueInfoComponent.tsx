@@ -21,6 +21,7 @@ const VenueInfoComponent: React.FC<Props> = ({venue}) => {
     const [isVisible, setIsVisible] = useState(false);
     const [mounted, setMounted] = useState(false);
     const [isFavorite, setIsFavorite] = useState(!!venue.is_favorite);
+    const [isProcessing, setIsProcessing] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [isUnauthorized, setIsUnauthorized] = useState(false);
     const {user} = useUser();
@@ -35,12 +36,15 @@ const VenueInfoComponent: React.FC<Props> = ({venue}) => {
                 try {
                     const res = await venueServices.venues.favorites(auth)(String(venue.id)).getAll();
                     const favorites = res.data?.data || res.data || [];
-                    const exists = Array.isArray(favorites) ? favorites.length > 0 : !!favorites.id;
-                    setIsFavorite(exists);
-                } catch (error:any) {
-                     if (error.message === "Please Sign In") {
-                           setIsUnauthorized(true);
-                     }
+                    console.log('favorites:', favorites);
+                    const exists = Array.isArray(favorites)
+                        ? favorites.some(fav => fav.is_staff_top === false)
+                        : (favorites.id && favorites.is_staff_top === false);
+                    setIsFavorite(!!exists);
+                } catch (error: any) {
+                    if (error.message === "Please Sign In") {
+                        setIsUnauthorized(true);
+                    }
                     console.error("Sync favorite error:", error);
                 }
             };
@@ -50,9 +54,9 @@ const VenueInfoComponent: React.FC<Props> = ({venue}) => {
 
     useEffect(() => {
         const fetchCollections = async () => {
-              if (!user?.token) return
+            if (!user?.token) return
             try {
-                const res = await venueServices.collections({ accessToken: user.token }).getAll();
+                const res = await venueServices.collections({accessToken: user.token}).getAll();
                 setUserCollections(res.data.data || res.data || []);
             } catch (e) {
                 console.error("Failed to fetch collections:", e);
@@ -60,18 +64,52 @@ const VenueInfoComponent: React.FC<Props> = ({venue}) => {
         };
         void fetchCollections();
 
-}, [user?.token]);
+    }, [user?.token]);
+    useEffect(() => {
+        const sync = (e: any) => {
+            if (String(e.detail.venueId) === String(venue.id)) {
+                setIsFavorite(e.type === 'venue_favorited');
+            }
+        };
+        window.addEventListener('venue_favorited', sync);
+        window.addEventListener('venue_unfavorited', sync);
+        return () => {
+            window.removeEventListener('venue_favorited', sync);
+            window.removeEventListener('venue_unfavorited', sync);
+        };
+    }, [venue.id]);
 
     const handleToggleFavorite = async () => {
-        if (!user?.token) return;
+        if (!user?.token || isProcessing) return;
         const auth = {accessToken: user.token};
 
         if (isFavorite) {
+            setIsProcessing(true);
             try {
-                await venueServices.venues.favorites(auth)(String(venue.id)).delete();
+                const privateCols = userCollections.filter(col =>
+                    !col.is_staff_top && col.venues?.some((v: any) => v.id === venue.id)
+                );
+                if (privateCols.length > 0) {
+                    await Promise.all(privateCols.map(col =>
+                        venueServices.collections(auth).removeVenue(col.id, venue.id!)
+                    ));
+                } else {
+                    await venueServices.venues.favorites(auth)(String(venue.id)).delete();
+                }
                 setIsFavorite(false);
-            } catch (error) {
-                console.error("Error removing from favorites:", error);
+                setUserCollections(prev => prev.map(col => {
+                    if (col.is_staff_top) return col;
+                    return {
+                        ...col,
+                        venues: col.venues ? col.venues.filter((v: any) => v.id !== venue.id) : []
+                    };
+                }));
+
+                window.dispatchEvent(new CustomEvent('venue_unfavorited', {detail: {venueId: venue.id}}));
+            } catch (error: any) {
+                if (error.response?.status === 404) setIsFavorite(false);
+            } finally {
+                setIsProcessing(false);
             }
         } else {
             setShowModal(true);
@@ -81,6 +119,7 @@ const VenueInfoComponent: React.FC<Props> = ({venue}) => {
     const handleSuccess = () => {
         setIsFavorite(true);
         setShowModal(false);
+        window.dispatchEvent(new CustomEvent('venue_favorited', {detail: {venueId: venue.id}}));
     };
 
     useEffect(() => {

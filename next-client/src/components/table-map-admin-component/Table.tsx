@@ -49,7 +49,6 @@ const Table: React.FC<TableProps> = ({table, draggable = false, onDragEnd, onCli
                draggable={draggable}
                 onDragEnd={(e) => {
             if (draggable && onDragEnd) {
-                // Беремо координати ГРУПИ, а не картинки
                 onDragEnd({
                     ...table,
                     x: e.target.x(),

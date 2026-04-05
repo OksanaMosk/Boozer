@@ -7,6 +7,7 @@ const paths = {
     bookings: "/bookings",
     menu: "/menu",
     news: "/news",
+    orders: "/orders",
     reviews: "/reviews-feedback",
     favorites: "/favorites",
     constants: "/constants",
@@ -41,6 +42,8 @@ export const urls = {
 
     venues: {
         list: `${paths.venues}/`,
+        approve: (id: string) => `${paths.venues}/${id}/approve/`,
+        ordersStats: (id: string) => `${paths.venues}/${id}/orders_stats/`,
         detail: (id: string) => `${paths.venues}/${id}/`,
         create: `${paths.venues}/`,
         update: (id: string) => `${paths.venues}/${id}/`,
@@ -55,6 +58,7 @@ export const urls = {
         travelLogistics:(venueId: string) => `${paths.venues}/${venueId}/travel_logistics/`,
         extraServices:(venueId: string) => `${paths.venues}/${venueId}/extra_services/`,
         favorites: (venueId: string) => `${paths.venues}/${venueId}/favorites/`,
+        reviewImages: (venueId: string, reviewId: string) => `${paths.venues}/${venueId}/reviews/${reviewId}/images/`,
         orders: (venueId: string) => `${paths.venues}/${venueId}/orders/`,
         stats: (venueId: string) => `${paths.venues}/${venueId}/stats/`,
         tags: {
@@ -101,7 +105,12 @@ export const urls = {
         byTable: (tableId: string) => `${paths.bookings}/?table=${tableId}`,
         active: `${paths.bookings}/?is_active=true`,
     },
-
+    orders: {
+        list: `${paths.orders}/`,
+        detail: (id: string | number) => `${paths.orders}/${id}/`,
+        update: (id: string | number) => `${paths.orders}/${id}/`,
+        delete: (id: string | number) => `${paths.orders}/${id}/`,
+    },
     reviews: {
         list: `${paths.reviews}/reviews/`,
         detail: (id: string) => `${paths.reviews}/reviews/${id}/`,
@@ -111,6 +120,7 @@ export const urls = {
         like: (id: string | number) => `${paths.reviews}/reviews/${id}/like/`,
         report: (id: string | number) => `${paths.reviews}/reviews/${id}/report/`,
         favoritesList: `${paths.reviews}/favorites/`,
+        images: (id: string) => `${paths.reviews}/reviews/${id}/images/`,
     },
 
     collections: {

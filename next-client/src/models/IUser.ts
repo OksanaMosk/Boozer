@@ -14,6 +14,8 @@ export interface IUser {
     is_rules_accepted: boolean;
   };
   is_active?: boolean;
+  managed_venue_ids?: number[];
+
 }
 
 export interface UserContextType {

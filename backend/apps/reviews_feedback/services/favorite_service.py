@@ -31,6 +31,18 @@ class FavoriteService:
         )
         return favorite
 
+    @staticmethod
+    def remove_venue_from_collection(user, venue_id, collection_id):
+        from apps.reviews_feedback.models import FavoriteVenue
+
+        deleted, _ = FavoriteVenue.objects.filter(
+            user=user,
+            venue_id=venue_id,
+            collection_id=collection_id
+        ).delete()
+
+        return deleted
+
 
     @staticmethod
     def get_top_candidates_by_category(category='general', limit=20):
@@ -61,26 +73,42 @@ class FavoriteService:
             total_votes=Count('id')
         ).order_by('-total_votes')[:limit]
 
+
     @staticmethod
-    def reorder_collection(user, collection_id, order_data):
+    def reorder_collection( collection_id, order_data):
         from django.db import transaction
         from apps.reviews_feedback.models import FavoriteVenue
 
         with transaction.atomic():
             for item in order_data:
-                update_fields = {'position': item['position']}
+                FavoriteVenue.objects.filter(
+                    venue_id=item['id'],
+                    collection_id=collection_id
+                ).update(position=item['position'])
 
-                if 'new_collection_id' in item:
-                    update_fields['collection_id'] = item['new_collection_id']
-                filter_kwargs = {
-                    'id': item['id'],
-                    'collection_id': collection_id
-                }
-                if not user.is_staff:
-                    filter_kwargs['user'] = user
-
-                FavoriteVenue.objects.filter(**filter_kwargs).update(**update_fields)
+                print(f"DEBUG: Venue {item['id']} in Col {collection_id} -> Position {item['position']}")
         return True
+
+    # @staticmethod
+    # def reorder_collection(user, collection_id, order_data):
+    #     from django.db import transaction
+    #     from apps.reviews_feedback.models import FavoriteVenue
+    #
+    #     with transaction.atomic():
+    #         for item in order_data:
+    #             update_fields = {'position': item['position']}
+    #
+    #             if 'new_collection_id' in item:
+    #                 update_fields['collection_id'] = item['new_collection_id']
+    #             filter_kwargs = {
+    #                 'id': item['id'],
+    #                 'collection_id': collection_id
+    #             }
+    #             if not user.is_staff:
+    #                 filter_kwargs['user'] = user
+    #
+    #             FavoriteVenue.objects.filter(**filter_kwargs).update(**update_fields)
+    #     return True
 
 class FavoriteCollectionService:
     @staticmethod

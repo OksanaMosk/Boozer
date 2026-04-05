@@ -3,7 +3,7 @@ import React from 'react';
 import { ButtonGoBackComponent } from "@/components/button-go-back-component/ButtonGoBackComponent";
 import { ButtonScrollTopComponent } from "@/components/button-scroll-top-component/ButtonScrollTopComponent";
 import { FavoriteManagerComponent } from "@/components/favorite-manager-component/FavoriteManagerComponent";
-import { useUser } from "@/app/contexts/UserProvider"; // Імпортуємо ваш контекст
+import { useUser } from "@/app/contexts/UserProvider";
 import { LoaderComponent } from "@/components/loader-component/LoaderComponent";
 
 const FavoritesPage = () => {

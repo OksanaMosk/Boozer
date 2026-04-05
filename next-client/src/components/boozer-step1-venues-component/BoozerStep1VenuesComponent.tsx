@@ -16,7 +16,9 @@ const BoozerStep1VenuesComponent: React.FC<VenuesComponentProps> = ({venues, tot
     return (
         <div className={styles.venuesListContainer}>
             <ul className={styles.list}>
-                {venues.map((venue) => (
+                 {venues
+                    .filter(venue => venue.status === 'active')
+                    .map((venue) => (
                     <li key={venue.id}>
                         <BoozerVenueComponent
                             venue={venue}

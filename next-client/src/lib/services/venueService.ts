@@ -74,6 +74,7 @@ export interface OrderFilterCriteria {
     status?: string;
     currency?: string;
     user?: string;
+    user_id?: string;
     venue?: string;
     start_date?: string;
     end_date?: string;
@@ -119,6 +120,8 @@ const venueServices = {
         getAllWithFilter: (filterCriteria?: VenueFilterCriteria, token?: Token) =>
             api(token).get<PaginatedResponse<IVenue>>(urls.venues.list, {params: buildVenueParams(filterCriteria)}),
         ...createService<IVenue>(urls.venues.list),
+        approve: (id: string, token?: Token) => api(token).post(urls.venues.approve(id)),
+        ordersStats: (id: string, token?: Token) => api(token).get<{ stats: { average_check: number; total_revenue: number; success_orders_count: number; total_orders_count: number; currency: string; }; orders: IOrder[]; }>(urls.venues.ordersStats(id)),
         photos: getByParent<IVenuePhoto>(urls.venues.photos),
         tables: (token?: Token) => (venueId: string) => ({
             getAll: () => getByParent<ITable>(urls.venues.tables, token)(venueId),
@@ -205,10 +208,14 @@ const venueServices = {
             delete: (id: string | number) => api(token).delete(urls.venues.reviews.delete(venueId, id.toString())),
             like: (id: string | number) => api(token).post(`${urls.venues.reviews.detail(venueId, id.toString())}like/`),
             report: (id: string | number, data: { reason: string; comment?: string }) => api(token).post(`${urls.venues.reviews.detail(venueId, id.toString())}report/`, data),
+            images: (reviewId: string | number) => ({
+                create: (formData: FormData) => api(token).post(urls.venues.reviewImages(venueId, reviewId.toString()), formData, { headers: {"Content-Type": "multipart/form-data"} }),
+                delete: (imageId: string | number) => api(token).delete(`${urls.venues.reviewImages(venueId, reviewId.toString())}${imageId}/`),}),
         }),
         favorites: (token?: Token) => (venueId: string) => ({
             add: (data: { collection_id?: number; new_collection_name?: string; collection_category?: string }) => api(token).post(urls.venues.favorites(venueId), data),
             getAll: (criteria?: FavoriteFilterCriteria) => api(token).get(urls.venues.favorites(venueId), {params: buildFavoriteParams(criteria || {venueId})}),
+            // removeFromCollection: (collectionId: number | string) => api(token).delete(`${urls.venues.favorites(venueId)}remove_from_collection/`, {params: { collection_id: collectionId }}),
             delete: () => api(token).delete(`${urls.venues.favorites(venueId)}delete_favorite/`),
         }),
         tags: (venueId: string) => ({
@@ -242,6 +249,13 @@ const venueServices = {
         byTable: getByParent<IOrder>(urls.bookings.byTable),
         active: (token?: Token) => api(token).get<IOrder[]>(urls.bookings.active),
     },
+    orders: (token?: Token) => ({
+        list: (params?: any) => api(token).get<IOrder[] | PaginatedResponse<IOrder>>(urls.orders.list, { params }),
+        get: (id: string | number) => api(token).get<IOrder>(urls.orders.detail(id)),
+        update: (id: string | number, data: Partial<IOrder>) => api(token).patch<IOrder>(urls.orders.detail(id), data),
+        updateStatus: (id: string | number, status: string) => api(token).patch<IOrder>(urls.orders.detail(id), { status }),
+        delete: (id: string | number) => api(token).delete(urls.orders.detail(id)),
+    }),
 
     reviews: {
         getAllWithFilter: (filterCriteria?: ReviewFilterCriteria, token?: Token) =>
@@ -260,8 +274,10 @@ const venueServices = {
             is_staff_top?: boolean
         }) => api(token).post(urls.collections.list, data),
         delete: (id: string | number) => api(token).delete(urls.collections.detail(id)),
+        update: (id: string | number, data: { name?: string; category?: string }) => api(token).patch(urls.collections.detail(id), data),
         reorderItems: (id: string | number, items: any[]) => api(token).patch(urls.collections.reorder(id), items),
-        // reorderItems: (id: string | number, items: any[]) => api(token).patch(`${urls.collections.detail(id.toString())}reorder/`, items),
+        removeVenue: (collectionId: string | number, venueId: string | number) => api(token).delete(`${urls.collections.detail(collectionId)}remove-venue/`, {params: { venue_id: venueId } // Бекенд чекає саме query-параметр venue_id
+        }),
         staffTop: () => api(token).get<IFavoriteCollection[]>(urls.collections.staffTop),
         mostHearted: () => api(token).get<any[]>(urls.collections.mostHearted),
     }),

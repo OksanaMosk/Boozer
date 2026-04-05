@@ -7,24 +7,24 @@ import styles from "./SortableVenueItemComponent.module.css";
 
 interface VenueItemProps {
     item: any;
+    position: number;
+    showIndex?: boolean;
     isOverlay?: boolean;
+    onDelete?: (venueId: string | number, collectionId: string | number) => void;
 }
 
-const SortableVenueItemComponent = ({item, isOverlay}: VenueItemProps) => {
+const SortableVenueItemComponent = ({item, position, showIndex, isOverlay, onDelete}: VenueItemProps) => {
     const venue = item.venue;
     const name = venue.name || "Unknown Venue";
-    const address = venue.address || "No address provided";
     const id = venue.id || "Unknown Venue";
     const city = venue.city || "";
     const country = venue.country || "";
     const rawPhoto = venue.main_photo || item.venue_main_photo;
     const photoUrl = rawPhoto
-        ? `http://localhost:8888/api/media/${rawPhoto}`
+        ? (rawPhoto.startsWith('http') ? rawPhoto : `http://localhost:8888/api/media/${rawPhoto}`)
         : "/images/noVenue.webp";
+    const totalVotes = venue.total_votes || 0;
 
-    const totalVotes = item.total_votes || 0;
-    const position = item.position ?? 0;
-    console.log(item)
     const {
         attributes,
         listeners,
@@ -62,25 +62,33 @@ const SortableVenueItemComponent = ({item, isOverlay}: VenueItemProps) => {
 
             <div className={styles.venueInfoWrapper}>
                 <div className={styles.venueInfo}>
-                    <h2 className={styles.venueTitle}>
-                        {name} <span className={styles.locationSmall}>{city} {country}</span>
-                    </h2>
-                    <hr className={styles.tagline}/>
-
+                    <h2 className={styles.venueTitle}>{name}</h2>
                     <div className={styles.addressWrapper}>
+                        <p className={styles.address}>{city}, {country}</p>
+
                         <div className={styles.about}>
-                            <p className={styles.value}>{address || "-"}</p>
-                        </div>
-                        <div className={styles.footerRow}>
                             <p className={styles.value}>Id: {item.venue?.id || item.venue_id}</p>
-                            <div className={styles.stats}>
-                                <span className={styles.posBadge}>Pos: {position}</span>
-                                {totalVotes > 0 && <span className={styles.votes}>🔥 {totalVotes}</span>}
-                                <span className={styles.posBadge}>Pos: {id}</span>
+                            <div className={styles.footerRow}>
+                                {showIndex && <p className={styles.posBadge}>Position: {position}</p>}
+                                {totalVotes > 0 && <p className={styles.posBadge}>Votes: <strong
+                                    className={styles.votes}>{totalVotes}</strong> 💛</p>}
+                                <p className={styles.posBadge}>{id}</p>
+
                             </div>
                         </div>
                     </div>
                 </div>
+                {!isOverlay && onDelete && (
+                    <button
+                        className={styles.button}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                          onDelete(item.venue.id, item.collection_id);
+                        }}
+                    >
+                        Delete from collection
+                    </button>
+                )}
             </div>
         </div>
     );

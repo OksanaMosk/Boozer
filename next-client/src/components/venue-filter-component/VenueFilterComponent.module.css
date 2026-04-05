@@ -48,14 +48,8 @@ align-items: center;
     border-radius: 2rem;
     cursor: pointer;
     outline: none;
-    background: linear-gradient(
-        90deg,
-        #f9f295,
-        #ae8625,
-        #faf398,
-        #b88a44
-    );
-    color:  var(--color-text-muted);
+    background: var(--menu-color);
+    color:  var(--logo-hover-color);
     box-shadow: 0 0 12px white;
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);

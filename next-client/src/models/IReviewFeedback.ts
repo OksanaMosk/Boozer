@@ -10,7 +10,12 @@ export interface IReview {
     author_name: string;
     venue: string | number;
     order?: number | null;
-    rating: number;
+    rating?: number;
+    food_rating?: number;
+    service_rating?: number;
+    atmosphere_rating?: number;
+    cleanliness_rating?: number;
+    value_rating?: number;
     comment: string | null;
     review_photos: IReviewPhoto[];
     likes_count: number;

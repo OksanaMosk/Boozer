@@ -1,25 +1,134 @@
-/*:global(.recharts-line-curve) {*/
-/*  filter: drop-shadow(0 0 6px rgba(249, 242, 149, 0.8))*/
-/*          drop-shadow(0 0 12px rgba(174, 134, 37, 0.6));*/
-/*}*/
-
-/*:global(.recharts-area-area) {*/
-/*  filter: drop-shadow(0 0 20px rgba(249, 242, 149, 0.25));*/
-/*    background-color: var(--menu-color);*/
-/*}*/
-/*.gold-line-glow path.recharts-line-curve {*/
-/*  filter: drop-shadow(0px 0px 5px rgba(249, 242, 149, 0.8))*/
-/*          drop-shadow(0px 0px 10px rgba(174, 134, 37, 0.4));*/
-/*}*/
-
-.chart-container {
-  background: linear-gradient(145deg, #1a1a1a, #0a0a0a);
-  border: 1px solid rgba(174, 134, 37, 0.3);
-  border-radius: 12px;
-  padding: 10px;
-  box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+.chartContainer {
+    width: 100%;
+    max-width: 360px;
+    background: linear-gradient(165deg, #141414 0%, #050505 100%);
+    padding: 20px;
+    border-radius: 16px;
+    /* Міняємо звичайний border на відносне позиціонування для псевдоелемента */
+    position: relative;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.8);
+    font-family: sans-serif;
+    box-sizing: border-box;
+    overflow: hidden;
 }
 
+/* ЗОЛОТИЙ БОРДЕР */
+.chartContainer::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    padding: 2px; /* Товщина бордера */
+    border-radius: 16px;
+    background: linear-gradient(
+        90deg,
+        #f9f295,
+        #ae8625,
+        #faf398,
+        #b88a44
+    );
+    -webkit-mask:
+            linear-gradient(#fff 0 0) content-box,
+            linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+            mask-composite: exclude;
+    pointer-events: none;
+}
+
+.unauthorizedWrapper {
+    text-align: center;
+    padding: 10px;
+}
+
+.crown {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.loaderWrapper {
+    height: 110px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.loaderText {
+    color: #ae8625;
+    font-size: 12px;
+    letter-spacing: 2px;
+    margin: 0;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 5px;
+    position: relative;
+    z-index: 2;
+}
+
+.label {
+    color: #ae8625;
+    font-size: 10px;
+    margin: 0 0 4px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.value {
+    color: #fff;
+    margin: 0;
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.tabs {
+    display: flex;
+    gap: 5px;
+}
+
+.tabButton {
+    background: transparent;
+    border: 1px solid rgba(174, 134, 37, 0.2);
+    color: rgba(174, 134, 37, 0.6);
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-size: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-weight: 600;
+    text-transform: uppercase;
+    position: relative;
+    z-index: 3;
+}
+
+.tabButtonActive {
+    background: rgba(174, 134, 37, 0.25);
+    border: 1px solid #f9f295;
+    color: #f9f295;
+}
+
+.chartWrapper {
+    width: 100%;
+    height: 50px;
+    position: relative;
+    z-index: 2;
+}
+
+.footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 12px;
+    position: relative;
+    z-index: 2;
+}
+
+.footerText {
+    color: rgba(174, 134, 37, 0.4);
+    font-size: 9px;
+}
+
+/* Tooltip Styles */
 .recharts-tooltip-wrapper .recharts-default-tooltip {
   background-color: #121212 !important;
   border: 1px solid #ae8625 !important;

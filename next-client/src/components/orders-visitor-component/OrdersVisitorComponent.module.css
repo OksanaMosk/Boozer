@@ -1,0 +1,9 @@
+.pageWrapper,
+.ordersGrid{
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+.sectionHeader {
+    color: var(--logo-hover-color);
+ }

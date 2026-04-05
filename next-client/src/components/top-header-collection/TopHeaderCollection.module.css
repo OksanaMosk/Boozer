@@ -1,0 +1,106 @@
+.header {
+    text-align: center;
+    margin: 0 auto 12px;
+    width:700px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--menu-color);
+    border-radius: 20px;
+    gap: 1rem;
+    flex-wrap: wrap;
+    padding: 12px;
+}
+
+.titleContainer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex: 1;
+    gap: 1rem;
+}
+
+.title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--logo-hover-color);
+
+}
+
+.title:hover {
+  color: var(--color-bg-dark);
+}
+
+.badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    background: var(--menu-color);
+    width: 140px;
+    height: 26px;
+    border-radius: 4px;
+    color: #6c757d;
+    text-transform: uppercase;
+}
+
+.input {
+    width: 100%;
+    font-size: 1rem;
+    font-weight: 600;
+    outline: none;
+    height: 26px;
+    padding: 0.5rem 2.5rem 0.5rem 1rem;
+    border-radius: 1.5rem;
+    color: var(--input-color);
+    border: 1px solid rgba(255,255,255,0.5);
+    background-color: rgba(255,255,255,0.05);
+    box-sizing: border-box;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.input:focus {
+    background-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 8px rgba(255,255,255,0.3);
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+.actionBtn,
+.deleteBtn {
+    width: 80px;
+    height: 26px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 20px;
+    border: 1px solid var(--color-noposter);
+    font-size: 12px;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.actionBtn:hover {
+    background:var(--reverse-menu-color);
+    border-color: var(--logo-hover-color);
+    color: var(--title-color);
+}
+
+.actionBtn {
+ background:var(--menu-color);
+    color: var(--logo-hover-color);
+}
+.deleteBtn {
+    background-color: #bf8282;
+    color: var(--color-text-muted);
+}
+
+.deleteBtn:hover {
+     border-color: var(--logo-hover-color);
+    background-color: #a94444;
+}

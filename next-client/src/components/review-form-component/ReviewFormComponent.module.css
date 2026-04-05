@@ -125,8 +125,14 @@
     color: var(--color-text);
 }
 
-.loader{
+.loaderWrapper{
+   box-sizing: border-box;
+    height: 45px;
     display: flex;
     justify-content: center;
-    margin: 70px auto 100px;
+    align-items: flex-start;
+    margin: 0;
+    padding: 0;
+    line-height: 1.2;
+    transform: scale(0.2);
 }

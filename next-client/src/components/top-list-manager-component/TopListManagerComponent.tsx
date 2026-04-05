@@ -19,14 +19,15 @@ export const TopListManagerComponent: React.FC<Props> = () => {
     const [activeCandidateColId, setActiveCandidateColId] = useState<string | null>(null);
 
     const loadData = useCallback(async () => {
+           if (!user?.token || collections.length > 0) return;
     try {
         if (!user?.token) return
         const res = await venueServices.collections({accessToken: user.token}).mostHearted();
         setCollections(res.data || []);
-        console.log('Top:', res.data);
+        console.log('Top:', res);
 
     } catch (e) {
-        console.error("Load error:", e);
+
         setCollections([]);
     }
 }, [user?.token]);
@@ -69,7 +70,7 @@ useEffect(() => {
     return (
         <div className={styles.container}>
             <div className={styles.wrapper}>
-                <h2 className={styles.title}>Most Hearted by users to form TOP collections</h2>
+                <h2 className={styles.title}>MAX 5 Most Hearted collections by users to form 'Staff TOP' categories.</h2>
                 <ul className={styles.list} >
                     {collections.map(col => (
                     <li key={col.category} className={styles.collectionCard}>
@@ -80,15 +81,15 @@ useEffect(() => {
                         <div className={styles.buttonGroup}>
                             <button
                                 className={styles.openBtn}
-                                onClick={() => router.push(`/admin/top-create?colId=${col.id}&category=${col.category}`)}
+                                onClick={() => router.push(`/admin/top-create?category=${col.category}`)}
                             >
-                                Open & Sort
+                                Open & Add to Top
                             </button>
                             <button
                                 className={styles.candidateBtn}
                                 onClick={() => handleShowCandidates( col.category)}
                             >
-                                Candidates Venue
+                               Open Candidates Venue
                             </button>
                         </div>
 

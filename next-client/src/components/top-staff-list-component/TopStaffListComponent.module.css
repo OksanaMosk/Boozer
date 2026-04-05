@@ -1,0 +1,98 @@
+.venuesListContainer {
+    margin: 0 auto 40px;
+    width: 70vw;
+    text-align: center;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+    padding: 0;
+    padding-inline-start:0;
+}
+.collectionSection {
+     margin: 0 auto;
+}
+.categoryTitle {
+    padding: 0;
+    margin: 0 auto ;
+    font-family: var(--font-imperial),serif;
+    font-size:3rem;
+    letter-spacing: 2px;
+    color: var(--color-text);
+}
+.link {
+    cursor: pointer;
+    text-decoration: none;
+    color: var(--color-container);
+}
+.list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+    list-style: none;
+    padding: 0;
+}
+
+.item {
+    position: relative;
+}
+.authBanner {
+    text-align: center;
+    margin: 0 auto;
+    padding: 0;
+}
+.titleGuest {
+    margin: 0 auto;
+    padding: 0;
+    font-family: var(--font-imperial),serif;
+    font-weight: 700;
+    font-size: 2rem;
+    letter-spacing: 2px;
+    color: var(--color-text);
+    line-height: 1;
+}
+.loginLink {
+      color: var(--input-color);
+}
+.heartBtn {
+    position: absolute;
+    top: 24px;
+    right: 20px;
+    z-index: 10;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: inherit;
+    border: none;
+}
+
+.loaderWrapper {
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    margin: 0;
+    padding: 0;
+}
+@media (min-width: 768px) {
+    .venuesListContainer {
+        width: 90%;
+    }
+}
+
+@media (min-width: 1280px) {
+    .venuesListContainer {
+        width: 100%;
+    }
+}
+
+@media (min-width: 1536px) {
+    .venuesListContainer {
+        width: 90%;
+        max-width: 1536px;
+    }
+}

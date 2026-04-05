@@ -5,51 +5,8 @@ import { ReviewStarsComponent } from "@/components/review-stars-component/Review
 import {NewsGalleryComponent} from "@/components/news-gallery-compopnent/NewsGalleryComponent";
 import React, {useState} from "react";
 
-
-const MOCK_REVIEWS = [
-    {
-        id: "mock-1",
-        user: { name: "Alex Thompson" },
-        rating: 5.0,
-        text: "The food was absolutely incredible! Best service I've had in a while. The atmosphere is very cozy.",
-        sub_ratings: { food: 5, service: 5, atmosphere: 5, cleanliness: 5, value: 5 },
-       photos: [
-    "/images/noPosterVenue.webp",
-    "/images/noPosterMenu.webp",
-    "/images/noPosterVenue.webp"
-],
-        likes: 12,
-        status: "is_active",
-    },
-    {
-        id: "mock-2",
-        user: { name: "Maria Garcia" },
-        rating: 4.5,
-        text: "Great experience! The text is now stretched to full width as requested. Very satisfied with the cleanliness and value.",
-        sub_ratings: { food: 5, service: 4, atmosphere: 5, cleanliness: 5, value: 4 },
-        photos: [
-            "/images/noPosterVenue.webp",
-            "/images/noPosterMenu.webp",
-            "/images/noPosterVenue.webp"
-        ],
-        likes: 8,
-        status: "is_active",
-    },
-    {
-        id: "mock-3",
-        user: { name: "Jason Derulo" },
-        rating: 5.0,
-        status: "active",
-        text: "Best service ever. Atmosphere is top notch. Highly recommended for family dinners!",
-        sub_ratings: { food: 5, service: 5, atmosphere: 5, cleanliness: 5, value: 5 },
-        photos: [],
-        likes: 12
-    }
-];
-
-export const ReviewComponent = ({review, onLike, onReport, isPlaceholder, placeholderIndex = 0}: any) => {
-    const data = isPlaceholder ? MOCK_REVIEWS[placeholderIndex] : review;
-    const s = data.sub_ratings || {};
+export const ReviewComponent = ({review, onLike, onReport, isAdminView = false}: any) => {
+    const data= review;
     const [likesCount, setLikesCount] = useState(data?.likes_count || 0);
     const [isLiked, setIsLiked] = useState(data?.is_liked || false);
     const [showReportForm, setShowReportForm] = useState(false);
@@ -85,7 +42,6 @@ export const ReviewComponent = ({review, onLike, onReport, isPlaceholder, placeh
         }
     };
 
-
     return (
       <div className={styles.newsCard}>
             <div className={styles.top}>
@@ -112,56 +68,93 @@ export const ReviewComponent = ({review, onLike, onReport, isPlaceholder, placeh
                             </div>
                         )}
                     </div>
-
-                    <div className={styles.buttonGroup}>
-                        {!showReportForm ? (
-                            <>
-                                <button onClick={handleLike}
-                                        className={`${styles.editButton} ${isLiked ? styles.activeLike : ''}`}>
-                                    👍 {likesCount}
-                                </button>
-                                <button onClick={() => setShowReportForm(true)} className={styles.deleteButton}>
-                                    ⚠ Report
-                                </button>
-                            </>
-                        ) : (
-                            <div className={styles.selectWrapper}>
-                                <div className={styles.reason}>
-                                    <label className={styles.labelSelect}>Reason</label>
-                                    <select
-                                        value={reportReason}
-                                        onChange={(e) => setReportReason(e.target.value)}
-                                        className={styles.select}
-                                    >
-                                        <option value="Spam">Spam</option>
-                                        <option value="Fake">Fake</option>
-                                        <option value="Abuse">Abuse</option>
-                                        <option value="Other">Other</option>
-                                    </select>
-                                    <div className={styles.reportActionButtons}>
-                                        <button onClick={handleSendReport}
-                                                className={styles.sendReportBtn}>Send
+                    {!isAdminView && (
+                        <>
+                            <div className={styles.buttonGroup}>
+                                {!showReportForm ? (
+                                    <>
+                                        <button onClick={handleLike}
+                                                className={`${styles.editButton} ${isLiked ? styles.activeLike : ''}`}>
+                                            👍 {likesCount}
                                         </button>
-
-                                        <button onClick={() => setShowReportForm(false)}
-                                                className={styles.cancelReportBtn}>✕
+                                        <button onClick={() => setShowReportForm(true)} className={styles.deleteButton}>
+                                            ⚠ Report
                                         </button>
+                                    </>
+                                ) : (
+                                    <div className={styles.selectWrapper}>
+                                        <div className={styles.reason}>
+                                            <label className={styles.labelSelect}>Reason</label>
+                                            <select
+                                                value={reportReason}
+                                                onChange={(e) => setReportReason(e.target.value)}
+                                                className={styles.select}
+                                            >
+                                                <option value="Spam">Spam</option>
+                                                <option value="Fake">Fake</option>
+                                                <option value="Abuse">Abuse</option>
+                                                <option value="Other">Other</option>
+                                            </select>
+                                            <div className={styles.reportActionButtons}>
+                                                <button onClick={handleSendReport}
+                                                        className={styles.sendReportBtn}>Send
+                                                </button>
+
+                                                <button onClick={() => setShowReportForm(false)}
+                                                        className={styles.cancelReportBtn}>✕
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <div className={styles.send}>
+                                            <label className={styles.labelSelect}>Add more details (optional)...</label>
+                                            <textarea
+                                                placeholder="Tell us more..."
+                                                className={styles.reportTextarea}
+                                                value={reportComment}
+                                                onChange={(e) => setReportComment(e.target.value)}
+                                            />
+                                        </div>
                                     </div>
-                                </div>
-
-                                <div className={styles.send}>
-                                    <label className={styles.labelSelect}>Add more details (optional)...</label>
-                                    <textarea
-                                        placeholder="Tell us more..."
-                                        className={styles.reportTextarea}
-                                        value={reportComment}
-                                        onChange={(e) => setReportComment(e.target.value)}
-                                    />
-                                </div>
+                                )}
                             </div>
-                        )}
-                    </div>
-                    {isReported && <div className={styles.bottomAlert}>Report sent</div>}
+                            {isReported && <div className={styles.bottomAlert}>Report sent</div>}
+                        </>
+                    )}
+
+                    {isAdminView && review.report_details && (
+                        <div className={styles.adminReportSection}>
+                            {!Array.isArray(review.report_details) && review.report_details.has_reports && (
+                                <div className={styles.contentReport}>
+                                    <strong>⚠️ Attention:</strong> This review has been reported for:
+                                    <p className={styles.reportDetails}>
+                                        {review.report_details.reasons.join(", ")}
+                                    </p>
+                                </div>
+                            )}
+
+                            {Array.isArray(review.report_details) && (
+                                <div className={styles.detailsAdminList}>
+                                    <h4 className={styles.detailsAdminTitle}>Global Moderation
+                                        Details:</h4>
+                                    <ol className={styles.detailsAdminWrapper}>
+                                        {review.report_details.map((report: any, idx: number) => (
+                                        <li className={styles.detailsAdminAbout}
+                                             key={idx}
+                                        >
+                                            <p className={styles.detailsAbout}><strong>Reason:</strong> {report.reason}
+                                            </p>
+                                            <p className={styles.detailsAbout}>
+                                                <strong>Comment:</strong> {report.comment || "No text"}</p>
+                                            <p className={styles.detailReporter}>By: {report.reporter}</p>
+                                        </li>
+                                        ))}
+                                    </ol>
+                                </div>
+                            )}
+                        </div>
+                    )}
+
                 </div>
 
                 {images.length > 0 && (
@@ -176,15 +169,22 @@ export const ReviewComponent = ({review, onLike, onReport, isPlaceholder, placeh
                     </div>
 
                     <div className={styles.subRatings}>
-                        {['Food', 'Service', 'Atmosphere', 'Cleanliness', 'Value'].map((item) => (
-                            <div key={item} className={styles.subRatingItem}>
-                                <span className={styles.ratingLabel}>{item}</span>
-                                <ReviewStarsComponent rating={s[item.toLowerCase().split(' ')[0]] || 0}/>
+                        {[
+                            {label: 'Food', key: 'food_rating'},
+                            {label: 'Service', key: 'service_rating'},
+                            {label: 'Atmosphere', key: 'atmosphere_rating'},
+                            {label: 'Cleanliness', key: 'cleanliness_rating'},
+                            {label: 'Value', key: 'value_rating'}
+                        ].map((item) => (
+                            <div key={item.key} className={styles.subRatingItem}>
+                                <span className={styles.ratingLabel}>{item.label}</span>
+
+                                <ReviewStarsComponent rating={data[item.key] || 0}/>
                             </div>
                         ))}
                     </div>
                 </div>
             </div>
-        </div>
+      </div>
     );
 };

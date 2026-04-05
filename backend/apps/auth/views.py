@@ -17,7 +17,7 @@ from core.services.jwt_service import ActivateToken, JWTService, RecoveryToken, 
 from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
 
 from apps.auth.serializers import EmailSerializer, PasswordSerializer
-from apps.user.serializers import UserSerializer, ProfileSerializer
+from apps.user.serializers import UserSerializer
 
 import requests
 from rest_framework.response import Response
@@ -25,7 +25,6 @@ from rest_framework.response import Response
 UserModel = get_user_model()
 
 logger = logging.getLogger(__name__)
-
 
 
 class ActivateUserView(GenericAPIView):
@@ -64,7 +63,6 @@ class ActivateUserView(GenericAPIView):
 
         if response.status_code == 200:
             return redirect(f"{settings.BASE_URL}/login?activated=true")
-            # return redirect('http://localhost:3000/login?activated=true')
         return response
 
 class RecoveryRequestView(GenericAPIView):
@@ -155,36 +153,23 @@ class LoginAPIView(APIView):
         Provide 'username' and 'password' in the request body.
     """
     permission_classes = (AllowAny,)
+
     def post(self, request, *args, **kwargs):
         username = request.data.get('username') or request.data.get('email')
         password = request.data.get('password')
         user = authenticate(username=username, password=password)
-        if user:
-            profile = getattr(user, 'profile', None)
 
-            if profile is None:
-                profile_data = {
-                    'name': "Admin",
-                    'surname': '',
-                    'age': None,
-                    'phone': '',
-                    'birth_date': None,
-                    'is_rules_accepted': True
-                }
-            else:
-                profile_data = ProfileSerializer(profile).data
+        if user:
+            user_data = UserSerializer(user).data
             token = JWTService.create_token(user=user, token_class=AccessToken)
             refresh_token = JWTService.create_token(user=user, token_class=RefreshToken)
+
             return Response({
                 'access': str(token),
                 'refresh': str(refresh_token),
-                'user': {
-                    'id': user.id,
-                    'email': user.email,
-                    'role': user.role,
-                    'profile':profile_data
-                }
+                'user': user_data
             }, status=status.HTTP_200_OK)
+
         return Response({'detail': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
 
 
@@ -231,32 +216,14 @@ class SocialLoginJWTAPIView(APIView):
             profile.surname = user_data.get('family_name', '') or email.split('@')[0]
         profile.save()
 
-        needs_profile = not profile.is_rules_accepted or not profile.birth_date
-
+        user_data = UserSerializer(user).data
+        user_data['needs_profile'] = not profile.is_rules_accepted or not profile.birth_date
         refresh = RefreshToken.for_user(user)
-        response_data = {
+        return Response({
             'access_token': str(refresh.access_token),
             'refresh_token': str(refresh),
-            'user': {
-                'id': user.id,
-                'email': user.email,
-                'role': user.role,
-                'profile': {
-                    'name': profile.name,
-                    'surname': profile.surname,
-                    'age': profile.age,
-                    'phone': profile.phone,
-                    'birth_date': profile.birth_date,
-                    'is_rules_accepted': profile.is_rules_accepted,
-                    'avatar': profile.avatar.url if profile.avatar else None,
-                }
-            }
-        }
-
-        if needs_profile:
-            response_data['user']['needs_profile'] = True
-
-        return Response(response_data)
+            'user': user_data
+        }, status=status.HTTP_200_OK)
 
     def get_user_data_from_provider(self, provider, access_token):
 
@@ -265,8 +232,7 @@ class SocialLoginJWTAPIView(APIView):
                 return self.verify_google_token(access_token)
             elif provider == 'facebook':
                 return self.verify_facebook_token(access_token)
-            # elif provider == 'apple':
-            #     return self.verify_apple_token(access_token)
+
         except requests.exceptions.RequestException:
             return None
 
@@ -280,8 +246,7 @@ class SocialLoginJWTAPIView(APIView):
 
         if response.status_code == 200:
             return response.json()
-
-        print(f'GOOGLE API ERROR: {response.status_code} - {response.text}')
+        # print(f'GOOGLE API ERROR: {response.status_code} - {response.text}')
         return None
 
     def verify_facebook_token(self, access_token):
@@ -316,21 +281,10 @@ class SocialLoginJWTAPIView(APIView):
             if user_response.status_code == 200:
                 return user_response.json()
 
-        except Exception as e:
-            print(f'Facebook verification error: {e}')
+        except requests.exceptions.RequestException:
             return None
 
         return None
-
-    # def verify_apple_token(self, access_token):
-    #     try:
-    #         apple_url = f'https://appleid.apple.com'
-    #         #  Apple працює через POST з клієнтським секретом.
-    #         # Цей метод через GET, як у Google, у Apple просто так не спрацює.
-    #         return None
-    #     except Exception:
-    #         return None
-
 
 class CurrentUserAPIView(APIView):
     """
@@ -338,21 +292,6 @@ class CurrentUserAPIView(APIView):
         Retrieve information about the currently authenticated user.
     """
     permission_classes = [IsAuthenticated]
-
     def get(self, request):
-        user = request.user
-        profile = getattr(user, 'profile', None)
-
-        data = {
-            'id': user.id,
-            'email': user.email,
-            'role': user.role,
-            'is_active': user.is_active,
-            'profile': {
-                'name': getattr(profile, 'name', None),
-                'surname': getattr(profile, 'surname', None),
-                'age': getattr(profile, 'age', None),
-                'avatar': profile.avatar.url if getattr(profile, 'avatar', None) else None,
-            } if profile else None
-        }
-        return Response(data)
+        serializer = UserSerializer(request.user)
+        return Response(serializer.data)

@@ -54,7 +54,7 @@ const VenueManagementComponent: React.FC<Props> = ({userId}) => {
 
     return (
         <div>
-            <h2>Manage Venue Listings</h2>
+            <h2 className={styles.title} >Manage Venue Listings</h2>
             <div className={styles.table}>
                 {venuesLoading ? (
                     <LoaderComponent/>

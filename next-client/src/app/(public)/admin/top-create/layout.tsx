@@ -5,7 +5,7 @@ import type {Metadata} from "next";
 import React from "react";
 
 export const metadata: Metadata = {
-    title: "Top Create| Boozer",
+    title: "Top Create | Boozer",
 };
 
 type Props = {

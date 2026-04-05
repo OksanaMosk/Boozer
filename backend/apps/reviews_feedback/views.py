@@ -2,15 +2,26 @@ from rest_framework import viewsets, filters, status, permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
-from .models import ReviewModel, FavoriteVenue, FavoriteCollection
+from .models import ReviewModel, FavoriteVenue, FavoriteCollection, ReviewPhotoModel
 from .serializers import (
     ReviewSerializer, FavoriteVenueSerializer,
-    ReviewReportSerializer, FavoriteCollectionSerializer
+    ReviewReportSerializer, FavoriteCollectionSerializer, ReviewPhotoSerializer
 )
 from .services.favorite_service import FavoriteService, FavoriteCollectionService
 from .services.review_service import ReviewService
 
 from ..user.permissions import IsAdmin, IsVisitorOrReadOnly, IsGuestReadOnly
+
+class ReviewImageViewSet(viewsets.ModelViewSet):
+    queryset = ReviewPhotoModel.objects.all()
+    serializer_class = ReviewPhotoSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def get_queryset(self):
+        return self.queryset.filter(review_id=self.kwargs['review_pk'])
+
+    def perform_create(self, serializer):
+        serializer.save(review_id=self.kwargs['review_pk'])
 
 class ReviewViewSet(viewsets.ModelViewSet):
     queryset = ReviewModel.objects.filter(is_published=True)
@@ -23,7 +34,12 @@ class ReviewViewSet(viewsets.ModelViewSet):
     ordering = ['-created_at']
 
     def get_queryset(self):
-        queryset = super().get_queryset()
+        queryset = super().get_queryset().prefetch_related(
+            'review_photos',
+            'reports',
+            'reports__user'
+        )
+
         venue_id = self.kwargs.get('venue_pk')
         if venue_id:
             queryset = queryset.filter(venue_id=venue_id)
@@ -33,7 +49,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
         return queryset
 
     @action(detail=True, methods=['post'], permission_classes=[permissions.IsAuthenticated])
-    def like(self, request, _pk=None, _venue_pk=None):
+    def like(self, request, pk=None, venue_pk=None):
         review = self.get_object()
         is_liked, count = ReviewService.toggle_like(request.user, review)
         return Response({
@@ -42,9 +58,12 @@ class ReviewViewSet(viewsets.ModelViewSet):
         })
 
     @action(detail=True, methods=['post'], permission_classes=[permissions.IsAuthenticated])
-    def report(self, request, _pk=None, _venue_pk=None):
+    def report(self, request, pk=None, venue_pk=None):
         review = self.get_object()
-        serializer = ReviewReportSerializer(data=request.data, context={'request': request})
+        data = request.data.copy()
+        data['review'] = review.id
+        serializer = ReviewReportSerializer(data=data, context={'request': request})
+
         if serializer.is_valid():
             ReviewService.create_report(
                 user=request.user,
@@ -57,7 +76,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         venue_id = self.kwargs.get('venue_pk')
-        serializer.save(venue_id=venue_id, user=self.request.user)
+        serializer.save(venue_id=venue_id)
 
 class FavoriteCollectionViewSet(viewsets.ModelViewSet):
     serializer_class = FavoriteCollectionSerializer
@@ -65,6 +84,12 @@ class FavoriteCollectionViewSet(viewsets.ModelViewSet):
     pagination_class = None
 
     def get_queryset(self):
+        user = self.request.user
+        detail_actions = ['retrieve', 'update', 'partial_update', 'destroy', 'reorder', 'remove_venue']
+
+        if self.action in detail_actions and (user.is_staff or user.is_superuser):
+            return FavoriteCollection.objects.filter(user=user)
+
         return FavoriteCollection.objects.filter(
             user=self.request.user,
             is_staff_top=False
@@ -73,7 +98,6 @@ class FavoriteCollectionViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
-
     @action(detail=True, methods=['patch'])
     def reorder(self, request, pk=None):
         if not request.user.is_staff:
@@ -81,25 +105,42 @@ class FavoriteCollectionViewSet(viewsets.ModelViewSet):
 
         if not isinstance(request.data, list):
             return Response({'error': 'Expected a list'}, status=400)
-
-        FavoriteService.reorder_collection(
-            user=request.user,
+        success = FavoriteService.reorder_collection(
             collection_id=pk,
             order_data=request.data
         )
 
-        return Response({'status': 'order updated'})
+        if success:
+            return Response({'status': 'order updated'}, status=200)
+        else:
+            return Response({'error': 'Failed to update order'}, status=400)
 
-    @action(detail=False, methods=['get'])
+
+    @action(detail=False, methods=['get'], permission_classes=[permissions.AllowAny])
     def staff_top(self, request):
         qs = FavoriteCollectionService.get_staff_top_collections()
         serializer = self.get_serializer(qs, many=True)
         return Response(serializer.data)
 
-    @action(detail=False, methods=['get'], permission_classes=[permissions.AllowAny])
+    @action(detail=False, methods=['get'], permission_classes=[IsAdmin])
     def most_hearted(self, request):
         data = FavoriteCollectionService.get_most_hearted_collections(limit=5)
         return Response(list(data))
+
+    @action(detail=True, methods=["delete"], url_path="remove-venue")
+    def remove_venue(self, request, pk=None):
+        venue_id = request.query_params.get("venue_id")
+
+        if not venue_id:
+            return Response({"error": "venue_id required"}, status=400)
+
+        deleted = FavoriteService.remove_venue_from_collection(
+            user=request.user,
+            venue_id=venue_id,
+            collection_id=pk
+        )
+
+        return Response({"deleted": deleted}, status=200)
 
 class FavoriteVenueViewSet(viewsets.ModelViewSet):
     queryset = FavoriteVenue.objects.all()

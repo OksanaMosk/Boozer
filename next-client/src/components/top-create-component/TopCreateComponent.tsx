@@ -2,129 +2,74 @@
 
 import React, { useState } from "react";
 import venueServices from "@/lib/services/venueService";
-import {CATEGORY_LABELS, INITIAL_CATEGORIES, TopCategoryType} from "@/models/IReviewFeedback";
-import {useUser} from "@/app/contexts/UserProvider";
+import { useUser } from "@/app/contexts/UserProvider";
+import styles from "./TopCreateComponent.module.css";
 
 interface Props {
-    role: string;
-    viewMode: 'official' | 'personal';
-    collections: any[];
     onCreated: () => void;
 }
 
-const TopCreateComponent: React.FC<Props> = ({
-    role,
-    viewMode,
-    collections,
-    onCreated
-}) => {
-     const { user } = useUser();
+const TopCreateComponent: React.FC<Props> = ({ onCreated }) => {
+    const { user } = useUser();
     const [showForm, setShowForm] = useState(false);
-    const [newName, setNewName] = useState("");
-    const [selectedCat, setSelectedCat] = useState("general");
-    const [customCat, setCustomCat] = useState("");
-    const [isCustom, setIsCustom] = useState(false);
-
-    const dynamicCategories = [
-        ...INITIAL_CATEGORIES,
-        ...(collections || [])
-            .map(c => ({
-              value: c.category as TopCategoryType,
-            label: c.category_display || CATEGORY_LABELS[c.category as TopCategoryType] || c.category
-            }))
-            .filter(
-                (c, i, arr) =>
-                    c.value &&
-                    arr.findIndex(a => a.value === c.value) === i &&
-                    !INITIAL_CATEGORIES.find(ic => ic.value === c.value)
-            )
-    ];
+    const [name, setName] = useState("");
+    const [error, setError] = useState<string | null>(null);
 
     const handleCreate = async () => {
-        const isOfficial = role === 'admin' && viewMode === 'official';
-        const finalCategory = isCustom ? customCat.trim() : selectedCat;
-        const finalName = isOfficial ? newName.trim() : finalCategory;
+        const finalName = name.trim();
+        if (!finalName || !user?.token) return;
 
-        if (!finalName || !finalCategory) return;
+        setError(null);
 
         try {
-             if (!user?.token) return;
-            await venueServices.collections({accessToken: user.token}).create({
+            await venueServices.collections({ accessToken: user.token }).create({
                 name: finalName,
-                category: finalCategory,
-                is_staff_top: isOfficial
+                category: finalName,
+                is_staff_top: true
             });
 
-            // reset
-            setNewName("");
-            setCustomCat("");
-            setIsCustom(false);
-            setSelectedCat("general");
+            setName("");
             setShowForm(false);
-
             onCreated();
-        } catch (e) {
-            console.error("Create error:", e);
+        } catch (err: any) {
+            setError(err.response?.data?.message || "Failed to create Staff TOP");
         }
     };
 
+    const toggleForm = () => {
+        setShowForm(prev => !prev);
+        setError(null);
+        setName("");
+    };
+
     return (
-        <div>
-            <button onClick={() => {
-                setShowForm(prev => !prev);
-                setIsCustom(false);
-            }}>
-                {showForm ? "✕ Cancel" : "+ Create TOP"}
+        <div className={styles.wrapper}>
+            <button className={styles.toggleBtn} onClick={toggleForm}>
+                {showForm ? " Cancel" : "Create Staff TOP"}
             </button>
 
             {showForm && (
-                <div>
-                    {role === 'admin' && viewMode === 'official' && (
+                <div className={styles.form}>
+                    <div className={styles.inputGroup}>
                         <input
-                            placeholder="TOP name (e.g. Best of 2026)"
-                            value={newName}
-                            onChange={(e) => setNewName(e.target.value)}
-                        />
-                    )}
-
-                    {!isCustom ? (
-                        <select
-                            value={selectedCat}
+                            className={styles.input}
+                            placeholder="Enter Staff TOP name..."
+                            value={name}
                             onChange={(e) => {
-                                if (e.target.value === "custom") {
-                                    setIsCustom(true);
-                                } else {
-                                    setSelectedCat(e.target.value);
-                                }
+                                setName(e.target.value);
+                                if (error) setError(null);
                             }}
+                            autoFocus
+                        />
+                        <button
+                            className={styles.saveBtn}
+                            onClick={handleCreate}
+                            disabled={!name.trim()}
                         >
-                            {dynamicCategories.map(c => (
-                                <option key={c.value} value={c.value}>
-                                    {c.label}
-                                </option>
-                            ))}
-                            <option value="custom">+ New Category...</option>
-                        </select>
-                    ) : (
-                        <div>
-                            <input
-                                placeholder="Enter category..."
-                                value={customCat}
-                                onChange={(e) => setCustomCat(e.target.value)}
-                                autoFocus
-                            />
-                            <button onClick={() => {
-                                setIsCustom(false);
-                                setCustomCat("");
-                            }}>
-                                Back
-                            </button>
-                        </div>
-                    )}
-
-                    <button onClick={handleCreate}>
-                        Save
-                    </button>
+                            Save
+                        </button>
+                    </div>
+                    {error && <p className={styles.error}>{error}</p>}
                 </div>
             )}
         </div>
