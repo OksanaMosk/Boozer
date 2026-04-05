@@ -14,6 +14,7 @@ const ProfileEditComponent = () => {
     const { data: session, update } = useSession();
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState("");
+    const [phoneServerError, setPhoneServerError] = useState("");
     const [showUpload, setShowUpload] = useState(false);
     const [isInitialized, setIsInitialized] = useState(false);
 
@@ -69,7 +70,7 @@ const handleAvatarUpload = async (file: File): Promise<string> => {
 const handleTextSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault();
     if (!user?.token) return;
-
+    setPhoneServerError("");
     try {
         setLoading(true);
         const data = new FormData();
@@ -102,8 +103,13 @@ const handleTextSubmit = async (e: React.SyntheticEvent) => {
         });
 
         setMessage("Profile updated successfully!");
-    } catch (err) {
-        setMessage("Error saving data.");
+   } catch (err: any) {
+        const serverData = err.response?.data || err.data;
+        if (serverData?.phone) {
+            setPhoneServerError(Array.isArray(serverData.phone) ? serverData.phone[0] : serverData.phone);
+        } else {
+            setMessage("Error saving data.");
+        }
     } finally {
         setLoading(false);
     }
@@ -177,6 +183,9 @@ const handleTextSubmit = async (e: React.SyntheticEvent) => {
                             defaultValue={formData.phone}
                         />
                         {phoneError && <p className={styles.errorMessage}>{phoneError}</p>}
+                        {(phoneServerError || phoneError) && (
+                            <p className={styles.errorMessage}>{phoneServerError || phoneError}</p>
+                        )}
                     </div>
 
                     <button type="submit" disabled={loading} className={styles.saveBtn}>

@@ -10,7 +10,9 @@ export type TabType =
     | "news"
     | "stats"
     | "users_control"
-    | "manage_tops";
+    | "manage_tops"
+    | "orders"
+    | "reviews";
 
 const VALID_TABS: TabType[] = [
     "profile",
@@ -20,7 +22,9 @@ const VALID_TABS: TabType[] = [
     "news",
     "stats",
     "users_control",
-    "manage_tops"
+    "manage_tops",
+     "orders",
+    "reviews",
 ];
 
 export const useDashboardTabs = () => {

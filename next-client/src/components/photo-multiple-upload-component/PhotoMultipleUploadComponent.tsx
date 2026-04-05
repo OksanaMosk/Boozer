@@ -34,6 +34,7 @@ const PhotoMultipleUploadComponent: React.FC<MultiplePhotoUploadProps> = ({
                                                                           }) => {
     const {user} = useUser();
     const [loading, setLoading] = useState<boolean>(false);
+    const [message, setMessage] = useState<string | null>(null);
     const inputRef = useRef<HTMLInputElement>(null);
     const [photos, setPhotos] = useState<Photo[]>(
         existingPhotos.map((photo): Photo => ({
@@ -46,8 +47,10 @@ const PhotoMultipleUploadComponent: React.FC<MultiplePhotoUploadProps> = ({
     const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
         if (!e.target.files) return;
         const files = Array.from(e.target.files);
+
         if (photos.length + files.length > maxFiles) {
-            alert(`You can upload a maximum of ${maxFiles} files. Currently you have ${photos.length}.`);
+            setMessage(`You can upload a maximum of ${maxFiles} files. Currently you have ${photos.length}.`);
+            setTimeout(() => setMessage(null), 3000);
             return;
         }
         const previewPhotos: Photo[] = files.map((file, i) => ({
@@ -68,10 +71,6 @@ const PhotoMultipleUploadComponent: React.FC<MultiplePhotoUploadProps> = ({
             setLoading(true);
             try {
                 if (!user?.token) return;
-                // await venueServices
-                //     .venues
-                //     .news({accessToken: user.token})(venueId)
-
                 await (venueServices.venues as any)
                     [type]({accessToken: user.token})(venueId)
                     .images(newsId)
@@ -99,30 +98,24 @@ const PhotoMultipleUploadComponent: React.FC<MultiplePhotoUploadProps> = ({
             for (const photo of photos) {
                 if (photo.file) {
                     const formData = new FormData();
-                    // formData.append("image", photo.file);
                     const fieldName = type === "reviews" ? "photo" : "image";
                     formData.append(fieldName, photo.file);
-                    // formData.append("is_cover", photo.is_cover ? "true" : "false");
 
                     if (type === "news") {
                         formData.append("is_cover", photo.is_cover ? "true" : "false");
                     }
 
-                    // const res = await venueServices
-                    //     .venues
-                    //     .news({accessToken: user.token})(venueId)
-
                     const res = await (venueServices.venues as any)
                         [type]({accessToken: user.token})(venueId)
                         .images(newsId)
                         .create(formData);
-                    // uploadedUrls.push(res.data.image);
                     uploadedUrls.push(res.data.photo || res.data.image);
                 }
             }
             onUploadComplete(uploadedUrls);
             setPhotos(prev => prev.map(p => ({...p, file: undefined})));
-            alert("Upload successful!");
+            setMessage("Upload successful!");
+            setTimeout(() => setMessage(null), 3000);
         } catch (error) {
             console.error("Error uploading photos", error);
         } finally {
@@ -147,6 +140,11 @@ const PhotoMultipleUploadComponent: React.FC<MultiplePhotoUploadProps> = ({
     return (
         <div className={styles.wrapper}>
             <div>
+                {message && (
+                    <div className={styles.errorMessage}>
+                        {message}
+                    </div>
+                )}
                 <div className={styles.uploadWrapper}>
                     <button
                         type="button"
@@ -182,16 +180,7 @@ const PhotoMultipleUploadComponent: React.FC<MultiplePhotoUploadProps> = ({
                             className={styles.photoImage}
                         />
                         <div className={styles.actions}>
-                            {/*<label className={styles.checkLabel}>*/}
-                            {/*    <input*/}
-                            {/*        type="radio"*/}
-                            {/*        name="coverPhoto"*/}
-                            {/*        checked={photo.is_cover}*/}
-                            {/*        onChange={() => handleCoverChange(index)}*/}
 
-                            {/*    />*/}
-                            {/*    Cover*/}
-                            {/*</label>*/}
                             {type === "news" && (
                                 <label className={styles.checkLabel}>
                                     <input
@@ -230,4 +219,3 @@ const PhotoMultipleUploadComponent: React.FC<MultiplePhotoUploadProps> = ({
 };
 
 export default PhotoMultipleUploadComponent;
-

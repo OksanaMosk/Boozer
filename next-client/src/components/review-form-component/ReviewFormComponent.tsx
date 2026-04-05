@@ -119,7 +119,7 @@ export const ReviewFormComponent = ({ venueId, onSubmit, orders, onUploadComplet
                 <RatingRow label="Value" category="value" value={subRatings.value} />
             </div>
 
-            <div className={styles.section}>
+            <div className={styles.selectWrapper}>
                 <label className={styles.label}>Select your visit:</label>
                 <select
                     className={styles.select}

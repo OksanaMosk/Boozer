@@ -78,7 +78,10 @@ class ReviewViewSet(viewsets.ModelViewSet):
         )
 
         from apps.common.serializers import StatusMessageSerializer
-        response_serializer = StatusMessageSerializer({'message': 'Report sent'})
+        response_serializer = StatusMessageSerializer({
+            'status': 'success',
+            'message': 'Report sent'
+        })
         return Response(response_serializer.data, status=status.HTTP_201_CREATED)
 
 

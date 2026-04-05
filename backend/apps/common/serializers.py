@@ -9,4 +9,4 @@ class URLResponseSerializer(serializers.Serializer):
 
 class CountResponseSerializer(serializers.Serializer):
     status = serializers.CharField()
-    count = serializers.IntegerField()
+    likes_count = serializers.IntegerField()

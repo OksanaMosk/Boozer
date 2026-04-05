@@ -17,6 +17,7 @@ import styles from "./DashboardComponent.module.css";
 import {LoaderComponent} from "@/components/loader-component/LoaderComponent";
 import {TopListManagerComponent} from "@/components/top-list-manager-component/TopListManagerComponent";
 import {OrdersVisitorComponent} from "@/components/orders-visitor-component/OrdersVisitorComponent";
+import {ReviewListEditComponent} from "@/components/review-list-edit-component/ReviewListEditComponent";
 
 interface IVenueWithId extends Omit<IVenue, 'id'> {
     id: string;
@@ -40,7 +41,8 @@ const DashboardComponent: React.FC = () => {
         { id: "manage_tops", label: "🎊 Manage Tops", show: isAdmin },
         { id: "venues_control", label: "My Venues", show: isVenueAdmin },
         { id: "users_control", label: "Users", show: isAdmin },
-        { id: "my_activity", label: "All Orders & Activity", show: true },
+        { id: "orders", label: "Orders", show: true },
+        { id: "reviews", label: "My Reviews", show: true },
     ].filter(tab => tab.show), [isAdmin, isVenueAdmin]);
 
     const handleApiError = (err: any) => {
@@ -176,10 +178,16 @@ const DashboardComponent: React.FC = () => {
                         }}
                     />
                 )}
-                {activeTab === "my_activity" && (
+                {activeTab === "orders" && (
                     <section className={styles.section}>
-                        <h2  className={styles.titleManage}>Orders & Activity</h2>
+                        <h2  className={styles.titleManage}>Orders</h2>
                        <OrdersVisitorComponent/>
+                    </section>
+                )}
+                 {activeTab === "reviews" && (
+                    <section className={styles.section}>
+                        <h2  className={styles.titleManage}>Reviews</h2>
+                       <ReviewListEditComponent/>
                     </section>
                 )}
             </div>

@@ -37,7 +37,10 @@ export const ReviewsVisitorComponent = ({ venueId }: { venueId: string, token?: 
             const rData = normalize(reviewsRes.data);
             const oData = normalize(ordersRes.data);
             setReviews(Array.isArray(rData) ? rData : []);
-            setOrders(Array.isArray(oData) ? oData.filter((o: any) => o?.id) : []);
+            setOrders(Array.isArray(oData)
+                ? oData.filter((o: any) => o?.id && String(o.user) === String(user?.id))
+                : []
+            );
         } catch (e) {
             console.error("Fetch error:", e);
         } finally {
@@ -86,7 +89,6 @@ export const ReviewsVisitorComponent = ({ venueId }: { venueId: string, token?: 
     };
 
     const handleSubmitReview = async (data: any) => {
-        console.log("--- SUBMIT DATA START ---", data);
 
         try {
             if (!user?.token || !venueId) return;
@@ -118,15 +120,9 @@ export const ReviewsVisitorComponent = ({ venueId }: { venueId: string, token?: 
             if (data.photo) {
                 formData.append("photo", data.photo);
             }
-
-            console.log("--- SENDING REQUEST TO API ---");
             const res = await venueServices.venues.reviews(auth)(venueId).create(formData);
-
-            console.log("API Response:", res);
-            // await loadData();
             return res;
         } catch (e: any) {
-            console.error("CRITICAL ERROR IN SUBMIT:", e);
             setIsCreating(false);
 
             const serverError = e?.response?.data?.order?.[0] || e?.response?.data?.detail || "Error processing review";
@@ -140,7 +136,10 @@ export const ReviewsVisitorComponent = ({ venueId }: { venueId: string, token?: 
         void loadData();
     };
 
-    const userConfirmedOrdersCount = orders.filter(o => o.status === "CONFIRMED").length;
+    const userConfirmedOrdersCount = orders.filter(o => {
+        return o.status === "CONFIRMED" && String(o.user) === String(user?.id);
+    }).length;
+
     const userReviewsCount = reviews.filter(r => {
         const rUserId = r.user?.id || r.user;
         return String(rUserId) === String(user?.id);

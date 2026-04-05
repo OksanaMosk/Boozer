@@ -261,6 +261,8 @@ const venueServices = {
         getAllWithFilter: (filterCriteria?: ReviewFilterCriteria, token?: Token) =>
             api(token).get<IReview[]>(urls.reviews.list, {params: buildReviewParams(filterCriteria)}),
         ...createService<IReview>(urls.reviews.list),
+        update: (reviewId: string | number, data: FormData | Partial<IReview>, token?: Token) => api(token).patch<IReview>(`${urls.reviews.list}${reviewId}/`, data),
+        delete: (reviewId: string | number, token?: Token) => api(token).delete(`${urls.reviews.list}${reviewId}/`),
         like: (reviewId: string | number, token?: Token) => api(token).post(urls.reviews.like(reviewId)),
         report: (reviewId: string | number, data: { reason: string; comment?: string }, token?: Token) => api(token).post(urls.reviews.report(reviewId), data),
     },

@@ -80,6 +80,7 @@ export const ReviewComponent = ({review, onLike, onReport, isAdminView = false}:
                                         <button onClick={() => setShowReportForm(true)} className={styles.deleteButton}>
                                             ⚠ Report
                                         </button>
+                                        {isReported && <div className={styles.bottomAlert}>Report sent</div>}
                                     </>
                                 ) : (
                                     <div className={styles.selectWrapper}>
@@ -118,7 +119,6 @@ export const ReviewComponent = ({review, onLike, onReport, isAdminView = false}:
                                     </div>
                                 )}
                             </div>
-                            {isReported && <div className={styles.bottomAlert}>Report sent</div>}
                         </>
                     )}
 
