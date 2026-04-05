@@ -1,4 +1,5 @@
-from rest_framework import viewsets, filters, status, permissions
+from django.shortcuts import get_object_or_404
+from rest_framework import viewsets, filters, status, permissions, serializers
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
@@ -9,7 +10,7 @@ from .serializers import (
 )
 from .services.favorite_service import FavoriteService, FavoriteCollectionService
 from .services.review_service import ReviewService
-
+from rest_framework.exceptions import PermissionDenied
 from ..user.permissions import IsAdmin, IsVisitorOrReadOnly, IsGuestReadOnly
 
 class ReviewImageViewSet(viewsets.ModelViewSet):
@@ -21,7 +22,8 @@ class ReviewImageViewSet(viewsets.ModelViewSet):
         return self.queryset.filter(review_id=self.kwargs['review_pk'])
 
     def perform_create(self, serializer):
-        serializer.save(review_id=self.kwargs['review_pk'])
+        review = get_object_or_404(ReviewModel, id=self.kwargs['review_pk'], user=self.request.user)
+        serializer.save(review=review)
 
 class ReviewViewSet(viewsets.ModelViewSet):
     queryset = ReviewModel.objects.filter(is_published=True)
@@ -52,10 +54,12 @@ class ReviewViewSet(viewsets.ModelViewSet):
     def like(self, request, pk=None, venue_pk=None):
         review = self.get_object()
         is_liked, count = ReviewService.toggle_like(request.user, review)
-        return Response({
+        from apps.common.serializers import CountResponseSerializer
+        serializer = CountResponseSerializer({
             'status': 'liked' if is_liked else 'unliked',
             'likes_count': count
         })
+        return Response(serializer.data)
 
     @action(detail=True, methods=['post'], permission_classes=[permissions.IsAuthenticated])
     def report(self, request, pk=None, venue_pk=None):
@@ -64,15 +68,19 @@ class ReviewViewSet(viewsets.ModelViewSet):
         data['review'] = review.id
         serializer = ReviewReportSerializer(data=data, context={'request': request})
 
-        if serializer.is_valid():
-            ReviewService.create_report(
-                user=request.user,
-                review=review,
-                reason=serializer.validated_data['reason'],
-                comment=serializer.validated_data.get('comment')
-            )
-            return Response({'status': 'report_sent'}, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer.is_valid(raise_exception=True)
+
+        ReviewService.create_report(
+            user=request.user,
+            review=review,
+            reason=serializer.validated_data['reason'],
+            comment=serializer.validated_data.get('comment')
+        )
+
+        from apps.common.serializers import StatusMessageSerializer
+        response_serializer = StatusMessageSerializer({'message': 'Report sent'})
+        return Response(response_serializer.data, status=status.HTTP_201_CREATED)
+
 
     def perform_create(self, serializer):
         venue_id = self.kwargs.get('venue_pk')
@@ -101,19 +109,21 @@ class FavoriteCollectionViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['patch'])
     def reorder(self, request, pk=None):
         if not request.user.is_staff:
-            return Response({'error': 'Only admins can reorder collections'}, status=403)
+            raise PermissionDenied('Only admins can reorder collections')
 
         if not isinstance(request.data, list):
-            return Response({'error': 'Expected a list'}, status=400)
+            raise serializers.ValidationError({'detail': 'Expected a list'})
         success = FavoriteService.reorder_collection(
             collection_id=pk,
             order_data=request.data
         )
 
         if success:
-            return Response({'status': 'order updated'}, status=200)
+            from apps.common.serializers import StatusMessageSerializer
+            serializer = StatusMessageSerializer({'message': 'Order updated successfully'})
+            return Response(serializer.data)
         else:
-            return Response({'error': 'Failed to update order'}, status=400)
+            raise serializers.ValidationError({'detail': 'Failed to update order'})
 
 
     @action(detail=False, methods=['get'], permission_classes=[permissions.AllowAny])
@@ -132,7 +142,7 @@ class FavoriteCollectionViewSet(viewsets.ModelViewSet):
         venue_id = request.query_params.get("venue_id")
 
         if not venue_id:
-            return Response({"error": "venue_id required"}, status=400)
+            raise serializers.ValidationError({'detail': 'venue_id required'})
 
         deleted = FavoriteService.remove_venue_from_collection(
             user=request.user,
@@ -140,7 +150,11 @@ class FavoriteCollectionViewSet(viewsets.ModelViewSet):
             collection_id=pk
         )
 
-        return Response({"deleted": deleted}, status=200)
+        from apps.common.serializers import StatusMessageSerializer
+        serializer = StatusMessageSerializer({
+            'message': 'Venue removed' if deleted else 'Venue not found in collection'
+        })
+        return Response(serializer.data)
 
 class FavoriteVenueViewSet(viewsets.ModelViewSet):
     queryset = FavoriteVenue.objects.all()

@@ -40,7 +40,7 @@ const DashboardComponent: React.FC = () => {
         { id: "manage_tops", label: "🎊 Manage Tops", show: isAdmin },
         { id: "venues_control", label: "My Venues", show: isVenueAdmin },
         { id: "users_control", label: "Users", show: isAdmin },
-        { id: "my_activity", label: "Orders & Activity", show: true },
+        { id: "my_activity", label: "All Orders & Activity", show: true },
     ].filter(tab => tab.show), [isAdmin, isVenueAdmin]);
 
     const handleApiError = (err: any) => {

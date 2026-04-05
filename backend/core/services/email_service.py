@@ -99,5 +99,5 @@ class EmailService:
             to=os.environ.get('EMAIL_HOST_USER'),
             template_name='refund_request.html',
             context=context,
-            subject=f"🚨 URGENT: Refund Request #{order.id} - {display_name}"
+            subject=f"🚨 PRIORITY: Refund Request #{order.id} - {display_name}"
         )

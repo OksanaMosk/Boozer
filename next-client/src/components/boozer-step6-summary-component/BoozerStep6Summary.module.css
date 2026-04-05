@@ -177,6 +177,12 @@
     margin-bottom: 12px;
     color: var(--color-white);
 }
+.billRowTransfers {
+     display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color:  var(--logo-hover-color);
+}
 
 .totalRow {
     margin: 30px auto;

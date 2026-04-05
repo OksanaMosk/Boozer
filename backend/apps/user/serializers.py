@@ -73,7 +73,7 @@ class UserSerializer(serializers.ModelSerializer):
             'profile',
             'managed_venue_ids'
         )
-        read_only_fields = ('id',  'is_active', 'is_staff', 'is_superuser', 'created_at', 'updated_at')
+        read_only_fields = ('id',  'is_active', 'is_staff', 'role', 'is_superuser', 'created_at', 'updated_at')
         extra_kwargs = {
             'password': {'write_only': True},
         }
@@ -83,29 +83,25 @@ class UserSerializer(serializers.ModelSerializer):
         if profile:
             return ProfileSerializer(profile).data
 
-        return {
-            'name': "Admin" if obj.is_staff or obj.is_superuser else "User",
-            'surname': '',
-            'age': None,
-            'phone': '',
-            'birth_date': None,
-            'is_rules_accepted': True
-        }
+        return ProfileSerializer(ProfileModel(
+            name="Admin" if obj.is_staff or obj.is_superuser else "User"
+        )).data
 
     def get_managed_venue_ids(self, obj):
         from apps.venue.models import VenueModel
         return list(VenueModel.objects.filter(venue_admin_id=obj.id).values_list('id', flat=True))
 
-    # def create(self, validated_data):
-    #     profile_data = validated_data.pop('profile')
-    #     return UserService.create_user_with_profile(validated_data, profile_data)
-
     def create(self, validated_data):
-        profile_data = self.initial_data.get('profile')
-        if not profile_data:
+        profile_raw_data = self.initial_data.get('profile')
+
+        if not profile_raw_data:
             raise serializers.ValidationError({'profile': 'This field is required'})
 
-        return UserService.create_user_with_profile(validated_data, profile_data)
+        profile_serializer = ProfileSerializer(data=profile_raw_data)
+        profile_serializer.is_valid(raise_exception=True)
+
+        return UserService.create_user_with_profile(validated_data, profile_serializer.validated_data)
+
 
 class UserRoleSerializer(serializers.Serializer):
     role = serializers.ChoiceField(choices=ROLE_CHOICES)

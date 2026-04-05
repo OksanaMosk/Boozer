@@ -7,6 +7,7 @@ from .models import MenuModel, MenuItemModel
 from .serializers import MenuSerializer, MenuItemSerializer
 from ..user.permissions import IsAdminOrVenueAdminOrReadOnly
 from django.shortcuts import get_object_or_404
+from rest_framework import serializers
 
 from ..venue.models import VenueModel
 
@@ -45,6 +46,8 @@ class MenuViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         venue_id = self.kwargs.get('venue_pk')
+        venue = get_object_or_404(VenueModel, id=venue_id)
+        self.check_object_permissions(self.request, venue)
         serializer.save(venue_id=venue_id)
 
 class MenuItemViewSet(viewsets.ModelViewSet):
@@ -78,13 +81,19 @@ class MenuItemViewSet(viewsets.ModelViewSet):
     def reorder(self, request, **kwargs):
         venue_pk = self.kwargs.get('venue_pk')
         menu_pk = self.kwargs.get('menu_pk')
+        menu = get_object_or_404(MenuModel, id=menu_pk, venue_id=venue_pk)
+        self.check_object_permissions(request, menu)
 
         if not isinstance(request.data, list):
-            return Response({'error': 'List expected'}, status=400)
+            raise serializers.ValidationError({'detail': 'List expected'})
 
         with transaction.atomic():
             for item in request.data:
+                if 'id' not in item or 'position' not in item:
+                    continue
+
                 update_data = {'position': item['position']}
+
                 if 'category' in item:
                     update_data['category'] = item['category']
 
@@ -94,4 +103,6 @@ class MenuItemViewSet(viewsets.ModelViewSet):
                     menu__venue__id=venue_pk
                 ).update(**update_data)
 
-        return Response({'status': 'ok'})
+        from apps.common.serializers import StatusMessageSerializer
+        serializer = StatusMessageSerializer({'message': 'Menu items reordered successfully'})
+        return Response(serializer.data)

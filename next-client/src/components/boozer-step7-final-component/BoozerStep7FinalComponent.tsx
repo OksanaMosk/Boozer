@@ -232,13 +232,13 @@ const BoozerStep7Final: React.FC<Props> = ({orderId, venueId}) => {
                     <div className={styles.orderSection}>
                         <h4>Travel & Logistics</h4>
                         {Number(order.flight_price) > 0 && (
-                            <div className={styles.receiptRow}>
+                            <div className={styles.billRowTransfers}>
                                 <span>Flight Tickets</span>
                                 <span>{(Number(order.flight_price) * rate).toFixed(2)} {order.currency}</span>
                             </div>
                         )}
                         {Number(order.transfer_price) > 0 && (
-                            <div className={styles.receiptRow}>
+                            <div className={styles.billRowTransfers}>
                                 <span>Local Transfer</span>
                                 <span>{(Number(order.transfer_price) * rate).toFixed(2)} {order.currency}</span>
                             </div>

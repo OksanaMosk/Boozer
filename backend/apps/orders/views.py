@@ -8,6 +8,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
 from rest_framework.views import APIView
+from rest_framework import serializers
 
 from core.services.email_service import EmailService
 from .models import OrderModel, TableBookingModel
@@ -20,6 +21,14 @@ from rest_framework.exceptions import PermissionDenied
 from django.db.backends.postgresql.psycopg_any import DateTimeRange
 from datetime import datetime
 from django.utils import timezone
+from rest_framework.exceptions import APIException
+
+
+class ReservationExpired(APIException):
+    status_code = 410
+    default_detail = 'Reservation expired'
+    default_code = 'EXPIRED'
+
 
 class OrderViewSet(viewsets.ModelViewSet):
     """
@@ -82,11 +91,7 @@ class OrderViewSet(viewsets.ModelViewSet):
         instance = self.get_object()
 
         if instance.expires_at and timezone.now() > instance.expires_at:
-            return Response(
-                {'detail': 'Reservation expired', 'code': 'EXPIRED'},
-                status=status.HTTP_410_GONE
-            )
-
+            raise ReservationExpired()
         return super().retrieve(request, *args, **kwargs)
 
     def perform_update(self, serializer):
@@ -105,7 +110,7 @@ class OrderViewSet(viewsets.ModelViewSet):
             return
 
         if order.expires_at and timezone.now() > order.expires_at:
-            raise ValidationError('Order expired')
+            raise ValidationError({'detail': 'Order expired'})
 
         serializer.save()
 
@@ -220,4 +225,4 @@ class ExchangeRateView(APIView):
             rates = get_private_bank_exchange_rate()
             return Response(rates, status=status.HTTP_200_OK)
         except ValidationError as e:
-            return Response({'detail': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+            raise serializers.ValidationError({'detail': str(e)})

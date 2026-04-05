@@ -121,13 +121,14 @@
 
 .progressTrack {
     background: var(--color-container);
+    background: linear-gradient(90deg, #8a6d3b, #d4af37);
     height: 2px;
     border-radius: 2px;
     overflow: hidden;
 }
 
 .progressFill {
-    background: linear-gradient(90deg, #8a6d3b, #d4af37);
+    background: var(--color-container);
     height: 100%;
     border-radius: 2px;
     box-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
@@ -137,7 +138,7 @@
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap:4px;
 }
 
 .genderCard {
@@ -146,14 +147,14 @@
     justify-content: space-between;
     align-items: center;
     background: var(--menu-color);
-    padding: 8px 20px;
+    padding: 2px 20px;
     border-radius: 12px;
     border: 1px solid var(--color-container);
 }
 
 .gLabel {
     color:var(--logo-hover-color);
-    font-size: 16px;
+    font-size: 12px;
     text-transform: uppercase;
 }
 .gValue {

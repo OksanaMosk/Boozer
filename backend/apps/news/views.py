@@ -3,7 +3,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from .models import NewsModel, NewsImageModel
 from .serializers import NewsSerializer, NewsImageSerializer
 from ..user.permissions import IsAdminOrVenueAdminOrReadOnly
-from rest_framework import viewsets, permissions
+from django.shortcuts import get_object_or_404
 
 
 class NewsViewSet(viewsets.ModelViewSet):
@@ -29,6 +29,9 @@ class NewsViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         venue_pk = self.kwargs.get('venue_pk')
+        from apps.venue.models import VenueModel
+        venue = get_object_or_404(VenueModel, id=venue_pk)
+        self.check_object_permissions(self.request, venue)
         news_type = serializer.validated_data.get('type')
         status = 'active' if news_type == 'general' else 'pending'
 
@@ -55,4 +58,6 @@ class NewsImageViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         news_pk = self.kwargs.get('news_pk')
+        news = get_object_or_404(NewsModel, id=news_pk)
+        self.check_object_permissions(self.request, news)
         serializer.save(news_id=news_pk)

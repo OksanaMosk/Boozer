@@ -2,14 +2,12 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404
 from rest_framework import filters, status, viewsets
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateAPIView, DestroyAPIView
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateAPIView, DestroyAPIView, GenericAPIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework.views import APIView
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
-from .models import UserModel
 from apps.user.models import ProfileModel
 from apps.reviews_feedback.models import ReviewModel, FavoriteVenue
 from apps.reviews_feedback.serializers import ReviewSerializer, FavoriteVenueSerializer
@@ -20,7 +18,7 @@ from apps.user.serializers import (
     UserSerializer,
     UserUpdateSerializer,
     UserActiveSerializer,
-    UserRoleSerializer,
+    UserRoleUpdateSerializer,
 )
 
 
@@ -55,33 +53,36 @@ class UserListCreateAPIView(ListCreateAPIView):
         return [IsAuthenticated(), IsAdmin()]
 
 
-class UpdateUserActiveAPIView(RetrieveUpdateAPIView, UserUpdateMixin):
+class UpdateUserActiveAPIView(RetrieveUpdateAPIView):
     queryset = UserModel.objects.all()
     serializer_class = UserActiveSerializer
     permission_classes = [IsAdmin]
     lookup_field = 'pk'
 
     def patch(self, request, *args, **kwargs):
-        if self.get_object() == request.user and request.data.get('is_active') is False:
-            raise ValidationError("You cannot block yourself.")
-
         user = self.get_object()
-        serializer = self.serializer_class(data=request.data)
+        serializer = self.get_serializer(user, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
+
+        if user == request.user and serializer.validated_data.get('is_active') is False:
+            raise ValidationError({'detail': 'You cannot block yourself.'})
+
         user = UserService.toggle_user_active_status(user, serializer.validated_data['is_active'])
         return Response(UserActiveSerializer(user).data)
 
 
-class UpdateUserRoleAPIView(APIView, UserUpdateMixin):
-    serializer_class = UserRoleSerializer
+class UpdateUserRoleAPIView(GenericAPIView):
+    serializer_class = UserRoleUpdateSerializer
     permission_classes = [IsAuthenticated, IsAdmin]
 
     def patch(self, request, user_id):
-        if int(user_id) == request.user.id and request.data.get('role') != 'admin':
-            raise ValidationError("You cannot demote yourself from admin role.")
+        user = get_object_or_404(UserModel, pk=user_id)
 
-        serializer = self.serializer_class(data=request.data)
+        serializer = self.get_serializer(user, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
+
+        if user == request.user and serializer.validated_data.get('role') != 'admin':
+            raise ValidationError({'detail': 'You cannot demote yourself from admin role.'})
         user = UserService.change_user_role(request.user, user_id, serializer.validated_data['role'])
         return Response(UserSerializer(user).data)
 
@@ -90,7 +91,7 @@ class UpdateUserAPIView(RetrieveUpdateAPIView, UserUpdateMixin):
     queryset = UserModel.objects.all()
     serializer_class = UserUpdateSerializer
     permission_classes = [IsAuthenticated, IsAdmin]
-    lookup_field = "pk"
+    lookup_field = 'pk'
 
     def patch(self, request, *args, **kwargs):
         return self.update_instance(request, self.get_object())
@@ -103,7 +104,7 @@ class DeleteUserAPIView(DestroyAPIView):
 
     def perform_destroy(self, instance):
         if instance == self.request.user:
-            raise ValidationError("You cannot delete yourself.")
+            raise ValidationError({'detail': 'You cannot delete yourself.'})
         instance.delete()
 
 class ProfileViewSet(viewsets.ModelViewSet):
@@ -125,7 +126,7 @@ class ProfileViewSet(viewsets.ModelViewSet):
 
     def _check_social_profile(self, serializer):
         user = self.request.user
-        if hasattr(user, 'auth_provider') and str(user.auth_provider).lower() != "email":
+        if hasattr(user, 'auth_provider') and str(user.auth_provider).lower() != 'email':
             birth_date = serializer.validated_data.get('birth_date')
             is_rules_accepted = serializer.validated_data.get('is_rules_accepted')
             if not birth_date or not is_rules_accepted:
@@ -169,46 +170,6 @@ class ProfileViewSet(viewsets.ModelViewSet):
 
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
-
-
-class UserProfileAPIView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request, user_id):
-        try:
-            profile = ProfileModel.objects.get(user__id=user_id)
-            serializer = ProfileSerializer(profile)
-            return Response(serializer.data)
-        except ProfileModel.DoesNotExist:
-            return Response({'detail': 'Profile not found.'}, status=404)
-
-    def post(self, request, user_id):
-        data = request.data
-        data['user'] = user_id
-        serializer = ProfileSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=201)
-        return Response(serializer.errors, status=400)
-
-    def put(self, request, user_id):
-        try:
-            profile = ProfileModel.objects.get(user__id=user_id)
-            serializer = ProfileSerializer(profile, data=request.data, partial=True)
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data)
-            return Response(serializer.errors, status=400)
-        except ProfileModel.DoesNotExist:
-            return Response({'detail': 'Profile not found.'}, status=404)
-
-    def delete(self, request, user_id):
-        try:
-            profile = ProfileModel.objects.get(user__id=user_id)
-            profile.delete()
-            return Response(status=204)
-        except ProfileModel.DoesNotExist:
-            return Response({'detail': 'Profile not found.'}, status=404)
 
 
 class UserViewSet(viewsets.ModelViewSet):

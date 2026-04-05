@@ -28,7 +28,7 @@ const BoozerStep2OrderBaseInfoComponent: React.FC<Props> = ({venueId, onNext, on
         end_date: "",
         guests_count: 2,
         comment: "",
-        gender: "ANY",
+        gender_preference: "ANY",
         payment_type: "Each pays for themselves",
         budget_range: "0-1000"
     });
@@ -224,8 +224,8 @@ const BoozerStep2OrderBaseInfoComponent: React.FC<Props> = ({venueId, onNext, on
                         <label className={styles.label}>Gender Preference</label>
                         <select
                             className={styles.select}
-                            value={formData.gender}
-                            onChange={e => setFormData({...formData, gender: e.target.value})}
+                            value={formData.gender_preference}
+                            onChange={e => setFormData({...formData, gender_preference: e.target.value})}
                         >
                             {GENDER_CHOICES.map(g => (
                                 <option key={g} value={g}>{g}</option>

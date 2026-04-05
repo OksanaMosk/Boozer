@@ -16,12 +16,26 @@ class VenueTagSerializer(serializers.ModelSerializer):
         model = VenueTagModel
         fields = ['id', 'venue', 'tag']
 
+    def validate_venue(self, value):
+        user = self.context['request'].user
+        if getattr(user, 'role', '').upper() == 'VENUE_ADMIN':
+            if value.venue_admin != user:
+                raise serializers.ValidationError('You cannot modify tags for a venue you do not own.')
+        return value
+
 class VenuePhotoSerializer(serializers.ModelSerializer):
     venue = serializers.PrimaryKeyRelatedField(queryset=VenueModel.objects.all())
 
     class Meta:
         model = VenuePhotoModel
         fields = ['id', 'photo', 'is_main', 'venue']
+
+    def validate_venue(self, value):
+        user = self.context['request'].user
+        if getattr(user, 'role', '').upper() == 'VENUE_ADMIN':
+            if value.venue_admin != user:
+                raise serializers.ValidationError('You cannot add photos to a venue that you do not own.')
+        return value
 
 
 class TableSerializer(serializers.ModelSerializer):
@@ -30,6 +44,12 @@ class TableSerializer(serializers.ModelSerializer):
         model = TableModel
         fields = ['id', 'capacity', 'x', 'y', 'width', 'height', 'is_active', 'bookings', 'venue']
 
+    def validate_venue(self, value):
+        user = self.context['request'].user
+        if getattr(user, 'role', '').upper() == 'VENUE_ADMIN':
+            if value.venue_admin != user:
+                raise serializers.ValidationError('You cannot create tables for a venue you do not own.')
+        return value
 
 class VenueSerializer(serializers.ModelSerializer):
     tags = serializers.SerializerMethodField()
@@ -84,4 +104,9 @@ class VenueSerializer(serializers.ModelSerializer):
                         instance.tags.add(tag)
 
             return instance
+
+class VenueOrdersStatsResponseSerializer(serializers.Serializer):
+    stats = serializers.DictField()
+    from apps.orders.serializers import OrderSerializer
+    orders = OrderSerializer(many=True)
 

@@ -8,15 +8,16 @@ from django.conf import settings
 from rest_framework import status
 from rest_framework.generics import GenericAPIView, get_object_or_404
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework.views import APIView
+from rest_framework.exceptions import ValidationError, NotFound
 
+from apps.common.serializers import StatusMessageSerializer
 from apps.user.models import ProfileModel
 from core.exceptions.jwt_exception import JWTException
 from core.services.email_service import EmailService
 from core.services.jwt_service import ActivateToken, JWTService, RecoveryToken, SocketToken
 from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
 
-from apps.auth.serializers import EmailSerializer, PasswordSerializer
+from apps.auth.serializers import EmailSerializer, PasswordSerializer, TokenSerializer, AuthResponseSerializer
 from apps.user.serializers import UserSerializer
 
 import requests
@@ -36,22 +37,24 @@ class ActivateUserView(GenericAPIView):
     serializer_class = UserSerializer
     def activate_user(self, token):
         if not token:
-            return Response({'detail': 'Token is required.'}, status=status.HTTP_400_BAD_REQUEST)
+            raise ValidationError({'detail': 'Token is required.'})
 
         try:
             user = JWTService.verify_token(token, ActivateToken)
             if user.is_active:
-                return Response({'detail': 'Account is already activated.'}, status=status.HTTP_200_OK)
+                serializer = StatusMessageSerializer({'status': 'info', 'message': 'Already activated'})
+                return Response(serializer.data, status=status.HTTP_200_OK)
             user.is_active = True
             user.save()
             serializer = UserSerializer(user)
             logger.info(f'User {user.email} activated successfully.')
-            return Response({'detail': 'Account activated successfully!', 'user': serializer.data}, status=status.HTTP_200_OK)
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
         except JWTException:
-            return Response({'detail': 'Invalid or expired token.'}, status=status.HTTP_400_BAD_REQUEST)
+            raise ValidationError({'detail': 'Invalid or expired token.'})
+
         except UserModel.DoesNotExist:
-            return Response({'detail': 'User not found.'}, status=status.HTTP_404_NOT_FOUND)
+            raise NotFound({'detail': 'User not found.'})
 
     def patch(self, request, *args, **kwargs):
         token = kwargs.get('token')
@@ -71,18 +74,16 @@ class RecoveryRequestView(GenericAPIView):
         Request a password recovery for a user account.
         Provide the user's email in the request body.
     """
-
-    def get_serializer(self):
-        return None
-
+    serializer_class = EmailSerializer
     permission_classes = (AllowAny,)
-    def post(self, *args, **kwargs):
-        data = self.request.data
-        serializer = EmailSerializer(data=data)
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        user = get_object_or_404(UserModel,  email=serializer.data['email'])
+
+        user = get_object_or_404(UserModel, email=serializer.validated_data['email'])
         EmailService.recovery(user)
-        return Response({'details': 'Link send to email'}, status.HTTP_200_OK)
+        response_serializer = StatusMessageSerializer({'status': 'success', 'message': 'Link sent to email'})
+        return Response(response_serializer.data, status=status.HTTP_200_OK)
 
 
 class RecoveryPasswordView(GenericAPIView):
@@ -96,16 +97,16 @@ class RecoveryPasswordView(GenericAPIView):
     serializer_class = PasswordSerializer
 
     def post(self, request, *args, **kwargs):
-        serializer = PasswordSerializer(data=request.data)
+        serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         token = kwargs['token']
         if not token:
-            return Response({'detail': 'Token is required.'}, status=status.HTTP_400_BAD_REQUEST)
+            raise ValidationError({'detail': 'Token is required.'})
 
         user = JWTService.verify_token(token, RecoveryToken)
         user.set_password(serializer.validated_data['password'])
         user.save()
-        return Response(UserSerializer(user).data, status.HTTP_200_OK)
+        return Response(UserSerializer(user).data, status=status.HTTP_200_OK)
 
 
 class SocketTokenView(GenericAPIView):
@@ -114,13 +115,13 @@ class SocketTokenView(GenericAPIView):
         Generate a socket token for the authenticated user.
     """
 
-    def get_serializer(self):
-        return None
-
+    serializer_class = TokenSerializer
     permission_classes = (IsAuthenticated,)
+
     def get(self, *args, **kwargs):
         token = JWTService.create_token(user=self.request.user,token_class=SocketToken)
-        return Response({'token': str(token)}, status.HTTP_200_OK)
+        serializer = self.get_serializer({'token': str(token)})
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 # @method_decorator(name='post', decorator=swagger_auto_schema(security=[]))
@@ -134,47 +135,40 @@ class RegisterAPIView(GenericAPIView):
     serializer_class = UserSerializer
 
     def post(self, request, *args, **kwargs):
-        # print("Server received body:", request.data)
-        serializer = UserSerializer(data=request.data)
+        serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+        user = serializer.save()
 
-        try:
-            user = serializer.save()
-        except Exception as e:
-            # print("Error creating user:", e)
-            return Response({'detail': str(e)}, status=400)
         return Response(UserSerializer(user).data, status=status.HTTP_201_CREATED)
 
 
-class LoginAPIView(APIView):
+class LoginAPIView(GenericAPIView):
     """
     post:
         Authenticate a user and return an access token.
         Provide 'username' and 'password' in the request body.
     """
     permission_classes = (AllowAny,)
-
+    serializer_class = AuthResponseSerializer
     def post(self, request, *args, **kwargs):
         username = request.data.get('username') or request.data.get('email')
         password = request.data.get('password')
         user = authenticate(username=username, password=password)
 
         if user:
-            user_data = UserSerializer(user).data
-            token = JWTService.create_token(user=user, token_class=AccessToken)
-            refresh_token = JWTService.create_token(user=user, token_class=RefreshToken)
-
-            return Response({
-                'access': str(token),
-                'refresh': str(refresh_token),
-                'user': user_data
-            }, status=status.HTTP_200_OK)
-
-        return Response({'detail': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
+            tokens_data = {
+                'access': str(JWTService.create_token(user=user, token_class=AccessToken)),
+                'refresh': str(JWTService.create_token(user=user, token_class=RefreshToken)),
+                'user': user
+            }
+            serializer = self.get_serializer(tokens_data)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        raise ValidationError({'detail': 'Invalid credentials'})
 
 
-class SocialLoginJWTAPIView(APIView):
+class SocialLoginJWTAPIView(GenericAPIView):
     permission_classes = [AllowAny]
+    serializer_class = AuthResponseSerializer
 
     SUPPORTED_PROVIDERS = ['google', 'facebook', 'apple']
 
@@ -183,10 +177,10 @@ class SocialLoginJWTAPIView(APIView):
         access_token = request.data.get('access_token')
 
         if provider not in self.SUPPORTED_PROVIDERS:
-            return Response({'detail': f'{provider} is not supported'}, status=400)
+            raise ValidationError({'detail': f'{provider} is not supported'})
 
         if not access_token:
-            return Response({'detail': 'access_token required'}, status=400)
+            raise ValidationError({'detail': 'access_token required'})
 
         return self.handle_social_login(provider, access_token)
 
@@ -194,7 +188,7 @@ class SocialLoginJWTAPIView(APIView):
         user_data = self.get_user_data_from_provider(provider, access_token)
 
         if not user_data or not user_data.get('email'):
-            return Response({'detail': 'Invalid token or no email found'}, status=400)
+            raise ValidationError({'detail': 'Invalid token or no email found'})
 
         email = user_data['email']
 
@@ -219,11 +213,13 @@ class SocialLoginJWTAPIView(APIView):
         user_data = UserSerializer(user).data
         user_data['needs_profile'] = not profile.is_rules_accepted or not profile.birth_date
         refresh = RefreshToken.for_user(user)
-        return Response({
+        response_data = {
             'access_token': str(refresh.access_token),
             'refresh_token': str(refresh),
             'user': user_data
-        }, status=status.HTTP_200_OK)
+        }
+        serializer = self.get_serializer(response_data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def get_user_data_from_provider(self, provider, access_token):
 
@@ -246,7 +242,7 @@ class SocialLoginJWTAPIView(APIView):
 
         if response.status_code == 200:
             return response.json()
-        # print(f'GOOGLE API ERROR: {response.status_code} - {response.text}')
+
         return None
 
     def verify_facebook_token(self, access_token):
@@ -286,12 +282,14 @@ class SocialLoginJWTAPIView(APIView):
 
         return None
 
-class CurrentUserAPIView(APIView):
+class CurrentUserAPIView(GenericAPIView):
     """
     get:
         Retrieve information about the currently authenticated user.
     """
     permission_classes = [IsAuthenticated]
+    serializer_class = UserSerializer
     def get(self, request):
-        serializer = UserSerializer(request.user)
-        return Response(serializer.data)
+        serializer = self.get_serializer(request.user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+

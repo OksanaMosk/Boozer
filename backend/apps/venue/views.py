@@ -9,12 +9,15 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .models import VenueModel, TagModel, TableModel, VenuePhotoModel, VenueTagModel
-from .serializers import VenueSerializer, TagSerializer, TableSerializer, VenuePhotoSerializer, VenueTagSerializer
+from .serializers import VenueSerializer, TagSerializer, TableSerializer, VenuePhotoSerializer, VenueTagSerializer, \
+    VenueOrdersStatsResponseSerializer
 from .services.geocode import geocode_city
 from .services.venue_constants_service import get_venue_constants
 from .services.venue_service import get_user_venues, approve_venue_service, get_venue_orders_statistics
+from ..common.serializers import StatusMessageSerializer, URLResponseSerializer
 from ..user.permissions import IsAdminOrVenueAdminOrReadOnly, IsAdmin
 from django.db.models import Exists, OuterRef
+from rest_framework.exceptions import NotFound, ValidationError
 
 
 class VenueViewSet(viewsets.ModelViewSet):
@@ -74,10 +77,10 @@ class VenueViewSet(viewsets.ModelViewSet):
 
         approve_venue_service(venue)
 
-        return Response({
-            'status': 'success',
+        serializer = StatusMessageSerializer({
             'message': 'Venue approved and email sent.'
-        }, status=200)
+        })
+        return Response(serializer.data, status=200)
 
     @action(detail=True, methods=['get'], permission_classes=[IsAdminOrVenueAdminOrReadOnly])
     def orders_stats(self, request, pk=None):
@@ -87,13 +90,12 @@ class VenueViewSet(viewsets.ModelViewSet):
         """
         venue = self.get_object()
         data = get_venue_orders_statistics(venue)
-        from apps.orders.serializers import OrderSerializer
-        serializer = OrderSerializer(data['orders'], many=True)
 
-        return Response({
+        serializer = VenueOrdersStatsResponseSerializer({
             'stats': data['stats'],
-            'orders': serializer.data
+            'orders': data['orders']
         })
+        return Response(serializer.data)
 
 class VenuePhotoViewSet(viewsets.ModelViewSet):
     queryset = VenuePhotoModel.objects.all()
@@ -131,18 +133,18 @@ class TableViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         venue_pk = self.kwargs.get('venue_pk')
         if not venue_pk:
-            raise serializers.ValidationError({'venue': 'venue_pk is required in URL'})
+            raise serializers.ValidationError({'detail': 'venue_pk is required in URL'})
         serializer.save(venue_id=venue_pk)
 
     @action(detail=False, methods=['get'], permission_classes=[permissions.AllowAny])
     def available(self, request, venue_pk=None):
         if not venue_pk:
-            return Response({'error': 'venue_pk is required in URL'}, status=400)
+            raise serializers.ValidationError({'detail': 'venue_pk is required in URL'})
 
         start = request.query_params.get('start')
         end = request.query_params.get('end')
         if not start or not end:
-            return Response({'error': 'start and end are required'}, status=400)
+            raise serializers.ValidationError({'detail': 'start and end are required'})
 
         start_dt = parse_datetime(start)
         end_dt = parse_datetime(end)
@@ -165,31 +167,35 @@ class TablesLayoutViewSet(viewsets.ViewSet):
     @action(detail=False, methods=['get'], url_path='get_background')
     def get_background(self, request, venue_pk=None):
         if not venue_pk:
-            return Response({'error': 'venue_pk is required'}, status=400)
-        try:
-            venue = VenueModel.objects.get(pk=venue_pk)
-        except VenueModel.DoesNotExist:
-            return Response({'error': 'Venue not found'}, status=404)
-        return Response({'url': venue.background_tables or ''})
+            raise serializers.ValidationError({'detail': 'venue_pk is required'})
 
+        from django.shortcuts import get_object_or_404
+        venue = get_object_or_404(VenueModel, pk=venue_pk)
+
+        self.check_object_permissions(request, venue)
+
+        serializer = URLResponseSerializer({'url': venue.background_tables or ''})
+        return Response(serializer.data)
 
     @action(detail=False, methods=['post'], url_path='upload_background')
     def upload_background(self, request, venue_pk=None):
         if not venue_pk:
-            return Response({'error': 'venue_pk is required'}, status=400)
-        try:
-            venue = VenueModel.objects.get(pk=venue_pk)
-        except VenueModel.DoesNotExist:
-            return Response({'error': 'Venue not found'}, status=404)
+            raise serializers.ValidationError({'detail': 'venue_pk is required'})
+
+        from django.shortcuts import get_object_or_404
+        venue = get_object_or_404(VenueModel, pk=venue_pk)
+
+        self.check_object_permissions(request, venue)
 
         url = request.data.get('url')
         if not url:
-            return Response({'error': 'URL is required'}, status=400)
+            raise serializers.ValidationError({'detail': 'URL is required'})
 
         venue.background_tables = url
         venue.save()
-        return Response({'url': venue.background_tables})
 
+        serializer = URLResponseSerializer({'url': venue.background_tables})
+        return Response(serializer.data)
 
 class VenueUserListView(APIView):
     """
@@ -211,14 +217,14 @@ class VenueUserListView(APIView):
 def venue_constants(request):
     try:
         constants = get_venue_constants()
-        if not constants:
-            return Response({'detail': 'Constants not found'}, status=status.HTTP_404_NOT_FOUND)
-        return Response(constants, status=status.HTTP_200_OK)
-    except ValueError as e:
-        return Response({'detail': str(e)}, status=status.HTTP_400_BAD_REQUEST)
-    except KeyError as e:
-        return Response({'detail': f'Missing key: {e}'}, status=status.HTTP_400_BAD_REQUEST)
 
+        if not constants:
+            raise NotFound(detail='Constants not found')
+
+        return Response(constants)
+
+    except (ValueError, KeyError) as e:
+        raise ValidationError(detail=str(e))
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
@@ -226,7 +232,7 @@ def city_coordinates(request):
     city = request.GET.get('city')
     country = request.GET.get('country')
     if not city or not country:
-        return Response({'detail': 'City and country are required'}, status=status.HTTP_400_BAD_REQUEST)
+        raise serializers.ValidationError({'detail': 'City and country are required'})
 
     lat, lng = geocode_city(city, country)
     return Response({'latitude': lat, 'longitude': lng}, status=status.HTTP_200_OK)

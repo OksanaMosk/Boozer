@@ -157,6 +157,12 @@
     display: inline-block;
     min-width: 300px;
 }
+.billRowTransfers {
+     display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color:  var(--color-text);
+}
 
 .amount {
     font-size: 48px;
