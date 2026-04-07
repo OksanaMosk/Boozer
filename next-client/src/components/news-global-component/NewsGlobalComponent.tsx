@@ -7,9 +7,10 @@ import venueServices from "@/lib/services/venueService";
 import { INews } from "@/models/IVenue";
 import { NewComponent } from "@/components/new-component/NewComponent";
 import { LoaderComponent } from "@/components/loader-component/LoaderComponent";
-import { PaginationComponent } from "@/components/pagination-component/PaginationComponent";
 import { ButtonScrollTopComponent } from "@/components/button-scroll-top-component/ButtonScrollTopComponent";
 import styles from "./NewsGlobalComponent.module.css";
+import {PaginationComponent} from "@/components/pagination-component/PaginationComponent";
+import {ButtonScrollBottomComponent} from "@/components/button-scroll-bottom-component/ButtonScrollBottomComponent";
 
 const NewsGlobalContent = () => {
     const { user } = useUser();
@@ -33,9 +34,7 @@ const NewsGlobalContent = () => {
             }, {accessToken: user?.token});
 
             if (res.data.data) {
-                const now = new Date();
                 const processedNews: INews[] = (res.data.data || [])
-                    .filter((item: INews) => !item.end_date || new Date(item.end_date) >= now)
                     .map((item: INews) => ({
                         ...item,
                         displayType: item.type === 'promotion' ? 'PROMO' : item.type === 'event' ? 'EVENT' : 'NEWS'
@@ -44,8 +43,9 @@ const NewsGlobalContent = () => {
                 setNews(processedNews);
                 setTotalPages(res.data.total_pages || 1);
             }
-        } catch (err) {
-            console.error("Failed to fetch global news:", err);
+        } catch {
+            setNews([]);
+            setTotalPages(1);
         } finally {
             setLoading(false);
         }
@@ -69,13 +69,14 @@ const NewsGlobalContent = () => {
 
     return (
         <div className={styles.container}>
+             <ButtonScrollBottomComponent/>
             <h1 className={styles.mainTitle}>News Feed & Promotions</h1>
 
-            <div className={styles.tabs}>
+            <div className={styles.tabNavigation}>
                 {["all", "general", "promotion", "event"].map(t => (
                     <button
                         key={t}
-                        className={activeTab === t ? styles.activeTab : styles.tab}
+                        className={`${styles.navButton} ${activeTab === t ? styles.activeTab : ""}`}
                         onClick={() => handleTabChange(t)}
                     >
                         {t === "all" ? "All" : t === "promotion" ? "Promotions" : t === "event" ? "Events" : "General"}
@@ -108,15 +109,9 @@ const NewsGlobalContent = () => {
                     )}
                 </div>
             )}
-
-
             {totalPages > 1 && (
-                <PaginationComponent
-                    totalPages={totalPages}
-                />
-            )}
-
-            <ButtonScrollTopComponent />
+                <PaginationComponent totalPages={totalPages}/>)}
+            <ButtonScrollTopComponent/>
         </div>
     );
 };

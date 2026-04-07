@@ -41,7 +41,6 @@ export const PaginationNewsComponent = ({totalPages, currentPage, onPageChangeAc
     const handlePrevPage = () => currentPage > 1 && onPageChangeAction(currentPage - 1);
     const handleNextPage = () => currentPage < totalPages && onPageChangeAction(currentPage + 1);
 
-    if (totalPages <= 1) return null;
 
     return (
         <div className={styles.paginationContainer}>

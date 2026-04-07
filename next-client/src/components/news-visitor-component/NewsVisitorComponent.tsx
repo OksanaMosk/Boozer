@@ -3,25 +3,13 @@
 import React, { useState, useEffect } from "react";
 import { useUser } from "@/app/contexts/UserProvider";
 import venueServices from "@/lib/services/venueService";
-import { INewsPhoto } from "@/models/IVenue";
+import {INews } from "@/models/IVenue";
 import { PaginationNewsComponent } from "@/components/pagination-news-component/PaginationNewsComponent";
 import { NewComponent } from "@/components/new-component/NewComponent";
 import { LoaderComponent } from "@/components/loader-component/LoaderComponent";
 import styles from "./NewsVisitorComponent.module.css";
+import {ButtonScrollBottomComponent} from "@/components/button-scroll-bottom-component/ButtonScrollBottomComponent";
 
-interface NewsItem {
-    id?: number | string;
-    title: string;
-    content: string;
-    type: "general" | "promotion" | "event";
-    status: string;
-    end_date?: string | null;
-    is_pinned: boolean;
-    images?: INewsPhoto[] | [];
-    preview?: string | null;
-    created_at?: string;
-    updated_at?: string;
-}
 
 interface ClientNewsProps {
     venueId: string;
@@ -29,12 +17,11 @@ interface ClientNewsProps {
 
 const NewsVisitorComponent: React.FC<ClientNewsProps> = ({ venueId }) => {
     const { user } = useUser();
-    const [news, setNews] = useState<NewsItem[]>([]);
+    const [news, setNews] = useState<INews[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
-    const [totalItems, setTotalItems] = useState(0);
+    const [totalPages, setTotalPages] = useState(1);
     const [activeTab, setActiveTab] = useState<"general" | "promotion" | "event">("general");
     const [loading, setLoading] = useState(false);
-    const itemsPerPage = 8;
 
     const fetchNews = async () => {
         if (!user?.token) return;
@@ -42,23 +29,18 @@ const NewsVisitorComponent: React.FC<ClientNewsProps> = ({ venueId }) => {
         try {
             const res = await venueServices.venues.news({ accessToken: user.token })(venueId).getAll({
                 page: currentPage,
-                limit: itemsPerPage,
                 type: activeTab,
-                is_pinned:true
+                is_pinned: true
             });
 
-            if (res.data) {
-                const now = new Date();
-                const activeNews = (res.data.data || []).filter((item: NewsItem) => {
-                    if (!item.end_date) return true;
-                    return new Date(item.end_date) >= now;
-                });
+           if (res.data) {
+            setNews(res.data.data || []);
+            setTotalPages(res.data.total_pages || 1);
+        }
 
-                setNews(activeNews);
-                setTotalItems(res.data.total_items || 0);
-            }
-        } catch (error) {
-            console.error(`Error fetching visitor news:`, error);
+        } catch  {
+          setNews([]);
+        setTotalPages(1);
         } finally {
             setLoading(false);
         }
@@ -68,7 +50,7 @@ const NewsVisitorComponent: React.FC<ClientNewsProps> = ({ venueId }) => {
         void fetchNews();
     }, [venueId, user?.token, activeTab, currentPage]);
 
-    const totalPages = Math.ceil(totalItems / itemsPerPage);
+
 
     if (!user?.token) {
         return <div className={styles.titleLog}>Please Sign In</div>;
@@ -76,21 +58,7 @@ const NewsVisitorComponent: React.FC<ClientNewsProps> = ({ venueId }) => {
 
     return (
         <div className={styles.typesWrapper}>
-            <div className={styles.tabsContainer}>
-                {(["general", "promotion", "event"] as const).map(tab => (
-                    <div
-                        key={tab}
-                        className={`${styles.tabButton} ${activeTab === tab ? styles.active : ""}`}
-                        onClick={() => {
-                            setActiveTab(tab);
-                            setCurrentPage(1);
-                        }}
-                    >
-                        {tab === "general" ? "News" : tab === "promotion" ? "Promo" : "Event"}
-                    </div>
-                ))}
-            </div>
-
+            <ButtonScrollBottomComponent/>
             <div className={styles.wrapper}>
                 <div className={styles.itemsWrapper}>
                     <div className={styles.wrapperTitle}>
@@ -98,7 +66,20 @@ const NewsVisitorComponent: React.FC<ClientNewsProps> = ({ venueId }) => {
                         <p className={styles.mediumText}>News</p>
                         <p className={styles.smallText}>Events</p>
                     </div>
-
+                    <div className={styles.tabNavigation}>
+                        {(["general", "promotion", "event"] as const).map(tab => (
+                            <div
+                                key={tab}
+                                className={`${styles.navButton} ${activeTab === tab ? styles.activeTab : ""}`}
+                                onClick={() => {
+                                    setActiveTab(tab);
+                                    setCurrentPage(1);
+                                }}
+                            >
+                                {tab === "general" ? "News" : tab === "promotion" ? "Promo" : "Event"}
+                            </div>
+                        ))}
+                    </div>
                     <div className={styles.newsSection}>
                         {loading ? (
                             <div className={styles.loaderWrapper}><LoaderComponent /></div>
@@ -122,18 +103,20 @@ const NewsVisitorComponent: React.FC<ClientNewsProps> = ({ venueId }) => {
                                     <p className={styles.emptyState}>There are no active news in this category at the moment</p>
                                 )}
 
-                                {totalPages > 1 && (
-                                    <PaginationNewsComponent
-                                        totalPages={totalPages}
-                                        currentPage={currentPage}
-                                        onPageChangeAction={(p: number) => setCurrentPage(p)}
-                                    />
-                                )}
                             </>
                         )}
                     </div>
+
                 </div>
+                {totalPages > 1 && (
+                    <PaginationNewsComponent
+                        totalPages={totalPages}
+                        currentPage={currentPage}
+                        onPageChangeAction={(p: number) => setCurrentPage(p)}
+                    />
+                )}
             </div>
+
         </div>
     );
 };

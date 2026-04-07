@@ -1,12 +1,12 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
-import {useRouter, useSearchParams} from "next/navigation";
-import venueService, { VenueFilterCriteria } from "@/lib/services/venueService";
+import React, { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from "next/navigation";
+import venueService from "@/lib/services/venueService";
 import { IVenue } from "@/models/IVenue";
 import VenuesComponent from "@/components/venues-component/VenuesComponent";
 import VenueFilterComponent from "@/components/venue-filter-component/VenueFilterComponent";
-import { LoaderComponent } from "@/components/loader-component/LoaderComponent";
+import {LoaderComponent} from "@/components/loader-component/LoaderComponent";
 import styles from "./VenuesClientComponent.module.css";
 import {useUser} from "@/app/contexts/UserProvider";
 
@@ -24,24 +24,51 @@ export const VenuesClientComponent = () => {
     const [totalPagesState, setTotalPagesState] = useState(1);
     const [isLoading, setIsLoading] = useState(false);
     const [isUnauthorized, setIsUnauthorized] = useState(false);
-    const searchParams = useSearchParams();
-    const currentPageFromURL = Number(searchParams.get("page") || "1");
     const router = useRouter();
+    const searchParams = useSearchParams();
     const {user} = useUser();
-    const [filters, setFilters] = useState<VenueFilters>({
-        country: searchParams.get("country") || undefined,
-        city: searchParams.get("city") || undefined,
-        name: searchParams.get("name") || undefined,
-        sort_by: (searchParams.get("sort_by") as any) || "rating",
-        sort_order: (searchParams.get("sort_order") as any) || "desc",
-        tags: searchParams.get("tags")?.split(",").filter(t => t !== "") || [],
-    });
 
     useEffect(() => {
+        const fetchVenues = async () => {
+            setIsLoading(true);
+            setIsUnauthorized(false);
+            const page = Number(searchParams.get("page") || "1");
+            const currentFilters: any = Object.fromEntries(searchParams.entries());
+
+            if (searchParams.get("tags")) {
+                currentFilters.tags = searchParams.get("tags")?.split(",").filter(Boolean);
+            }
+
+            try {
+                const auth = user?.token ? {accessToken: user.token} : undefined;
+                const response = await venueService.venues.getAllWithFilter({
+                    ...currentFilters,
+                    page
+                }, auth);
+
+                setVenuesData(response.data.data ?? []);
+                setTotalPagesState(response.data.total_pages ?? 1);
+            } catch (error: any) {
+                if (error.response?.status === 404 && page > 1) {
+                    const params = new URLSearchParams(searchParams.toString());
+                    params.set("page", "1");
+                    router.push(`?${params.toString()}`, {scroll: false});
+                    return;
+                }
+                if (error.response?.status === 401) setIsUnauthorized(true);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        void fetchVenues();
+    }, [searchParams, user?.token, router]);
+
+    const handleFilterChange = (newFilters: VenueFilters) => {
         const params = new URLSearchParams();
 
-        Object.entries(filters).forEach(([key, value]) => {
-            if (value !== undefined && value !== "" && value !== null) {
+        Object.entries(newFilters).forEach(([key, value]) => {
+            if (value !== undefined && value !== null && value !== '') {
                 if (Array.isArray(value)) {
                     if (value.length > 0) params.set(key, value.join(","));
                 } else {
@@ -50,55 +77,33 @@ export const VenuesClientComponent = () => {
             }
         });
 
-        if (currentPageFromURL > 1) params.set("page", String(currentPageFromURL));
+        const currentParams = new URLSearchParams(searchParams.toString());
+        const currentPage = currentParams.get("page") || "1";
 
-        const queryString = params.toString();
-        router.push(queryString ? `?${queryString}` : "/venues", {scroll: false});
-    }, [filters, currentPageFromURL, router]);
+        currentParams.delete("page");
+        const isFiltersChanged = params.toString() !== currentParams.toString();
 
-    const fetchVenues = useCallback(async (page: number, filters: VenueFilters) => {
-        setIsLoading(true);
-        setIsUnauthorized(false);
-        const apiParams = {
-            ...filters,
-            tags: Array.isArray(filters.tags) ? filters.tags.join(",") : filters.tags || undefined,
-            ordering: filters.sort_order === "desc" ? `-${filters.sort_by}` : filters.sort_by,
-            page
-        };
-        try {
-            const auth = (user?.token && user.token.length > 0)
-                ? {accessToken: user.token}
-                : undefined;
-            const response = await venueService.venues.getAllWithFilter(apiParams as any, auth);
-            setVenuesData(response.data.data ?? []);
-            setTotalPagesState(response.data.total_pages ?? 1);
-        } catch (error: any) {
-            if (error.message === "Please Sign In") {
-                setIsUnauthorized(true);
-                const res = await venueService.venues.getAllWithFilter(apiParams as any);
-                setVenuesData(res.data.data ?? []);
-            }
-            console.error("Error fetching venues:", error);
-        } finally {
-            setIsLoading(false);
+        if (isFiltersChanged) {
+            params.set("page", "1");
+        } else {
+            params.set("page", currentPage);
         }
-    }, [user?.token]);
-
-
-    const handleFilterChange = (newFilters: VenueFilterCriteria) => {
-        setFilters(newFilters);
+        const newQueryString = params.toString();
+        if (newQueryString !== searchParams.toString()) {
+            router.push(`?${newQueryString}`, {scroll: false});
+        }
     };
 
-    useEffect(() => {
-        void fetchVenues(currentPageFromURL, filters);
-    }, [currentPageFromURL, filters, fetchVenues]);
 
     return (
         <div className={styles.wrapper}>
             <h1 className={styles.title}>Venues</h1>
             <VenueFilterComponent onFilterChange={handleFilterChange}/>
+
             {isLoading ? (
-                <div className={styles.loaderWrapper}><LoaderComponent/></div>
+                <div className={styles.loaderWrapper}>
+                    <LoaderComponent/>
+                </div>
             ) : (
                 <VenuesComponent
                     venues={venuesData}

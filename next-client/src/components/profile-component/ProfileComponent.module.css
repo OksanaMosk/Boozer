@@ -1,4 +1,7 @@
 .container {
+    text-align: center;
+    margin: 0 auto;
+    width: 80%;
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
@@ -144,21 +147,12 @@
 .dot { color: #333; }
 
 .statsGrid {
-    display: flex;
-    gap: 2.5rem;
+    width: 100%;
+    margin-top: 20px;
+   text-align: left;
     border-top: 1px solid var(--logo-hover-color);
 }
 
-.statBox {
-    display: flex;
-    flex-direction: column;
-}
-
-.statValue {
-    font-size: 1.4rem;
-    font-weight: 700;
-    color: var(--logo-hover-color);
-}
 
 .statLabel {
     font-size: 0.7rem;
@@ -175,4 +169,13 @@
     display: flex;
     justify-content: center;
     margin: 70px auto 100px;
+}
+
+.divider {
+    height: 1px;
+    background-color: var(--logo-hover-color);
+    margin: 10px 0;
+}
+.phone {
+    text-align: left;
 }

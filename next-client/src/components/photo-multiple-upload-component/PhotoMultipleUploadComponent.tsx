@@ -116,8 +116,12 @@ const PhotoMultipleUploadComponent: React.FC<MultiplePhotoUploadProps> = ({
             setPhotos(prev => prev.map(p => ({...p, file: undefined})));
             setMessage("Upload successful!");
             setTimeout(() => setMessage(null), 3000);
-        } catch (error) {
-            console.error("Error uploading photos", error);
+        } catch (error: any) {
+            if (error.response?.status === 404) {
+                onUploadComplete([]);
+                  setLoading(false);
+                return;
+            }
         } finally {
             setLoading(false);
         }

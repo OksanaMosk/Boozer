@@ -1,4 +1,6 @@
 from apps.news.models import NewsModel
+from django.utils import timezone
+from django.db.models import Q
 
 
 class NewsService:
@@ -16,11 +18,18 @@ class NewsService:
         if role == 'VENUE_ADMIN':
             from apps.venue.models import VenueModel
             is_owner = VenueModel.objects.filter(id=venue_id, venue_admin=user).exists()
-
             if is_owner:
                 return qs
 
-        return qs.filter(status='active')
+
+        now = timezone.now()
+        qs = qs.filter(status='active')
+
+        qs = qs.filter(
+            Q(end_date__isnull=True) | Q(end_date__gte=now)
+        )
+
+        return qs
 
     @staticmethod
     def determine_initial_status(news_type):

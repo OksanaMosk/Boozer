@@ -32,6 +32,7 @@
 .deleteButton:hover {
     background-color: #a94444;
 }
+.subTitlePin,
 .subTitleEdit,
 .subTitle{
     font-weight: 700;
@@ -46,7 +47,21 @@
      margin: 0;
     padding: 0;
 }
-
+.pinned {
+    font-size: 30px;
+}
+.pin {
+    text-align: left;
+    color: var(--logo-hover-color);
+    display: flex;
+    gap: 10px;
+   width: 100%;
+}
+.subTitlePin {
+    display: flex;
+    justify-content:flex-start;
+    align-items: center;
+}
 .newsCard {
     overflow: hidden;
     padding: 20px;
@@ -68,7 +83,11 @@
 .newsCard.editMode {
     height: auto;
 }
-
+.topPin {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
 .top {
     width: 100%;
     display: flex;

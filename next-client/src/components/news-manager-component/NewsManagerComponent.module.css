@@ -1,19 +1,17 @@
 .itemsWrapper{
     font-family: var(--font-playfair),sans-serif;
     text-align: center;
-    width: 70vw;
+    width: 80vw;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 110px;
-
 }
 .wrapperTitle {
     width: 100%;
-    text-align: left;
-    margin: 0 auto 60px;
+    text-align:center;
+    margin: 0 auto 40px;
     padding: 0;
     position: relative;
     display: inline-block;
@@ -23,10 +21,10 @@
     margin: 0;
     padding: 0;
     width: 100%;
-    text-align: left;
+    text-align: center;
     font-family: Sans,sans-serif;
     color:var(--title-color);
-    font-size: 16rem;
+    font-size: 12rem;
     font-style: italic;
     font-weight: 800;
     position: relative;
@@ -41,8 +39,8 @@
     color:var(--title-color);
     position: absolute;
     top: 90%;
-    left:30%;
-    font-size: 16rem;
+    left:0;
+    font-size: 12rem;
     transform: translateY(-50%);
     z-index: 2;
     text-shadow: 1px 1px 1px var(--title-primary-color);
@@ -52,9 +50,9 @@
     font-family: var(--font-imperial),sans-serif;
     position: absolute;
     top: 30%;
-    left:60%;
+    left:30%;
     transform: translateY(-50%);
-    font-size: 16rem;
+    font-size: 12rem;
     font-weight: 500;
     z-index: 3;
     color: var(--title-primary-color);
@@ -92,70 +90,67 @@
     align-items: flex-start;
     justify-content: center;
 }
-.tabsContainer {
-     position: fixed;
-    margin-top: 70px;
+
+.tabNavigation {
+    margin: 150px auto 0;
     display: flex;
-    justify-content: flex-start;
-    align-items: flex-start;
-    gap: 2rem;
-    width: 250px;
-    height: auto;
-    flex-direction: column;
-    left: 10px;
-    top: 150px;
-    z-index: 4;
-}
-.tabButton {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    width: 120px;
-    height: 45px;
-    padding: 0.5rem 1rem;
-    color: #30240b;
-    background: linear-gradient(90deg, #30240b, white, #30240b);
-    cursor: pointer;
-    outline: none;
-    transition: all 0.3s ease-in-out;
-    border: 1px solid rgba(255,255,255,0.5);
-    font-weight: bold;
-    border-radius: 0 1.5rem 1.5rem 0;
+    justify-content: center;
     text-align: center;
-
-}
-.tabButton:hover {
-   background: linear-gradient(90deg, white, #30240b, white);
-    color: white;
+    width: 100%;
+    gap: -20px;
 }
 
-
-.tabButton.active {
-    background-color: #3e8e41;
-    color: white;
-}
-.typesWrapper {
+.navButton {
+    width: 160px;
+    height: 45px;
     display: flex;
     justify-content: center;
     align-items: center;
-    flex-direction: column;
+    margin-left: -40px;
+    border-radius: 40px;
+    border: 1px solid var(--color-noposter);
+    font-size: 12px;
+    cursor: pointer;
+    background:var(--menu-color);
+    color: var(--logo-hover-color);
+    transition: background-color 0.2s, color 0.2s;
 }
 
+.navButton:first-child {
+    margin-left: 0;
+}
+
+.activeTab {
+    background: var(--reverse-menu-color);
+    color: var(--title-color);
+}
+
+
 .newsSection {
+    height: auto;
     margin: 0 auto;
     text-align: center;
     width:70vw;
     display: flex;
     flex-direction: column;
-    overflow: auto;
     gap: 2rem;
+    overflow: hidden;
 }
+.news {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 60px auto;
+    width:100%;
+    gap: 3rem;
 
+}
 
 .loaderWrapper {
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    margin: 70px auto;
+    margin: 40px auto 90px;
 
 }

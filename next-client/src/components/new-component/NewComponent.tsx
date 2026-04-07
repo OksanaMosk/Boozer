@@ -24,9 +24,13 @@ export const NewComponent = ({news, venueId, onDelete, onUpdate, isReadOnly = fa
     const images = editNews.images || [];
     const [coverMessage, setCoverMessage] = useState("");
     const coverImage = images.find((img: any) => img.is_cover)?.image || editNews.preview;
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        setEditNews({...editNews, [e.target.name]: e.target.value});
+        const {name, value, type} = e.target;
+        const val = type === "checkbox" ? (e.target as HTMLInputElement).checked : value;
+        setEditNews({...editNews, [name]: val});
     };
+
     const handleSetCover = async (photoId: string | number) => {
         if (!user?.token || !editNews?.id) return;
         const photo = editNews.images?.find((p: any) => p.id.toString() === photoId.toString());
@@ -67,6 +71,7 @@ export const NewComponent = ({news, venueId, onDelete, onUpdate, isReadOnly = fa
             const formData = new FormData();
             formData.append("title", editNews.title);
             formData.append("content", editNews.content);
+            formData.append("is_pinned", editNews.is_pinned ? "true" : "false");
             const res = await venueServices.venues.news({accessToken: user.token})(venueId)
                 .update(editNews.id.toString(), formData as any);
             setEditNews({...editNews, ...res.data});
@@ -80,15 +85,29 @@ export const NewComponent = ({news, venueId, onDelete, onUpdate, isReadOnly = fa
         <div className={`${styles.newsCard} ${editMode ? styles.editMode : ''}`}>
             <div className={styles.top}>
                 {editMode ? (
-                    <input
+                    <div className={styles.topPin}>
+                        <input
                         type="text"
                         name="title"
                         value={editNews.title}
                         onChange={handleChange}
                         className={styles.subTitleEdit}
                     />
+                        <label className={styles.pin}>
+                            <input
+                                type="checkbox"
+                                name="is_pinned"
+                                checked={editNews.is_pinned}
+                                onChange={handleChange}
+                            />
+                            Pin
+                        </label>
+                    </div>
                 ) : (
-                    <div className={styles.subTitle}>{editNews.title}</div>
+                    <div className={styles.subTitlePin}>
+                        {editNews.is_pinned && <span title="Pinned" className={styles.pinned}>🎊</span>}
+                        {editNews.title}
+                    </div>
                 )}
                 {!isReadOnly && (
                     <div className={styles.topStatus}>

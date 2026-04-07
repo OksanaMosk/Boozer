@@ -5,14 +5,11 @@ import Link from "next/link";
 import { useUser } from "@/app/contexts/UserProvider";
 import { useDashboardTabs } from "@/hooks/useDashboardTabs";
 import userService from "@/lib/services/userService";
-import venueServices from "@/lib/services/venueService";
 import { IVenue } from "@/models/IVenue";
-
 import ProfileComponent from "@/components/profile-component/ProfileComponent";
 import { FavoriteManagerComponent } from "@/components/favorite-manager-component/FavoriteManagerComponent";
 import VenueListingComponent from "@/components/venue-listing-component/VenueListingComponent";
 import AdminUserManagementComponent from "@/components/admin-user-management-component/AdminUserManagementComponent";
-import { getCurrentLevelDiscount, getNextLevelDiscount } from "@/lib/services/getCurrentLevelDiscount";
 import styles from "./DashboardComponent.module.css";
 import {LoaderComponent} from "@/components/loader-component/LoaderComponent";
 import {TopListManagerComponent} from "@/components/top-list-manager-component/TopListManagerComponent";
@@ -29,11 +26,9 @@ const DashboardComponent: React.FC = () => {
     const [venues, setVenues] = useState<IVenueWithId[]>([]);
     const [venuesLoading, setVenuesLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const [reviewCount, setReviewCount] = useState(0);
     const isAdmin = user?.role === "admin";
     const isVenueAdmin = user?.role === "venue_admin";
-    const currentLevel = getCurrentLevelDiscount(reviewCount);
-    const nextLevel = getNextLevelDiscount(reviewCount);
+
 
     const DASHBOARD_TABS = useMemo(() => [
         { id: "profile", label: "My Profile", show: true },
@@ -71,17 +66,6 @@ const DashboardComponent: React.FC = () => {
         void loadVenues();
     }, [user?.id, activeTab, isVenueAdmin, user?.token]);
 
-    // useEffect(() => {
-    //     if (!user?.id) return;
-    //     const loadReviewStats = async () => {
-    //         try {
-    //             const response = await venueServices.reviews.getAllWithFilter({ user: user.id }, { accessToken: user.token! });
-    //             const count = Array.isArray(response.data) ? response.data.length : (response.data as any).count || 0;
-    //             setReviewCount(count);
-    //         } catch (err) { handleApiError(err); }
-    //     };
-    //     void loadReviewStats();
-    // }, [user?.id, user?.token]);
 
     const handleDelete = (venueId: string) => {
         setVenues((prev) => prev.filter((v) => v.id !== venueId));
@@ -90,9 +74,6 @@ const DashboardComponent: React.FC = () => {
     if (userLoading) return <div className={styles.loaderWrapper}><LoaderComponent/></div>;
     if (!user) return <p className={styles.titleLog}>Please Sign In to access your dashboard.</p>;
 
-    const dashboardStats = isVenueAdmin
-        ? [{label: "My Venues", value: venues.length}, {label: "Total Views", value: "1.2k"}]
-        : [{label: "Reviews", value: reviewCount}, {label: "Discount", value: `${currentLevel.discount}%`}];
 
     return (
         <div className={styles.wrapper}>
@@ -128,23 +109,13 @@ const DashboardComponent: React.FC = () => {
 
                 {activeTab === "profile" && (
                     <div className={styles.profileSection}>
-                        {nextLevel && (
-                            <div className={styles.loyaltyProgress}>
-                                <p>Write <strong>{nextLevel.minReviews - reviewCount}</strong> more reviews to
-                                    unlock <strong>{nextLevel.discount}%</strong>!</p>
-                            </div>
-                        )}
                         <ProfileComponent
                             user={user}
-                            stats={[
-                                ...dashboardStats,
-                                {label: "Loyalty Level", value: currentLevel.label}
-                            ]}
                             actions={
                                 <div className={styles.actionsProfile}>
                                     {!isAdmin &&
                                         <Link href="/profile-edit" className={styles.outline}>Edit Profile</Link>}
-                                    {isVenueAdmin &&
+                                    {isVenueAdmin || isAdmin &&
                                         <Link href="/venue-admin/create-venue" className={styles.primary}>+ Add
                                             Venue</Link>}
                                 </div>
@@ -163,7 +134,7 @@ const DashboardComponent: React.FC = () => {
                                         onDelete={() =>
                                             handleDelete(v.id)}
                                     />)
-                            ) : <p>No venues added yet.</p>
+                            ) : <p className={styles.titleNo}>No venues added yet.</p>
                             }
                         </div>
                     </section>

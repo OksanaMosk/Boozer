@@ -1,14 +1,30 @@
 .list {
+    text-align: center;
+    margin: 0 auto;
     display: flex;
     flex-direction: column;
     gap: 2rem;
 }
 .itemWrapper {
+     text-align: center;
+    margin: 0 auto 20px;
     position: relative;
-    margin-bottom: 20px;
-    width: 100%;
+    width: 80%;
 }
 
+.mainTitle {
+    display: flex;
+    justify-content:center;
+    align-items: center;
+    font-size: 3rem;
+    color: var(--color-text);
+    font-family: var(--font-imperial),serif;
+    letter-spacing: 4px;
+    width: 100%;
+    margin: 0 auto 1.5rem;
+    padding: 0;
+    gap: 10px;
+}
 .newsBadge {
     position: absolute;
     right: 70%;
@@ -25,6 +41,7 @@
     pointer-events: none;
     box-shadow: 0 2px 4px rgba(0,0,0,0.3);
 }
+.emptyState,
 .title {
     padding: 0;
     font-family: var(--font-imperial),serif;
@@ -32,5 +49,39 @@
     font-size: 2rem;
     letter-spacing: 2px;
     color: var(--color-text);
-line-height: 1;
+    line-height: 1;
 }
+.tabNavigation {
+    margin: 0 auto 40px;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    width: 100%;
+    gap: -20px;
+}
+
+.navButton {
+    width: 160px;
+    height: 45px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: -40px;
+    border-radius: 40px;
+    border: 1px solid var(--color-noposter);
+    font-size: 12px;
+    cursor: pointer;
+    background:var(--menu-color);
+    color: var(--logo-hover-color);
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.navButton:first-child {
+    margin-left: 0;
+}
+
+.activeTab {
+    background: var(--reverse-menu-color);
+    color: var(--title-color);
+}
+

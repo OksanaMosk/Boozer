@@ -16,7 +16,7 @@ class NewsViewSet(viewsets.ModelViewSet):
     filterset_fields = ['venue', 'status', 'type', 'is_pinned']
     search_fields = ['title', 'content']
     ordering_fields = [ 'created_at', 'title']
-    ordering = ['-created_at', '-is_pinned']
+    ordering = ['-is_pinned', '-created_at']
 
     def get_queryset(self):
         return NewsService.get_news_for_user(

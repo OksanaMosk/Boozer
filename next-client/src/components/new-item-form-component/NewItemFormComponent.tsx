@@ -102,7 +102,6 @@ export const NewItemFormComponent: React.FC<NewNewsFormProps> = ({venueId, onCre
             setCreatedNews(newNews);
             onCreate(newNews);
         } catch (err) {
-            // console.error("Create failed:", err);
             alert("Failed to create news");
         } finally {
             setLoading(false);
@@ -226,7 +225,9 @@ export const NewItemFormComponent: React.FC<NewNewsFormProps> = ({venueId, onCre
                     </div>
                 </div>
                 {createdNews && (
-                    <PhotoMultipleUploadComponent
+
+                    <div key={createdNews.id}> {
+                        <PhotoMultipleUploadComponent
                         venueId={venueId}
                         newsId={createdNews.id.toString()}
                         maxFiles={7}
@@ -239,6 +240,19 @@ export const NewItemFormComponent: React.FC<NewNewsFormProps> = ({venueId, onCre
                         }
                         onUploadComplete={handleUploadComplete}
                     />
+
+                    }
+                        <button
+                            type="button"
+                            className={styles.button}
+                            onClick={() => {
+                                setCreatedNews(null);
+                                handleUploadComplete([]);
+                            }}
+                        >
+                            Close without photos
+                        </button>
+                    </div>
                 )}
                 <button
                     type="submit"
@@ -249,6 +263,7 @@ export const NewItemFormComponent: React.FC<NewNewsFormProps> = ({venueId, onCre
                         <div className={`authButton ${styles.loaderWrapper}`}><LoaderComponent/></div>
                     ) : "Add News"}
                 </button>
+
             </div>
         </form>
     );

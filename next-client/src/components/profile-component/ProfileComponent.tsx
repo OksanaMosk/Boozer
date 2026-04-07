@@ -8,14 +8,12 @@ import ChatComponent from "@/components/chat-component/ChatComponent";
 
 interface ProfileProps {
     user: IUser;
-    stats?: { label: string; value: string | number }[];
     actions?: React.ReactNode;
     loading?: boolean;
 }
 
 const ProfileComponent: React.FC<ProfileProps> = ({
     user,
-    stats = [],
     actions,
     loading
 }) => {
@@ -93,24 +91,14 @@ const getPhotoUrl = (avatarUrl?: string | null) => {
                                     ? `${calculateAge(birthday)} years old`
                                     : 'No age'}
                             </p>
-                            {user.profile.phone && (
-                                <>
-                                    <span className={styles.dot}>•</span>
-                                    <span className={styles.phone}>{user.profile.phone}</span>
-                                </>
+                            {user.profile?.phone && (
+                                    <div className={styles.statsGrid}>
+                                        <span className={styles.phone}>{user.profile.phone}</span>
+                                </div>
+
                             )}
                         </div>
 
-                        {stats.length > 0 && (
-                            <div className={styles.statsGrid}>
-                                {stats.map((s, i) => (
-                                    <div key={i} className={styles.statBox}>
-                                        <span className={styles.statValue}>{s.value}</span>
-                                        <span className={styles.statLabel}>{s.label}</span>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
                     </div>
                 </div>
 
