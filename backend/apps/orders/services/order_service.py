@@ -1,8 +1,12 @@
 from decimal import Decimal
+from django.db.models import Q
+from apps.orders.models import OrderModel
 from apps.orders.services.exchange_service import get_today_rates
 from datetime import timedelta
 from django.utils import timezone
 from django.db import transaction
+
+
 
 def create_order_with_details(user, venue_id, validated_data, items_data, extra_services_data):
     with transaction.atomic():
@@ -24,7 +28,7 @@ def create_order_with_details(user, venue_id, validated_data, items_data, extra_
             es_data['price'] = es_data['service'].price
             OrderExtraServiceModel.objects.create(order=order, **es_data)
 
-        from apps.travel_logistics.services import TravelCalculationService
+        from apps.travel_logistics.services.travel_calculation_service import TravelCalculationService
         travel_service = TravelCalculationService(order.venue)
         travel_service.apply_to_order(order)
 
@@ -81,5 +85,24 @@ def confirm_order(order):
         calculate_total(order)
 
     return order
+
+
+def get_orders_for_user(user, venue_id=None):
+    if not user.is_authenticated:
+        return OrderModel.objects.none()
+
+    user_role = getattr(user, 'role', '').lower()
+
+    if user.is_staff or user_role == 'admin':
+        qs = OrderModel.objects.all()
+    elif user_role == 'venue_admin':
+        qs = OrderModel.objects.filter(Q(user=user) | Q(venue__in=user.venues.all()))
+    else:
+        qs = OrderModel.objects.filter(user=user)
+
+    if venue_id:
+        qs = qs.filter(venue_id=venue_id)
+
+    return qs.select_related('user', 'venue').prefetch_related('items', 'extra_services')
 
 

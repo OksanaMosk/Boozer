@@ -2,7 +2,8 @@ import googlemaps
 from decimal import Decimal
 from django.conf import settings
 from math import radians, cos, sin, asin, sqrt
-from .models import AirportModel
+
+from apps.travel_logistics.models import AirportModel
 
 
 class TravelCalculationService:

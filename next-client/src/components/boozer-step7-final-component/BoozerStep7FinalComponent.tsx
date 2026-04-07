@@ -72,7 +72,7 @@ const BoozerStep7Final: React.FC<Props> = ({orderId, venueId}) => {
     }, [isConfirmed]);
 
     const handleGoToOrders = () => {
-         router.push("/dashboard?tab=my_activity")
+         router.push("/dashboard?tab=orders")
     };
 
     if (!user) return <p className={styles.titleLog}>Please Sign In.</p>;

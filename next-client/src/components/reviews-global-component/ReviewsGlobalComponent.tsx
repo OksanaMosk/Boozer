@@ -5,10 +5,10 @@ import venueServices from "@/lib/services/venueService";
 import { ReviewFormComponent } from "@/components/review-form-component/ReviewFormComponent";
 import { ReviewComponent } from "@/components/review-component/ReviewComponent";
 import { useUser } from "@/app/contexts/UserProvider";
-import styles from "./ReviewsVisitorComponent.module.css"
+import styles from "./ReviewsGlobalComponent.module.css"
 import { LoaderComponent } from "@/components/loader-component/LoaderComponent";
 
-export const ReviewsVisitorComponent = ({ venueId }: { venueId: string, token?: any }) => {
+export const ReviewsGlobalComponent = ({ venueId }: { venueId: string, token?: any }) => {
     const [reviews, setReviews] = useState<any[]>([]);
     const [orders, setOrders] = useState<any[]>([]);
     const [isCreating, setIsCreating] = useState(false);

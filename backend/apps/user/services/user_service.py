@@ -3,9 +3,9 @@ from django.shortcuts import get_object_or_404
 
 from rest_framework.exceptions import PermissionDenied, ValidationError
 
+from apps.user.models import ProfileModel, UserModel
 from core.services.email_service import EmailService
 
-from .models import ProfileModel, UserModel
 
 
 class UserService:

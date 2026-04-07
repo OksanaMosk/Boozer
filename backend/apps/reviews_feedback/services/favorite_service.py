@@ -89,26 +89,6 @@ class FavoriteService:
                 print(f"DEBUG: Venue {item['id']} in Col {collection_id} -> Position {item['position']}")
         return True
 
-    # @staticmethod
-    # def reorder_collection(user, collection_id, order_data):
-    #     from django.db import transaction
-    #     from apps.reviews_feedback.models import FavoriteVenue
-    #
-    #     with transaction.atomic():
-    #         for item in order_data:
-    #             update_fields = {'position': item['position']}
-    #
-    #             if 'new_collection_id' in item:
-    #                 update_fields['collection_id'] = item['new_collection_id']
-    #             filter_kwargs = {
-    #                 'id': item['id'],
-    #                 'collection_id': collection_id
-    #             }
-    #             if not user.is_staff:
-    #                 filter_kwargs['user'] = user
-    #
-    #             FavoriteVenue.objects.filter(**filter_kwargs).update(**update_fields)
-    #     return True
 
 class FavoriteCollectionService:
     @staticmethod
@@ -125,3 +105,15 @@ class FavoriteCollectionService:
         ).annotate(
             total_hearts=Count('id')
         ).order_by('-total_hearts')[:limit]
+
+
+    @staticmethod
+    def get_collections_for_user(user, action):
+        detail_actions = ['retrieve', 'update', 'partial_update', 'destroy', 'reorder', 'remove_venue']
+        if action in detail_actions and (user.is_staff or user.is_superuser):
+            return FavoriteCollection.objects.filter(user=user)
+
+        return FavoriteCollection.objects.filter(
+            user=user,
+            is_staff_top=False
+        )

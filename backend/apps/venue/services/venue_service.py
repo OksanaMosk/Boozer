@@ -1,10 +1,56 @@
 from decimal import Decimal
-
+from django.db.models import Q, Exists, OuterRef
 from django.core.mail import send_mail
-from django.db.models.aggregates import Sum, Avg, Count
+from django.db.models.aggregates import Count
 
 from apps.orders.services.exchange_service import get_today_rates
+
 from core.services.email_service import EmailService
+
+
+def get_venues_list(user, tags_param=None):
+    from apps.venue.models import VenueModel
+    from apps.reviews_feedback.models import FavoriteVenue
+    qs = VenueModel.objects.all()
+    role = getattr(user, 'role', '').upper()
+
+    if role == 'ADMIN' or getattr(user, 'is_staff', False):
+        pass
+    elif role == 'VENUE_ADMIN':
+        qs = qs.filter(Q(status='active') | Q(venue_admin=user))
+    else:
+        qs = qs.filter(status='active')
+
+    if user.is_authenticated:
+        is_favorite_subquery = FavoriteVenue.objects.filter(
+            user=user,
+            venue_id=OuterRef('pk'),
+            collection__is_staff_top=False
+        )
+        qs = qs.annotate(is_favorite=Exists(is_favorite_subquery))
+
+    if tags_param:
+        tags_list = [t.strip().lower() for t in tags_param.split(',') if t.strip()]
+        if tags_list:
+            qs = qs.filter(tags__name__in=tags_list).distinct()
+
+    return qs.order_by('id', '-rating')
+
+
+def get_venue_create_data(user):
+    role = getattr(user, 'role', '').upper()
+    if role == 'VENUE_ADMIN':
+        return {'venue_admin': user, 'status': 'pending'}
+    elif role == 'ADMIN':
+        return {'venue_admin': user, 'status': 'active'}
+    return None
+
+
+def update_venue_background_url(venue, url):
+    venue.background_tables = url
+    venue.save(update_fields=['background_tables'])
+    return venue
+
 
 
 def get_user_venues(user, user_id):
@@ -35,13 +81,10 @@ def approve_venue_service(venue):
 
 
 def get_venue_orders_statistics(venue):
-
     orders_qs = venue.orders.all().order_by('-id')
     rates = get_today_rates()
     venue_curr = venue.currency or "UAH"
-
     success_statuses = ['CONFIRMED']
-
     total_revenue_venue_curr = Decimal('0.00')
     success_count = 0
 

@@ -1,7 +1,7 @@
 import React from "react";
 import { ButtonGoBackComponent } from "@/components/button-go-back-component/ButtonGoBackComponent";
 import { ButtonScrollTopComponent } from "@/components/button-scroll-top-component/ButtonScrollTopComponent";
-import {ReviewsVisitorComponent} from "@/components/reviews-visitor-component/ReviewsVisitorComponent";
+import {ReviewsGlobalComponent} from "@/components/reviews-global-component/ReviewsGlobalComponent";
 
 export default async function ReviewsPage({params}: { params: Promise<{ id: string }> }) {
     const {id} = await params;
@@ -9,7 +9,7 @@ export default async function ReviewsPage({params}: { params: Promise<{ id: stri
     return (
         <div style={{fontWeight: "bolder", margin: "40px auto", textAlign: "center"}}>
             <ButtonGoBackComponent/>
-             <ReviewsVisitorComponent venueId={id} />
+             <ReviewsGlobalComponent venueId={id} />
             <ButtonScrollTopComponent/>
         </div>
   );

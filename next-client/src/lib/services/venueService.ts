@@ -7,11 +7,10 @@ import {
     IMenuItem,
     IReview,
     INews,
-    // IVenueTag,
     PaginatedResponse, ITable,
     INewsPhoto, IExtraService
 } from "@/models/IVenue";
-// import {IUser} from "@/models/IUser";
+
 import {IOrder, ITableBooking, OrderStatusType} from "@/models/IOrder";
 import {ITravelEstimate, ITravelLogistics} from "@/models/ITravel";
 import {IFavoriteCollection} from "@/models/IReviewFeedback";

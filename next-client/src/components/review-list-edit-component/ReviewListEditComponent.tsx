@@ -17,11 +17,7 @@ export const ReviewListEditComponent = () => {
         const fetchReviews = async () => {
             if (!user?.token) return;
             try {
-                const res = await venueServices.reviews.getAllWithFilter(
-                    {},
-                    { accessToken: user.token }
-                );
-
+               const res = await venueServices.reviews.getAllWithFilter({ user: user.id }, { accessToken: user.token! });
                 const responseData = (res as any).data?.data || (res as any).data || res;
                 setReviews(Array.isArray(responseData) ? responseData : []);
             } catch (error) {

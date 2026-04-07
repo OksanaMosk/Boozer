@@ -79,6 +79,7 @@ export const ReviewEditComponent = ({
         image: p.photo
     }));
 
+
     return (
         <div className={`${styles.newsCard} ${editMode ? styles.editMode : ""}`}>
             <div className={styles.top}>
@@ -124,17 +125,46 @@ export const ReviewEditComponent = ({
                                  )}
                              </div>
                         </div>
-                            <p style={{marginLeft: '10px', color: '#ffc107'}}>
-                                ★ {calculateOverall(editData)}
-                            </p>
-                            <div className={styles.subRatings}>
-                            {[
-                                {label: 'Food', key: 'food_rating'},
-                                {label: 'Service', key: 'service_rating'},
-                                {label: 'Atmosphere', key: 'atmosphere_rating'},
-                                {label: 'Cleanliness', key: 'cleanliness_rating'},
-                                {label: 'Value', key: 'value_rating'}
-                            ].map((item) => (
+                    <div>
+                        <p style={{marginLeft: '10px', color: '#ffc107'}}>
+                        ★ {calculateOverall(editData)}
+                    </p>
+                        <div className={styles.bottom}>
+                            {editMode ? (
+                                <div style={{marginTop: "15px"}}>
+                                    <PhotoMultipleUploadComponent
+                                        venueId={editData.venue?.toString() || "0"}
+                                        newsId={editData.id.toString()}
+                                        type="reviews"
+                                        maxFiles={7}
+                                        existingPhotos={(editData.review_photos || []).map((p: any) => ({
+                                            id: p.id,
+                                            url: p.photo
+                                        }))}
+                                        onUploadComplete={(newPhotos: any) => {
+                                            setEditData({...editData, review_photos: newPhotos});
+                                        }}
+                                    />
+                                </div>
+                            ) : (
+                                imagesForGallery.length > 0 && (
+                                    <div style={{marginTop: "10px"}}>
+                                        <NewsGalleryComponent images={imagesForGallery}/>
+                                    </div>
+                                )
+                            )}
+                        </div>
+                    </div>
+
+
+                    <div className={styles.subRatings}>
+                        {[
+                            {label: 'Food', key: 'food_rating'},
+                            {label: 'Service', key: 'service_rating'},
+                            {label: 'Atmosphere', key: 'atmosphere_rating'},
+                            {label: 'Cleanliness', key: 'cleanliness_rating'},
+                            {label: 'Value', key: 'value_rating'}
+                        ].map((item) => (
                             <div key={item.key} className={styles.subRatingItem}>
                                 <span className={styles.ratingLabel}>{item.label}</span>
 
@@ -148,32 +178,6 @@ export const ReviewEditComponent = ({
                     </div>
 
                 </div>
-            </div>
-
-            <div className={styles.bottom}>
-                {editMode ? (
-                    <div style={{marginTop: "15px"}}>
-                        <PhotoMultipleUploadComponent
-                            venueId={editData.venue?.toString() || "0"}
-                            newsId={editData.id.toString()}
-                            type="reviews"
-                            maxFiles={7}
-                            existingPhotos={(editData.review_photos || []).map((p: any) => ({
-                                id: p.id,
-                                url: p.photo
-                            }))}
-                            onUploadComplete={(newPhotos: any) => {
-                                setEditData({...editData, review_photos: newPhotos});
-                            }}
-                        />
-                    </div>
-                ) : (
-                    imagesForGallery.length > 0 && (
-                        <div style={{marginTop: "10px"}}>
-                            <NewsGalleryComponent images={imagesForGallery}/>
-                        </div>
-                    )
-                )}
             </div>
         </div>
     );

@@ -71,17 +71,17 @@ const DashboardComponent: React.FC = () => {
         void loadVenues();
     }, [user?.id, activeTab, isVenueAdmin, user?.token]);
 
-    useEffect(() => {
-        if (!user?.id) return;
-        const loadReviewStats = async () => {
-            try {
-                const response = await venueServices.reviews.getAllWithFilter({ user: user.id }, { accessToken: user.token! });
-                const count = Array.isArray(response.data) ? response.data.length : (response.data as any).count || 0;
-                setReviewCount(count);
-            } catch (err) { handleApiError(err); }
-        };
-        void loadReviewStats();
-    }, [user?.id, user?.token]);
+    // useEffect(() => {
+    //     if (!user?.id) return;
+    //     const loadReviewStats = async () => {
+    //         try {
+    //             const response = await venueServices.reviews.getAllWithFilter({ user: user.id }, { accessToken: user.token! });
+    //             const count = Array.isArray(response.data) ? response.data.length : (response.data as any).count || 0;
+    //             setReviewCount(count);
+    //         } catch (err) { handleApiError(err); }
+    //     };
+    //     void loadReviewStats();
+    // }, [user?.id, user?.token]);
 
     const handleDelete = (venueId: string) => {
         setVenues((prev) => prev.filter((v) => v.id !== venueId));

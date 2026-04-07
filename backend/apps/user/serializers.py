@@ -7,8 +7,9 @@ from rest_framework import serializers
 
 from apps.user.constants import ROLE_CHOICES
 from apps.user.models import ProfileModel
+from apps.user.services.user_service import UserService
 from core.enums.regex_enum import phone_validator
-from apps.user.services import UserService
+
 
 UserModel = get_user_model()
 

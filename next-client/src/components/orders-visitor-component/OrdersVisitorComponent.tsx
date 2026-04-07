@@ -8,33 +8,50 @@ import { IOrder } from "@/models/IOrder";
 import { OrderItemComponent } from "@/components/order-item-component/OrderItemComponent";
 import venueServices from "@/lib/services/venueService";
 import {AxiosResponse} from "axios";
+import {PaginationComponent} from "@/components/pagination-component/PaginationComponent";
+import {useSearchParams} from "next/navigation";
 
 export const OrdersVisitorComponent = () => {
     const {user} = useUser();
     const [orders, setOrders] = useState<IOrder[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const searchParams = useSearchParams();
+    const currentPage = Number(searchParams.get("page") || "1");
+    const [totalPages, setTotalPages] = useState(1);
 
     const fetchOrders = useCallback(async () => {
-        if (!user?.token) return;
-        try {
-            setLoading(true);
-            setError(null);
-            const response: AxiosResponse = await venueServices.orders({accessToken: user.token}).list();
-            console.log("DEBUG: Raw data from server:", response);
-            const data = Array.isArray(response.data)
-                ? response.data
-                : (response.data?.data || []);
-            const confirmedOnly = data.filter((order: IOrder) =>
-                order.status?.toUpperCase() === "CONFIRMED"
-            );
-            setOrders(confirmedOnly);
-        } catch (err: any) {
-            setError("Could not load your VIP history. Please try again later.");
-        } finally {
-            setLoading(false);
+    if (!user?.token) return;
+    try {
+        setLoading(true);
+        setError(null);
+        setOrders([]);
+        const response: AxiosResponse = await venueServices
+            .orders({accessToken: user.token})
+            .list({
+                page: currentPage,
+                status: 'CONFIRMED',
+                ordering: '-id'
+            });
+
+        const data = response.data?.data || [];
+        const pages = response.data?.total_pages || 1;
+
+        setOrders(data);
+        setTotalPages(pages);
+        window.scrollTo({top: 0, behavior: 'smooth'});
+    } catch (err: any) {
+
+        if (err.response?.status === 404) {
+            setOrders([]);
+            setTotalPages(1);
+        } else {
+            setError("Could not load your history.");
         }
-    }, [user?.token]);
+    } finally {
+        setLoading(false);
+    }
+}, [user?.token, currentPage]);
 
     useEffect(() => {
         void fetchOrders();
@@ -112,6 +129,9 @@ export const OrdersVisitorComponent = () => {
                     )}
                 </div>
             )}
+             {totalPages > 1 && (
+            <PaginationComponent totalPages={totalPages} />
+        )}
         </div>
     );
 }

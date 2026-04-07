@@ -2,6 +2,8 @@ from django.db import transaction
 from django.shortcuts import get_object_or_404
 from rest_framework.exceptions import PermissionDenied, ValidationError
 from apps.venue.models import TableModel
+from django.db.backends.postgresql.psycopg_any import DateTimeRange
+from datetime import datetime
 
 
 def create_bulk_table_bookings(*, order_id, table_ids, time_range, venue_id, user):
@@ -44,3 +46,15 @@ def create_bulk_table_bookings(*, order_id, table_ids, time_range, venue_id, use
             created_bookings.append(booking)
 
     return created_bookings
+
+def apply_time_range_filter(qs, lower, upper):
+    if not (lower and upper):
+        return qs
+    try:
+        l_dt = datetime.fromisoformat(lower.replace('Z', '+00:00'))
+        u_dt = datetime.fromisoformat(upper.replace('Z', '+00:00'))
+        if l_dt > u_dt:
+            return qs.none()
+        return qs.filter(time_range__overlap=DateTimeRange(l_dt, u_dt))
+    except (ValueError, TypeError):
+        return qs
