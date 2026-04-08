@@ -2,9 +2,9 @@ from decimal import Decimal
 from django.db.models import Q, Exists, OuterRef
 from django.core.mail import send_mail
 from django.db.models.aggregates import Count
-
+from better_profanity import profanity
 from apps.orders.services.exchange_service import get_today_rates
-
+from django.utils import timezone
 from core.services.email_service import EmailService
 
 
@@ -37,13 +37,28 @@ def get_venues_list(user, tags_param=None):
     return qs.order_by('id', '-rating')
 
 
-def get_venue_create_data(user):
+def get_venue_create_data(user, description=''):
     role = getattr(user, 'role', '').upper()
+
     if role == 'VENUE_ADMIN':
-        return {'venue_admin': user, 'status': 'pending'}
+        status = 'pending'
     elif role == 'ADMIN':
-        return {'venue_admin': user, 'status': 'active'}
-    return None
+        status = 'active'
+    else:
+        return None
+
+    if description and profanity.contains_profanity(description):
+        return {
+            'venue_admin': user,
+            'status': 'pending',
+            'edit_attempts': 1
+        }
+
+    return {
+        'venue_admin': user,
+        'status': status,
+        'edit_attempts': 0
+    }
 
 
 def update_venue_background_url(venue, url):
@@ -72,7 +87,8 @@ def notify_admin(venue):
 
 def approve_venue_service(venue):
     venue.status = 'active'
-    venue.save()
+    venue.edit_attempts = 0
+    venue.save(update_fields=['status', 'edit_attempts'])
 
     if venue.venue_admin and venue.venue_admin.email:
         EmailService.venue_approval(venue)
@@ -83,6 +99,10 @@ def approve_venue_service(venue):
 def get_venue_orders_statistics(venue):
     orders_qs = venue.orders.all().order_by('-id')
     rates = get_today_rates()
+
+    venue.last_exchange_update = timezone.now()
+    venue.save(update_fields=['last_exchange_update'])
+
     venue_curr = venue.currency or "UAH"
     success_statuses = ['CONFIRMED']
     total_revenue_venue_curr = Decimal('0.00')

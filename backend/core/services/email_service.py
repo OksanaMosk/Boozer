@@ -65,8 +65,8 @@ class EmailService:
 
     @classmethod
     def venue_approval(cls, venue):
-        admin_name = getattr(venue.venue_admin, 'username', venue.venue_admin.email)
-
+        # admin_name = getattr(venue.venue_admin, 'username', venue.venue_admin.email)
+        admin_name = f"{getattr(venue.venue_admin.profile, 'name', '')} {getattr(venue.venue_admin.profile, 'surname', '')}".strip() or venue.venue_admin.email
         context = {
             'name': admin_name,
             'venue_name': venue.name,
@@ -101,3 +101,17 @@ class EmailService:
             context=context,
             subject=f"🚨 PRIORITY: Refund Request #{order.id} - {display_name}"
         )
+
+    @classmethod
+    def send_profanity_notification(cls, venue):
+        if venue.venue_admin and venue.venue_admin.email:
+            cls.__send_email.delay(
+                to=venue.venue_admin.email,
+                template_name='venue_blocked_profanity.html',
+                context={
+                    'name': f"{getattr(venue.venue_admin.profile, 'name', '')} {getattr(venue.venue_admin.profile, 'surname', '')}".strip() or venue.venue_admin.email,
+                    'venue_name': venue.name,
+                    'frontend_url': f"{settings.BASE_URL}/dashboard?tab=venues_control"
+                },
+                subject=f"Your listing '{venue.name}' has been blocked"
+            )

@@ -15,6 +15,8 @@ import {LoaderComponent} from "@/components/loader-component/LoaderComponent";
 import {TopListManagerComponent} from "@/components/top-list-manager-component/TopListManagerComponent";
 import {OrdersVisitorComponent} from "@/components/orders-visitor-component/OrdersVisitorComponent";
 import {ReviewListEditComponent} from "@/components/review-list-edit-component/ReviewListEditComponent";
+import {ButtonScrollBottomComponent} from "@/components/button-scroll-bottom-component/ButtonScrollBottomComponent";
+import {ButtonScrollTopComponent} from "@/components/button-scroll-top-component/ButtonScrollTopComponent";
 
 interface IVenueWithId extends Omit<IVenue, 'id'> {
     id: string;
@@ -115,7 +117,7 @@ const DashboardComponent: React.FC = () => {
                                 <div className={styles.actionsProfile}>
                                     {!isAdmin &&
                                         <Link href="/profile-edit" className={styles.outline}>Edit Profile</Link>}
-                                    {isVenueAdmin || isAdmin &&
+                                    {(isVenueAdmin || isAdmin) &&
                                         <Link href="/venue-admin/create-venue" className={styles.primary}>+ Add
                                             Venue</Link>}
                                 </div>
@@ -125,6 +127,7 @@ const DashboardComponent: React.FC = () => {
                 )}
                 {isVenueAdmin && activeTab === "venues_control" && (
                     <section className={styles.section}>
+                        <ButtonScrollBottomComponent/>
                         <h2 className={styles.titleManage}>Manage Venue Listings</h2>
                         <div className={styles.table}>
                             {venuesLoading ? <LoaderComponent/> : venues.length > 0 ? (
@@ -137,6 +140,7 @@ const DashboardComponent: React.FC = () => {
                             ) : <p className={styles.titleNo}>No venues added yet.</p>
                             }
                         </div>
+                        <ButtonScrollTopComponent/>
                     </section>
                 )}
 

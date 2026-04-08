@@ -5,9 +5,10 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useUser } from "@/app/contexts/UserProvider";
 import venueService from "@/lib/services/venueService";
-import { IVenueWithId } from "@/models/IVenue";
+import {IStats, IVenueWithId} from "@/models/IVenue";
 import styles from "./VenueListingComponent.module.css";
 import GoldChartComponent from "@/components/gold-chart-component/GoldChartComponent";
+
 
 interface Props {
     venue: IVenueWithId;
@@ -20,7 +21,8 @@ const VenueListingComponent: React.FC<Props> = ({ venue, onDelete, onStatusChang
     const router = useRouter();
     const [status, setStatus] = useState<string>(venue.status || "");
     const [message, setMessage] = useState<{ text: string; isError: boolean } | null>(null);
-
+    const [stats, setStats] = useState<IStats | null>(null);
+    const [oldStats, setOldStats] = useState<any>(null);
     const isAdmin = user?.role?.toUpperCase() === 'ADMIN';
     const isLocked = (venue.edit_attempts ?? 0) >= 3;
 
@@ -40,6 +42,24 @@ const VenueListingComponent: React.FC<Props> = ({ venue, onDelete, onStatusChang
             return () => clearTimeout(timer);
         }
     }, [message]);
+
+    useEffect(() => {
+        const fetchAllData = async () => {
+            if (!venue.id || !user?.token) return;
+            try {
+                const [trafficRes, oldStatsRes] = await Promise.all([
+                    venueService.stats.getTrafficAnalytics(venue.id, {accessToken: user.token}),
+                    venueService.stats.getStats(venue.id, {accessToken: user.token})
+                ]);
+
+                setStats(trafficRes.data);
+                setOldStats(oldStatsRes.data);
+            } catch (err) {
+                console.error("Error loading stats:", err);
+            }
+        };
+        void fetchAllData();
+    }, [venue.id, user?.token]);
 
     const handleStatusChange = async (e: React.MouseEvent) => {
         e.stopPropagation();
@@ -87,7 +107,7 @@ const VenueListingComponent: React.FC<Props> = ({ venue, onDelete, onStatusChang
 
     return (
         <div className={styles.list}>
-            <div className={styles.tableRow} onClick={() => !isLocked && router.push(`/venues/${venue.id}`)}>
+            <div className={styles.tableRow} onClick={() => (!isLocked || isAdmin) && router.push(`/venues/${venue.id}`)}>
                 <div className={styles.tablePhoto}>
                     <img src={photoUrl} alt={venue.name} className={styles.venuePoster} width={380} height={200} />
                 </div>
@@ -103,26 +123,60 @@ const VenueListingComponent: React.FC<Props> = ({ venue, onDelete, onStatusChang
                         </div>
 
                         <div className={styles.rightWrapper}>
-                            <div className={styles.stats}><GoldChartComponent /></div>
-
+                            <div className={styles.stats}><GoldChartComponent user={!!user} stats={stats}/></div>
+                            {oldStats && (
+                                <div className={styles.quickStats}>
+                                    <div className={styles.statItem}>
+                                        <span className={styles.statLabel}>Day</span>
+                                        <span className={styles.statValue}>{oldStats.daily_views}</span>
+                                    </div>
+                                    <div className={styles.statItem}>
+                                        <span className={styles.statLabel}>Week</span>
+                                        <span className={styles.statValue}>{oldStats.weekly_views}</span>
+                                    </div>
+                                    <div className={styles.statItem}>
+                                        <span className={styles.statLabel}>Month</span>
+                                        <span className={styles.statValue}>{oldStats.monthly_views}</span>
+                                    </div>
+                                    <div className={styles.statDivider}/>
+                                    <div className={styles.statItem}>
+                                        <span className={styles.statLabelBold}>Total</span>
+                                        <span className={styles.statValueBold}>{oldStats.total_views}</span>
+                                    </div>
+                                </div>
+                            )}
                             <div className={styles.actions}>
                                 <button
                                     className={styles.button}
                                     onClick={handleStatusChange}
-                                    disabled={isLocked || (status === "pending" && !isAdmin)}
+                                    disabled={(!isAdmin && isLocked) || (status === "pending" && !isAdmin)}
                                 >
                                     {status === "pending" ? (isAdmin ? "Approve" : "Pending") : (status === "active" ? "Deactivate" : "Activate")}
                                 </button>
 
-                                <Link href={isLocked ? "#" : `/venue-admin/venues/${venue.id}/edit/`}>
-                                    <button className={styles.editButton} disabled={isLocked} onClick={e => e.stopPropagation()}>
-                                        Edit
+                                {isLocked && !isAdmin ? (
+                                    <button
+                                        className={styles.editButton}
+                                        style={{opacity: 0.5, cursor: 'not-allowed'}}
+                                        disabled
+                                        onClick={e => e.stopPropagation()}
+                                    >
+                                        🔒 Edit
                                     </button>
-                                </Link>
-
+                                ) : (
+                                    <Link href={`/venue-admin/venues/${venue.id}/edit/`}>
+                                        <button
+                                            className={styles.editButton}
+                                            onClick={e => e.stopPropagation()}
+                                        >
+                                            Edit
+                                        </button>
+                                    </Link>
+                                )}
                                 <button className={styles.deleteButton} onClick={handleDelete}>Delete</button>
 
-                                {message && <p className={message.isError ? styles.error : styles.success}>{message.text}</p>}
+                                {message &&
+                                    <p className={message.isError ? styles.error : styles.success}>{message.text}</p>}
                                 {isLocked && <p className={styles.lockHint}>Locked (Max attempts)</p>}
                             </div>
                         </div>

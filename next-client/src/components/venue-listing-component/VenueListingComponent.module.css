@@ -99,7 +99,7 @@
 .rightWrapper {
     display: flex;
     justify-content: space-between;
-    width: 53%;
+    width: 60%;
 }
 
 .actionsLink,
@@ -219,6 +219,9 @@
 }
 .venueId {
    font-size: 0.8rem;
+}
+.lockHint {
+    font-size: 10px;
 }
 @media (min-width: 768px) {
     .button,

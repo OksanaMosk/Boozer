@@ -85,7 +85,16 @@ const VenueCreateComponent = () => {
 
             setMessage("Venue created successfully! Now you can upload photos.");
         } catch (err: any) {
-            setMessage(err?.response?.data?.detail || "Error creating venue.");
+            const errorData = err?.response?.data;
+            if (errorData && typeof errorData === 'object' && !Array.isArray(errorData)) {
+                const fieldName = Object.keys(errorData)[0];
+                const fieldError = errorData[fieldName];
+                const capitalizedField = fieldName.charAt(0).toUpperCase() + fieldName.slice(1);
+                const errorMessage = Array.isArray(fieldError) ? fieldError[0] : fieldError;
+                setMessage(`${capitalizedField}: ${errorMessage}`);
+            } else {
+                setMessage(err?.response?.data?.detail || "Error creating venue.");
+            }
         } finally {
             setLoadingVenue(false);
         }

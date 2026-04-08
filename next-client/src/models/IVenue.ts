@@ -158,3 +158,18 @@ export interface PaginatedResponse<T> {
   next: boolean;
   data: T[];
 }
+
+export interface IChartPoint {
+  name: string;
+  value: number;
+}
+
+export interface IStats {
+  total_views: number;
+  daily: IChartPoint[];
+  weekly: IChartPoint[];
+  monthly: IChartPoint[];
+  daily_views: number;
+  weekly_views: number;
+  monthly_views: number;
+}

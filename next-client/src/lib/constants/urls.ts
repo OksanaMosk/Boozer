@@ -61,6 +61,7 @@ export const urls = {
         reviewImages: (venueId: string, reviewId: string) => `${paths.venues}/${venueId}/reviews/${reviewId}/images/`,
         orders: (venueId: string) => `${paths.venues}/${venueId}/orders/`,
         stats: (venueId: string) => `${paths.venues}/${venueId}/stats/`,
+        traffic: (venueId: string) => `${paths.venues}/${venueId}/traffic/`,
         tags: {
             list: (venueId: string) => `${paths.venues}/${venueId}/tags/`,
             detail: (venueId: string, id: string) => `${paths.venues}/${venueId}/tags/${id}/`,

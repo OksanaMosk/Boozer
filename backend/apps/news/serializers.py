@@ -29,8 +29,14 @@ class NewsSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = [
             'venue',
-            'status',
             'views_count',
             'created_at',
             'updated_at',
         ]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        request = self.context.get('request')
+
+        if request and not request.user.is_staff:
+            self.fields['status'].read_only = True

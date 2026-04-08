@@ -2,7 +2,6 @@ from rest_framework import serializers
 from .models import VenueModel, VenuePhotoModel, TableModel, TagModel, VenueTagModel
 from ..orders.serializers import TableBookingSerializer
 from django.db import transaction
-from .models import VenueModel
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -109,4 +108,20 @@ class VenueOrdersStatsResponseSerializer(serializers.Serializer):
     stats = serializers.DictField()
     from apps.orders.serializers import OrderSerializer
     orders = OrderSerializer(many=True)
+
+
+class ChartPointSerializer(serializers.Serializer):
+    name = serializers.CharField()
+    value = serializers.IntegerField()
+
+
+class VenueTrafficSerializer(serializers.Serializer):
+    total_views = serializers.IntegerField()
+    daily_views = serializers.IntegerField()
+    weekly_views = serializers.IntegerField()
+    monthly_views = serializers.IntegerField()
+
+    daily = ChartPointSerializer(many=True)
+    weekly = ChartPointSerializer(many=True)
+    monthly = ChartPointSerializer(many=True)
 

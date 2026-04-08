@@ -8,7 +8,6 @@ export default async function EditVenuePage({params,}:{ params: Promise<{ id: st
 
   return (
     <div>
-      <ButtonGoBackComponent />
       <VenueEditComponent venueId={id} />
     </div>
   );

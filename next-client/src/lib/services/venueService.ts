@@ -8,7 +8,7 @@ import {
     IReview,
     INews,
     PaginatedResponse, ITable,
-    INewsPhoto, IExtraService
+    INewsPhoto, IExtraService, IStats
 } from "@/models/IVenue";
 
 import {IOrder, ITableBooking, OrderStatusType} from "@/models/IOrder";
@@ -230,6 +230,12 @@ const venueServices = {
             updateStatus: (orderId: string | number, status: OrderStatusType) => api(token).patch<IOrder>(`${urls.venues.orders(venueId)}${orderId}/`, {status}),
             delete: (orderId: string | number) => api(token).delete(`${urls.venues.orders(venueId)}${orderId}/`),}),
     },
+
+    stats: {
+        getStats: (venueId: string, token?: Token) => api(token).get(urls.venues.stats(venueId)),
+        getTrafficAnalytics: (venueId: string | number, token?: Token) => api(token).get<IStats>(urls.venues.traffic(venueId.toString())),
+    },
+
     venuePhotos: (token?: Token) => ({
         list: getByParent<IVenuePhoto>(urls.venues.photos, token),
         get: (venueId: string, photoId: string) => api(token).get<IVenuePhoto>(`${urls.venues.photos(venueId)}/${photoId}/`),
@@ -292,9 +298,9 @@ const venueServices = {
         getConstants: () => api().get(urls.constants.constantsList),
     },
 
-    stats: {
-        getStats: (venueId: string, token?: Token) => api(token).get(urls.venues.stats(venueId)),
-    },
+    // stats: {
+    //     getStats: (venueId: string, token?: Token) => api(token).get(urls.venues.stats(venueId)),
+    // },
     exchangeService: {
         getRates: (token?: Token) => api(token).get<{ USD: number; EUR: number }>(urls.exchangeRates),
     }

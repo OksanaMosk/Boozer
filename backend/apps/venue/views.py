@@ -9,10 +9,12 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import VenueModel, TagModel, TableModel, VenuePhotoModel, VenueTagModel
+from .models import VenueModel, TagModel, TableModel, VenuePhotoModel, VenueTagModel, VenueTraffic
 from .serializers import VenueSerializer, TagSerializer, TableSerializer, VenuePhotoSerializer, VenueTagSerializer, \
-    VenueOrdersStatsResponseSerializer
+    VenueOrdersStatsResponseSerializer, VenueTrafficSerializer
 from .services.geocode import geocode_city
+from .services.stats_service import update_venue_stats, handle_venue_update_profanity, get_venue_analytics, \
+    get_venue_stats_for_user
 from .services.table_service import get_available_tables_by_time
 from .services.venue_constants_service import get_venue_constants
 from .services.venue_service import get_user_venues, approve_venue_service, get_venue_orders_statistics, \
@@ -39,13 +41,29 @@ class VenueViewSet(viewsets.ModelViewSet):
             tags_param=self.request.query_params.get('tags__name')
         )
 
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        VenueTraffic.objects.create(venue=instance)
+        update_venue_stats(instance, request)
+        return super().retrieve(request, *args, **kwargs)
 
     def perform_create(self, serializer):
-        create_data = get_venue_create_data(self.request.user)
+        description = serializer.validated_data.get('description', '')
+        create_data = get_venue_create_data(self.request.user, description)
+
         if not create_data:
             raise PermissionDenied('You do not have permission to create a venue.')
+
+        name = serializer.validated_data.get('name')
+        if VenueModel.objects.filter(name=name, venue_admin=self.request.user).exists():
+            raise ValidationError({'name': 'Venue with this name already exists.'})
+
         serializer.save(**create_data)
 
+    def perform_update(self, serializer):
+        instance = self.get_object()
+        handle_venue_update_profanity(instance, serializer, self.request.user)
+        serializer.save(edit_attempts=instance.edit_attempts, status=instance.status)
 
     @action(detail=True, methods=['post'], permission_classes=[IsAdmin])
     def approve(self, request, pk=None):
@@ -71,6 +89,19 @@ class VenueViewSet(viewsets.ModelViewSet):
             'orders': data['orders']
         })
         return Response(serializer.data)
+
+    @action(detail=True, methods=['get'], url_path='traffic')
+    def get_traffic_data(self, request, pk=None):
+        venue = self.get_object()
+        stats_data = get_venue_analytics(venue)
+        serializer = VenueTrafficSerializer(stats_data)
+        return Response(serializer.data)
+
+    @action(detail=True, methods=['get'], url_path='stats')
+    def get_stats(self, request, pk=None):
+        venue = self.get_object()
+        data = get_venue_stats_for_user(venue.id, request.user)
+        return Response(data)
 
 class VenuePhotoViewSet(viewsets.ModelViewSet):
     queryset = VenuePhotoModel.objects.all()

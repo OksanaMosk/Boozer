@@ -24,6 +24,7 @@ export const NewComponent = ({news, venueId, onDelete, onUpdate, isReadOnly = fa
     const images = editNews.images || [];
     const [coverMessage, setCoverMessage] = useState("");
     const coverImage = images.find((img: any) => img.is_cover)?.image || editNews.preview;
+    const isAdmin = user?.role === 'admin';
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const {name, value, type} = e.target;
@@ -72,6 +73,9 @@ export const NewComponent = ({news, venueId, onDelete, onUpdate, isReadOnly = fa
             formData.append("title", editNews.title);
             formData.append("content", editNews.content);
             formData.append("is_pinned", editNews.is_pinned ? "true" : "false");
+             if (isAdmin && editNews.status) {
+            formData.append("status", editNews.status);
+        }
             const res = await venueServices.venues.news({accessToken: user.token})(venueId)
                 .update(editNews.id.toString(), formData as any);
             setEditNews({...editNews, ...res.data});
@@ -112,14 +116,29 @@ export const NewComponent = ({news, venueId, onDelete, onUpdate, isReadOnly = fa
                 {!isReadOnly && (
                     <div className={styles.topStatus}>
                         <p className={styles.topP}><strong>Type:</strong> {editNews.type}</p>
-                        <p className={styles.topP}><strong>Status:</strong> {editNews.status}</p>
+                        {editMode && isAdmin ? (
+                            <div className={styles.statusSelectWrapper}>
+                                <strong>Status:</strong>
+                                <select
+                                    name="status"
+                                    value={editNews.status}
+                                    onChange={(e) => setEditNews({...editNews, status: e.target.value})}
+                                    className={styles.statusSelect}
+                                >
+                                    <option value="pending">Pending</option>
+                                    <option value="active">Active</option>
+                                </select>
+                            </div>
+                        ) : (
+                            <p className={styles.topP}><strong>Status:</strong> {editNews.status}</p>
+                        )}
                     </div>
                 )}
                 {!isReadOnly && (
-                <div className={styles.buttonGroup}>
-                    {editMode ? (
-                        <>
-                            <button onClick={handleSave} disabled={loading} className={styles.editButton}>
+                    <div className={styles.buttonGroup}>
+                        {editMode ? (
+                            <>
+                                <button onClick={handleSave} disabled={loading} className={styles.editButton}>
                                 {loading ? "Saving..." : "Save"}
                             </button>
                             <button onClick={() => setEditMode(false)} className={styles.deleteButton}>

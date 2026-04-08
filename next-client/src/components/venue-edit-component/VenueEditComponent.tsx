@@ -8,6 +8,7 @@ import { IVenue, IVenuePhoto } from "@/models/IVenue";
 import { LoaderComponent } from "@/components/loader-component/LoaderComponent";
 import { VenueFormComponent } from "@/components/venue-form-component/VenueFormComponent";
 import { VenuePhotosComponent } from "@/components/venue-photos-component/VenuePhotosComponent";
+import styles from "./VenueEditComponent.module.css";
 
 interface Props {
     venueId: string;
@@ -31,12 +32,13 @@ const VenueEditComponent = ({ venueId }: Props) => {
     const [newFiles, setNewFiles] = useState<ILocalPhoto[]>([]);
     const [loadingPhotos, setLoadingPhotos] = useState(false);
     const { user } = useUser();
-
+  console.log('venueId:', venueId);
+            console.log('user?.token:', user?.token);
     useEffect(() => {
-        if (!venueId) return;
         (async () => {
             try {
-                const response = await venueServices.venues.get(venueId);
+                if (!venueId || !user?.token) return;
+                const response = await venueServices.venues.get(venueId, { accessToken: user.token });
                 const venueData = response.data;
                 setForm(venueData);
                 setExistingPhotos(venueData.photos || []);
@@ -50,7 +52,7 @@ const VenueEditComponent = ({ venueId }: Props) => {
                 setLoading(false);
             }
         })();
-    }, [venueId]);
+    }, [venueId, user?.token]);
 
     const handleSubmit = async (e: React.SyntheticEvent) => {
         e.preventDefault();
@@ -75,9 +77,10 @@ const VenueEditComponent = ({ venueId }: Props) => {
             );
 
             setMessage("Venue updated successfully!");
-            setTimeout(() => router.push(`/venue-admin/venues/${venueId}`), 1500);
+            setTimeout(() => router.push("/dashboard"), 1000);
         } catch (err: any) {
-            setError(err?.response?.data?.detail || "Update failed");
+            const serverError = err?.response?.data?.description || err?.response?.data?.detail || "Update failed";
+            setError(Array.isArray(serverError) ? serverError[0] : serverError);
         } finally {
             setSaving(false);
         }
@@ -124,6 +127,9 @@ const VenueEditComponent = ({ venueId }: Props) => {
 
     return (
         <>
+            <button type="button" className={styles.button}
+                    onClick={() => router.push('/dashboard?tab=venues_control')}>Go back
+            </button>
             <VenueFormComponent
                 mode="edit"
                 venueId={venueId}

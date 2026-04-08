@@ -119,3 +119,23 @@ class TableModel(models.Model):
 
     def __str__(self):
         return f"Table {self.capacity} at {self.venue.name}"
+
+
+class VenueTraffic(models.Model):
+    venue = models.ForeignKey(
+        'VenueModel',
+        on_delete=models.CASCADE,
+        related_name='traffic_logs'
+    )
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'venue_traffic'
+        verbose_name = "Venue Traffic"
+        verbose_name_plural = "Venue Traffic"
+        indexes = [
+            models.Index(fields=['venue', 'timestamp']),
+        ]
+
+    def __str__(self):
+        return f"View for {self.venue.name} at {self.timestamp}"

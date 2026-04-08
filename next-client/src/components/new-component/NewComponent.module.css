@@ -62,6 +62,40 @@
     justify-content:flex-start;
     align-items: center;
 }
+.statusSelectWrapper{
+    padding-left: 1rem;
+    width: 100%;
+    color: var(--color-text);
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.statusSelect {
+    color: var(--color-bg-dark);
+    padding: 2px;
+    width: 80px;
+    font-size: 0.8rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--color-text);
+    cursor: pointer;
+    outline: none;
+    background: linear-gradient(
+        90deg,
+        #f9f295,
+        #ae8625,
+        #faf398,
+        #b88a44
+    );
+}
+.statusSelect option {
+    outline: none;
+    background: var(--title-color);
+    color: var(--color-badgeId);
+    border: none;
+}
 .newsCard {
     overflow: hidden;
     padding: 20px;
