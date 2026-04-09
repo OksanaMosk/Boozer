@@ -48,6 +48,16 @@ class ReviewModel(SubRatingsMixin, BaseModel):
         return f"{self.user.username} — {self.venue.name} ({self.rating})"
 
 
+    def save(self, *args, **kwargs):
+
+        scores = [self.food_rating, self.service_rating, self.atmosphere_rating,
+                  self.cleanliness_rating, self.value_rating]
+        valid_scores = [s for s in scores if s > 0]
+        if valid_scores:
+            self.rating = sum(valid_scores) / len(valid_scores)
+        super().save(*args, **kwargs)
+
+
 class ReviewPhotoModel(models.Model):
     review = models.ForeignKey(
         ReviewModel,

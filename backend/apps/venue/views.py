@@ -25,12 +25,12 @@ from rest_framework.exceptions import NotFound, ValidationError
 
 
 class VenueViewSet(viewsets.ModelViewSet):
-    queryset = VenueModel.objects.all().order_by('id')
+    queryset = VenueModel.objects.all()
     serializer_class = VenueSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['country', 'city']
     search_fields = ['name', 'description']
-    ordering_fields = ['rating', 'average_check', 'reviews_count', 'views']
+    ordering_fields = ['name', 'rating', 'created_at', 'average_check', 'reviews_count', 'views']
     ordering = [ 'id', '-rating',]
 
     permission_classes = [IsAdminOrVenueAdminOrReadOnly]

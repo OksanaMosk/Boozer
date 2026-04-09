@@ -32,7 +32,7 @@ class ReviewSerializer(serializers.ModelSerializer):
             'cleanliness_rating', 'value_rating', 'comment',
             'review_photos', 'likes_count', 'is_liked', 'report_details', 'owner_reply', 'created_at'
         ]
-        read_only_fields = ['user', 'venue']
+        read_only_fields = ['user', 'venue', 'rating']
 
         validators = [
             UniqueTogetherValidator(

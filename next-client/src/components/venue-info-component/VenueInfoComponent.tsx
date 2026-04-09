@@ -220,6 +220,7 @@ const VenueInfoComponent: React.FC<Props> = ({venue}) => {
                             <h2 className={styles.title}>
                                 Welcome to {venue.name} in {venue.city}
                             </h2>
+                            {venue.rating && <p className={styles.overallLabel}>✸ {venue.rating}</p>}
                             {venue.tags && venue.tags.length > 0 && (
                                 <div className={styles.tagsWrapper}>
                                     {venue.tags.map((tag) => (
@@ -234,7 +235,7 @@ const VenueInfoComponent: React.FC<Props> = ({venue}) => {
                                 </div>
                             )}
                             <Link href={`/venues/${venue.id}/reviews`} className={styles.reviewsBtn}>
-                                ✸ Reviews
+                                Reviews
                             </Link>
 
                             {venue.description && (

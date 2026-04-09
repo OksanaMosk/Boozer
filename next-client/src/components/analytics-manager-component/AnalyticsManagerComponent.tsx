@@ -102,7 +102,7 @@ if (!data) return <div className={styles.noData}>No financial records found for 
                 </div>
 
                 <div className={styles.audienceBox}>
-                    <h3 className={styles.boxTitle}>Guest Portrait</h3>
+                    <h3 className={styles.boxTitle}>Guest Portrait of Orders</h3>
                     <div className={styles.genderFlex}>
                         {stats.gender_distribution.map((g) => (
                             <div key={g.gender_preference} className={styles.genderCard}>

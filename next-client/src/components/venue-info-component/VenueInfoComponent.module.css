@@ -261,3 +261,9 @@
     display: flex;
     justify-content: center;
 }
+.overallLabel {
+    color: var(--color-noposter);
+    font-family: var(--font-imperial),serif;
+    margin: 0 8px 0 0;
+    font-size: 20px;
+}

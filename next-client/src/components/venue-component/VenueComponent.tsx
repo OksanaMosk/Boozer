@@ -49,7 +49,10 @@ const VenueComponent: React.FC<Props> = ({venue}) => {
                             <p className={styles.value}>{venue.address || "-"}</p>
                         </div>
                         <div className={styles.footerRow}>
-                            <p className={styles.value}>Id: {venue.id}</p>
+                            <p className={`${styles.overallLabel} ${!(venue.rating !== undefined && venue.rating > 0) ? styles.hidden : ''}`}>
+                                ✸ {venue.rating}
+                            </p>
+                            <p className={styles.valueId}>Id: {venue.id}</p>
                         </div>
                     </div>
                 </div>

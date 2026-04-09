@@ -1,7 +1,7 @@
 .venueWrapper {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 0.5rem;
   width: 310px;
   height: 380px;
   padding: 16px;
@@ -27,6 +27,8 @@
 
 .venuePoster,
 .placeholder {
+    padding: 0;
+    margin: 0;
   border-radius: 2rem;
   width: 280px;
   height: 240px;
@@ -42,10 +44,12 @@
 }
 
 .venueInfoWrapper {
+    padding: 0;
+    margin: 0;
     height: 140px;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
     align-items: flex-start;
     font-size: 0.8rem;
 }
@@ -57,6 +61,7 @@
     justify-content: flex-start;
 }
 .venueTitle {
+    padding: 0;
     width: 100%;
   margin: 0 0 0.5rem;
   font-size: 1rem;
@@ -71,14 +76,19 @@
 
 .footerRow{
     display: flex;
+    flex-direction: column;
     justify-content: space-between;
-    align-items: flex-end;
+    align-items: flex-start;
+    width: 18%;
 }
-
+.valueId,
 .value {
   color: var(--input-color);
       margin: 0;
     padding: 0;
+}
+.valueId {
+    font-size: 12px;
 }
 
 .img {
@@ -98,6 +108,7 @@
     color: var(--input-color);
 }
 .about {
+    width: 80%;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -108,4 +119,16 @@
 .addressWrapper {
     display: flex;
     justify-content: space-between;
+}
+.overallLabel {
+    color: var(--color-noposter);
+    font-family: var(--font-imperial), serif;
+    margin: 0;
+    height: 24px;
+    line-height: 24px;
+    font-size: 20px;
+}
+
+.hidden {
+    visibility: hidden;
 }
