@@ -56,6 +56,7 @@ if (!data) return <div className={styles.noData}>No financial records found for 
 
     return (
         <div className={styles.container}>
+            <p className={styles.titleId}>N {venueId}</p>
             <h1 className={styles.titleManage}>Venue Analytics & Insights</h1>
             <div className={styles.statsFlex}>
                 <div className={styles.statCard}>

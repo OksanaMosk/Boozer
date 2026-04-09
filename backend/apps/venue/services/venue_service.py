@@ -126,6 +126,8 @@ def get_venue_orders_statistics(venue):
             success_count += 1
 
     avg_check = total_revenue_venue_curr / success_count if success_count > 0 else 0
+    venue.average_check = round(avg_check, 2)
+    venue.save(update_fields=['average_check', 'last_exchange_update'])
 
     budget_dist = list(orders_qs.values('budget_range').annotate(count=Count('id')).order_by('-count'))
     gender_dist = list(orders_qs.values('gender_preference').annotate(count=Count('id')).order_by('-count'))
