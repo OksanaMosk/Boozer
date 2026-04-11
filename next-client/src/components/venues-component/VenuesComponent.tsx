@@ -153,7 +153,11 @@ const VenuesComponent: React.FC<VenuesComponentProps> = ({venues, totalPages, is
                     </li>
                 ))}
             </ul>
-            <PaginationComponent totalPages={totalPages}/>
+           {totalPages > 1 && (
+                <div className={styles.paginationWrapper}>
+                    <PaginationComponent totalPages={totalPages}/>
+                </div>
+            )}
             <ButtonScrollTopComponent/>
         </div>
     );

@@ -11,7 +11,7 @@ export default async function ReviewsPage({ params }: { params: Promise<{ id: st
         <div
             style={{
                 fontWeight: "bolder",
-                margin: "0 auto",
+                margin: "40px auto",
                 textAlign: "center"
             }}
         >

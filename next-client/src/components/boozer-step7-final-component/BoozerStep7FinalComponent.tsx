@@ -112,7 +112,7 @@ const BoozerStep7Final: React.FC<Props> = ({orderId, venueId}) => {
                         </button>
                         <audio
                             ref={audioRef}
-                            src="/videos/playboi-carti-evil-jordan.mp3"
+                            src="/videos/rose-bruno-mars-apt.mp3"
                         />
                     </div>
                     🎊

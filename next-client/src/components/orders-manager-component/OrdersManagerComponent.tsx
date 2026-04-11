@@ -1,13 +1,15 @@
 "use client";
 
 import React, {useEffect, useState, useCallback, useMemo} from "react";
-import { useParams } from "next/navigation";
+import {useParams, useSearchParams} from "next/navigation";
 import styles from "./OrdersManagerComponent.module.css";
 import { useUser } from "@/app/contexts/UserProvider";
 import { LoaderComponent } from "@/components/loader-component/LoaderComponent";
 import { IOrder } from "@/models/IOrder";
 import { OrderItemComponent } from "@/components/order-item-component/OrderItemComponent";
 import venueServices from "@/lib/services/venueService";
+import {PaginationComponent} from "@/components/pagination-component/PaginationComponent";
+import {AxiosResponse} from "axios";
 
 interface OrdersManagerProps {
     venueId?: number | string;
@@ -18,6 +20,9 @@ export const OrdersManagerComponent = ({ venueId: propsVenueId }: OrdersManagerP
     const [orders, setOrders] = useState<IOrder[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const searchParams = useSearchParams()
+    const [totalPages, setTotalPages] = useState(1);
+    const currentPage = Number(searchParams.get("page")|| 1);
 
     const activeVenueId = useMemo(() => {
         const id = propsVenueId ?? params?.id;
@@ -31,24 +36,27 @@ export const OrdersManagerComponent = ({ venueId: propsVenueId }: OrdersManagerP
         try {
             setLoading(true);
             setError(null);
-            const { data } = await venueServices.venues
+            // setOrders([]);
+            const response:AxiosResponse = await venueServices.venues
                 .orders({ accessToken: user.token })(activeVenueId)
-                .getAll();
+                .getAll({page: currentPage});
 
-            const result = Array.isArray(data) ? data : (data.data || []);
-            setOrders(result);
+            const resData = response.data;
+
+            setOrders(resData.data || []);
+            setTotalPages(resData.total_pages);
         } catch (err) {
             setError("Failed to sync venue orders.");
         } finally {
             setLoading(false);
         }
-    }, [user?.token, activeVenueId]);
+    }, [user?.token, activeVenueId, currentPage]);
 
     useEffect(() => {
       void fetchVenueOrders();
     }, [fetchVenueOrders]);
 
-    if (loading && orders.length === 0) return <LoaderComponent />;
+    if (loading) return <LoaderComponent />;
 
     return (
         <div className={styles.pageWrapper}>
@@ -76,6 +84,11 @@ export const OrdersManagerComponent = ({ venueId: propsVenueId }: OrdersManagerP
                             onUpdate={fetchVenueOrders}
                         />
                     ))}
+                </div>
+            )}
+            {totalPages > 1 && (
+                <div className={styles.paginationWrapper}>
+                    <PaginationComponent totalPages={totalPages}/>
                 </div>
             )}
         </div>

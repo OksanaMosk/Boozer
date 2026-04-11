@@ -1,11 +1,15 @@
+.limitReached,
 .title {
     padding: 0;
     font-family: var(--font-imperial),serif;
     font-weight: 700;
-    font-size: 2rem;
+    font-size: 4rem;
     letter-spacing: 2px;
     color: var(--color-text);
     line-height: 1;
+}
+.limitReached {
+    font-size: 2rem;
 }
 .loaderWrapper {
     display: flex;

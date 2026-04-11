@@ -40,7 +40,7 @@ class OrderViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['status', 'currency', 'user', 'venue', 'start_date', 'end_date']
     search_fields = ['comment', 'user_city', 'venue__name']
-    ordering = ['-start_date']
+    ordering = ['-id']
     ordering_fields = ['id', 'start_date', 'end_date', 'total_price']
 
     def get_permissions(self):
@@ -61,7 +61,7 @@ class OrderViewSet(viewsets.ModelViewSet):
         return get_orders_for_user(
             self.request.user,
             self.kwargs.get('venue_pk')
-        )
+        ).order_by('-id')
 
     def perform_create(self, serializer):
         """

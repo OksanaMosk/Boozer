@@ -47,6 +47,8 @@ Add: news (text + images), additional services: transfer (airport → flight →
 
 Set pricing, View statistics,
 
+Average Check: The value is populated by the Venue Admin according to the Technical Specifications (TS). The calculations are performed automatically within the Analytics section.
+
 🍽️ Menu (Drag & Drop). Built with React Drag & Drop. Supports: moving items between categories, reordering categories.
 
 🪑🪑 Table Booking. Canvas-based layout (coordinates), User selects table visually. Availability: no time overlaps. Database: PostgreSQL / Supabase.

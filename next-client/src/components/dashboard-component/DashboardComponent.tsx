@@ -38,7 +38,7 @@ const DashboardComponent: React.FC = () => {
         { id: "manage_tops", label: "🎊 Manage Tops", show: isAdmin },
         { id: "venues_control", label: "My Venues", show: isVenueAdmin },
         { id: "users_control", label: "Users", show: isAdmin },
-        { id: "orders", label: "Orders", show: true },
+        { id: "orders", label: " My Orders", show: true },
         { id: "reviews", label: "My Reviews", show: true },
     ].filter(tab => tab.show), [isAdmin, isVenueAdmin]);
 
@@ -155,7 +155,6 @@ const DashboardComponent: React.FC = () => {
                 )}
                 {activeTab === "orders" && (
                     <section className={styles.section}>
-                        <h2  className={styles.titleManage}>Orders</h2>
                        <OrdersVisitorComponent/>
                     </section>
                 )}

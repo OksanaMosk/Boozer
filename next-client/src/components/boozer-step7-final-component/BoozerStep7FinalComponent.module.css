@@ -189,11 +189,11 @@
     width: 100%;
     font-size: 70px;
     margin-bottom: 20px;
-    animation: bounce 3s infinite;
+    animation: bounce 0.8s infinite;
 }
 @keyframes bounce {
     0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-6px); }
+    50% { transform: translateY(-12px); }
 
 }
 

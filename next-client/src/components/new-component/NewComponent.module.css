@@ -149,6 +149,7 @@
 }
 
 .cardInfo {
+    text-align: left;
     display: flex;
     width: 100%;
     flex-direction: column;
@@ -165,11 +166,25 @@
     font-size: 0.6rem;
     color: var(--title-primary-color);
 }
+.id {
+    font-size: 12px;
+    color: darkgray;
+}
+.bottomWrapper {
+    width: 100%;
+     display: flex;
+    gap: 1rem;
+     align-items: flex-start;
+    justify-content:space-between;
+}
 .bottom {
+    height: auto;
     width: 100%;
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
+    align-items: flex-start;
+
 }
 .contentTextEdit,
 .contentText {

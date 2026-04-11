@@ -89,7 +89,14 @@ export const ReviewEditComponent = ({
             <div className={styles.top}>
                 <div className={styles.about}>
                     <div className={styles.subTitle}>
-                        <p  className={styles.subTitleP}>{editData.author_name}</p>
+                        <div >
+                            <p className={styles.subTitleP}>{editData.author_name}</p>
+                            <p className={styles.date}>
+                                Created
+                                at: {review.created_at ? new Date(review.created_at).toLocaleDateString() : 'N/A'}
+                            </p>
+                        </div>
+
                         <div className={styles.contentWrapper}>
                             {editMode ? (
                                 <textarea
@@ -130,7 +137,6 @@ export const ReviewEditComponent = ({
                     </div>
 
                     <div>
-                        <p className={styles.star}>★ {calculateOverall(editData)}</p>
                         <div className={styles.bottom}>
                             {editMode ? (
                                 <div style={{ marginTop: "15px" }}>
@@ -150,31 +156,36 @@ export const ReviewEditComponent = ({
                                 </div>
                             ) : (
                                 imagesForGallery.length > 0 && (
-                                    <div style={{ marginTop: "10px" }}>
+                                    <div className={styles.newsGalleryWrapper}>
                                         <NewsGalleryComponent images={imagesForGallery} />
                                     </div>
                                 )
                             )}
                         </div>
                     </div>
-
-                    <div className={styles.subRatings}>
-                        {[
-                            { label: 'Food', key: 'food_rating' },
-                            { label: 'Service', key: 'service_rating' },
-                            { label: 'Atmosphere', key: 'atmosphere_rating' },
-                            { label: 'Cleanliness', key: 'cleanliness_rating' },
-                            { label: 'Value', key: 'value_rating' }
-                        ].map((item) => (
-                            <div key={item.key} className={styles.subRatingItem}>
-                                <span className={styles.ratingLabel}>{item.label}</span>
-                                <ReviewStarsComponent
-                                    rating={Number(editData[item.key]) || 0}
-                                    interactive={editMode}
-                                    onStarClick={(val: number) => handleStarClick(item.key, val)}
-                                />
-                            </div>
-                        ))}
+                    <div className={styles.starBlock}>
+                        <div className={styles.starBlockTitle} >
+                            <p className={styles.star}>★ {calculateOverall(editData)}</p>
+                            <p className={styles.id}>Venue Id: {review.venue}</p>
+                        </div>
+                        <div className={styles.subRatings}>
+                            {[
+                                {label: 'Food', key: 'food_rating'},
+                                {label: 'Service', key: 'service_rating'},
+                                {label: 'Atmosphere', key: 'atmosphere_rating'},
+                                {label: 'Cleanliness', key: 'cleanliness_rating'},
+                                {label: 'Value', key: 'value_rating'}
+                            ].map((item) => (
+                                <div key={item.key} className={styles.subRatingItem}>
+                                    <span className={styles.ratingLabel}>{item.label}</span>
+                                    <ReviewStarsComponent
+                                        rating={Number(editData[item.key]) || 0}
+                                        interactive={editMode}
+                                        onStarClick={(val: number) => handleStarClick(item.key, val)}
+                                    />
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 </div>
             </div>

@@ -55,7 +55,12 @@ export const ReviewComponent = ({review, onLike, onReport, isAdminView = false}:
                                     <span className={styles.statusPulse}/>
                                 </div>
                             )}
+
                         </div>
+                        <p className={styles.date}>
+                                Created
+                                at: {review.created_at ? new Date(review.created_at).toLocaleDateString() : 'N/A'}
+                            </p>
                         <div className={styles.contentWrapper}>
                             <p className={styles.contentText}>
                                 {data.comment || "No comment provided."}
@@ -165,7 +170,10 @@ export const ReviewComponent = ({review, onLike, onReport, isAdminView = false}:
 
                 <div className={styles.topStatus}>
                     <div className={styles.overallHeader}>
-                        <span className={styles.overallLabel}>{Number(data.rating || 0).toFixed(1)} ✸</span>
+                        <div className={styles.starBlockTitle}>
+                            <span className={styles.overallLabel}>{Number(data.rating || 0).toFixed(1)} ✸</span>
+                            <p className={styles.id}>Venue Id: {data.venue}</p>
+                        </div>
                     </div>
 
                     <div className={styles.subRatings}>
@@ -177,8 +185,7 @@ export const ReviewComponent = ({review, onLike, onReport, isAdminView = false}:
                             {label: 'Value', key: 'value_rating'}
                         ].map((item) => (
                             <div key={item.key} className={styles.subRatingItem}>
-                                <span className={styles.ratingLabel}>{item.label}</span>
-
+                                    <span className={styles.ratingLabel}>{item.label}</span>
                                 <ReviewStarsComponent rating={data[item.key] || 0}/>
                             </div>
                         ))}

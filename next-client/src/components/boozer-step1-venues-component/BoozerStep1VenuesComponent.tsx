@@ -27,7 +27,11 @@ const BoozerStep1VenuesComponent: React.FC<VenuesComponentProps> = ({venues, tot
                     </li>
                 ))}
             </ul>
-            <PaginationComponent totalPages={totalPages}/>
+           {totalPages > 1 && (
+                <div className={styles.paginationWrapper}>
+                    <PaginationComponent totalPages={totalPages}/>
+                </div>
+            )}
         </div>
     );
 };

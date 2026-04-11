@@ -6,20 +6,26 @@ import { useUser } from "@/app/contexts/UserProvider";
 import styles from "./ReviewListEditComponent.module.css";
 import { ReviewEditComponent } from "@/components/review-edit-component/ReviewEditComponent";
 import {LoaderComponent} from "@/components/loader-component/LoaderComponent";
+import {PaginationComponent} from "@/components/pagination-component/PaginationComponent";
+import {useSearchParams} from "next/navigation";
 
 export const ReviewListEditComponent = () => {
     const { user } = useUser();
     const [reviews, setReviews] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [loadingId, setLoadingId] = useState<string | number | null>(null);
+    const searchParams = useSearchParams();
+    const currentPage = Number(searchParams.get("page") || "1");
+    const [totalPages, setTotalPages] = useState(1);
 
     useEffect(() => {
         const fetchReviews = async () => {
             if (!user?.token) return;
             try {
-               const res = await venueServices.reviews.getAllWithFilter({ user: user.id }, { accessToken: user.token! });
-                const responseData = (res as any).data?.data || (res as any).data || res;
-                setReviews(Array.isArray(responseData) ? responseData : []);
+               const res = await venueServices.reviews.getAllWithFilter({ user: user.id, page: currentPage }, { accessToken: user.token! });
+                const responseData = (res as any).data || res;
+                setReviews(responseData.data || []);
+                setTotalPages(responseData.total_pages || 1);
             } catch (error) {
                 console.error("Failed to fetch reviews:", error);
             } finally {
@@ -28,7 +34,7 @@ export const ReviewListEditComponent = () => {
         };
 
         void fetchReviews();
-    }, [user?.token]);
+     }, [user?.token, currentPage]);
 
     const handleUpdateReview = (updatedReview: any) => {
         setReviews((prev) =>
@@ -73,6 +79,11 @@ export const ReviewListEditComponent = () => {
                     ))
                 )}
             </div>
+           {totalPages > 1 && (
+                <div className={styles.paginationWrapper}>
+                    <PaginationComponent totalPages={totalPages}/>
+                </div>
+            )}
         </div>
     );
 };

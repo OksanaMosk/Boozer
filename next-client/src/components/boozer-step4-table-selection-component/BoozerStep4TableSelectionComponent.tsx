@@ -54,7 +54,7 @@ const BoozerStep4TableSelectionComponent: React.FC<Props> = ({venueId, orderId, 
                 const [orderRes, bgRes, tablesRes]: AxiosResponse[] = await Promise.all([
                     venueServices.venues.orders({accessToken})(venueId).get(orderId),
                     venueServices.venues.background({accessToken})(venueId).getBackground(),
-                    venueServices.venues.tables({accessToken})(venueId).getAll()
+                    venueServices.venues.tables({accessToken})(venueId).getAll({ size: 100 })
                 ]);
                 setOrderInfo({guests: orderRes.data.guests_count || 0});
                 if (orderRes.data.start_date && orderRes.data.end_date) {

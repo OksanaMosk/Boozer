@@ -8,7 +8,7 @@
     justify-content: space-between;
     align-items: center;
     width: 70%;
-    height:210px;
+    height:240px;
     flex-wrap: wrap;
     color: var(--input-color);
     backdrop-filter: blur(20px);
@@ -29,7 +29,7 @@
     100% { transform: translateY(0); }
 }
 .top {
-    height: 180px;
+    height: 190px;
     width: 100%;
     gap: 4px;
     display: flex;
@@ -37,8 +37,12 @@
 
 }
 .topStatus {
+    height: 190px;
     display: flex;
-    gap: 1rem;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 8px;
 }
 .subTitle {
     display: flex;
@@ -69,47 +73,47 @@
     align-items: flex-start;
     justify-content: space-between;
 }
-.statusWrapper {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 12px;
-    height: 12px;
-}
+/*.statusWrapper {*/
+/*    position: relative;*/
+/*    display: flex;*/
+/*    align-items: center;*/
+/*    justify-content: center;*/
+/*    width: 12px;*/
+/*    height: 12px;*/
+/*}*/
 
-.statusDot {
-    width: 8px;
-    height: 8px;
-    background-color: #2ecc71;
-    border-radius: 50%;
-    z-index: 2;
-}
+/*.statusDot {*/
+/*    width: 8px;*/
+/*    height: 8px;*/
+/*    background-color: #2ecc71;*/
+/*    border-radius: 50%;*/
+/*    z-index: 2;*/
+/*}*/
 
-.statusPulse {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(46, 204, 113, 0.7);
-    border-radius: 50%;
-    z-index: 1;
-    animation: pulseAnimation 2s infinite ease-in-out;
-}
+/*.statusPulse {*/
+/*    position: absolute;*/
+/*    width: 100%;*/
+/*    height: 100%;*/
+/*    background-color: rgba(46, 204, 113, 0.7);*/
+/*    border-radius: 50%;*/
+/*    z-index: 1;*/
+/*    animation: pulseAnimation 2s infinite ease-in-out;*/
+/*}*/
 
-@keyframes pulseAnimation {
-    0% {
-        transform: scale(0.8);
-        opacity: 0.8;
-    }
-    70% {
-        transform: scale(2.5);
-        opacity: 0;
-    }
-    100% {
-        transform: scale(2.5);
-        opacity: 0;
-    }
-}
+/*@keyframes pulseAnimation {*/
+/*    0% {*/
+/*        transform: scale(0.8);*/
+/*        opacity: 0.8;*/
+/*    }*/
+/*    70% {*/
+/*        transform: scale(2.5);*/
+/*        opacity: 0;*/
+/*    }*/
+/*    100% {*/
+/*        transform: scale(2.5);*/
+/*        opacity: 0;*/
+/*    }*/
+/*}*/
 
 .buttonGroup {
     width: 100%;
@@ -190,7 +194,8 @@
 }
 
 .overallLabel {
-    color: var(--title-color);
+    padding: 0;
+    color: var(--color-noposter);
     font-family: var(--font-imperial),serif;
     margin: 0 8px 0 0;
     font-weight: 600;
@@ -200,7 +205,7 @@
 .subRatings {
     box-sizing: border-box;
     width: 200px;
-    height: 180px;
+    height: 190px;
     margin: 0;
     padding: 0;
     display: flex;
@@ -216,7 +221,7 @@
 .subRatingItem {
     width: 100%;
      text-align: left;
-    height: 34px;
+    height: 36px;
     margin: 0;
     padding: 0;
     display: flex;
@@ -227,8 +232,8 @@
 
 .ratingLabel {
    width: 100%;
-     text-align: left;
-     margin: 0;
+    text-align: left;
+    margin: 0;
     padding: 0 20px;
     font-size: 16px;
     color: var(--logo-hover-color);
@@ -236,7 +241,10 @@
 }
 
 .galleryWrapper {
-    margin-top: 8rem;
+    margin-top: 10px;
+    height: 320px;
+    padding: 0;
+
     display: flex;
     justify-content: center;
     align-items: center;
@@ -414,4 +422,47 @@
     padding: 0;
     text-align: left;
     opacity: 0.4;
+}
+.overallHeader {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+
+}
+.starBlockTitle {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 4px;
+}
+.id {
+    margin: 0;
+    padding: 0;
+    font-size: 12px;
+    display: flex;
+     align-items: center;
+    justify-content: flex-start;
+     color: var(--logo-hover-color);
+ }
+.date {
+     margin: 0;
+    padding: 0;
+    display: flex;
+     align-items:center;
+    justify-content: flex-start;
+    font-size: 12px;
+    letter-spacing: normal;
+    color: var(--title-primary-color);
+}
+.overallHeader {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
 }

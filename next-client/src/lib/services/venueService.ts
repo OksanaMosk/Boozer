@@ -30,6 +30,10 @@ const createService = <T>(baseUrl: string) => ({
 const getByParent = <T>(endpoint: (parentId: string) => string, token?: Token) =>
     (parentId: string) => api(token).get<T>(endpoint(parentId));
 
+const getByParentPaginated = <T>(endpoint: (parentId: string) => string, token?: Token) =>
+    (parentId: string, config?: any) => api(token).get<PaginatedResponse<T>>(endpoint(parentId), config);
+
+
 export interface VenueFilterCriteria {
     search?: string;
     country?: string;
@@ -89,6 +93,8 @@ export interface OrderFilterCriteria {
     venue?: string;
     start_date?: string;
     end_date?: string;
+    size?: number;
+    page?: number;
 }
 
 const buildOrderParams = (criteria?: OrderFilterCriteria) => {
@@ -100,18 +106,24 @@ const buildOrderParams = (criteria?: OrderFilterCriteria) => {
     if (criteria.venue) params.venue = criteria.venue;
     if (criteria.start_date) params.start_date = criteria.start_date;
     if (criteria.end_date) params.end_date = criteria.end_date;
+    if (criteria?.size) params.size = criteria.size;
+    if (criteria?.page) params.page = criteria.page;
     return params;
 };
 
 export interface ReviewFilterCriteria {
     venue?: string;
     user?:string;
+    page?: number;
+    size?: number;
 }
 
 const buildReviewParams = (criteria?: ReviewFilterCriteria) => {
-    const params: Record<string, string> = {};
+    const params: Record<string, string | number> = {};
     if (criteria?.venue) params.venue = criteria.venue;
     if (criteria?.user) params.user = criteria.user;
+    if (criteria?.page) params.page = criteria.page;
+    if (criteria?.size) params.size = criteria.size;
     return params;
 };
 
@@ -135,21 +147,15 @@ const venueServices = {
         ordersStats: (id: string, token?: Token) => api(token).get<{ stats: { average_check: number; total_revenue: number; success_orders_count: number; total_orders_count: number; currency: string; }; orders: IOrder[]; }>(urls.venues.ordersStats(id)),
         photos: getByParent<IVenuePhoto>(urls.venues.photos),
         tables: (token?: Token) => (venueId: string) => ({
-            getAll: () => getByParent<ITable>(urls.venues.tables, token)(venueId),
+             getAll: (params?: any) => getByParentPaginated<ITable>(urls.venues.tables, token)(venueId, { params }),
+            // getAll: () => getByParent<ITable>(urls.venues.tables, token)(venueId),
             get: (tableId: string) => api(token).get<ITable>(`${urls.venues.tables(venueId)}${tableId}/`),
             create: (data: Partial<ITable>) => api(token).post<ITable>(urls.venues.tables(venueId), data),
             update: (tableId: string, data: Partial<ITable>) => api(token).patch<ITable>(`${urls.venues.tables(venueId)}${tableId}/`, data),
             delete: (tableId: string) => api(token).delete(`${urls.venues.tables(venueId)}${tableId}/`)
         }),
         background: (token?: Token) => (venueId: string) => ({
-            getBackground: () => api(token).get<{
-                url: string
-            }>(`${urls.venues.list}${venueId}/tables_layout/get_background/`),
-            uploadBackground: (url: string) => {
-                return api(token).post<{
-                    url: string
-                }>(`${urls.venues.list}${venueId}/tables_layout/upload_background/`, {url});
-            },
+            getBackground: () => api(token).get<{ url: string }>(`${urls.venues.list}${venueId}/tables_layout/get_background/`), uploadBackground: (url: string) => {return api(token).post<{ url: string }>(`${urls.venues.list}${venueId}/tables_layout/upload_background/`, {url});},
         }),
         bookings: (token?: Token) => (venueId: string) => (tableId: string) => ({
             getAll: () => api(token).get<ITableBooking[]>(urls.venues.bookings(venueId, tableId)),
@@ -212,7 +218,8 @@ const venueServices = {
             delete: (id: string) => api(token).delete(`${urls.venues.extraServices(venueId)}${id}/`),
         }),
         reviews: (token?: Token) => (venueId: string) => ({
-            getAll: (params?: any) => api(token).get<PaginatedResponse<IReview>>(urls.venues.reviews.list(venueId), {params}),
+            // getAll: (params?: any) => api(token).get<PaginatedResponse<IReview>>(urls.venues.reviews.list(venueId), {params}),
+            getAll: (filterCriteria?: ReviewFilterCriteria) =>api(token).get<PaginatedResponse<IReview>>(urls.venues.reviews.list(venueId), {params: buildReviewParams(filterCriteria)}),
             get: (id: string | number) => api(token).get<IReview>(urls.venues.reviews.detail(venueId, id.toString())),
             create: (data: Partial<IReview> | FormData) => api(token).post<IReview>(urls.venues.reviews.create(venueId), data, {headers: data instanceof FormData ? {"Content-Type": "multipart/form-data"} : {}}),
             update: (id: string | number, data: Partial<IReview> | FormData) => api(token).patch<IReview>(urls.venues.reviews.update(venueId, id.toString()), data, {headers: data instanceof FormData ? {"Content-Type": "multipart/form-data"} : {}}),
@@ -233,9 +240,7 @@ const venueServices = {
             ...createService<{ name: string }>(urls.venues.tags.list(venueId)),
         }),
         orders: (token?: Token) => (venueId: string) => ({
-            getAll: (filterCriteria?: OrderFilterCriteria & {
-                page?: number
-            }) => api(token).get<PaginatedResponse<IOrder>>(urls.venues.orders(venueId), {params: buildOrderParams(filterCriteria)}),
+            getAll: (filterCriteria?: OrderFilterCriteria & { page?: number }) => api(token).get<PaginatedResponse<IOrder>>(urls.venues.orders(venueId), {params: buildOrderParams(filterCriteria)}),
             get: (orderId: string | number) => api(token).get<IOrder>(`${urls.venues.orders(venueId)}${orderId}/`),
             create: (data: Partial<IOrder>) => api(token).post<IOrder>(urls.venues.orders(venueId), data),
             update: (orderId: string | number, data: Partial<IOrder>) => api(token).patch<IOrder>(`${urls.venues.orders(venueId)}${orderId}/`, data),

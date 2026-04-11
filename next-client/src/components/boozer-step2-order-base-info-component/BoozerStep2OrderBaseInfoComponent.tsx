@@ -246,7 +246,7 @@ const BoozerStep2OrderBaseInfoComponent: React.FC<Props> = ({venueId, onNext, on
                     </div>
 
                     <div className={styles.selectWrapper}>
-                        <label className={styles.label}>Budget Range</label>
+                        <label className={styles.label}>Budget Preference</label>
                         <select
                             className={styles.select}
                             value={formData.budget_range}

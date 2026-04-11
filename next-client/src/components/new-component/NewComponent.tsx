@@ -157,71 +157,77 @@ export const NewComponent = ({news, venueId, onDelete, onUpdate, isReadOnly = fa
                     )}
                 </div>
                     )}
+                <p className={styles.id}>Venue Id: {venueId} </p>
             </div>
 
-            <div className={styles.cardInfo}>
-                {editMode ? (
-                    <textarea
-                        name="content"
-                        value={editNews.content}
-                        onChange={handleChange}
-                        className={styles.contentTextEdit}
-                    />
-                ) : (
-                    <p className={styles.contentText}>{editNews.content}</p>
-                )}
-
-                <div className={styles.dates}>
-                    <p className={styles.date}>
-                        <small>Created: {editNews.created_at ? new Date(editNews.created_at).toLocaleDateString() : "---"}</small>
-                    </p>
-                    {editNews.end_date && (
-                        <p className={styles.date}>
-                            <small>Ends: {new Date(editNews.end_date).toLocaleDateString()}</small>
-                        </p>
-                    )}
-                </div>
-            </div>
-
-            <div className={styles.bottom}>
-                {coverImage && <img src={coverImage} alt="Cover" className={styles.coverImage}/>}
-
-               {!isReadOnly && editMode && (
-                    <div className={styles.photoWrapper}>
-                        {coverMessage && <div className={styles.error}>{coverMessage}</div>}
-                        <PhotoMultipleUploadComponent
-                            key={editNews.id}
-                            venueId={venueId}
-                            newsId={editNews.id.toString()}
-                            existingPhotos={editNews.images
-                                ?.filter((img: any) => img.image || img.preview)
-                                .map((img: any) => ({
-
-                                    id: img.id,
-                                    url: img.image || img.preview || null,
-                                    is_cover: img.is_cover || false
-                                })) || []}
-                            maxFiles={7}
-                            onSetCover={handleSetCover}
-                            onUploadComplete={(uploadedPhotos: any[]) => {
-                                const newImages = uploadedPhotos.map((p) => ({
-                                    id: p.id,
-                                    image: p.image || p.url,
-                                    is_cover: p.is_cover || false
-                                }));
-
-                                const updatedNews = {
-                                    ...editNews,
-                                    images: [...(editNews.images || []), ...newImages]
-                                };
-
-                                setEditNews(updatedNews);
-                                onUpdate(updatedNews);
-                            }}
+            <div className={styles.bottomWrapper}>
+                <div className={styles.cardInfo}>
+                    {editMode ? (
+                        <textarea
+                            name="content"
+                            value={editNews.content}
+                            onChange={handleChange}
+                            className={styles.contentTextEdit}
                         />
+                    ) : (
+                        <p className={styles.contentText}>{editNews.content}</p>
+                    )}
+
+                    <div className={styles.dates}>
+                        <p className={styles.date}>
+                            <small>Created: {editNews.created_at ? new Date(editNews.created_at).toLocaleDateString() : "---"}</small>
+                        </p>
+                        {editNews.end_date && (
+                            <p className={styles.date}>
+                                <small>Ends: {new Date(editNews.end_date).toLocaleDateString()}</small>
+                            </p>
+                        )}
+
                     </div>
-                )}
-                {images.length > 0 && <NewsGalleryComponent images={images}/>}
+                    {coverImage && <img src={coverImage} alt="Cover" className={styles.coverImage}/>}
+                </div>
+
+                <div className={styles.bottom}>
+
+
+                    {!isReadOnly && editMode && (
+                        <div className={styles.photoWrapper}>
+                            {coverMessage && <div className={styles.error}>{coverMessage}</div>}
+                            <PhotoMultipleUploadComponent
+                                key={editNews.id}
+                                venueId={venueId}
+                                newsId={editNews.id.toString()}
+                                existingPhotos={editNews.images
+                                    ?.filter((img: any) => img.image || img.preview)
+                                    .map((img: any) => ({
+
+                                        id: img.id,
+                                        url: img.image || img.preview || null,
+                                        is_cover: img.is_cover || false
+                                    })) || []}
+                                maxFiles={7}
+                                onSetCover={handleSetCover}
+                                onUploadComplete={(uploadedPhotos: any[]) => {
+                                    const newImages = uploadedPhotos.map((p) => ({
+                                        id: p.id,
+                                        image: p.image || p.url,
+                                        is_cover: p.is_cover || false
+                                    }));
+
+                                    const updatedNews = {
+                                        ...editNews,
+                                        images: [...(editNews.images || []), ...newImages]
+                                    };
+
+                                    setEditNews(updatedNews);
+                                    onUpdate(updatedNews);
+                                }}
+                            />
+                        </div>
+                    )}
+                    {images.length > 0 && <NewsGalleryComponent images={images}/>}
+                </div>
+
             </div>
         </div>
     );

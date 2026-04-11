@@ -83,7 +83,7 @@ if (!data) return <div className={styles.noData}>No financial records found for 
 
             <div className={styles.analyticsFlex}>
                 <div className={styles.budgetBox}>
-                    <h3 className={styles.boxTitle}>Budget Distribution</h3>
+                    <h3 className={styles.boxTitle}>Budget Preference</h3>
                     <div className={styles.progressList}>
                         {stats.budget_distribution.map((b) => (
                             <div key={b.budget_range} className={styles.progressItem}>

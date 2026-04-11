@@ -131,7 +131,7 @@ const VenueFilterComponent: React.FC<FilterProps> = ({ onFilterChange }) => {
                 <input
                     type="text"
                     name="search"
-                    placeholder="Search name..."
+                    placeholder="Search by keyword..."
                     value={filters.search || ""}
                     onChange={handleChange}
                     className={styles.input}
