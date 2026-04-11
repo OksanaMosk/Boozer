@@ -1,5 +1,5 @@
 .newsCard {
-    margin: 10px auto;
+    margin: 60px auto;
     text-align: center;
     overflow: hidden;
     padding: 12px;
@@ -8,7 +8,7 @@
     justify-content: space-between;
     align-items: center;
     width: 70%;
-    min-height:210px;
+    height:210px;
     flex-wrap: wrap;
     color: var(--input-color);
     backdrop-filter: blur(20px);
@@ -20,7 +20,7 @@
     box-shadow:
     0 8px 32px rgba(0, 0, 0, 0.3);
     gap: 20px;
-
+    transition: all 0.4s ease-in-out;
 }
 
 @keyframes float {
@@ -28,23 +28,24 @@
     50% { transform: translateY(-10px); }
     100% { transform: translateY(0); }
 }
+.active.newsCard {
+    height: auto;
+    overflow: visible;
+    min-height: 100%;
+}
 .top {
-    height: 180px;
     width: 100%;
     gap: 4px;
     display: flex;
     justify-content: space-between;
-
+    height: auto;
 }
 
-.topStatus {
-    display: flex;
-    gap: 1rem;
-}
 .subTitle {
     display: flex;
     flex-direction: column;
-    justify-content:flex-start;
+    height: 180px;
+    justify-content:space-between;
     align-items: flex-start;
     font-size: 2rem;
     color: var(--color-text);
@@ -53,65 +54,24 @@
     width: 40%;
     margin: 0;
     padding: 0;
-    gap: 10px;
-}
+
+}.subTitleP {
+    margin: 0;
+    padding: 0;
+ }
+
 .about {
     display: flex;
     width: 100%;
     align-items: flex-start;
     justify-content: space-between;
+    gap: 16px;
     margin: 0;
     padding: 0;
-    height: 178px;
-
-}
-.text {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: space-between;
-}
-.statusWrapper {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 12px;
-    height: 12px;
+    height: auto;
+    min-height: 100%;
 }
 
-.statusDot {
-    width: 8px;
-    height: 8px;
-    background-color: #2ecc71;
-    border-radius: 50%;
-    z-index: 2;
-}
-
-.statusPulse {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(46, 204, 113, 0.7);
-    border-radius: 50%;
-    z-index: 1;
-    animation: pulseAnimation 2s infinite ease-in-out;
-}
-
-@keyframes pulseAnimation {
-    0% {
-        transform: scale(0.8);
-        opacity: 0.8;
-    }
-    70% {
-        transform: scale(2.5);
-        opacity: 0;
-    }
-    100% {
-        transform: scale(2.5);
-        opacity: 0;
-    }
-}
 
 .buttonGroup {
     width: 100%;
@@ -173,7 +133,7 @@
     margin: 0;
     color: var(--color-text);
     font-size: 1rem;
-    text-align: justify;
+    text-align: left;
 }
 
 .error {
@@ -290,7 +250,7 @@
     margin: 0;
     padding: 0;
     color: var(--input-color);
-    font-size: 0.6rem;
+    font-size: 1rem;
     cursor: pointer;
     outline: none;
     width: 100%;
@@ -310,9 +270,10 @@
     border: none;
 }
 .reportTextarea {
-    font-size: 0.6rem;
+    font-size: 0.9rem;
     width: 100%;
-    padding: 0.5rem 2.5rem 0.5rem 1rem;
+    height: 200px;
+    padding: 0.5rem;
     border-radius: 1.5rem;
     color: var(--input-color);
     outline: none;
@@ -321,7 +282,6 @@
     resize: vertical;
     border: 1px solid var(--input-color);
     justify-content: flex-start;
-    height: 60px;
 }
 .reportTextarea:focus {
     background-color: rgba(255, 255, 255, 0.3);
@@ -418,5 +378,9 @@
     justify-content: center;
     align-items: flex-start;
     margin: 70px auto;
+}
 
+.star {
+    margin-left: 20px;
+    color: var(--color-noposter);
 }

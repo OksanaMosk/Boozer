@@ -223,6 +223,31 @@
 .lockHint {
     font-size: 10px;
 }
+.quickStats {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    align-items: flex-start;
+    justify-content: flex-start;
+}
+.statItem {
+    width: 100%;
+    font-size: 12px;
+    display: flex;
+    gap: 4px;
+    align-items: flex-start;
+    justify-content: space-between;
+}
+.statValue,
+.statLabel {
+    color: var(--logo-hover-color);
+}
+.statDivider {
+    width: 100%;
+    height: 1px;
+    background-color: var(--logo-hover-color);
+    margin: 2px 0;
+}
 @media (min-width: 768px) {
     .button,
     .buttonLink,
@@ -233,10 +258,6 @@
 
     }
 
-    /*.actions {*/
-    /*    justify-content: center;*/
-    /*    align-items: center;*/
-    /*}*/
 }
 
 @media (min-width: 1200px) {

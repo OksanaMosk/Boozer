@@ -121,12 +121,13 @@
     justify-content: space-between;
 }
 .overallLabel {
-    color: var(--color-noposter);
+    color: var(--color-text);
     font-family: var(--font-imperial), serif;
     margin: 0;
     height: 24px;
     line-height: 24px;
     font-size: 20px;
+    font-weight: 600;
 }
 
 .hidden {

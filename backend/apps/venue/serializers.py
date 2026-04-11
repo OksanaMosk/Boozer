@@ -61,12 +61,14 @@ class VenueSerializer(serializers.ModelSerializer):
     tables = TableSerializer(many=True, read_only=True)
     background_tables = serializers.URLField(required=False, allow_null=True)
     is_favorite = serializers.BooleanField(read_only=True, default=False)
+    distance = serializers.FloatField(read_only=True, allow_null=True)
+    converted_check = serializers.FloatField(read_only=True, allow_null=True)
 
     class Meta:
         model = VenueModel
         fields = [
             'id', 'name', 'is_favorite', 'venue_admin', 'country', 'city', 'address',
-            'latitude', 'longitude', 'phone', 'description',
+            'latitude', 'longitude', 'phone', 'description', 'distance', 'converted_check', 'created_at',
             'opening_hours', 'photos', 'tables', 'features', 'average_check',  'currency', 'rating', 'reviews_count',
             'status', 'views', 'daily_views', 'weekly_views', 'monthly_views',
             'edit_attempts', 'last_exchange_update',

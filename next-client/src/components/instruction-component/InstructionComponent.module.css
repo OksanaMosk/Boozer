@@ -1,0 +1,61 @@
+.page {
+    margin: 0 auto;
+    text-align: center;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.title {
+  font-family: var(--font-imperial), serif;
+  color: var(--color-text);
+  font-size: 3rem;
+  letter-spacing: 4px;
+}
+
+.card {
+  max-width: 600px;
+  margin: 0 auto;
+  border: 2px solid var(--color-noposter);
+  border-radius: 24px;
+  padding: 30px;
+  background: var(--menu-color);
+}
+
+.sectionTitle {
+  color: var(--color-text);
+  font-size: 24px;
+  margin: 20px 0 10px;
+}
+
+.text {
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+.warningText {
+  font-size: 14px;
+  color: var(--logo-hover-color);
+  margin-bottom: 20px;
+}
+
+.list {
+  padding-left: 20px;
+}
+
+.listItem {
+  margin-bottom: 10px;
+}
+
+.warningBox {
+  margin-top: 25px;
+  padding: 15px;
+  border-radius: 20px;
+  border: 1px solid #7a5c1e;
+  background:var(--reverse-menu-color);
+  color: var(--badge-color);
+  text-align: center;
+  font-weight: bold;
+}

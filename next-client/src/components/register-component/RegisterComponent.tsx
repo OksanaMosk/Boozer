@@ -11,6 +11,7 @@ import { LoaderComponent } from "@/components/loader-component/LoaderComponent";
 import DatePickerComponent from "@/components/date-picker-component/DatePickerComponent";
 import ButtonsSocialComponent from "@/components/buttons-social-component/ButtonsSocialComponent";
 import styles from "./RegisterComponent.module.css";
+import Link from "next/link";
 
 
 const RegisterComponent = () => {
@@ -120,7 +121,6 @@ const RegisterComponent = () => {
         } catch (err: unknown) {
             if (err instanceof AxiosError) {
                 const status = err.response?.status;
-                // const data = err.response?.data;
 
                 if (status === 400) {
                     setErrorMsg("A user with this email already exists. Try logging in.");
@@ -131,7 +131,7 @@ const RegisterComponent = () => {
                 } else {
                     setErrorMsg("An unknown error occurred. Please try again.");
                 }
-                // console.error("Register failed:", status, data);
+
             } else if (err instanceof Error) {
 
                 setErrorMsg(err.message || "An unexpected error occurred.");
@@ -277,7 +277,11 @@ const RegisterComponent = () => {
                             className={styles.checkboxInput}
                         />
                         <span className={styles.checkboxSpan}></span>
-                        I confirm that I am over 18 and accept the rules
+
+                        <Link href="/instruction"
+                              className={styles.linkRul}>
+                            I confirm I am 18+ and accept the rules
+                        </Link>
                     </label>
                 </div>
 

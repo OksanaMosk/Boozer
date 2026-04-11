@@ -118,13 +118,13 @@ const VenuesComponent: React.FC<VenuesComponentProps> = ({venues, totalPages, is
             {mounted && (!user?.token || isUnauthorized) && (
                 <div className={styles.authBanner}>
                     <p className={styles.titleGuest}>
-                        You are a guest. Please <Link href="/login" className={styles.loginLink}>Sign In</Link> to
-                        save venues and see your favorite marks.
+                        You are a guest. Please <Link href="/login" className={styles.loginLink}>Sign In</Link> to find venues near you, save them, and see your favorite marks.
                     </p>
                 </div>
             )}
             <ul className={styles.list}>
-                {venues.filter(venue => venue.status === 'active').map((venue) => (
+                {/*{venues.filter(venue => venue.status === 'active').map((venue) => (*/}
+                {venues.map((venue) => (
                     <li key={venue.id} className={styles.item}>
                         <button
                             className={styles.heartBtn}

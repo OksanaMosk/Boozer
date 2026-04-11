@@ -220,7 +220,8 @@ const VenueInfoComponent: React.FC<Props> = ({venue}) => {
                             <h2 className={styles.title}>
                                 Welcome to {venue.name} in {venue.city}
                             </h2>
-                            {venue.rating && <p className={styles.overallLabel}>✸ {venue.rating}</p>}
+                                <p className={`${styles.overallLabel} ${!(venue.rating !== undefined && venue.rating > 0) ? styles.hidden : ''}`}>
+                                ✸ {venue.rating}</p>
                             {venue.tags && venue.tags.length > 0 && (
                                 <div className={styles.tagsWrapper}>
                                     {venue.tags.map((tag) => (

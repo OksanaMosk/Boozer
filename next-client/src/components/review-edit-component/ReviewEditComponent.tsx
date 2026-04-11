@@ -34,59 +34,63 @@ export const ReviewEditComponent = ({
         return (sum / 5).toFixed(1);
     };
 
-    const handleStarClick = (category: string, value: number) => {
-        setEditData((prev: any) => ({ ...prev, [`${category}_rating`]: value }));
+    const handleStarClick = (categoryKey: string, value: number) => {
+        setEditData((prev: any) => ({
+            ...prev,
+            [categoryKey]: value
+        }));
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setEditData({ ...editData, [e.target.name]: e.target.value });
     };
 
-    const handleSave = async () => {
-        if (!user?.token) return;
-        setLoading(true);
-        try {
-            const overall = calculateOverall(editData);
-            const payload = {
-                comment: editData.comment,
-                rating: overall,
-                food_rating: editData.food_rating,
-                service_rating: editData.service_rating,
-                atmosphere_rating: editData.atmosphere_rating,
-                cleanliness_rating: editData.cleanliness_rating,
-                value_rating: editData.value_rating,
-            };
-
-            const res = await venueServices.reviews.update(
-                editData.id.toString(),
-                payload as any,
-                { accessToken: user.token }
-            );
-
-            const updated = (res as any).data || res;
-            setEditData(updated);
-            if (onUpdate) onUpdate(updated);
-            setEditMode(false);
-        } catch (error) {
-            console.error("Save failed", error);
-        } finally {
-            setLoading(false);
-        }
+    const handleCancel = () => {
+        setEditData(review);
+        setEditMode(false);
     };
 
+    const handleSave = async () => {
+    if (!user?.token) return;
+    setLoading(true);
+    try {
+        const payload = {
+            comment: editData.comment,
+            food_rating: editData.food_rating,
+            service_rating: editData.service_rating,
+            atmosphere_rating: editData.atmosphere_rating,
+            cleanliness_rating: editData.cleanliness_rating,
+            value_rating: editData.value_rating,
+        };
+
+        const res = await venueServices.reviews.update(
+            editData.id.toString(),
+            payload as any,
+            { accessToken: user.token }
+        );
+
+        const updated = (res as any).data || res;
+        setEditData(updated);
+        if (onUpdate) onUpdate(updated);
+        setEditMode(false);
+    } catch (error) {
+        console.error("Save failed", error);
+    } finally {
+        setLoading(false);
+    }
+};
 
     const imagesForGallery = (editData.review_photos || []).map((p: any) => ({
         image: p.photo
     }));
 
-
     return (
-        <div className={`${styles.newsCard} ${editMode ? styles.editMode : ""}`}>
+        <div className={`${styles.newsCard} ${editMode ? styles.active : ""}`}>
             <div className={styles.top}>
                 <div className={styles.about}>
-                        <div className={styles.subTitle}>
-                            <p>{editData.author_name }</p>
-                            <div className={styles.contentWrapper}>
+                    <div className={styles.subTitle}>
+                        <p  className={styles.subTitleP}>{editData.author_name}</p>
+                        <div className={styles.contentWrapper}>
                             {editMode ? (
                                 <textarea
                                     name="comment"
@@ -100,38 +104,36 @@ export const ReviewEditComponent = ({
                                 </p>
                             )}
                         </div>
-                             <div className={styles.buttonGroup}>
-                                 {editMode ? (
-                                     <>
-                                         <button onClick={handleSave} disabled={loading} className={styles.editButton}>
-                                             {loading ? "Saving..." : "Save All"}
-                                         </button>
-                                         <button onClick={() => setEditMode(false)} className={styles.deleteButton}>
-                                             Cancel
-                                         </button>
-                                     </>
-                                 ) : (
-                                     <>
-                                         <button onClick={() => setEditMode(true)} className={styles.editButton}>
-                                             Edit
-                                         </button>
-                                         {onDelete && (
-                                             <button onClick={() => onDelete(editData.id)}
-                                                     className={styles.deleteButton}>
-                                                 Delete
-                                             </button>
-                                         )}
-                                     </>
-                                 )}
-                             </div>
+                        <div className={styles.buttonGroup}>
+                            {editMode ? (
+                                <>
+                                    <button onClick={handleSave} disabled={loading} className={styles.editButton}>
+                                        {loading ? "Saving..." : "Save All"}
+                                    </button>
+                                    <button onClick={handleCancel} className={styles.deleteButton}>
+                                        Cancel
+                                    </button>
+                                </>
+                            ) : (
+                                <>
+                                    <button onClick={() => setEditMode(true)} className={styles.editButton}>
+                                        Edit
+                                    </button>
+                                    {onDelete && (
+                                        <button onClick={() => onDelete(editData.id)} className={styles.deleteButton}>
+                                            Delete
+                                        </button>
+                                    )}
+                                </>
+                            )}
                         </div>
+                    </div>
+
                     <div>
-                        <p style={{marginLeft: '10px', color: '#ffc107'}}>
-                        ★ {calculateOverall(editData)}
-                    </p>
+                        <p className={styles.star}>★ {calculateOverall(editData)}</p>
                         <div className={styles.bottom}>
                             {editMode ? (
-                                <div style={{marginTop: "15px"}}>
+                                <div style={{ marginTop: "15px" }}>
                                     <PhotoMultipleUploadComponent
                                         venueId={editData.venue?.toString() || "0"}
                                         newsId={editData.id.toString()}
@@ -142,32 +144,30 @@ export const ReviewEditComponent = ({
                                             url: p.photo
                                         }))}
                                         onUploadComplete={(newPhotos: any) => {
-                                            setEditData({...editData, review_photos: newPhotos});
+                                            setEditData({ ...editData, review_photos: newPhotos });
                                         }}
                                     />
                                 </div>
                             ) : (
                                 imagesForGallery.length > 0 && (
-                                    <div style={{marginTop: "10px"}}>
-                                        <NewsGalleryComponent images={imagesForGallery}/>
+                                    <div style={{ marginTop: "10px" }}>
+                                        <NewsGalleryComponent images={imagesForGallery} />
                                     </div>
                                 )
                             )}
                         </div>
                     </div>
 
-
                     <div className={styles.subRatings}>
                         {[
-                            {label: 'Food', key: 'food_rating'},
-                            {label: 'Service', key: 'service_rating'},
-                            {label: 'Atmosphere', key: 'atmosphere_rating'},
-                            {label: 'Cleanliness', key: 'cleanliness_rating'},
-                            {label: 'Value', key: 'value_rating'}
+                            { label: 'Food', key: 'food_rating' },
+                            { label: 'Service', key: 'service_rating' },
+                            { label: 'Atmosphere', key: 'atmosphere_rating' },
+                            { label: 'Cleanliness', key: 'cleanliness_rating' },
+                            { label: 'Value', key: 'value_rating' }
                         ].map((item) => (
                             <div key={item.key} className={styles.subRatingItem}>
                                 <span className={styles.ratingLabel}>{item.label}</span>
-
                                 <ReviewStarsComponent
                                     rating={Number(editData[item.key]) || 0}
                                     interactive={editMode}
@@ -176,9 +176,9 @@ export const ReviewEditComponent = ({
                             </div>
                         ))}
                     </div>
-
                 </div>
             </div>
         </div>
     );
 };
+

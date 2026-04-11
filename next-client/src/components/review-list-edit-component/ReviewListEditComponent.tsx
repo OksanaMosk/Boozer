@@ -55,8 +55,6 @@ export const ReviewListEditComponent = () => {
 
     return (
         <div className={styles.listWrapper}>
-             <h2 className={styles.listTitle}>НЕ доробила</h2>
-
             <div className={styles.reviewsGrid}>
                 {reviews.length === 0 ? (
                     <p className={styles.noReviews}>No reviews found.</p>

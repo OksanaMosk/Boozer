@@ -118,10 +118,10 @@
 }
 
 .checkboxGroup {
-  display: flex;
-  align-items: center;
+    display: flex;
+    align-items: center;
     justify-content: center;
-  padding: 10px;
+    padding: 10px;
 }
 
 .checkbox {
@@ -136,8 +136,7 @@
   cursor: pointer;
 }
 
-.checkboxSpan {
-  width: 20px;
+.checkboxSpan {width: 20px;
   height: 20px;
   background-color: transparent;
     border: 1px solid #30240b;
@@ -159,7 +158,7 @@
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%); /* Центруємо символ всередині чекбокса */
+  transform: translate(-50%, -50%);
   line-height: 20px;
 }
 
@@ -172,7 +171,7 @@
     padding: 0.5rem 1rem;
     border-radius: 1.5rem;
     color: #30240b;
-      background: linear-gradient(90deg, #30240b, white, #30240b);
+    background: linear-gradient(90deg, #30240b, white, #30240b);
     cursor: pointer;
     outline: none;
     transition: all 0.3s ease-in-out;
@@ -193,6 +192,7 @@
     font-size: 0.875rem;
     text-align: center;
 }
+.linkRul,
 .link {
       background: linear-gradient(90deg, #7a5c1e, #d4af37, #f5e6a1, #d4af37, #7a5c1e);
   -webkit-background-clip: text;
@@ -202,6 +202,7 @@
     font-size: 1rem;
     text-decoration: none;
 }
+.linkRul:hover,
 .link:hover {
     text-decoration: underline;
 }
@@ -220,6 +221,10 @@
 .calendarSidebar {
   position: absolute;
   left: 115%;
-top: -22vh;
+    top: -22vh;
   z-index: 100;
+}
+.linkRul {
+    padding: 0;
+    font-size: 12px;
 }

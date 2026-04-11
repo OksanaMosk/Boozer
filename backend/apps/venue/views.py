@@ -9,6 +9,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from .filters import VenueFilter
 from .models import VenueModel, TagModel, TableModel, VenuePhotoModel, VenueTagModel, VenueTraffic
 from .serializers import VenueSerializer, TagSerializer, TableSerializer, VenuePhotoSerializer, VenueTagSerializer, \
     VenueOrdersStatsResponseSerializer, VenueTrafficSerializer
@@ -28,18 +29,30 @@ class VenueViewSet(viewsets.ModelViewSet):
     queryset = VenueModel.objects.all()
     serializer_class = VenueSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    filterset_fields = ['country', 'city']
+    filterset_class = VenueFilter
     search_fields = ['name', 'description']
-    ordering_fields = ['name', 'rating', 'created_at', 'average_check', 'reviews_count', 'views']
-    ordering = [ 'id', '-rating',]
+    ordering_fields = ['name', 'rating', 'created_at', 'converted_check', 'distance', 'average_check', 'reviews_count', 'views']
+    ordering = ['-rating', '-id']
 
     permission_classes = [IsAdminOrVenueAdminOrReadOnly]
 
     def get_queryset(self):
-        return get_venues_list(
+        target_curr = self.request.query_params.get('currency', 'UAH').upper()
+        qs = get_venues_list(
             user=self.request.user,
-            tags_param=self.request.query_params.get('tags__name')
+            tags_param=self.request.query_params.get('tags__name'),
+            lat = self.request.query_params.get('lat'),
+            lon = self.request.query_params.get('lon'),
+            target_currency=target_curr
         )
+        ordering = self.request.query_params.get('ordering')
+
+        if ordering:
+
+            return qs.order_by(ordering, '-id')
+
+        return qs.order_by('-rating', '-id')
+
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()

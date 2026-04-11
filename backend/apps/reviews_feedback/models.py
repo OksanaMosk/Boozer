@@ -54,7 +54,9 @@ class ReviewModel(SubRatingsMixin, BaseModel):
                   self.cleanliness_rating, self.value_rating]
         valid_scores = [s for s in scores if s > 0]
         if valid_scores:
-            self.rating = sum(valid_scores) / len(valid_scores)
+            self.rating = round(sum(valid_scores) / len(valid_scores), 1)
+        else:
+            self.rating = 0.0
         super().save(*args, **kwargs)
 
 

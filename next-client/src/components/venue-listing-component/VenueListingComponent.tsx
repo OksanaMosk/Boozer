@@ -127,15 +127,15 @@ const VenueListingComponent: React.FC<Props> = ({ venue, onDelete, onStatusChang
                             {oldStats && (
                                 <div className={styles.quickStats}>
                                     <div className={styles.statItem}>
-                                        <span className={styles.statLabel}>Day</span>
+                                        <span className={styles.statLabel}>Day:</span>
                                         <span className={styles.statValue}>{oldStats.daily_views}</span>
                                     </div>
                                     <div className={styles.statItem}>
-                                        <span className={styles.statLabel}>Week</span>
+                                        <span className={styles.statLabel}>Week:</span>
                                         <span className={styles.statValue}>{oldStats.weekly_views}</span>
                                     </div>
                                     <div className={styles.statItem}>
-                                        <span className={styles.statLabel}>Month</span>
+                                        <span className={styles.statLabel}>Month:</span>
                                         <span className={styles.statValue}>{oldStats.monthly_views}</span>
                                     </div>
                                     <div className={styles.statDivider}/>

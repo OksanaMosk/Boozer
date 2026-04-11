@@ -9,6 +9,10 @@ from apps.reviews_feedback.models import ReviewModel
 def update_venue_rating(sender, instance, **kwargs):
     venue = instance.venue
     stats = venue.reviews.filter(is_published=True).aggregate(avg=Avg('rating'))
-    venue.rating = stats['avg'] or 0
+
+    raw_avg = stats['avg'] or 0
+    venue.rating = round(raw_avg, 1)
+
+
     venue.reviews_count = venue.reviews.filter(is_published=True).count()
     venue.save(update_fields=['rating', 'reviews_count'])

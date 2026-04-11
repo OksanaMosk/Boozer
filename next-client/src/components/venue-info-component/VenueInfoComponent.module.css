@@ -262,8 +262,12 @@
     justify-content: center;
 }
 .overallLabel {
-    color: var(--color-noposter);
+    color: var(--color-text);
     font-family: var(--font-imperial),serif;
     margin: 0 8px 0 0;
     font-size: 20px;
+    font-weight: 600;
+}
+.hidden {
+    visibility: hidden;
 }

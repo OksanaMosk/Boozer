@@ -31,28 +31,40 @@ const getByParent = <T>(endpoint: (parentId: string) => string, token?: Token) =
     (parentId: string) => api(token).get<T>(endpoint(parentId));
 
 export interface VenueFilterCriteria {
-    name?: string;
+    search?: string;
     country?: string;
     city?: string;
     rating_min?: number;
     rating_max?: number;
-    reviews_count_min?: number;
-    reviews_count_max?: number;
+    min_check?: number;
+    max_check?: number;
+    currency?: string;
     tags?: string[];
-    sort_by?: "average_check" | "rating" | "reviews_count" | "views";
+    lat?: number;
+    lon?: number;
+    sort_by?: "name" | "rating" | "converted_check" | "created_at" | "distance" | "reviews_count" | "views";
     sort_order?: "asc" | "desc";
 }
 
 const buildVenueParams = (criteria?: VenueFilterCriteria & { page?: number }) => {
     const params: Record<string, string | number | boolean> = {};
     if (!criteria) return params;
-    if (criteria.name) params.name = criteria.name;
+
+    if (criteria.search) params.search = criteria.search;
+
     if (criteria.country) params.country = criteria.country;
     if (criteria.city) params.city = criteria.city;
+
     if (criteria.rating_min !== undefined) params.rating_min = criteria.rating_min;
     if (criteria.rating_max !== undefined) params.rating_max = criteria.rating_max;
-    if (criteria.reviews_count_min !== undefined) params.reviews_count_min = criteria.reviews_count_min;
-    if (criteria.reviews_count_max !== undefined) params.reviews_count_max = criteria.reviews_count_max;
+    if (criteria.min_check !== undefined) params.min_check = criteria.min_check;
+    if (criteria.max_check !== undefined) params.max_check = criteria.max_check;
+    if (criteria.currency) params.currency = criteria.currency;
+
+
+    if (criteria.lat !== undefined) params.lat = criteria.lat;
+    if (criteria.lon !== undefined) params.lon = criteria.lon;
+
     if (criteria.tags) {
         const tagValue = Array.isArray(criteria.tags)
             ? criteria.tags.join(",")

@@ -7,6 +7,7 @@ import profileService from "@/lib/services/profileService";
 import DatePickerComponent from "@/components/date-picker-component/DatePickerComponent";
 import {LoaderComponent} from "@/components/loader-component/LoaderComponent";
 import styles from "./CompleteProfileFormComponent.module.css";
+import Link from "next/link";
 
 export default function CompleteProfileFormComponent() {
     const [birthDate, setBirthDate] = useState<Date | null>(null);
@@ -71,7 +72,6 @@ export default function CompleteProfileFormComponent() {
             router.push("/dashboard");
 
         } catch (err: any) {
-            // console.error("Profile save error", err);
             setErrorMsg(`Profile save error: ${err.message}`);
         } finally {
             setIsSubmitting(false);
@@ -142,7 +142,10 @@ export default function CompleteProfileFormComponent() {
                             className={styles.checkboxInput}
                         />
                         <span className={styles.checkboxSpan}></span>
-                        I confirm that I am over 18 and accept the rules
+                        <Link href="/instruction"
+                              className={styles.linkRul}>
+                            I confirm I am 18+ and accept the rules
+                        </Link>
                     </label>
                 </div>
 

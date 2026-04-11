@@ -6,9 +6,11 @@ from better_profanity import profanity
 from apps.orders.services.exchange_service import get_today_rates
 from django.utils import timezone
 from core.services.email_service import EmailService
+from django.db.models import F, FloatField, ExpressionWrapper, Case, When
+from django.db.models.functions import ACos, Cos, Radians, Sin
 
 
-def get_venues_list(user, tags_param=None):
+def get_venues_list(user, tags_param=None, lat=None, lon=None, target_currency='UAH'):
     from apps.venue.models import VenueModel
     from apps.reviews_feedback.models import FavoriteVenue
     qs = VenueModel.objects.all()
@@ -34,7 +36,45 @@ def get_venues_list(user, tags_param=None):
         if tags_list:
             qs = qs.filter(tags__name__in=tags_list).distinct()
 
-    return qs.order_by('id', '-rating')
+    rates = get_today_rates()
+
+    def r(curr):
+        if curr == 'UAH': return 1.0
+        return float(rates.get(curr, 1.0))
+
+    t_rate = r(target_currency)
+    qs = qs.annotate(
+        converted_check=Case(
+            When(currency='USD',
+                 then=ExpressionWrapper(F('average_check') * r('USD') / t_rate, output_field=FloatField())),
+            When(currency='EUR',
+                 then=ExpressionWrapper(F('average_check') * r('EUR') / t_rate, output_field=FloatField())),
+            When(currency='UAH',
+                 then=ExpressionWrapper(F('average_check') * r('UAH') / t_rate, output_field=FloatField())),
+            default=F('average_check'),
+            output_field=FloatField()
+        )
+    )
+
+
+    if lat and lon:
+        try:
+            u_lat, u_lon = float(lat), float(lon)
+            qs = qs.annotate(
+                distance=ExpressionWrapper(
+                    6371 * ACos(
+                        Cos(Radians(u_lat)) * Cos(Radians(F('latitude'))) *
+                        Cos(Radians(F('longitude')) - Radians(u_lon)) +
+                        Sin(Radians(u_lat)) * Sin(Radians(F('latitude')))
+                    ),
+                    output_field=FloatField()
+                )
+            )
+        except (ValueError, TypeError):
+            pass
+
+    return qs
+
 
 
 def get_venue_create_data(user, description=''):
