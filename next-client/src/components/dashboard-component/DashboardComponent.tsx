@@ -17,17 +17,24 @@ import {OrdersVisitorComponent} from "@/components/orders-visitor-component/Orde
 import {ReviewListEditComponent} from "@/components/review-list-edit-component/ReviewListEditComponent";
 import {ButtonScrollBottomComponent} from "@/components/button-scroll-bottom-component/ButtonScrollBottomComponent";
 import {ButtonScrollTopComponent} from "@/components/button-scroll-top-component/ButtonScrollTopComponent";
+import {useSearchParams} from "next/navigation";
+import {PaginationComponent} from "@/components/pagination-component/PaginationComponent";
 
 interface IVenueWithId extends Omit<IVenue, 'id'> {
     id: string;
 }
 
 const DashboardComponent: React.FC = () => {
-    const { user, loading: userLoading } = useUser();
-    const { activeTab, setTab } = useDashboardTabs();
+    const {user, loading: userLoading} = useUser();
+    const {activeTab, setTab} = useDashboardTabs();
     const [venues, setVenues] = useState<IVenueWithId[]>([]);
     const [venuesLoading, setVenuesLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const searchParams = useSearchParams();
+    const currentPage = Number(searchParams.get("page") || "1");
+    const [totalPages, setTotalPages] = useState(1);
+
+
     const isAdmin = user?.role === "admin";
     const isVenueAdmin = user?.role === "venue_admin";
 
@@ -55,9 +62,16 @@ const DashboardComponent: React.FC = () => {
         const loadVenues = async () => {
             try {
                 setVenuesLoading(true);
-                const response = await userService.getUserVenues(String(user.id), { accessToken: user.token! });
-                const mappedVenues = response.venues.map((v: IVenue) => ({ ...v, id: String(v.id) } as IVenueWithId));
-                setVenues(mappedVenues);
+                setVenues([]);
+                const response = await userService.getUserVenues(String(user.id), { accessToken: user.token! }, { page: currentPage });
+                const data = (response as any).data || response;
+            setTotalPages(data.total_pages || 1);
+
+            const mappedVenues = (data.venues || []).map((v: IVenue) => ({
+                ...v, id: String(v.id)
+            } as IVenueWithId));
+
+            setVenues(mappedVenues);
             } catch (err) {
                 setVenues([]);
                 handleApiError(err);
@@ -66,7 +80,7 @@ const DashboardComponent: React.FC = () => {
             }
         };
         void loadVenues();
-    }, [user?.id, activeTab, isVenueAdmin, user?.token]);
+    }, [user?.id, activeTab, isVenueAdmin, user?.token, currentPage]);
 
 
     const handleDelete = (venueId: string) => {
@@ -140,6 +154,11 @@ const DashboardComponent: React.FC = () => {
                             ) : <p className={styles.titleNo}>No venues added yet.</p>
                             }
                         </div>
+                        {totalPages > 1 && (
+                            <div className={styles.paginationWrapper}>
+                                <PaginationComponent totalPages={totalPages}/>
+                            </div>
+                        )}
                         <ButtonScrollTopComponent/>
                     </section>
                 )}

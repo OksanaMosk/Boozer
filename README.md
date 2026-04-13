@@ -89,7 +89,7 @@ The backend: validates the token with the provider retrieves user data. After su
 
 🔒 Access Rules: Browsing — public, Orders & real pricing — authenticated users only.
 
-🚧 In Progress: Reviews, TOPs, Discounts & bonus system,  News (partial), Admin panel (partial), Statistics,  Average check calculations, Chat.
+🚧 In Progress: Chat.
 Postman collection is not tested for the Favorites, Review.
 
 🎊 Product Vision VIP Boozer is more than booking — it’s a full experience: travel, entertainment, comfort, personalization.

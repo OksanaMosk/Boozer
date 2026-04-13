@@ -107,14 +107,14 @@ def update_venue_background_url(venue, url):
     return venue
 
 
-
 def get_user_venues(user, user_id):
     from apps.venue.models import VenueModel
     if user.role in ['admin']:
-        return VenueModel.objects.filter(venue_admin__id=user_id)
+        return VenueModel.objects.filter(venue_admin__id=user_id).order_by('-id')
     if user.role == 'venue_admin' and user.id == user_id:
-        return VenueModel.objects.filter(venue_admin__id=user_id)
+        return VenueModel.objects.filter(venue_admin__id=user_id).order_by('-id')
     return VenueModel.objects.none()
+
 
 def notify_admin(venue):
     send_mail(

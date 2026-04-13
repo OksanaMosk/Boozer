@@ -7,7 +7,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.decorators import api_view, permission_classes, action
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
-from rest_framework.views import APIView
+from rest_framework.generics import ListAPIView
 
 from .filters import VenueFilter
 from .models import VenueModel, TagModel, TableModel, VenuePhotoModel, VenueTagModel, VenueTraffic
@@ -193,19 +193,23 @@ class TablesLayoutViewSet(viewsets.ViewSet):
         update_venue_background_url(venue, url)
         return Response({'url': venue.background_tables})
 
-class VenueUserListView(APIView):
-    """
-    get:
-        Retrieve a list of venues belonging to the authenticated user.
-        Only accessible to logged-in users.
-    """
 
+class VenueUserListView(ListAPIView):
     permission_classes = [IsAdminOrVenueAdminOrReadOnly]
+    serializer_class = VenueSerializer
 
-    def get(self, request, user_id):
-        venues = get_user_venues(request.user, user_id)
-        serializer = VenueSerializer(venues, many=True)
-        return Response({'venues': serializer.data})
+    def get_queryset(self):
+        return get_user_venues(self.request.user, self.kwargs.get('user_id'))
+
+    def list(self, request, *args, **kwargs):
+        response = super().list(request, *args, **kwargs)
+
+        if isinstance(response.data, dict) and 'data' in response.data:
+            response.data['venues'] = response.data.pop('data')
+        elif isinstance(response.data, list):
+            response.data = {'venues': response.data}
+
+        return response
 
 
 @api_view(['GET'])

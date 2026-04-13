@@ -7,7 +7,6 @@ from django.utils import timezone
 from django.db import transaction
 
 
-
 def create_order_with_details(user, venue_id, validated_data, items_data, extra_services_data):
     with transaction.atomic():
         from apps.orders.models import OrderModel, OrderExtraServiceModel, OrderItemModel

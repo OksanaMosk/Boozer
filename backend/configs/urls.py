@@ -22,6 +22,7 @@ urlpatterns = [
     path('api/orders/', include('apps.orders.urls')),
     path('api/reviews-feedback/', include('apps.reviews_feedback.urls')),
     path('api/news/', include('apps.news.urls')),
+    path('api/rooms/', include('apps.chat.urls')),
     path('api/exchange-rates/', ExchangeRateView.as_view(), name='exchange_rates'),
 ]
 

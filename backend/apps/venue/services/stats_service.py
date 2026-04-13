@@ -69,6 +69,7 @@ MAX_EDIT_ATTEMPTS = 3
 
 def handle_venue_update_profanity(venue, serializer, user):
     description = serializer.validated_data.get('description')
+    new_status = serializer.validated_data.get('status')
     user_role = getattr(user, 'role', '')
 
     if venue.edit_attempts >= MAX_EDIT_ATTEMPTS and user_role != 'admin':
@@ -76,12 +77,16 @@ def handle_venue_update_profanity(venue, serializer, user):
 
     if user_role.lower() == 'admin' or user.is_staff:
         venue.edit_attempts = 0
+        if new_status:
+            venue.status = new_status
         venue.save(update_fields=['edit_attempts', 'status'])
         return
 
     if not (description and profanity.contains_profanity(description)):
         venue.edit_attempts = 0
-        venue.save(update_fields=['edit_attempts'])
+        if new_status:
+            venue.status = new_status
+        venue.save(update_fields=['edit_attempts', 'status'])
         return
 
     venue.edit_attempts += 1

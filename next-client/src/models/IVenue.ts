@@ -148,8 +148,13 @@ export interface IVenueWithId extends Omit<IVenue, "id"> {
 }
 
 export interface GetUserVenuesResponse {
-    venues: IVenue[];
+  venues: IVenueWithId[];
+  total_pages: number;
+  count?: number;
+  next?: string | null;
+  previous?: string | null;
 }
+
 
 export interface PaginatedResponse<T> {
   total_items: number;

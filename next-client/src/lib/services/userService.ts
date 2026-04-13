@@ -62,9 +62,9 @@ const userService = {
     }
   },
 
-  getUserVenues: async (userId: string, token: { accessToken: string }) => {
+  getUserVenues: async (userId: string, token: { accessToken: string }, params?: any) => {
     try {
-      const response = await apiService(token.accessToken).get<GetUserVenuesResponse>(urls.users.userVenues(userId));
+      const response = await apiService(token.accessToken).get<GetUserVenuesResponse>(urls.users.userVenues(userId), { params });
       return response.data;
     } catch (err: any) {
       if (err.isUnauthorized) throw new Error("Please Sign In");

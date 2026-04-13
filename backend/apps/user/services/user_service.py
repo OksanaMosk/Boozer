@@ -7,7 +7,6 @@ from apps.user.models import ProfileModel, UserModel
 from core.services.email_service import EmailService
 
 
-
 class UserService:
     @staticmethod
     @transaction.atomic
