@@ -65,6 +65,15 @@ Real conversion happens only at checkout.
 
 📰 News. Categories: General, Promotions, Events, Promotions and events may require payment to be published.
 
+📊 Automated Analytics: The Average Check is automatically calculated in the venue’s local currency. For reference, the payment currency used by each visitor is also displayed.
+
+📊 Statistical Insights: The Analytics section provides data on all orders, including:
+Total number of confirmed orders.
+Visitor demographics (gender distribution).
+Budget preferences to analyze potential customer expectations and adjust pricing strategies accordingly.
+
+📰 Reviews — can only be posted after a confirmed order. Review Limits: Users will see a notification: "You have already submitted reviews for all your confirmed visits" if there are no new confirmed orders available for feedback.
+
 Roles. 👫Visitor: Browse platform, Create Boozer orders, Book menus, tables, transfer, and more, Make payments.
 
 🤵Venue Admin: Manage own venues, Menus, tables, services.
@@ -87,7 +96,7 @@ The backend: validates the token with the provider retrieves user data. After su
 
 🔒 Advantages: No password storage required. Secure integration with external providers. Scalable and stateless authentication via JWT. Unified authorization system across frontend and backend.
 
-🔒 Access Rules: Browsing — public, Orders & real pricing — authenticated users only.
+🔒 Access Rules: Browsing — public, Orders & real pricing — authenticated users only. 
 
 🚧 In Progress: Chat.
 Postman collection is not tested for the Favorites, Review.
