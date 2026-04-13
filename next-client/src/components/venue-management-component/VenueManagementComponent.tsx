@@ -73,7 +73,7 @@ const VenueManagementComponent: React.FC<Props> = ({userId}) => {
         <div>
              <div className={styles.paginationWrapper}>
             </div>
-            <h2 className={styles.title} >Manage Venue Listings TAB</h2>
+            <h2 className={styles.title} >Manage Venue Listings</h2>
             <div className={styles.table}>
                 {venuesLoading ? (
                     <LoaderComponent/>
