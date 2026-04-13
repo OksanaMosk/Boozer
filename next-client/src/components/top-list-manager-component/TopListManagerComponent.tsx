@@ -24,7 +24,7 @@ export const TopListManagerComponent: React.FC<Props> = () => {
         if (!user?.token) return
         const res = await venueServices.collections({accessToken: user.token}).mostHearted();
         setCollections(res.data || []);
-        console.log('Top:', res);
+        // console.log('Top:', res);
 
     } catch (e) {
 

@@ -8,15 +8,25 @@ import { ReviewEditComponent } from "@/components/review-edit-component/ReviewEd
 import {LoaderComponent} from "@/components/loader-component/LoaderComponent";
 import {PaginationComponent} from "@/components/pagination-component/PaginationComponent";
 import {useSearchParams} from "next/navigation";
+import {ButtonScrollBottomComponent} from "@/components/button-scroll-bottom-component/ButtonScrollBottomComponent";
+import {ButtonScrollTopComponent} from "@/components/button-scroll-top-component/ButtonScrollTopComponent";
 
 export const ReviewListEditComponent = () => {
     const { user } = useUser();
     const [reviews, setReviews] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [loadingId, setLoadingId] = useState<string | number | null>(null);
+    const [message, setMessage] = useState<{ text: string; isError: boolean } | null>(null);
     const searchParams = useSearchParams();
     const currentPage = Number(searchParams.get("page") || "1");
     const [totalPages, setTotalPages] = useState(1);
+
+    useEffect(() => {
+    if (message) {
+        const timer = setTimeout(() => setMessage(null), 4000);
+        return () => clearTimeout(timer);
+    }
+}, [message]);
 
     useEffect(() => {
         const fetchReviews = async () => {
@@ -27,7 +37,7 @@ export const ReviewListEditComponent = () => {
                 setReviews(responseData.data || []);
                 setTotalPages(responseData.total_pages || 1);
             } catch (error) {
-                console.error("Failed to fetch reviews:", error);
+                 setMessage({ text: "Failed to load reviews.", isError: true });
             } finally {
                 setLoading(false);
             }
@@ -50,8 +60,10 @@ export const ReviewListEditComponent = () => {
         try {
             await venueServices.reviews.delete(reviewId.toString(), { accessToken: user.token });
             setReviews((prev) => prev.filter((r) => r.id !== reviewId));
-        } catch (error) {
-            console.error("Delete failed:", error);
+             setMessage({ text: "Review deleted successfully", isError: false });
+        } catch (error:any) {
+            const errorMsg = error.response?.data?.detail || "Delete failed";
+            setMessage({ text: errorMsg, isError: true });
         } finally {
             setLoadingId(null);
         }
@@ -61,6 +73,12 @@ export const ReviewListEditComponent = () => {
 
     return (
         <div className={styles.listWrapper}>
+            {message && (
+                    <p  className={styles.errorMessage}>
+                        {message.isError ? '⚠️ ' : '✅ '}{message.text}
+                    </p>
+                )}
+               <ButtonScrollBottomComponent/>
             <div className={styles.reviewsGrid}>
                 {reviews.length === 0 ? (
                     <p className={styles.noReviews}>No reviews found.</p>
@@ -84,6 +102,7 @@ export const ReviewListEditComponent = () => {
                     <PaginationComponent totalPages={totalPages}/>
                 </div>
             )}
+            <ButtonScrollTopComponent/>
         </div>
     );
 };

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import styles from "./ReviewEditComponent.module.css";
 import { useUser } from "@/app/contexts/UserProvider";
 import venueServices from "@/lib/services/venueService";
@@ -18,11 +18,19 @@ export const ReviewEditComponent = ({
     review,
     onDelete,
     onUpdate
-}: ReviewEditComponentProps) => {
-    const { user } = useUser();
+                                    }: ReviewEditComponentProps) => {
+    const {user} = useUser();
     const [editMode, setEditMode] = useState(false);
     const [editData, setEditData] = useState(review);
     const [loading, setLoading] = useState(false);
+    const [message, setMessage] = useState<string | null>(null);
+
+    useEffect(() => {
+    if (message) {
+        const timer = setTimeout(() => setMessage(null), 4000);
+        return () => clearTimeout(timer);
+    }
+}, [message]);
 
     const calculateOverall = (data: any) => {
         const sum =
@@ -53,6 +61,7 @@ export const ReviewEditComponent = ({
     const handleSave = async () => {
     if (!user?.token) return;
     setLoading(true);
+    setMessage(null);
     try {
         const payload = {
             comment: editData.comment,
@@ -73,8 +82,9 @@ export const ReviewEditComponent = ({
         setEditData(updated);
         if (onUpdate) onUpdate(updated);
         setEditMode(false);
-    } catch (error) {
-        console.error("Save failed", error);
+    } catch (error:any) {
+        const errorMsg = error.response?.data?.detail || "Failed to update review. Please check your data.";
+        setMessage(errorMsg);
     } finally {
         setLoading(false);
     }
@@ -132,8 +142,10 @@ export const ReviewEditComponent = ({
                                         </button>
                                     )}
                                 </>
+
                             )}
                         </div>
+                          {message && <p className={styles.errorMessage}>{message}</p>}
                     </div>
 
                     <div>

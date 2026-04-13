@@ -56,7 +56,6 @@ const MenuVisitorComponent = ({venueId}: Props) => {
                 const publishedMenus = menus.filter((menu: any) => menu.is_published);
 
                 const allItems = publishedMenus.flatMap((menu: any) => menu.items || []);
-                console.log("VISITOR:", response.data);
                 const grouped = allItems.reduce(
                     (acc: Record<string, IMenuItem[]>, item: IMenuItem) => {
                         const category = item.category || "other";

@@ -36,7 +36,6 @@ const VenueInfoComponent: React.FC<Props> = ({venue}) => {
                 try {
                     const res = await venueServices.venues.favorites(auth)(String(venue.id)).getAll();
                     const favorites = res.data?.data || res.data || [];
-                    console.log('favorites:', favorites);
                     const exists = Array.isArray(favorites)
                         ? favorites.some(fav => fav.is_staff_top === false)
                         : (favorites.id && favorites.is_staff_top === false);
@@ -45,7 +44,6 @@ const VenueInfoComponent: React.FC<Props> = ({venue}) => {
                     if (error.message === "Please Sign In") {
                         setIsUnauthorized(true);
                     }
-                    console.error("Sync favorite error:", error);
                 }
             };
             void checkFavoriteStatus();
@@ -59,7 +57,6 @@ const VenueInfoComponent: React.FC<Props> = ({venue}) => {
                 const res = await venueServices.collections({accessToken: user.token}).getAll();
                 setUserCollections(res.data.data || res.data || []);
             } catch (e) {
-                console.error("Failed to fetch collections:", e);
             }
         };
         void fetchCollections();

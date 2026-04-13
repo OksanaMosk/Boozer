@@ -81,26 +81,30 @@ class EmailService:
 
     @classmethod
     def refund_request(cls, user, order):
-        display_name = (
-            user.profile.name if hasattr(user, 'profile') and user.profile.name
-            else user.get_full_name() or user.username or user.email
-        )
+        p = getattr(user, 'profile', None)
+        display_name = f"{getattr(p, 'name', '')} {getattr(p, 'surname', '')}".strip() if p else ""
+        if not display_name:
+            display_name = getattr(user, 'username', user.email if user.email else f"User#{user.id}")
 
         context = {
             'name': display_name,
-            'email': user.email,
+            'email': user.email or "no-email@provided.com",
             'order_id': order.id,
             'total_price': order.total_price,
             'currency': order.currency,
-            'admin_name': "Administrator"
         }
 
-        cls.__send_email.delay(
-            to=os.environ.get('EMAIL_HOST_USER'),
-            template_name='refund_request.html',
-            context=context,
-            subject=f"🚨 PRIORITY: Refund Request #{order.id} - {display_name}"
-        )
+        admin_email = os.environ.get('EMAIL_HOST_USER')
+
+        if admin_email:
+            cls.__send_email.delay(
+                to=admin_email,
+                template_name='refund_request.html',
+                context=context,
+                subject=f"🚨 REFUND REQUEST #{order.id} - {display_name}"
+            )
+        else:
+            print(f"CRITICAL: Email not sent. EMAIL_HOST_USER is not set in ENV.")
 
     @classmethod
     def send_profanity_notification(cls, venue):

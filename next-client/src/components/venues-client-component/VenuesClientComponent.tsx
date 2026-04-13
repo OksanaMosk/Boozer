@@ -9,6 +9,7 @@ import VenueFilterComponent from "@/components/venue-filter-component/VenueFilte
 import {LoaderComponent} from "@/components/loader-component/LoaderComponent";
 import styles from "./VenuesClientComponent.module.css";
 import {useUser} from "@/app/contexts/UserProvider";
+import {fetchCoordinatesByIP} from "@/lib/services/geoIpService";
 
 interface VenueFilters {
     search?: string;
@@ -80,7 +81,7 @@ export const VenuesClientComponent = () => {
         };
     }, [searchParams, user?.token, router]);
 
-    const handleFilterChange = (newFilters: VenueFilters) => {
+    const handleFilterChange = async (newFilters: VenueFilters) => {
         const params = new URLSearchParams();
 
         const applyParams = (filters: any) => {
@@ -115,8 +116,17 @@ export const VenuesClientComponent = () => {
                             lat: pos.coords.latitude,
                             lon: pos.coords.longitude
                         });
+
+
                     },
-                    () => applyParams(newFilters)
+                  async () => {
+                    const ipData = await fetchCoordinatesByIP();
+                    if (ipData) {
+                        applyParams({ ...newFilters, lat: ipData.lat, lon: ipData.lng });
+                    } else {
+                        applyParams({ ...newFilters, sort_by: 'rating' });
+                    }
+                }
                 );
                 return;
             }

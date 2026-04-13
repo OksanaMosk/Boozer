@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, {useState} from "react";
 import {LoaderComponent} from "@/components/loader-component/LoaderComponent";
 import styles from "./VenuePhotosComponent.module.css";
 
@@ -32,6 +32,12 @@ export const VenuePhotosComponent = ({
                                          onDeleteExisting,
                                          loading,
                                      }: VenuePhotosProps) => {
+    const [message, setMessage] = useState("");
+
+    const showMessage = (text: string) => {
+        setMessage(text);
+        setTimeout(() => setMessage(""), 5000);
+    };
 
     const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (!e.target.files) return;
@@ -39,10 +45,11 @@ export const VenuePhotosComponent = ({
         const MAX_LIMIT = 7;
         const currentTotal = existingPhotos.length + newFiles.length;
         if (currentTotal + selectedFiles.length > MAX_LIMIT) {
-            alert(`You can only have up to ${MAX_LIMIT} photos. You already have ${currentTotal}.`);
+             showMessage(`Limit reached: ${MAX_LIMIT} photos max. You have ${currentTotal}.`);
             e.target.value = "";
             return;
         }
+         setMessage("");
         const mappedFiles = selectedFiles.map((file, i) => ({
             file,
             preview_url: URL.createObjectURL(file),
@@ -65,6 +72,7 @@ export const VenuePhotosComponent = ({
 
     return (
         <form onSubmit={onAddPhotos} className={styles.photoWrapper}>
+              {message && <p className={styles.errorMessage}>{message}</p>}
             <label className={styles.label}>
                 Upload Photos (Total: {existingPhotos.length + newFiles.length} / 7)
             </label>

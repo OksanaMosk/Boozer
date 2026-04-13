@@ -1,8 +1,20 @@
-.title {
+.title,
+.titleNo {
     padding: 0;
     margin: 0 ;
     font-family: var(--font-imperial),serif;
     font-size: 3rem;
     letter-spacing: 2px;
     color: var(--color-text);
+}
+.titleNo {
+    margin-top: 80px;
+    font-size: 2rem;
+}
+.errorMessage {
+    text-align: center;
+    margin: 0 auto;
+    width: 100%;
+    color: var(--logo-hover-color);
+    font-size: 0.8rem;
 }

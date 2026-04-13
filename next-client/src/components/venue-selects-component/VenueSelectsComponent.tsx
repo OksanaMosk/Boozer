@@ -22,6 +22,7 @@ const VenueSelectsComponent: React.FC<VenueSelectsProps> = ({
                                                             }) => {
     const [countriesList, setCountriesList] = useState<string[]>([]);
     const [cityByCountry, setCityByCountry] = useState<Record<string, string[]>>({});
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         venueServices.constants
@@ -29,8 +30,9 @@ const VenueSelectsComponent: React.FC<VenueSelectsProps> = ({
             .then(({data}) => {
                 setCountriesList(data.countries);
                 setCityByCountry(data.cities_by_country);
+                setError(null);
             })
-            .catch((err) => console.error("Failed to load constants", err));
+             .catch(() => setError("Failed to load countries list."));
     }, []);
 
     const availableCity = country ? cityByCountry[country] || [] : [];
@@ -42,7 +44,7 @@ const VenueSelectsComponent: React.FC<VenueSelectsProps> = ({
 
     const handleCityChange = async (value: string) => {
         setCity(value);
-
+        setError(null);
         if (value && country) {
             try {
                 const coords = await fetchCoordinates(value, country);
@@ -50,7 +52,7 @@ const VenueSelectsComponent: React.FC<VenueSelectsProps> = ({
                     setCoordinates(coords.latitude, coords.longitude);
                 }
             } catch (error) {
-                console.error("Error fetching coordinates:", error);
+                setError("Could not determine coordinates for this city.");
             }
         }
     };
@@ -86,7 +88,7 @@ const VenueSelectsComponent: React.FC<VenueSelectsProps> = ({
                         </option>
                     ))}
                 </select>
-            )}
+            )}  {error && <p className={styles.errorMessage}>{error}</p>}
         </div>
     );
 };

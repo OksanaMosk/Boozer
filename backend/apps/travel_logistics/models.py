@@ -4,6 +4,8 @@ from core.constants.currencies import CURRENCY_CHOICES
 from core.constants.extra_services import SERVICE_TYPES, PRICE_TYPES, FIXED
 from core.constants.travel_logistics import STEP_TYPES, TO_AIRPORT
 from core.models import BaseModel
+from decimal import Decimal
+from django.core.validators import MinValueValidator
 
 class TravelLogisticsModel(BaseModel):
     class Meta:
@@ -25,7 +27,8 @@ class TravelLogisticsModel(BaseModel):
     price_per_km = models.DecimalField(
         max_digits=10,
         decimal_places=2,
-        default=0
+        default=0,
+        validators=[MinValueValidator(Decimal('0.00'), message="Price cannot be negative.")]
     )
     currency = models.CharField(
         max_length=3,
@@ -80,12 +83,13 @@ class ExtraServiceModel(models.Model):
     price_type = models.CharField(
         max_length=20,
         choices=PRICE_TYPES,
-        default=FIXED
+        default=FIXED,
     )
 
     price = models.DecimalField(
         max_digits=10,
-        decimal_places=2
+        decimal_places=2,
+        validators=[MinValueValidator(Decimal('0.00'), message="Price cannot be negative.")]
     )
     currency = models.CharField(
         max_length=3,

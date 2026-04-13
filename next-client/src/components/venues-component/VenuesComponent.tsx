@@ -123,7 +123,6 @@ const VenuesComponent: React.FC<VenuesComponentProps> = ({venues, totalPages, is
                 </div>
             )}
             <ul className={styles.list}>
-                {/*{venues.filter(venue => venue.status === 'active').map((venue) => (*/}
                 {venues.map((venue) => (
                     <li key={venue.id} className={styles.item}>
                         <button

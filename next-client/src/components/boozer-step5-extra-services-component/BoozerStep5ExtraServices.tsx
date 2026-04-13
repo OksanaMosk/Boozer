@@ -23,6 +23,7 @@ const BoozerStep5ExtraServices = ({venueId, orderId, onNext, onBack}: Props) => 
     const [order, setOrder] = useState<IOrder | null>(null);
     const [extraServices, setExtraServices] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [message, setMessage] = useState("");
     const [isBackLoading, setIsBackLoading] = useState(false);
     const [includeLogistics, setIncludeLogistics] = useState(true);
     const [lastTravelData, setLastTravelData] = useState<any>(null);
@@ -71,9 +72,6 @@ const BoozerStep5ExtraServices = ({venueId, orderId, onNext, onBack}: Props) => 
                 setVenueCurrency(venueCurr);
                 setCurrency(venueCurr);
 
-                console.log("Travel logistics:", travelLogisticsData);
-                console.log("Detected currency:", venueCurrency);
-
                 setExtraServices(Array.isArray(servicesData) ? servicesData : []);
                 setGuestCount(orderData.guests_count || 1);
                 if (orderData.start_date && orderData.end_date) {
@@ -83,7 +81,7 @@ const BoozerStep5ExtraServices = ({venueId, orderId, onNext, onBack}: Props) => 
                     setNightCount(days > 0 ? days : 1);
                 }
             } catch (error) {
-                console.error("Fetch error:", error);
+                setMessage("Failed to load services data.");
             } finally {
                 setIsLoading(false);
             }
@@ -110,6 +108,7 @@ const BoozerStep5ExtraServices = ({venueId, orderId, onNext, onBack}: Props) => 
     const handleSave = async () => {
         if (!user?.token) return;
         setIsSaving(true);
+        setMessage("");
         const payload = {
             guests_count: guestCount,
             travel_calculation: lastTravelData,
@@ -132,11 +131,10 @@ const BoozerStep5ExtraServices = ({venueId, orderId, onNext, onBack}: Props) => 
                 }),
         };
         try {
-            console.log("PAYLOAD5:", payload);
             await venueServices.venues.orders({accessToken: user.token})(venueId).update(orderId, payload as any);
             onNext();
-        } catch (error) {
-            console.error(" Помилка при збереженні:", error);
+        } catch (error:any) {
+            setMessage(error.response?.data?.detail || "Error saving extra services.");
         } finally {
             setIsSaving(false);
         }
@@ -258,6 +256,7 @@ const BoozerStep5ExtraServices = ({venueId, orderId, onNext, onBack}: Props) => 
                 </div>
 
             </div>
+             {message && <p className={styles.errorMessage}>{message}</p>}
             <div className={styles.actions}>
                 <button onClick={handleBack} className={styles.buttonPrev} disabled={isBackLoading}>
                     {isBackLoading ?

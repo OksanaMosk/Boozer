@@ -16,6 +16,8 @@ const TravelLogisticsFormComponent: React.FC<Props> = ({ venueId }) => {
     const { user } = useUser();
     const token = user?.token ? {accessToken: user.token} : undefined;
     const [loading, setLoading] = useState(false);
+    const [errorMsg, setErrorMsg] = useState<string | null>(null);
+    const [successMsg, setSuccessMsg] = useState<string | null>(null);
     const [savedLogistics, setSavedLogistics] = useState<ITravelLogistics[]>([]);
     const [savedExtras, setSavedExtras] = useState<IExtraService[]>([]);
     const [logistics, setLogistics] = useState<Partial<ITravelLogistics>[]>([
@@ -38,8 +40,6 @@ const TravelLogisticsFormComponent: React.FC<Props> = ({ venueId }) => {
             ]);
             const actualLogistics = logRes.data.data || [];
             const actualExtras = extraRes.data.data || [];
-            console.log("Logistics Array:", actualLogistics);
-            console.log("Extras Array:", actualExtras);
             setSavedLogistics(actualLogistics);
             setSavedExtras(actualExtras);
             if (actualLogistics.length > 0) {
@@ -50,7 +50,7 @@ const TravelLogisticsFormComponent: React.FC<Props> = ({ venueId }) => {
             }
 
         } catch (err) {
-            console.error("Помилка завантаження:", err);
+             setErrorMsg("Failed to load data. Please check your connection or refresh the page.");
         }
     };
 
@@ -59,6 +59,7 @@ const TravelLogisticsFormComponent: React.FC<Props> = ({ venueId }) => {
     }, [venueId, user?.token]);
 
     const handleLogisticsChange = (type: string, value: string) => {
+        setErrorMsg(null);
         const numValue = Math.max(0, parseFloat(value) || 0);
         setLogistics(prev => prev.map(item =>
             item.step_type === type ? {...item, price_per_km: numValue} : item
@@ -66,6 +67,7 @@ const TravelLogisticsFormComponent: React.FC<Props> = ({ venueId }) => {
     };
 
     const handleServiceChange = (type: string, field: keyof IExtraService, value: string) => {
+        setErrorMsg(null);
         setExtraServices(prev => prev.map(item =>
             item.service_type === type
                 ? {...item, [field]: field === 'price' ? Math.max(0, parseFloat(value) || 0) : value}
@@ -74,8 +76,13 @@ const TravelLogisticsFormComponent: React.FC<Props> = ({ venueId }) => {
     };
 
     const handleSave = async () => {
-        if (!token) return alert("Please Sign In");
+       if (!token) {
+        setErrorMsg("Please Sign In to save settings.");
+        return;
+    }
         setLoading(true);
+         setErrorMsg(null);
+          setSuccessMsg(null);
         try {
             await Promise.all([
                 venueServices.venues.travelLogistics(token)(venueId).updatePrices(
@@ -90,10 +97,22 @@ const TravelLogisticsFormComponent: React.FC<Props> = ({ venueId }) => {
                     }))
                 )
             ]);
-            alert("Save!");
+              setSuccessMsg("Settings saved successfully!");
             await fetchData();
-        } catch (err) {
-            alert("Error Save");
+            setTimeout(() => setSuccessMsg(null), 3000);
+       } catch (error: any) {
+        const data = error?.response?.data;
+        if (data) {
+            const errorData = data.price || data.price_per_km || data.detail;
+            if (errorData) {
+                const message = Array.isArray(errorData) ? errorData[0] : errorData;
+                setErrorMsg(message);
+            } else {
+                setErrorMsg("Failed to save. Please check your inputs.");
+            }
+        } else {
+            setErrorMsg("Error Save: Server is not responding.");
+        }
         } finally {
             setLoading(false);
         }
@@ -130,7 +149,7 @@ const TravelLogisticsFormComponent: React.FC<Props> = ({ venueId }) => {
                 <h2 className={styles.mainTitle}>Update or Create Rates</h2>
 
                 <div className={styles.editorBlock}>
-                    <h3 className={`${styles.blockTitle} styles.logisticsTitle`}>Logistics Settings</h3>
+                    <h3 className={`${styles.blockTitle} ${styles.logisticsTitle}`}>Logistics Settings</h3>
                     <div className={styles.inputList}>
                         {logistics.map((item) => (
                             <div key={item.step_type} className={styles.inputRow}>
@@ -140,16 +159,20 @@ const TravelLogisticsFormComponent: React.FC<Props> = ({ venueId }) => {
                                         type="number" step="0.1"
                                         value={item.price_per_km || ""}
                                         onChange={(e) => handleLogisticsChange(item.step_type!, e.target.value)}
+                                        onKeyDown={(e) => {
+                                            if (e.key === '-') e.preventDefault();
+                                        }}
                                         className={styles.inputField}
                                     /></div>
                                 <p className={styles.value}>{item.currency}/km</p>
+
                             </div>
                         ))}
                     </div>
                 </div>
 
                 <div className={styles.editorBlock}>
-                    <h3 className={`${styles.blockTitle} styles.servicesTitle`}>Extra Services</h3>
+                    <h3 className={`${styles.blockTitle} ${styles.servicesTitle}`}>Extra Services</h3>
                     <div className={styles.inputList}>
                         {extraServices.map((service) => (
                             <div key={service.service_type} className={styles.inputRow}>
@@ -162,6 +185,9 @@ const TravelLogisticsFormComponent: React.FC<Props> = ({ venueId }) => {
                                         type="number"
                                         value={service.price || ""}
                                         onChange={(e) => handleServiceChange(service.service_type!, 'price', e.target.value)}
+                                        onKeyDown={(e) => {
+                                            if (e.key === '-') e.preventDefault();
+                                        }}
                                         className={styles.inputField}
                                     />
                                 </div>
@@ -169,7 +195,8 @@ const TravelLogisticsFormComponent: React.FC<Props> = ({ venueId }) => {
                         ))}
                     </div>
                 </div>
-
+                  {successMsg && <p className={styles.errorMessage}>{successMsg}</p>}
+                {errorMsg && <p className={styles.errorMessage}>{errorMsg}</p>}
                 <button
                     onClick={handleSave}
                     disabled={loading}

@@ -23,19 +23,15 @@ export const OrderItemComponent = ({ order, onUpdate, venueId }: OrderItemProps)
 
     const userRole = user.role?.toLowerCase();
     const isAdmin = userRole === "admin";
-    const isVenueAdmin = userRole === "venue_admin";
-    const orderVenueId = String(order.venue?.id || order.venue);
-        console.log('orderVenueId', orderVenueId);
-    const hasAccess = user.managed_venue_ids?.includes(Number(orderVenueId));
-const canManage = isAdmin || (isVenueAdmin && (hasAccess || (venueId && String(venueId) === orderVenueId)));
-console.log('userRole:', userRole);
-console.log('user :', user );
-        
+        const isVenueAdmin = userRole === "venue_admin";
+        const orderVenueId = String(order.venue?.id || order.venue);
+        const hasAccess = user.managed_venue_ids?.includes(Number(orderVenueId));
+        const canManage = isAdmin || (isVenueAdmin && (hasAccess || (venueId && String(venueId) === orderVenueId)));
 
         return {
             canManage,
             canDelete: isAdmin,
-            canRefund: (String(user.id) === String(order.user?.id || order.user) || isAdmin) &&
+            canRefund: (String(user.id) === String(order.user?.id || order.user) ) &&
                 order.status === "CONFIRMED" && !order.comment?.includes("[REFUND]"),
             isRefundPending: order.comment?.includes("[REFUND]")
         };
@@ -66,12 +62,12 @@ console.log('user :', user );
 
     const onAdminCancel = () => {
         if (!orderService) return;
-        void requestAction(() => orderService.updateStatus(String(order.id), "CANCELLED"), "Status: CANCELLED");
+        void requestAction(() => orderService.updateStatus(String(order.id), "CANCELLED"), "status: CANCELLED");
     };
 
     const onAdminDelete = () => {
         if (!orderService) return;
-        void requestAction(() => orderService.delete(String(order.id)), "Order Purged");
+        void requestAction(() => orderService.delete(String(order.id)), "Order Deleted");
     };
 
     const onRefundRequest = () => {
@@ -190,14 +186,20 @@ console.log('user :', user );
                         <div className={styles.processingState}>Processing...</div>
                     ) : (
                         <div className={styles.buttonLayout}>
-                            {permissions.canManage && (
-                                <div className={styles.managementGroup}>
-                                    <button className={styles.secondaryBtn} onClick={onAdminCancel}>Cancel Order
+                            {order.status !== "CANCELLED" ? (
+                                permissions.canManage && (
+                                    <button className={styles.secondaryBtn} onClick={onAdminCancel}>
+                                        Cancel Order
                                     </button>
-                                    {permissions.canDelete && (
-                                        <button className={styles.dangerBtn} onClick={onAdminDelete}>Delete</button>
-                                    )}
-                                </div>
+                                )
+                            ) : (
+
+                                <span className={styles.cancelledLabel}>Order is Cancelled</span>
+                            )}
+                            {permissions.canDelete && (
+                                <button className={styles.dangerBtn} onClick={onAdminDelete}>
+                                    Delete
+                                </button>
                             )}
                             {permissions.canRefund && (
                                 <button className={styles.premiumActionBtn} onClick={onRefundRequest}>Request

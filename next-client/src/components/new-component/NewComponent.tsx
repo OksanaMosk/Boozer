@@ -61,26 +61,31 @@ export const NewComponent = ({news, venueId, onDelete, onUpdate, isReadOnly = fa
                 onUpdate(updatedNews);
                 setCoverMessage("");
             }
-        } catch (err) {
-            console.error("Failed to set cover:", err);
+        } catch (err:any) {
+            const errorText = err.response?.data?.detail || "Failed to set cover image";
+            setCoverMessage(errorText);
+            setTimeout(() => setCoverMessage(""), 3000);
         }
     };
     const handleSave = async () => {
         if (!user?.token) return;
         setLoading(true);
+        setCoverMessage("");
         try {
             const formData = new FormData();
             formData.append("title", editNews.title);
             formData.append("content", editNews.content);
             formData.append("is_pinned", editNews.is_pinned ? "true" : "false");
-             if (isAdmin && editNews.status) {
-            formData.append("status", editNews.status);
-        }
+            if (isAdmin && editNews.status) {
+                formData.append("status", editNews.status);
+            }
             const res = await venueServices.venues.news({accessToken: user.token})(venueId)
                 .update(editNews.id.toString(), formData as any);
             setEditNews({...editNews, ...res.data});
             onUpdate(res.data);
             setEditMode(false);
+        } catch (err: any) {
+            setCoverMessage(err.response?.data?.detail || "Error saving changes");
         } finally {
             setLoading(false);
         }

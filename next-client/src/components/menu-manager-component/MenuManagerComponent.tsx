@@ -7,6 +7,7 @@ import venueServices from "@/lib/services/venueService";
 import { IMenu } from "@/models/IVenue";
 import MenuCreateComponent from "@/components/menu-create-component/MenuCreateComponent";
 import styles from "./MenuManagerComponent.module.css";
+import {LoaderComponent} from "@/components/loader-component/LoaderComponent";
 
 interface Props {
     venue: { id: string; name?: string };
@@ -39,7 +40,7 @@ const MenuManagerComponent: React.FC<Props> = ({venue}) => {
 
                     setMenuList(response.data.data);
                 } catch (error) {
-                    console.error("Failed to fetch full menu with token", error);
+                    setMessage("Failed to load menus. Please refresh the page.");
                 } finally {
                     setIsLoading(false);
                 }
@@ -64,6 +65,7 @@ const MenuManagerComponent: React.FC<Props> = ({venue}) => {
     };
 
     const handleSave = async (menuId: string) => {
+         setMessage("");
         if (!editingTitle.trim()) return;
         try {
             await menuService(venue.id).update(menuId, {title: editingTitle});
@@ -108,7 +110,7 @@ const MenuManagerComponent: React.FC<Props> = ({venue}) => {
             <div className={styles.wrapper}>
                 {message && <p className={styles.error}>{message}</p>}
                 {isLoading ? (
-                    <p>Loading menus from server...</p>
+                    <div className={styles.loaderWrapper}><LoaderComponent/></div>
                 ) : menuList.length > 0 ? (
                     <table className={styles.table}>
                         <thead>

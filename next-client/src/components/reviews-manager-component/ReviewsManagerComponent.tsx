@@ -14,6 +14,7 @@ export const ReviewsManagerComponent = ({ venueId }: { venueId: string }) => {
     const { user } = useUser();
     const [reviews, setReviews] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    const [message, setMessage] = useState<string | null>(null);
     const searchParams = useSearchParams();
     const currentPage = Number(searchParams.get("page") || "1");
     const [totalPages,setTotalPages] = useState(1);
@@ -22,13 +23,14 @@ export const ReviewsManagerComponent = ({ venueId }: { venueId: string }) => {
         if (!user?.token || !venueId) return;
         try {
             setLoading(true);
+            setMessage(null);
             const auth = { accessToken: user.token };
             const res:AxiosResponse = await venueServices.venues.reviews(auth)(venueId).getAll({page: currentPage});
             const resData = res.data;
             setTotalPages(resData.total_pages);
             setReviews(resData.data || []);
         } catch (e) {
-            console.error("Failed to load reviews for admin:", e);
+            setMessage("Failed to load reviews for this venue.");
         } finally {
             setLoading(false);
         }
@@ -43,6 +45,7 @@ export const ReviewsManagerComponent = ({ venueId }: { venueId: string }) => {
     return (
         <div style={{ padding: "20px" }}>
             <h2 className={styles.title} >Reviews Management</h2>
+              {message && <p className={styles.errorMessage}>{message}</p>}
             {reviews.length > 0 ? (
                 reviews.map((r) => (
                     <ReviewComponent
@@ -52,7 +55,7 @@ export const ReviewsManagerComponent = ({ venueId }: { venueId: string }) => {
                     />
                 ))
             ) : (
-                <p>No reviews found for this venue.</p>
+                 <p className={styles.titleNo}>No reviews found for this venue.</p>
             )}
           {totalPages > 1 && (
                 <div className={styles.paginationWrapper}>

@@ -15,6 +15,7 @@
     color: dimgrey;
 
 }
+.titleNo,
 .sectionHeader {
     padding: 0;
     margin: 0 ;
@@ -22,4 +23,7 @@
     font-size: 3rem;
     letter-spacing: 4px;
     color: var(--color-text);
+}
+.titleNo {
+    font-size: 2rem;
 }

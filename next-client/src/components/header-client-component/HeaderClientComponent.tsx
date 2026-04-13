@@ -40,7 +40,6 @@ export const HeaderClientComponent = () => {
             await signOut({redirect: false});
             router.push("/");
         } catch (error) {
-            // console.error("Logout failed:", error);
             window.location.href = "/login";
         }
     };

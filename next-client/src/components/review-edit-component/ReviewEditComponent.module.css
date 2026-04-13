@@ -273,7 +273,7 @@
 .reportTextarea {
     font-size: 0.9rem;
     width: 100%;
-    height: 200px;
+    height: 150px;
     padding: 0.5rem;
     border-radius: 1.5rem;
     color: var(--input-color);
@@ -416,4 +416,11 @@
     font-size: 12px;
     letter-spacing: normal;
     color: var(--title-primary-color);
+}
+.errorMessage {
+    text-align: center;
+    margin: 0 auto;
+    width: 100%;
+    color: var(--logo-hover-color);
+    font-size: 0.8rem;
 }

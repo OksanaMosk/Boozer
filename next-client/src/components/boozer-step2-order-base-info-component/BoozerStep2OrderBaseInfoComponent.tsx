@@ -48,7 +48,7 @@ const BoozerStep2OrderBaseInfoComponent: React.FC<Props> = ({venueId, onNext, on
                     city: data.city || ""
                 });
             } catch (e) {
-                console.error("Geo fetch failed", e);
+                setMessage("Could not detect city automatically.");
             }
         };
 
@@ -138,6 +138,7 @@ const BoozerStep2OrderBaseInfoComponent: React.FC<Props> = ({venueId, onNext, on
     };
     const handleSubmit = async (e: React.SyntheticEvent) => {
         e.preventDefault();
+        setMessage("");
         if (!formData.start_date || !formData.end_date) return;
         const payload = {
             ...formData,
@@ -147,7 +148,7 @@ const BoozerStep2OrderBaseInfoComponent: React.FC<Props> = ({venueId, onNext, on
             user_city: userGeo.city,
             status: "DRAFT"
         };
-        console.log("PAYLOAD2:", payload);
+
         setLoading(true);
         try {
             if (!user?.token) return
@@ -158,7 +159,7 @@ const BoozerStep2OrderBaseInfoComponent: React.FC<Props> = ({venueId, onNext, on
                 onNext(Number(response.data.id));
             }
         } catch (error) {
-            console.error("Error saving order:", error);
+             setMessage("Error saving order:");
         } finally {
             setLoading(false);
         }

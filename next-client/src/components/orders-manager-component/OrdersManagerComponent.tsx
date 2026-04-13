@@ -72,7 +72,7 @@ export const OrdersManagerComponent = ({ venueId: propsVenueId }: OrdersManagerP
                 </div>
             ) : orders.length === 0 ? (
                 <div className={styles.list}>
-                    <p>No active orders found for this location.</p>
+                    <p className={styles.titleNo}>No active orders found for this location.</p>
                 </div>
             ) : (
                 <div className={styles.list}>

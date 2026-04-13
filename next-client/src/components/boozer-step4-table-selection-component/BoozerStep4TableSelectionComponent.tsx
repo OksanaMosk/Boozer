@@ -137,7 +137,7 @@ const BoozerStep4TableSelectionComponent: React.FC<Props> = ({venueId, orderId, 
             );
             setReservedTableIds(reservedIds);
         } catch (err) {
-            console.error("Failed to fetch reserved tables", err);
+            setMessage("Could not update table availability")
         }
     }, [accessToken, venueId, startTime, endTime]);
 
@@ -145,23 +145,6 @@ const BoozerStep4TableSelectionComponent: React.FC<Props> = ({venueId, orderId, 
         const timer = setTimeout(checkReserved, 500);
         return () => clearTimeout(timer);
     }, [startTime, endTime, checkReserved]);
-
-
-    useEffect(() => {
-        if (!allTables.length || !reservedTableIds.size) return;
-
-        console.log("Табл стол та стат (після бронювань):");
-        console.table(
-            allTables.map(table => {
-                const tid = Number(table.id);
-                return {
-                    TableID: tid,
-                    OrderID: orderId,
-                    Status: reservedTableIds.has(tid) ? "Reserved" : "Free"
-                };
-            })
-        );
-    }, [allTables, reservedTableIds, orderId]);
 
     useEffect(() => {
         const updateSize = () => setStageSize({width: window.innerWidth * 0.7, height: window.innerHeight * 0.7});
@@ -203,7 +186,7 @@ const BoozerStep4TableSelectionComponent: React.FC<Props> = ({venueId, orderId, 
                 tables: Array.from(selectedTableIds),
                 time_range: {lower: startTime, upper: endTime}
             };
-            console.log("PAYLOAD4:", payload);
+
             await venueServices.venues.bookings({accessToken})(venueId)("").bulkCreate(payload);
             onNext();
         } catch (err: any) {

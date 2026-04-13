@@ -39,7 +39,6 @@ export const PhotoSingleUploadComponent = ({
             setFile(null);
             if (onChange) onChange(uploadedUrl);
         } catch (err) {
-            // console.error(err);
             setMessage("Failed to upload photo.");
         } finally {
             setLoading(false);

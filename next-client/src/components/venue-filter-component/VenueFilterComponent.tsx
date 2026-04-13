@@ -11,6 +11,7 @@ interface FilterProps {
 
 const VenueFilterComponent: React.FC<FilterProps> = ({ onFilterChange }) => {
     const searchParams = useSearchParams();
+    const [message, setMessage] = useState<string | null>(null);
     const [filters, setFilters] = useState<VenueFilterCriteria>({
         search: searchParams.get("search") || "",
         country: searchParams.get("country") || "",
@@ -38,7 +39,9 @@ const VenueFilterComponent: React.FC<FilterProps> = ({ onFilterChange }) => {
                 setCountriesList(data.countries || []);
                 setCitiesByCountry(data.cities_by_country || {});
             })
-            .catch((err) => console.error("Failed to load venue constants", err));
+            .catch(() => {
+                setMessage("Could not load country/city lists.");
+            });
     }, []);
 
 
@@ -106,6 +109,7 @@ const VenueFilterComponent: React.FC<FilterProps> = ({ onFilterChange }) => {
             currency: "UAH",
             tags: [],
         };
+         setMessage(null);
         setFilters(initialFilters);
         setTagsInput("");
         onFilterChange(initialFilters);
@@ -113,6 +117,7 @@ const VenueFilterComponent: React.FC<FilterProps> = ({ onFilterChange }) => {
 
     return (
         <div className={styles.filterContainer}>
+              {message && <p className={styles.errorMessage}>{message}</p>}
             <div className={styles.row}>
                 <select name="country" value={filters.country || ""} onChange={handleChange} className={styles.select}>
                     <option value="">All Countries</option>

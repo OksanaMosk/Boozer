@@ -19,6 +19,7 @@ const BoozerStep7Final: React.FC<Props> = ({orderId, venueId}) => {
     const {user} = useUser();
     const [isConfirmed, setIsConfirmed] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [message, setMessage] = useState("");
     const [order, setOrder] = useState<IOrder | null>(null);
     const audioRef = useRef<HTMLAudioElement>(null);
     const [isPlaying, setIsPlaying] = useState(true);
@@ -28,6 +29,7 @@ const BoozerStep7Final: React.FC<Props> = ({orderId, venueId}) => {
     useEffect(() => {
         const fetchOrder = async () => {
             if (!user?.token) return;
+                setMessage("");
             try {
                 const res: AxiosResponse<IOrder> = await venueServices.venues
                     .orders({accessToken: user.token})(venueId)
@@ -37,9 +39,8 @@ const BoozerStep7Final: React.FC<Props> = ({orderId, venueId}) => {
                  if (res.data.status === "CONFIRMED") {
                 setIsConfirmed(true);
             }
-
-            } catch (e) {
-                console.error("Failed to fetch final order data", e);
+            } catch (error:any) {
+                setMessage(error.response?.data?.detail || "Failed to fetch final order data");
             }
         };
         void fetchOrder();
@@ -55,8 +56,9 @@ const BoozerStep7Final: React.FC<Props> = ({orderId, venueId}) => {
                 .update(orderId, {status: "CONFIRMED" as OrderStatusType});
 
             setIsConfirmed(true);
-        } catch (err) {
-            alert("Payment failed. Please try again.");
+        } catch (error:any) {
+            setMessage("Payment failed. Please try again.");
+
         } finally {
             setLoading(false);
         }
@@ -269,6 +271,7 @@ const BoozerStep7Final: React.FC<Props> = ({orderId, venueId}) => {
             </div>
             <p className={styles.small}> 💳</p>
             <div className={styles.finalSummary}>
+                  {message && <p className={styles.errorMessage}>{message}</p>}
                 <p className={styles.label}>Total to Pay:</p>
                 <h1 className={styles.amount}>
                     {Number(order.total_price).toLocaleString(undefined, {minimumFractionDigits: 2})} {order.currency}

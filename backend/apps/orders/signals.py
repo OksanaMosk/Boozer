@@ -23,20 +23,3 @@ def send_order_confirmed_email_signal(sender, instance, created, **kwargs):
                 except Exception:
                     pass
             transaction.on_commit(send_safe)
-
-
-#
-# @receiver(post_save, sender=OrderModel)
-# def send_order_confirmed_email_signal(sender, instance, created, **kwargs):
-#     if instance.status == 'CONFIRMED' and instance.user:
-#         if not getattr(instance, '_email_sent', False):
-#             instance._email_sent = True
-#             user_to_notify = instance.user
-#
-#             def send_safe():
-#                 try:
-#                     EmailService.order_confirmation(user_to_notify, instance)
-#                 except Exception:
-#                     pass
-#
-#             transaction.on_commit(send_safe)

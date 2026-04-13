@@ -62,7 +62,7 @@ const MenuItemsCreateComponent: React.FC<VenueMenuItemsCreateComponentProps> = (
                 const res = await venueServices.venues.get(venueId, ({accessToken: user.token}));
                 setGlobalCurrency(res.data.currency);
             } catch (err) {
-                console.error("Error", err);
+                 setFetchError("Could not load venue currency. Default may be used.");
             }
         };
         void fetchVenueCurrency();
@@ -76,7 +76,6 @@ const MenuItemsCreateComponent: React.FC<VenueMenuItemsCreateComponentProps> = (
             try {
                 const result: AxiosResponse = await service.getAll();
                 const fetchedItems = result.data;
-                console.log("ADMIN:", fetchedItems);
                 setItems(fetchedItems);
             } catch (err: any) {
                 const errorMsg = err?.response?.data?.detail || "Failed to load menu items";
@@ -174,7 +173,7 @@ const MenuItemsCreateComponent: React.FC<VenueMenuItemsCreateComponentProps> = (
             });
 
         } catch (err) {
-            console.error("Delete failed", err);
+           setFetchError("Delete failed. Please try again.");
         }
     };
     const handleCreateOrUpdate = React.useCallback((item: MenuItem) => {

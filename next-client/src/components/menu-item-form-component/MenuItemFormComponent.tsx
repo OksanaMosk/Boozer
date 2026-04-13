@@ -42,6 +42,7 @@ const MenuItemFormComponent: React.FC<MenuItemFormProps> = ({venueId, menuId, gl
     const {user} = useUser();
     const [loadingItem, setLoadingItem] = useState(false);
     const [createdItem, setCreatedItem] = useState<MenuItem | null>(null);
+    const [errorMsg, setErrorMsg] = useState<string | null>(null);
     const [photoUploaded, setPhotoUploaded] = useState(false);
     const [menuItem, setMenuItem] = useState<NewMenuItem>({
         name: "",
@@ -76,6 +77,7 @@ const MenuItemFormComponent: React.FC<MenuItemFormProps> = ({venueId, menuId, gl
         e.preventDefault();
         if (!user?.token) return;
         setLoadingItem(true);
+        setErrorMsg(null);
 
         try {
             const formData = new FormData();
@@ -89,7 +91,6 @@ const MenuItemFormComponent: React.FC<MenuItemFormProps> = ({venueId, menuId, gl
 
             const res = await venueServices.venues.menuItems({accessToken: user.token})(venueId)(menuId)
                 .create(formData as any);
-            console.log("Server saved currency:", res.data.currency)
             const newItem: MenuItem = {
                 ...res.data,
                 id: String(res.data.id),
@@ -101,8 +102,18 @@ const MenuItemFormComponent: React.FC<MenuItemFormProps> = ({venueId, menuId, gl
             setPhotoUploaded(false);
             setCreatedItem(newItem);
             onCreate(newItem);
-        } catch (error) {
-            console.error("error:", error);
+        } catch (error: any) {
+            const serverErrors = error?.response?.data;
+
+            if (serverErrors && serverErrors.price) {
+                const message = Array.isArray(serverErrors.price)
+                    ? serverErrors.price[0]
+                    : serverErrors.price;
+
+                setErrorMsg(message);
+            } else {
+                setErrorMsg("Failed to add item. Please check the data.");
+            }
         } finally {
             setLoadingItem(false);
         }
@@ -116,9 +127,12 @@ const MenuItemFormComponent: React.FC<MenuItemFormProps> = ({venueId, menuId, gl
                 <textarea name="description" placeholder="Description" value={menuItem.description}
                           onChange={handleChange} className={styles.textarea}/>
                 <div className={styles.priceInputWrapper}>
-                    <input type="number" step="0.01" name="price" placeholder="Price" value={menuItem.price}
+                    <input type="number" step="0.01" min="0" onKeyDown={(e) => {
+                        if (e.key === '-') e.preventDefault();
+                    }} name="price" placeholder="Price" value={menuItem.price}
                            onChange={handleChange} required className={styles.inputPrice}/>
                     <span className={styles.currencyLabel}>{globalCurrency}</span>
+                    {errorMsg && <p className={styles.errorMessage}>{errorMsg}</p>}
                 </div>
                 <label className={styles.label} htmlFor="category">Category</label>
                 <select name="category" value={menuItem.category} onChange={handleChange} className={styles.select}>

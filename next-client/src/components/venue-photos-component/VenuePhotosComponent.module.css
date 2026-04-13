@@ -151,6 +151,13 @@
     line-height: 1.2;
     transform: scale(0.2);
 }
+.errorMessage {
+    text-align: center;
+    margin: 0 auto;
+    width: 100%;
+    color: var(--logo-hover-color);
+    font-size: 0.8rem;
+}
 
 @media (min-width: 768px) {
     .label,

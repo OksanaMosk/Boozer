@@ -10,6 +10,8 @@ import venueServices from "@/lib/services/venueService";
 import {AxiosResponse} from "axios";
 import {PaginationComponent} from "@/components/pagination-component/PaginationComponent";
 import {useSearchParams} from "next/navigation";
+import {ButtonScrollTopComponent} from "@/components/button-scroll-top-component/ButtonScrollTopComponent";
+import {ButtonScrollBottomComponent} from "@/components/button-scroll-bottom-component/ButtonScrollBottomComponent";
 
 export const OrdersVisitorComponent = () => {
     const {user} = useUser();
@@ -68,6 +70,7 @@ export const OrdersVisitorComponent = () => {
 
     return (
         <div className={styles.pageWrapper}>
+            <ButtonScrollBottomComponent/>
             {orders.length === 0 ? (
                 <div className={styles.emptyState}>
                     <p>No activity records found.</p>
@@ -92,6 +95,7 @@ export const OrdersVisitorComponent = () => {
                     <PaginationComponent totalPages={totalPages}/>
                 </div>
             )}
+            <ButtonScrollTopComponent/>
         </div>
     );
 }

@@ -32,8 +32,7 @@ const VenueEditComponent = ({ venueId }: Props) => {
     const [newFiles, setNewFiles] = useState<ILocalPhoto[]>([]);
     const [loadingPhotos, setLoadingPhotos] = useState(false);
     const { user } = useUser();
-  console.log('venueId:', venueId);
-            console.log('user?.token:', user?.token);
+
     useEffect(() => {
         (async () => {
             try {

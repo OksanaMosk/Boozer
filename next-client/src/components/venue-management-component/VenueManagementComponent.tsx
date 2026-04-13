@@ -42,7 +42,6 @@ const VenueManagementComponent: React.FC<Props> = ({userId}) => {
 
     const handleDelete = (venueId: string) => {
         setVenues((prev) => prev.filter((v) => v.id !== venueId));
-        // alert('Venue deleted successfully');
     };
 
 

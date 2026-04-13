@@ -17,7 +17,9 @@ const BoozerStep6Summary = ({ venueId, orderId, onNext }: any) => {
     const [currency, setCurrency] = useState<"UAH" | "USD" | "EUR">("UAH");
     const [rates, setRates] = useState({USD: 1, EUR: 1});
     const [isSaving, setIsSaving] = useState(false);
+    const [message, setMessage] = useState("");
     const router = useRouter();
+
     const getConverted = (amount: number, itemCurrency: string = order?.currency || "USD") => {
         if (currency === itemCurrency) return amount;
 
@@ -38,32 +40,13 @@ const BoozerStep6Summary = ({ venueId, orderId, onNext }: any) => {
     useEffect(() => {
         const initData = async () => {
             if (!user?.token) return;
+                setMessage("");
             try {
                 const [orderRes, exchangeRes] = await Promise.all([
                     venueServices.venues.orders({accessToken: user.token})(venueId).get(orderId),
                     exchangeService.init(user.token)
                 ]);
                 const data = orderRes.data;
-                console.log("data:", data)
-
-                console.log("--- AUDIT START ---");
-                console.log("1. Menu Total:", data?.menu_total);
-                console.log("2. Services Total:", data?.services_total);
-                console.log("3. Flight Price:", data?.flight_price);
-                console.log("4. Transfer Price:", data?.transfer_price);
-                console.log("--- MATH CHECK ---");
-                const mTotal = Number(data?.menu_total || 0);
-                const sTotal = Number(data?.services_total || 0);
-                const fPrice = Number(data?.flight_price || 0);
-                const tPrice = Number(data?.transfer_price || 0);
-
-                const mathTotal = mTotal + sTotal + fPrice + tPrice;
-
-                console.log("Real Sum (JS Calculation):", mathTotal.toFixed(2));
-                console.log("Total Price (from backend DB):", data?.total_price);
-                console.log("Difference:", (mathTotal - Number(data?.total_price || 0)).toFixed(2));
-                console.log("--- AUDIT END ---");
-
                 setOrder(data);
                 setTimeLeft(data.remaining_seconds || 0);
                 if (data.currency) {
@@ -71,7 +54,7 @@ const BoozerStep6Summary = ({ venueId, orderId, onNext }: any) => {
                 }
                 setRates(exchangeRes);
             } catch (e) {
-                console.error(e);
+              setMessage("Failed to load summary data. Please try again.");
             }
         };
         void initData();
@@ -111,7 +94,8 @@ const BoozerStep6Summary = ({ venueId, orderId, onNext }: any) => {
             };
             await venueServices.venues.orders({accessToken: user.token})(venueId).update(orderId, payload as any);
             onNext();
-        } catch (error) {
+        } catch (error:any) {
+             setMessage(error.response?.data?.detail || "Confirmation failed.");
             setIsSaving(false);
         }
     };
@@ -127,6 +111,7 @@ const BoozerStep6Summary = ({ venueId, orderId, onNext }: any) => {
             await venueServices.venues.orders({accessToken: user.token})(venueId).update(orderId, payload as any);
             router.push("/");
         } catch (error) {
+            setMessage("Error cancelling order.");
             setIsSaving(false);
         }
     };
@@ -276,7 +261,7 @@ const BoozerStep6Summary = ({ venueId, orderId, onNext }: any) => {
                             </b>
                         </div>
                     </div>
-
+                    {message && <p className={styles.errorMessage}>{message}</p>}
                     <div className={styles.actions}>
                         <button
                             className={styles.confirmBtn}

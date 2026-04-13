@@ -2,6 +2,7 @@ from core.constants.category import CATEGORY_CHOICES
 from core.constants.currencies import CURRENCY_CHOICES
 from core.models import BaseModel
 from django.db import models
+from django.core.validators import MinValueValidator
 
 class MenuModel(BaseModel):
     class Meta:
@@ -36,7 +37,7 @@ class MenuItemModel(BaseModel):
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
 
-    price = models.DecimalField(max_digits=10, decimal_places=2)
+    price = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0, message="Price cannot be negative.")])
 
     currency = models.CharField(
         max_length=3,

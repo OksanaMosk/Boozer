@@ -41,6 +41,7 @@ const NEWS_TYPE_OPTIONS = ["general", "promotion", "event"] as const;
 
 export const NewItemFormComponent: React.FC<NewNewsFormProps> = ({venueId, onCreate}) => {
     const {user} = useUser();
+    const [message, setMessage] = useState("");
     const [newsItem, setNewsItem] = useState<NewNews>({
         title: "",
         content: "",
@@ -57,13 +58,20 @@ export const NewItemFormComponent: React.FC<NewNewsFormProps> = ({venueId, onCre
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     tomorrow.setHours(0, 0, 0, 0);
+
     const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+        setMessage("");
         const {name, value, type} = e.target;
         let val: string | boolean = value;
         if (type === "checkbox" && "checked" in e.target) {
             val = e.target.checked;
         }
         setNewsItem(prev => ({...prev, [name]: val}));
+    };
+
+    const showMessage = (text: string) => {
+        setMessage(text);
+        setTimeout(() => setMessage(""), 5000);
     };
 
     const handleAddNews = async (e: React.SyntheticEvent<HTMLFormElement>) => {
@@ -101,8 +109,9 @@ export const NewItemFormComponent: React.FC<NewNewsFormProps> = ({venueId, onCre
             };
             setCreatedNews(newNews);
             onCreate(newNews);
-        } catch (err) {
-            alert("Failed to create news");
+        } catch (err: any) {
+            const errorMsg = err.response?.data?.detail || "Failed to create news. Try again.";
+            showMessage(errorMsg);
         } finally {
             setLoading(false);
         }
@@ -161,7 +170,7 @@ export const NewItemFormComponent: React.FC<NewNewsFormProps> = ({venueId, onCre
                     }`}
                 >
                     {newsItem.type === "general" ? "Status: active" :
-                        <a className={styles.pending} href="/">Status: pending. Promotion will be published after
+                        <a className={styles.pending} href="/instruction">Status: pending. Promotion will be published after
                             payment confirmation and admin approval</a>
                     }
                 </span>
@@ -205,7 +214,7 @@ export const NewItemFormComponent: React.FC<NewNewsFormProps> = ({venueId, onCre
                                             : value;
 
                                         if (newDate && newDate < tomorrow) {
-                                            alert("Please select a future date!");
+                                            showMessage("Please select a future date!");
                                             return;
                                         }
                                         if (newDate) {
@@ -254,6 +263,7 @@ export const NewItemFormComponent: React.FC<NewNewsFormProps> = ({venueId, onCre
                         </button>
                     </div>
                 )}
+                  {message && <p className={styles.errorMessage}>{message}</p>}
                 <button
                     type="submit"
                     disabled={loading || !!createdNews}

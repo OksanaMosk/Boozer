@@ -7,7 +7,7 @@
     padding: 0.5rem 0.25rem;
     font-size: 1.5rem;
     color: var(--color-text);
-    background-color:var(--color-container);
+    background:var(--menu-color);
     border: 1px solid var(--color-text);
     cursor: pointer;
     transition: background-color 0.3s ease-in-out;
@@ -16,7 +16,6 @@
 }
 
 .scrollToTopBtn:hover {
-    color: var(--color-container);
-    background-color: var(--color-text);
+    background: var(--reverse-menu-color);
     border: none;
 }

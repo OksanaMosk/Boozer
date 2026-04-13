@@ -4,7 +4,7 @@ import {IUser} from "@/models/IUser";
 export type PaymentType = "Each pays for themselves" | "I pay" | "Someone else pays";
 export type BudgetRangeType = "0-1000" | "1000-3000" | "3000-5000" | "5000+";
 export type GenderPreferenceType = "ANY" | "MALE" | "FEMALE";
-export type OrderStatusType = "DRAFT" | "HOLD" | "CONFIRMED" | "CANCELLED";
+export type OrderStatusType = "DRAFT" | "HOLD" | "CONFIRMED" | "EXPIRED" | "CANCELLED";
 
 export interface IOrderItem {
     id?: string;

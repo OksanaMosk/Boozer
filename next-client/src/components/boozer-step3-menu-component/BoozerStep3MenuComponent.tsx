@@ -60,10 +60,12 @@ const BoozerStep3MenuComponent: React.FC<Props> = ({venueId, orderId, onNext, on
     };
 
     const addPortion = (id: string) => {
+         setMessage("");
         setCart((prev) => ({...prev, [id]: (prev[id] || 0) + 1}));
     };
 
     const removePortion = (id: string) => {
+         setMessage("");
         setCart((prev) => {
             const copy = {...prev};
             if (copy[id] > 1) copy[id] -= 1;
@@ -129,7 +131,7 @@ const BoozerStep3MenuComponent: React.FC<Props> = ({venueId, orderId, onNext, on
                     const data = await exchangeService.init(user.token);
                     setRates(data);
                 } catch (err) {
-                    console.error("Exchange init error:", err);
+                    setMessage("Currency rates unavailable. Using default prices.");
                 }
             }
         };
@@ -146,7 +148,7 @@ const BoozerStep3MenuComponent: React.FC<Props> = ({venueId, orderId, onNext, on
             })),
             status: "HOLD" as OrderStatusType
         };
-        console.log("PAYLOAD3:", payload);
+
 
         try {
             if (!user?.token) return

@@ -49,6 +49,7 @@ const TopManagerComponent = () => {
         }
         const auth = {accessToken: user.token};
         setIsLoading(true);
+         setDragPoolMessage(null);
         try {
             const [resCols, resStaff] = await Promise.all([
                 venueServices.collections(auth).getAll(),
@@ -129,7 +130,7 @@ const TopManagerComponent = () => {
 
             setItems([...filteredCandidates, ...existingFormatted, ...staffVenuesFormatted]);
         } catch (e) {
-            console.error("Error loadData:", e);
+            setDragPoolMessage("Failed to load collection data. Please refresh.");
         } finally {
             setIsLoading(false);
         }
@@ -210,7 +211,7 @@ const TopManagerComponent = () => {
                 try {
                     await venueServices.collections({accessToken: token}).reorderItems(targetColId, payload);
                 } catch (e) {
-                    console.error("Reorder error:", e);
+                     setDragPoolMessage("Failed to update item order on server.");
                     void loadData();
                 }
             }
@@ -228,7 +229,9 @@ const TopManagerComponent = () => {
             setItems(updatedItems);
             if (currentCid !== "pool" && currentCid !== targetColId) {
                 venueServices.collections({accessToken: token}).removeVenue(currentCid, activeItem.venue.id)
-                    .catch(e => console.error("Remove old error", e));
+                   .catch(() => {
+            setDragPoolMessage("Failed to remove from old collection.");
+        });
             }
             venueServices.venues.favorites({accessToken: token})(activeItem.venue.id).add({
                 venue: activeItem.venue.id,

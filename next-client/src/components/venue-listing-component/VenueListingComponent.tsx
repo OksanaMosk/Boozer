@@ -55,7 +55,7 @@ const VenueListingComponent: React.FC<Props> = ({ venue, onDelete, onStatusChang
                 setStats(trafficRes.data);
                 setOldStats(oldStatsRes.data);
             } catch (err) {
-                console.error("Error loading stats:", err);
+                 setMessage({ text: "Failed to load stats", isError: true });
             }
         };
         void fetchAllData();

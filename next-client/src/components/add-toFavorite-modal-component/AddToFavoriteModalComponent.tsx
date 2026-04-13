@@ -3,12 +3,15 @@ import React, { useState, useMemo } from 'react';
 import venueServices from "@/lib/services/venueService";
 import styles from "./AddToFavoriteModalComponent.module.css";
 import {CATEGORY_LABELS, INITIAL_CATEGORIES, TopCategoryType} from "@/models/IReviewFeedback";
+import {LoaderComponent} from "@/components/loader-component/LoaderComponent";
 
 export const AddToFavoriteModalComponent = ({ venueId, onClose, token, onSuccess, initialCollections, // <-- прийшов від батька
     onCollectionsUpdate }: any) => {
     const [selectedCat, setSelectedCat] = useState("");
     const [isCustom, setIsCustom] = useState(false);
     const [newCatName, setNewCatName] = useState("");
+    const [error, setError] = useState<string | null>(null);
+    const [isLoading, setIsLoading] = useState(false);
     const auth = { accessToken: token };
 
     const allCategories = useMemo(() => {
@@ -25,6 +28,9 @@ export const AddToFavoriteModalComponent = ({ venueId, onClose, token, onSuccess
 
     const handleFinalSave = async (category: string) => {
         if (!category) return;
+        setError(null);
+        setIsLoading(true);
+
         try {
             const catValue = category.toLowerCase().trim();
             const existingCol = initialCollections.find((c: any) => c.category?.toLowerCase() === catValue);
@@ -50,15 +56,23 @@ export const AddToFavoriteModalComponent = ({ venueId, onClose, token, onSuccess
 
             if (onSuccess) onSuccess();
             onClose();
-        } catch (e) {
-            console.error("Save error:", e);
-        }
+        } catch (e: any) {
+            const errorMessage = e.response?.data?.message || "Error save. Try again.";
+            setError(errorMessage);
+        } finally {
+            setIsLoading(false);
+    }
     };
 
 
     return (
         <div className={styles.overlay} onClick={(e) => e.stopPropagation()}>
             <div className={styles.modal}>
+                {error && (
+                    <p className={styles.errorMessage}>
+                        {error}
+                    </p>
+                )}
                 <p className={styles.title}>Save in...</p>
                 {!isCustom ? (
                     <div className={styles.selectWrapper}>
@@ -98,8 +112,27 @@ export const AddToFavoriteModalComponent = ({ venueId, onClose, token, onSuccess
                             autoFocus
                         />
                         <div className={styles.buttons}>
-                            <button className={styles.button} onClick={() => handleFinalSave(newCatName)}>Add & Save</button>
-                            <button className={styles.button} onClick={() => setIsCustom(false)}>Cancel</button>
+                            <button
+                                className={styles.button}
+                                onClick={() => handleFinalSave(newCatName)}
+                                disabled={isLoading}
+                            >
+                                {isLoading ? (
+                                    <div className={`authButton ${styles.loaderWrapper}`}>
+                                        <LoaderComponent/>
+                                    </div>
+                                ) : (
+                                    "Add & Save"
+                                )}
+                            </button>
+
+                            <button
+                                className={styles.button}
+                                onClick={() => setIsCustom(false)}
+                                disabled={isLoading}
+                            >
+                                Cancel
+                            </button>
                         </div>
                     </div>
                 )}

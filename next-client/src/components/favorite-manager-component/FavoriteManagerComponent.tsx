@@ -24,6 +24,7 @@ export const FavoriteManagerComponent: React.FC<Props> = () => {
     const [selectedCategory, setSelectedCategory] = useState<string>("");
     const [loading, setLoading] = useState(true);
     const [listLoading, setListLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
     const {user} = useUser()
     useEffect(() => {
         if (user?.token) {
@@ -33,6 +34,7 @@ export const FavoriteManagerComponent: React.FC<Props> = () => {
 
     const fetchCollections = async () => {
         if (!user?.token) return
+        setError(null);
         try {
             const res = await venueServices.collections({accessToken: user.token}).getAll();
             const data = (res.data as any)?.data || res.data || [];
@@ -42,7 +44,7 @@ export const FavoriteManagerComponent: React.FC<Props> = () => {
             }
 
         } catch (e) {
-            console.error(e);
+            setError("Failed to load favorite collections.");
         } finally {
             setLoading(false);
         }
@@ -78,8 +80,7 @@ export const FavoriteManagerComponent: React.FC<Props> = () => {
                 const res = await venueServices.collections({accessToken: user.token}).get(found.id);
                 setSelectedCollection(res.data as IFavoriteCollectionDetail);
             } catch (e) {
-                console.error(e);
-
+                 setError("Could not load collection details.");
             } finally {
                 setListLoading(false);
             }
@@ -129,6 +130,7 @@ export const FavoriteManagerComponent: React.FC<Props> = () => {
             <div className={styles.selectWrapper}>
                 <h2 className={styles.title}>My Favorite Places</h2>
                 <img className={styles.image} alt="logo" src="/favicon/android-chrome-192x192.png"/>
+                  {error && <p className={styles.errorMessage}>{error}</p>}
                 <label className={styles.label}>Select list:</label>
                 <select
                     value={selectedCategory}

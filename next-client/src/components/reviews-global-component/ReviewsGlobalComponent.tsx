@@ -28,6 +28,7 @@ export const ReviewsGlobalComponent = ({ venueId }: { venueId: string, token?: a
         if (!user?.token || !venueId) return;
         try {
             setLoading(true);
+             setMessage(null);
             const [reviewsRes, ordersRes, userReviewsRes] = await Promise.all([
                 venueServices.venues.reviews(auth)(venueId).getAll({page: currentPage}),
                 venueServices.venues.orders(auth)(venueId).getAll({size: 100}),
@@ -54,7 +55,7 @@ export const ReviewsGlobalComponent = ({ venueId }: { venueId: string, token?: a
                 : []
             );
         } catch (e) {
-            console.error("Fetch error:", e);
+           setMessage({ text: "Failed to load reviews data.", type: 'error' });
         } finally {
             setLoading(false);
         }
@@ -91,7 +92,7 @@ export const ReviewsGlobalComponent = ({ venueId }: { venueId: string, token?: a
                 r.id === reviewId ? { ...r, likes_count: res.data.likes_count, is_liked: !r.is_liked } : r
             ));
         } catch (e) {
-            console.error("Like failed", e);
+            setMessage({ text: "Could not update like status.", type: 'error' });
         }
     };
 

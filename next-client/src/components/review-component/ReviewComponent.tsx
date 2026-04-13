@@ -25,7 +25,6 @@ export const ReviewComponent = ({review, onLike, onReport, isAdminView = false}:
               setLikesCount((prev: number) => isLiked ? prev - 1 : prev + 1);
             setIsLiked(!isLiked);
         } catch (error) {
-            console.error("Like failed", error);
         }
     };
 

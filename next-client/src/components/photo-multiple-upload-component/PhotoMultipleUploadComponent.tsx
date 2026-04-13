@@ -45,6 +45,7 @@ const PhotoMultipleUploadComponent: React.FC<MultiplePhotoUploadProps> = ({
     );
 
     const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+         setMessage(null);
         if (!e.target.files) return;
         const files = Array.from(e.target.files);
 
@@ -80,7 +81,8 @@ const PhotoMultipleUploadComponent: React.FC<MultiplePhotoUploadProps> = ({
                 if (error.response?.status === 404) {
                     setPhotos(prev => prev.filter((_, i) => i !== index));
                 } else {
-                    console.error("Error deleting from server", error);
+                    setMessage("Failed to delete photo from server.");
+                    setTimeout(() => setMessage(null), 3000);
                 }
             } finally {
                 setLoading(false);
@@ -119,9 +121,12 @@ const PhotoMultipleUploadComponent: React.FC<MultiplePhotoUploadProps> = ({
         } catch (error: any) {
             if (error.response?.status === 404) {
                 onUploadComplete([]);
-                  setLoading(false);
+                setLoading(false);
                 return;
             }
+            const errorText = error.response?.data?.detail || "Upload failed. Check file size or format.";
+            setMessage(errorText);
+            setTimeout(() => setMessage(null), 3000);
         } finally {
             setLoading(false);
         }

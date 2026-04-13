@@ -32,3 +32,10 @@
     from { transform: translateY(-10px); opacity: 0; }
     to { transform: translateY(0); opacity: 1; }
 }
+.errorMessage {
+    text-align: center;
+    margin: 0 auto;
+    width: 100%;
+    color: var(--logo-hover-color);
+    font-size: 0.8rem;
+}

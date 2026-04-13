@@ -57,7 +57,7 @@ const TableMapAdmin: React.FC<TableMapAdminProps> = ({venueId, token}) => {
                     img.onload = () => setBackground(img);
                 }
             })
-            .catch(console.error);
+              .catch(() => setSaveStatus("Failed to load map background"));
     }, [venueId, accessToken]);
 
 
@@ -70,7 +70,7 @@ const TableMapAdmin: React.FC<TableMapAdminProps> = ({venueId, token}) => {
                 const venueTables = res.data.data
                 setTables(venueTables);
             })
-            .catch(console.error);
+             .catch(() => setSaveStatus("Failed to load tables data"));
     }, [venueId, accessToken]);
 
 
@@ -213,8 +213,12 @@ const handleDragEnd = (updatedTable: ITable) => {
                 await tableService.delete(String(table.id));
                 setTables(prev => prev.filter(t => t.id !== table.id));
             }
-        } catch (err) {
-            console.error("Delete error:", err);
+            setSaveStatus("Table removed");
+            setTimeout(() => setSaveStatus(null), 2000);
+        } catch (err:any) {
+           const errorMsg = err.response?.data?.detail || "Delete error: Table might be booked";
+            setSaveStatus(errorMsg);
+            setTimeout(() => setSaveStatus(null), 4000);
         }
     };
     if (stageSize.width === 0 || stageSize.height === 0) return <div>Loading...</div>;
