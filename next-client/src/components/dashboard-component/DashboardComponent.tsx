@@ -19,6 +19,7 @@ import {ButtonScrollBottomComponent} from "@/components/button-scroll-bottom-com
 import {ButtonScrollTopComponent} from "@/components/button-scroll-top-component/ButtonScrollTopComponent";
 import {useSearchParams} from "next/navigation";
 import {PaginationComponent} from "@/components/pagination-component/PaginationComponent";
+import ReviewsAdminManagerComponent from "@/components/reviews-admin-manager-component/ReviewsAdminManagerComponent";
 
 interface IVenueWithId extends Omit<IVenue, 'id'> {
     id: string;
@@ -47,6 +48,7 @@ const DashboardComponent: React.FC = () => {
         { id: "users_control", label: "Users", show: isAdmin },
         { id: "orders", label: " My Orders", show: true },
         { id: "reviews", label: "My Reviews", show: true },
+        { id: "manage_reviews", label: "Manage Reviews", show:  isAdmin },
     ].filter(tab => tab.show), [isAdmin, isVenueAdmin]);
 
     const handleApiError = (err: any) => {
@@ -179,8 +181,15 @@ const DashboardComponent: React.FC = () => {
                 )}
                  {activeTab === "reviews" && (
                     <section className={styles.section}>
-                        <h2  className={styles.titleManage}>Reviews</h2>
-                       <ReviewListEditComponent/>
+                        <h2 className={styles.titleManage}>Reviews</h2>
+                        <ReviewListEditComponent/>
+                    </section>
+                 )}
+                {activeTab === "manage_reviews" && isAdmin && (
+                    <section className={styles.section}>
+                        <h2 className={styles.titleManage}>Manage Reviews</h2>
+
+                        <ReviewsAdminManagerComponent/>
                     </section>
                 )}
             </div>

@@ -12,7 +12,8 @@ export type TabType =
     | "users_control"
     | "manage_tops"
     | "orders"
-    | "reviews";
+    | "reviews"
+    | "manage_reviews";
 
 const VALID_TABS: TabType[] = [
     "profile",
@@ -23,8 +24,9 @@ const VALID_TABS: TabType[] = [
     "stats",
     "users_control",
     "manage_tops",
-     "orders",
+    "orders",
     "reviews",
+    "manage_reviews",
 ];
 
 export const useDashboardTabs = () => {
