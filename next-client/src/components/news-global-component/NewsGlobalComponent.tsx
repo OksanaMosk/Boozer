@@ -11,6 +11,7 @@ import { ButtonScrollTopComponent } from "@/components/button-scroll-top-compone
 import styles from "./NewsGlobalComponent.module.css";
 import {PaginationComponent} from "@/components/pagination-component/PaginationComponent";
 import {ButtonScrollBottomComponent} from "@/components/button-scroll-bottom-component/ButtonScrollBottomComponent";
+import Link from "next/link";
 
 const NewsGlobalContent = () => {
     const { user } = useUser();
@@ -76,6 +77,7 @@ const NewsGlobalContent = () => {
                 {["all", "general", "promotion", "event"].map(t => (
                     <button
                         key={t}
+                        aria-label="Tab news"
                         className={`${styles.navButton} ${activeTab === t ? styles.activeTab : ""}`}
                         onClick={() => handleTabChange(t)}
                     >
@@ -88,20 +90,22 @@ const NewsGlobalContent = () => {
                     {news.length > 0 ? (
                         news.map(item => (
                             <div key={item.id} className={styles.itemWrapper}>
-                                <span className={styles.newsBadge}>
-                        {item.type === 'promotion' ? 'PROMO' : item.type === 'event' ? 'EVENT' : 'NEWS'}
-                    </span>
+                                <Link href={`/news/${item.id}`}>
+                                    <span className={styles.newsBadge}>
+                                        {item.type === 'promotion' ? 'PROMO' : item.type === 'event' ? 'EVENT' : 'NEWS'}
+                                </span>
 
-                                <NewComponent
-                                    news={item}
-                                    venueId={String(item.venue || "")}
-                                    token={user?.token || ""}
-                                    isReadOnly={true}
-                                    onDelete={() => {
-                                    }}
-                                    onUpdate={() => {
-                                    }}
-                                />
+                                    <NewComponent
+                                        news={item}
+                                        venueId={String(item.venue || "")}
+                                        token={user?.token || ""}
+                                        isReadOnly={true}
+                                        onDelete={() => {
+                                        }}
+                                        onUpdate={() => {
+                                        }}
+                                    />
+                                </Link>
                             </div>
                         ))
                     ) : (

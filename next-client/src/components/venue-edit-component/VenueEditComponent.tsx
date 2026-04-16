@@ -126,7 +126,9 @@ const VenueEditComponent = ({ venueId }: Props) => {
 
     return (
         <>
-            <button type="button" className={styles.button}
+            <button type="button"
+                     aria-label="go back"
+                    className={styles.button}
                     onClick={() => router.push('/dashboard?tab=venues_control')}>Go back
             </button>
             <VenueFormComponent

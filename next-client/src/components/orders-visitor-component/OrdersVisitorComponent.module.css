@@ -7,3 +7,11 @@
 .sectionHeader {
     color: var(--logo-hover-color);
  }
+.titleNo {
+    padding: 0;
+    font-family: var(--font-imperial),serif;
+    letter-spacing: 2px;
+    color: var(--color-text);
+    margin-top: 80px;
+    font-size: 2rem;
+}

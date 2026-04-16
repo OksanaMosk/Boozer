@@ -1,8 +1,12 @@
-
-import React from 'react';
 import { ButtonGoBackComponent } from "@/components/button-go-back-component/ButtonGoBackComponent";
 import { ButtonScrollTopComponent } from "@/components/button-scroll-top-component/ButtonScrollTopComponent";
 import TopStaffListComponent from "@/components/top-staff-list-component/TopStaffListComponent";
+import {Metadata} from "next";
+
+export const metadata: Metadata = {
+    title: "TOPs | Boozer",
+    description: "Explore TOPs on Boozer.",
+};
 
 const TopsPage = () => {
     return (

@@ -64,6 +64,7 @@ export const UserInfoComponent = ({onLogoutAction, classNames = {}}: UserInfoPro
                 <p className={`${styles.user} ${classNames.user ?? ""}`}>{user.email}</p>
 
                 <button
+                    aria-label="Logout"
                     onClick={onLogoutAction}
                     className={`${styles.logoutBtn} ${classNames.logoutBtn ?? ""}`}
                 >

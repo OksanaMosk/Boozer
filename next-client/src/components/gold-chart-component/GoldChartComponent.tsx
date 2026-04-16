@@ -57,8 +57,9 @@ export default function GoldChartComponent({ user = true, stats }: Props) {
             <div className={styles.tabs}>
               {(['daily', 'weekly', 'monthly'] as Period[]).map((p) => (
                 <button
-                  key={p}
-                  onClick={(e) => {
+                    aria-label="Show analytics"
+                    key={p}
+                    onClick={(e) => {
                     e.stopPropagation();
                     setPeriod(p);
                   }}

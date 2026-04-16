@@ -124,20 +124,29 @@ export const ReviewEditComponent = ({
                         <div className={styles.buttonGroup}>
                             {editMode ? (
                                 <>
-                                    <button onClick={handleSave} disabled={loading} className={styles.editButton}>
+                                    <button onClick={handleSave}
+                                            disabled={loading}
+                                            aria-label="Save review"
+                                            className={styles.editButton}>
                                         {loading ? "Saving..." : "Save All"}
                                     </button>
-                                    <button onClick={handleCancel} className={styles.deleteButton}>
+                                    <button
+                                        aria-label="Cancel save review"
+                                        onClick={handleCancel} className={styles.deleteButton}>
                                         Cancel
                                     </button>
                                 </>
                             ) : (
                                 <>
-                                    <button onClick={() => setEditMode(true)} className={styles.editButton}>
+                                    <button onClick={() => setEditMode(true)}
+                                            aria-label="Edit review"
+                                            className={styles.editButton}>
                                         Edit
                                     </button>
                                     {onDelete && (
-                                        <button onClick={() => onDelete(editData.id)} className={styles.deleteButton}>
+                                        <button onClick={() => onDelete(editData.id)}
+                                                aria-label="Delete review"
+                                                className={styles.deleteButton}>
                                             Delete
                                         </button>
                                     )}

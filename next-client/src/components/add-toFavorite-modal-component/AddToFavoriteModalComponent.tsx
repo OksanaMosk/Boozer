@@ -77,6 +77,7 @@ export const AddToFavoriteModalComponent = ({ venueId, onClose, token, onSuccess
                 {!isCustom ? (
                     <div className={styles.selectWrapper}>
                         <select
+                            aria-label="Add favorite and save"
                             className={styles.select}
                             value={selectedCat}
                             onChange={(e) => {

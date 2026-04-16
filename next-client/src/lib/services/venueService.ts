@@ -14,6 +14,7 @@ import {
 import {IOrder, ITableBooking, OrderStatusType} from "@/models/IOrder";
 import {ITravelEstimate, ITravelLogistics} from "@/models/ITravel";
 import {IFavoriteCollection} from "@/models/IReviewFeedback";
+import {IChatRoom} from "@/models/IChat";
 
 type Token = { accessToken: string };
 
@@ -148,7 +149,6 @@ const venueServices = {
         photos: getByParent<IVenuePhoto>(urls.venues.photos),
         tables: (token?: Token) => (venueId: string) => ({
              getAll: (params?: any) => getByParentPaginated<ITable>(urls.venues.tables, token)(venueId, { params }),
-            // getAll: () => getByParent<ITable>(urls.venues.tables, token)(venueId),
             get: (tableId: string) => api(token).get<ITable>(`${urls.venues.tables(venueId)}${tableId}/`),
             create: (data: Partial<ITable>) => api(token).post<ITable>(urls.venues.tables(venueId), data),
             update: (tableId: string, data: Partial<ITable>) => api(token).patch<ITable>(`${urls.venues.tables(venueId)}${tableId}/`, data),
@@ -218,7 +218,6 @@ const venueServices = {
             delete: (id: string) => api(token).delete(`${urls.venues.extraServices(venueId)}${id}/`),
         }),
         reviews: (token?: Token) => (venueId: string) => ({
-            // getAll: (params?: any) => api(token).get<PaginatedResponse<IReview>>(urls.venues.reviews.list(venueId), {params}),
             getAll: (filterCriteria?: ReviewFilterCriteria) =>api(token).get<PaginatedResponse<IReview>>(urls.venues.reviews.list(venueId), {params: buildReviewParams(filterCriteria)}),
             get: (id: string | number) => api(token).get<IReview>(urls.venues.reviews.detail(venueId, id.toString())),
             create: (data: Partial<IReview> | FormData) => api(token).post<IReview>(urls.venues.reviews.create(venueId), data, {headers: data instanceof FormData ? {"Content-Type": "multipart/form-data"} : {}}),
@@ -233,7 +232,6 @@ const venueServices = {
         favorites: (token?: Token) => (venueId: string) => ({
             add: (data: { collection_id?: number; new_collection_name?: string; collection_category?: string }) => api(token).post(urls.venues.favorites(venueId), data),
             getAll: (criteria?: FavoriteFilterCriteria) => api(token).get(urls.venues.favorites(venueId), {params: buildFavoriteParams(criteria || {venueId})}),
-            // removeFromCollection: (collectionId: number | string) => api(token).delete(`${urls.venues.favorites(venueId)}remove_from_collection/`, {params: { collection_id: collectionId }}),
             delete: () => api(token).delete(`${urls.venues.favorites(venueId)}delete_favorite/`),
         }),
         tags: (venueId: string) => ({
@@ -263,7 +261,8 @@ const venueServices = {
 
     allNews: {
         list: (params?: { page?: number; limit?: number; type?: string; status?: string; is_pinned?: boolean; }, token?: Token) => api(token).get<PaginatedResponse<INews>>(urls.allNews.list, {params}),
-        get: (newsId: string | number, token?: Token) => api(token).get<INews>(`${urls.allNews.detail}${newsId}/`),
+        get: (newsId: string | number, token?: Token) =>
+        api(token).get<INews>(urls.allNews.detail(String(newsId)))
     },
 
     bookings: {
@@ -314,10 +313,26 @@ const venueServices = {
     constants: {
         getConstants: () => api().get(urls.constants.constantsList),
     },
+    chat: (token?: Token) => ({
+        getRooms: (params:any) => api(token).get<IChatRoom[]>(urls.chat.rooms, {params}),
+        connect: (roomName: string) => {
+        const tokenString = typeof token === 'object' ? token.accessToken : token;
+        const socket = new WebSocket(urls.chat.socket(roomName, String(tokenString || '')));
+        return socket;
+    },
+        pushMessage: (socket: WebSocket, venueId: number, text: string, roomName: string) => {
+            socket.send(JSON.stringify({
+                action: "send_chat_message",
+                request_id: Date.now(),
+                data: {
+                    venueId: venueId,
+                    text: text,
+                    roomName: roomName
+                }
+            }));
+        }
+    }),
 
-    // stats: {
-    //     getStats: (venueId: string, token?: Token) => api(token).get(urls.venues.stats(venueId)),
-    // },
     exchangeService: {
         getRates: (token?: Token) => api(token).get<{ USD: number; EUR: number }>(urls.exchangeRates),
     }

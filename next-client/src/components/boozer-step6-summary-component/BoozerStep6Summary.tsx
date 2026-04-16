@@ -126,8 +126,8 @@ const BoozerStep6Summary = ({ venueId, orderId, onNext }: any) => {
                 <p className={styles.smallText}>pay</p>
             </div>
             <div className={styles.selectCurrency}>
-                <label className={styles.label}>Currency</label>
-                <select className={styles.select} value={currency} onChange={(e) => setCurrency(e.target.value as any)}>
+                <label htmlFor="currency-select"  className={styles.label}>Currency</label>
+                <select id="currency-select" className={styles.select} value={currency} onChange={(e) => setCurrency(e.target.value as any)}>
                     <option value="UAH">UAH</option>
                     <option value="USD">USD</option>
                     <option value="EUR">EUR</option>

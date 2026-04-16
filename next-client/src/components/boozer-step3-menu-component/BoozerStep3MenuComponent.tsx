@@ -177,8 +177,10 @@ const BoozerStep3MenuComponent: React.FC<Props> = ({venueId, orderId, onNext, on
                     <p className={styles.smallText}>Select</p>
                 </div>
                 <div className={styles.selectCurrency}>
-                    <label className={styles.label}>Currency</label>
-                    <select value={currency} onChange={(e) => setCurrency(e.target.value as any)}
+                    <label htmlFor="currency-select" className={styles.label}>Currency</label>
+                    <select id="currency-select"
+                        value={currency}
+                        onChange={(e) => setCurrency(e.target.value as any)}
                             className={styles.select}>
                         <option value="UAH">UAH</option>
                         <option value="USD">USD</option>

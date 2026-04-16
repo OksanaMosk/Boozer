@@ -4,7 +4,6 @@ import React from "react";
 import styles from "./ProfileComponent.module.css";
 import {IUser} from "@/models/IUser";
 import {LoaderComponent} from "@/components/loader-component/LoaderComponent";
-import ChatComponent from "@/components/chat-component/ChatComponent";
 
 interface ProfileProps {
     user: IUser;
@@ -105,11 +104,7 @@ const getPhotoUrl = (avatarUrl?: string | null) => {
                 <div className={styles.actionsWrapper}>
                     {actions}
                 </div>
-
             </header>
-            <div className={styles.chatWrapper}>
-                <ChatComponent ownerId={String(user.id)}/>
-            </div>
         </>
     );
 };

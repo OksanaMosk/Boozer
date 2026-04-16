@@ -60,6 +60,7 @@ const VenueSelectsComponent: React.FC<VenueSelectsProps> = ({
     return (
         <div className={styles.filters}>
             <select
+                aria-label="Select country"
                 className={styles.select}
                 value={country}
                 onChange={(e) => handleCountryChange(e.target.value)}
@@ -77,6 +78,7 @@ const VenueSelectsComponent: React.FC<VenueSelectsProps> = ({
 
             {country && (
                 <select
+                    aria-label="Select city"
                     className={styles.select}
                     value={city}
                     onChange={(e) => handleCityChange(e.target.value)}

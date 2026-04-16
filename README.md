@@ -80,11 +80,42 @@ Roles. 👫Visitor: Browse platform, Create Boozer orders, Book menus, tables, t
 
 👨‍⚖️Admin: Manage: users, venues, Moderation, Analytics.
 
-⚙️ Tech Stack: Backend: Python, Django, Celery, Redis, Supabase.
+💬 Chat System
+The platform features a real-time communication system that bridges the gap between visitors and venue management.
+🔄 Communication Flow:
+Initiating Chat: From the VenueInfo page, visitors can start a conversation via the chat trigger located in the page footer.
+Room Creation: Upon initiation, a private chat room is automatically created, linking the specific visitor and the venue.
+Venue Management:
+Through the Venue Admin Dashboard, administrators can view all incoming inquiries.
+The Venue Admin can respond and chat with visitors directly on behalf of the establishment.
+✨ Key Features:
+Direct Interaction: Seamless transition from viewing venue details to active communication.
+Brand Representation: Admins speak as the venue, maintaining professional brand consistency.
+Centralized Dashboard: All visitor chats are organized and managed in one place for the admin.
 
-Frontend: Next.js, React, Drag & Drop, React Canvas.
+## 🛠 Tech Stack
 
-Infrastructure: Nginx, Docker, Google Maps API, OAuth (Google, Facebook).
+### Backend
+* **Python & Django** – Robust server-side logic and application framework.
+* **Django REST Framework (DRF)** – Powerful API development with nested routing support.
+* **SimpleJWT** – Secure token-based authentication.
+* **WebSockets (Daphne & Django Channels)** – Real-time, bi-directional communication for the chat system.
+* **Redis** – High-performance message broker and channel layer.
+* **Celery & Celery Beat** – Background task processing and scheduled jobs.
+* **PostgreSQL** – Primary relational database using the modern `psycopg` (v3) adapter.
+* **Supabase / S3 (Boto3 & Django-Storages)** – Scalable cloud storage for media and static files.
+
+### Frontend
+* **Next.js & React** – Modern framework for server-side rendering and responsive UI.
+* **Drag & Drop** – Interactive interface for intuitive file uploads and element management.
+* **React Canvas** – High-performance rendering for complex graphical components.
+
+### Infrastructure & Security
+* **Nginx** – High-performance web server and reverse proxy.
+* **Docker** – Full containerization for consistent deployment across environments.
+* **OAuth (Google & Facebook)** – Simplified and secure social authentication.
+* **Google Maps API** – Advanced geolocation, venue mapping, and place services.
+* **Better-profanity** – Automated content moderation for chat and reviews.
 
 Authentication Architecture: The authentication system is built using a custom social login implementation based on OAuth and JWT.
 
@@ -98,7 +129,7 @@ The backend: validates the token with the provider retrieves user data. After su
 
 🔒 Access Rules: Browsing — public, Orders & real pricing — authenticated users only. 
 
-🚧 In Progress: Chat.
+🚧 In Progress: 
 Postman collection is not tested for the Favorites, Review.
 
 🎊 Product Vision VIP Boozer is more than booking — it’s a full experience: travel, entertainment, comfort, personalization.

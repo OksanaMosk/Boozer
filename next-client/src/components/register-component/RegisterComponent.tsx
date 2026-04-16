@@ -285,7 +285,11 @@ const RegisterComponent = () => {
                     </label>
                 </div>
 
-                <button type="submit" className={styles.button} disabled={isSubmitting}>
+                <button type="submit"
+                        className={styles.button}
+                        disabled={isSubmitting}
+                        aria-label={isSubmitting ? "Creating your account, please wait" : "Sign Up"}
+                >
                     {isSubmitting ?
                         <div className={`authButton ${styles.loaderWrapper}`}><LoaderComponent/></div> : "Sign Up"}
                 </button>

@@ -222,8 +222,9 @@ const BoozerStep2OrderBaseInfoComponent: React.FC<Props> = ({venueId, onNext, on
 
                 <div className={styles.selectContainer}>
                     <div className={styles.selectWrapper}>
-                        <label className={styles.label}>Gender Preference</label>
+                        <label htmlFor="preference-select" className={styles.label}>Gender Preference</label>
                         <select
+                             id="preference-select"
                             className={styles.select}
                             value={formData.gender_preference}
                             onChange={e => setFormData({...formData, gender_preference: e.target.value})}
@@ -234,8 +235,9 @@ const BoozerStep2OrderBaseInfoComponent: React.FC<Props> = ({venueId, onNext, on
                         </select>
                     </div>
                     <div className={styles.selectWrapper}>
-                        <label className={styles.label}>Payment Type</label>
+                        <label  htmlFor="payment_type-select" className={styles.label}>Payment Type</label>
                         <select
+                             id="payment_type-select"
                             className={styles.select}
                             value={formData.payment_type}
                             onChange={e => setFormData({...formData, payment_type: e.target.value})}
@@ -247,8 +249,11 @@ const BoozerStep2OrderBaseInfoComponent: React.FC<Props> = ({venueId, onNext, on
                     </div>
 
                     <div className={styles.selectWrapper}>
-                        <label className={styles.label}>Budget Preference</label>
+                        <label
+                            htmlFor="budget_range-select"
+                            className={styles.label}>Budget Preference</label>
                         <select
+                              id="budget_range-select"
                             className={styles.select}
                             value={formData.budget_range}
                             onChange={e => setFormData({...formData, budget_range: e.target.value})}

@@ -4,6 +4,7 @@ import {useRouter, useSearchParams} from "next/navigation";
 
 export type TabType =
     | "profile"
+    | "chat"
     | "favorites"
     | "my_activity"
     | "venues_control"
@@ -17,6 +18,7 @@ export type TabType =
 
 const VALID_TABS: TabType[] = [
     "profile",
+    "chat",
     "favorites",
     "my_activity",
     "venues_control",

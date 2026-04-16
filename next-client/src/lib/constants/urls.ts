@@ -12,7 +12,8 @@ const paths = {
     favorites: "/favorites",
     constants: "/constants",
     venuesStats: "/venues/stats",
-    exchangeRates: "/exchange-rates"
+    exchangeRates: "/exchange-rates",
+    chat: "/rooms"
 };
 
 export const urls = {
@@ -30,7 +31,6 @@ export const urls = {
         changeRole: (id: string) => `${paths.users}/change-role/${id}/`,
         delete: (id: string) => `${paths.users}/${id}/delete/`,
         reviews: (userId: string) => `${paths.users}/${userId}/reviews/`,
-        // favorites: (userId: string) => `${paths.users}/${userId}/favorites/`,
         updateProfile:(userId: string) => `${paths.users}/${userId}/profile/`,
         userVenues: (userId: string) => `${paths.users}/${userId}/venues/`,
     },
@@ -135,6 +135,11 @@ export const urls = {
         list: `${paths.reviews}/favorites/`,
         detail: (id: string | number) => `${paths.reviews}/favorites/${id}/`,
         candidates: `${paths.reviews}/favorites/candidates/`,
+    },
+     chat: {
+        rooms: `${paths.chat}/`,
+        socket: (roomName: string, token: string) =>
+            `ws://localhost:8888/ws/chat/${roomName}?token=${token}`,
     },
     constants: {
         constantsList: `${paths.constants}/`

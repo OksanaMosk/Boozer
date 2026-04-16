@@ -78,10 +78,14 @@ export const ReviewComponent = ({review, onLike, onReport, isAdminView = false}:
                                 {!showReportForm ? (
                                     <>
                                         <button onClick={handleLike}
+                                                aria-label={isLiked ? "Remove like" : "Like this review"}
+                                                aria-pressed={isLiked}
                                                 className={`${styles.editButton} ${isLiked ? styles.activeLike : ''}`}>
                                             👍 {likesCount}
                                         </button>
-                                        <button onClick={() => setShowReportForm(true)} className={styles.deleteButton}>
+                                        <button
+                                            aria-label="Report this content for violation"
+                                            onClick={() => setShowReportForm(true)} className={styles.deleteButton}>
                                             ⚠ Report
                                         </button>
                                         {isReported && <div className={styles.bottomAlert}>Report sent</div>}
@@ -89,8 +93,11 @@ export const ReviewComponent = ({review, onLike, onReport, isAdminView = false}:
                                 ) : (
                                     <div className={styles.selectWrapper}>
                                         <div className={styles.reason}>
-                                            <label className={styles.labelSelect}>Reason</label>
+                                            <label
+                                                htmlFor="reason-select"
+                                                className={styles.labelSelect}>Reason</label>
                                             <select
+                                                id="reason-select"
                                                 value={reportReason}
                                                 onChange={(e) => setReportReason(e.target.value)}
                                                 className={styles.select}
@@ -102,10 +109,12 @@ export const ReviewComponent = ({review, onLike, onReport, isAdminView = false}:
                                             </select>
                                             <div className={styles.reportActionButtons}>
                                                 <button onClick={handleSendReport}
+                                                        aria-label="Send report"
                                                         className={styles.sendReportBtn}>Send
                                                 </button>
 
                                                 <button onClick={() => setShowReportForm(false)}
+                                                        aria-label="Cancel report"
                                                         className={styles.cancelReportBtn}>✕
                                                 </button>
                                             </div>

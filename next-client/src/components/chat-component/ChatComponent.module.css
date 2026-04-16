@@ -1,109 +1,11 @@
 .container {
-  display: flex;
-  flex-direction: column;
-    justify-content: center;
-  width: 400px;
-  margin: 0 auto;
-  text-align: center;
-}
-
-.chatBox {
-
-  display: flex;
-  flex-direction: column;
-    gap: 2rem;
-  border: none;
-  height: 500px;
-  overflow: hidden;
-     background-color: inherit;
-    padding: 2.5rem;
-    border-radius: 1.5rem;
-    box-shadow: 0 0 12px white;
-}
-
-.messages {
-  flex: 1;
-  padding: 10px;
-  overflow-y: auto;
-    border-radius: 1.2rem;
-    border: 1px solid var(--color-white);
-    outline: none;
-    background-color: rgba(255, 255, 255, 0);
-      box-shadow: 0 0 12px white;
-}
-
-.messageItem {
-  margin-bottom: 16px;
-  display: flex;
-  flex-wrap: wrap;
-    color: var(--color-white);
-    font-size: 14px;
-    background-color: rgba(255, 255, 255, 0.5);
-    border-radius: 1.5rem;
-    padding: 8px;
-}
-
-.username {
-  margin-right: 8px;
-  cursor: pointer;
-  color: var(--color-border);
-}
-
-.activeUser {
-  color: #d73a49;
-}
-
-.messageText {
-    word-break: break-word;
-    color: var(--color-white);
-}
-.inputRow {
-  display: flex;
-  padding: 4px;
-}
-
-.messageInput {
-    padding: 8px 8px 8px 20px;
-    border-radius: 100px;
-    font-size: 14px;
-    margin: 0;
-    color: var(--color-white);
-    border: 1px solid var(--color-white);
-    outline: none;
-    background-color: transparent;
-    resize: none;
-    white-space: pre-wrap;
-    word-wrap: break-word;
-    box-shadow: 0 0 12px white;
-
-}
-.messageInput::placeholder{
-color: darkgray;
-}
-
-.messageInput:focus {
-    background-color: rgba(255, 255, 255, 0.3);
-}
-
-.chatButton{
-    width: 260px;
-    height: 45px;
-    border-radius: 2rem;
-    text-decoration: none;
+    margin: 0 auto;
     text-align: center;
-    margin: 3rem auto 5rem auto;
     display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 1.2rem;
-   background: linear-gradient(90deg, #30240b, white, #30240b);
-    cursor: pointer;
-    outline: none;
-    transition: all 0.3s ease-in-out;
-    border: 1px solid rgba(255,255,255,0.5);
-    color: var(--color-text-muted);
-}
-.chatButton:hover {
-  background: linear-gradient(90deg, white, #30240b, white);
-    color: var(--color-white);
+    width: 50vw;
+    height: 70vh;
+    background: var(--reverse-menu-color);
+    overflow: hidden;
+    position: relative;
+    border-radius: 1.5rem;
 }

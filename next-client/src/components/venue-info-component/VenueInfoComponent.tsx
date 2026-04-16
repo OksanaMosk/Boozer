@@ -3,13 +3,14 @@
 import React, { useEffect, useRef, useMemo, useState } from "react";
 import Link from "next/link";
 import { IVenue } from "@/models/IVenue";
-import ChatComponent from "../chat-component/ChatComponent";
+
 import styles from "./VenueInfoComponent.module.css";
 import {ButtonGoBackComponent} from "@/components/button-go-back-component/ButtonGoBackComponent";
 import {HeartIcon} from "@/components/HeartIcon";
 import {AddToFavoriteModalComponent} from "@/components/add-toFavorite-modal-component/AddToFavoriteModalComponent";
 import {useUser} from "@/app/contexts/UserProvider";
 import venueServices from "@/lib/services/venueService";
+import {useRouter} from "next/navigation";
 
 interface Props {
     venue: IVenue;
@@ -25,7 +26,7 @@ const VenueInfoComponent: React.FC<Props> = ({venue}) => {
     const [showModal, setShowModal] = useState(false);
     const [isUnauthorized, setIsUnauthorized] = useState(false);
     const {user} = useUser();
-
+    const  router = useRouter();
     useEffect(() => {
         setMounted(true);
         setIsFavorite(!!venue.is_favorite);
@@ -332,6 +333,7 @@ const VenueInfoComponent: React.FC<Props> = ({venue}) => {
                         {photos.length > 1 && currentPhoto && (
                             <div className={styles.singleGalleryWrapper}>
                                 <button
+                                    aria-label="Prev photo"
                                     className={styles.arrow}
                                     onClick={prevPhoto}
                                     disabled={currentIndex === 0}
@@ -346,6 +348,7 @@ const VenueInfoComponent: React.FC<Props> = ({venue}) => {
                                 />
 
                                 <button
+                                    aria-label="Next photo"
                                     className={styles.arrow}
                                     onClick={nextPhoto}
                                     disabled={currentIndex === photos.length - 1}
@@ -393,7 +396,11 @@ const VenueInfoComponent: React.FC<Props> = ({venue}) => {
                     <p>ID: {venue.id}</p>
                     <div style={{margin: "20px auto", maxWidth: "400px"}}>
                         {venue.id ? (
-                            <ChatComponent ownerId={String(venue.id)}/>
+                            <button className={styles.buttonChat}
+                                aria-label="Chat with Venue"
+                                onClick={() => router.push(`/chat?venueId=${venue.id}&venueName=${venue.name}`)}>
+                                Chat with Venue
+                            </button>
                         ) : (
                             <p style={{textAlign: "center"}}>Venue Admin not available</p>
                         )}

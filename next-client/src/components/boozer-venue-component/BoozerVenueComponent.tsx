@@ -37,6 +37,7 @@ const BoozerVenueComponent: React.FC<Props> = ({venue, selected = false, onSelec
             <button
                 className={styles.selectButton}
                 onClick={handleToggle}
+                aria-label="Toggle selection"
             >
                 {isSelected ? "Selected 🍹" : "Choose"}
             </button>

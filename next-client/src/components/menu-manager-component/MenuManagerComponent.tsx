@@ -148,6 +148,7 @@ const MenuManagerComponent: React.FC<Props> = ({venue}) => {
                                 <td className={styles.actions}>
                                     <button
                                         className={styles.button}
+                                        aria-label={menu.is_published ? "Unpublish menu" : "Publish menu"}
                                         onClick={(e) => {
                                             if (!menu.id) return;
                                             e.stopPropagation();
@@ -160,6 +161,7 @@ const MenuManagerComponent: React.FC<Props> = ({venue}) => {
                                         <>
                                             <button
                                                 className={styles.button}
+                                                aria-label="Save changes"
                                                 onClick={(e) => {
                                                     e.stopPropagation();
                                                     if (menu.id) {
@@ -171,6 +173,7 @@ const MenuManagerComponent: React.FC<Props> = ({venue}) => {
                                             </button>
                                             <button
                                                 className={styles.deleteButton}
+                                                aria-label="Cancel changes"
                                                 onClick={(e) => {
                                                     e.stopPropagation();
                                                     setEditingMenuId(null);
@@ -182,6 +185,7 @@ const MenuManagerComponent: React.FC<Props> = ({venue}) => {
                                     ) : (
                                         <>
                                             <button
+                                                aria-label="Edit title"
                                                 className={styles.editButton}
                                                 onClick={(e) => {
                                                     e.stopPropagation();
@@ -194,6 +198,7 @@ const MenuManagerComponent: React.FC<Props> = ({venue}) => {
                                                 Edit title
                                             </button>
                                             <button
+                                                aria-label="Delete menu"
                                                 className={styles.deleteButton}
                                                 onClick={(e) => {
                                                     e.stopPropagation();
@@ -205,6 +210,7 @@ const MenuManagerComponent: React.FC<Props> = ({venue}) => {
                                                 Delete
                                             </button>
                                             <button
+                                                 aria-label="Go to menu items"
                                                 className={styles.button}
                                                 onClick={(e) => {
                                                     e.stopPropagation();

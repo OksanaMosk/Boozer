@@ -70,7 +70,12 @@ const MenuCreateComponent: React.FC<VenueMenuCreateComponentProps> = ({venueId, 
             </div>
 
             <div className={styles.bottomWrapper}>
-                <button type="submit" disabled={loadingMenu} className={styles.submitButton}>
+                <button
+                    type="submit"
+                    disabled={loadingMenu}
+                    className={styles.submitButton}
+                    aria-label={loadingMenu ? "Saving menu changes" : "Save menu"}
+                >
                     {loadingMenu ? <div className={styles.loaderWrapper}><LoaderComponent/></div> : "Save Menu"}
                 </button>
             </div>

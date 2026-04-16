@@ -81,7 +81,7 @@ export const ReviewListEditComponent = () => {
                <ButtonScrollBottomComponent/>
             <div className={styles.reviewsGrid}>
                 {reviews.length === 0 ? (
-                    <p className={styles.noReviews}>No reviews found.</p>
+                    <p className={styles.titleNo}>No reviews found.</p>
                 ) : (
                     reviews.map((review) => (
                         <div

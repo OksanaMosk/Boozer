@@ -61,7 +61,10 @@ const HeroComponent = () => {
                     Premium Places
                 </p>
             </div>
-            <button className={styles.videoSoundToggle} onClick={toggleMute}>
+            <button
+                aria-label={muted ? "Unmute video" : "Mute video"}
+                className={styles.videoSoundToggle}
+                onClick={toggleMute}>
                 {muted ? "Sound on" : "Sound off"}
             </button>
         </section>

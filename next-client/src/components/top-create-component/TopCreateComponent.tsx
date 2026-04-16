@@ -44,7 +44,9 @@ const TopCreateComponent: React.FC<Props> = ({ onCreated }) => {
 
     return (
         <div className={styles.wrapper}>
-            <button className={styles.toggleBtn} onClick={toggleForm}>
+            <button className={styles.toggleBtn}
+                    aria-label="Create Staff TOP"
+                    onClick={toggleForm}>
                 {showForm ? " Cancel" : "Create Staff TOP"}
             </button>
 
@@ -62,6 +64,7 @@ const TopCreateComponent: React.FC<Props> = ({ onCreated }) => {
                             autoFocus
                         />
                         <button
+                            aria-label="Save item to Staff TOP"
                             className={styles.saveBtn}
                             onClick={handleCreate}
                             disabled={!name.trim()}

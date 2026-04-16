@@ -147,7 +147,11 @@ const AdminUserManagementComponent: React.FC<AdminUserManagementProps> = ({activ
             <h2 className={styles.subtitle}>Manage Users</h2>
 
             <div className={styles.filters}>
-                <select onChange={e => setRole(e.target.value)} value={role || ""} className={styles.bigSelect}>
+                <select onChange={e => setRole(e.target.value)}
+                        value={role || ""}
+                        aria-label="Change role"
+                        className={styles.bigSelect}
+                >
                     <option value="">All Roles</option>
                     <option value="visitor">Visitor</option>
                     <option value="venue_admin">Venue Admin</option>
@@ -155,6 +159,7 @@ const AdminUserManagementComponent: React.FC<AdminUserManagementProps> = ({activ
                 </select>
 
                 <select
+                    aria-label="Change active status"
                     onChange={e => {
                         const value = e.target.value;
                         setIsActive(value === "" ? undefined : value === "true");
@@ -167,14 +172,20 @@ const AdminUserManagementComponent: React.FC<AdminUserManagementProps> = ({activ
                     <option value="false">Blocked</option>
                 </select>
 
-                <select onChange={e => setSortBy(e.target.value)} value={sortBy} className={styles.bigSelect}>
+                <select onChange={e => setSortBy(e.target.value)} value={sortBy}
+                        aria-label="Sort by"
+                        className={styles.bigSelect}>
                     <option value="id">ID</option>
                     <option value="email">Email</option>
                     <option value="role">Role</option>
                     <option value="is_active">Status</option>
                 </select>
 
-                <select onChange={e => setSortOrder(e.target.value)} value={sortOrder} className={styles.bigSelect}>
+                <select onChange={e => setSortOrder(e.target.value)}
+                        value={sortOrder}
+                        className={styles.bigSelect}
+                        aria-label="Sort by"
+                >
                     <option value="asc">Ascending (↑)</option>
                     <option value="desc">Descending (↓)</option>
                 </select>
@@ -201,6 +212,7 @@ const AdminUserManagementComponent: React.FC<AdminUserManagementProps> = ({activ
 
                         <td>
                             <select
+                                aria-label="Change role"
                                 className={styles.select}
                                 value={user.role}
                                 disabled={String(user.id) === String(session?.user?.id)}

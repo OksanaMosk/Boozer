@@ -188,7 +188,9 @@ export const OrderItemComponent = ({ order, onUpdate, venueId }: OrderItemProps)
                         <div className={styles.buttonLayout}>
                             {order.status !== "CANCELLED" ? (
                                 permissions.canManage && (
-                                    <button className={styles.secondaryBtn} onClick={onAdminCancel}>
+                                    <button className={styles.secondaryBtn}
+                                            aria-label="Cansel order"
+                                            onClick={onAdminCancel}>
                                         Cancel Order
                                     </button>
                                 )
@@ -197,12 +199,14 @@ export const OrderItemComponent = ({ order, onUpdate, venueId }: OrderItemProps)
                                 <span className={styles.cancelledLabel}>Order is Cancelled</span>
                             )}
                             {permissions.canDelete && (
-                                <button className={styles.dangerBtn} onClick={onAdminDelete}>
+                                <button className={styles.dangerBtn}
+                                        aria-label="Delete order"
+                                        onClick={onAdminDelete}>
                                     Delete
                                 </button>
                             )}
                             {permissions.canRefund && (
-                                <button className={styles.premiumActionBtn} onClick={onRefundRequest}>Request
+                                <button className={styles.premiumActionBtn} aria-label="Refund money"  onClick={onRefundRequest}>Request
                                     Refund</button>
                             )}
                             {permissions.isRefundPending && (

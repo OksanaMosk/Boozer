@@ -9,6 +9,7 @@ import { NewComponent } from "@/components/new-component/NewComponent";
 import { LoaderComponent } from "@/components/loader-component/LoaderComponent";
 import styles from "./NewsVisitorComponent.module.css";
 import {ButtonScrollBottomComponent} from "@/components/button-scroll-bottom-component/ButtonScrollBottomComponent";
+import Link from "next/link";
 
 
 interface ClientNewsProps {
@@ -87,20 +88,27 @@ const NewsVisitorComponent: React.FC<ClientNewsProps> = ({ venueId }) => {
                             <>
                                 {news.length > 0 ? (
                                     news.map((item) => (
-                                        <NewComponent
+
+                                        <Link
+                                            href={`/venues/${venueId}/news/${item.id}`}
                                             key={item.id}
-                                            news={item}
-                                            venueId={venueId}
-                                            token={user?.token || ""}
-                                            isReadOnly={true}
-                                            onDelete={() => {
-                                            }}
-                                            onUpdate={() => {
-                                            }}
-                                        />
+                                            className={styles.newsLink}
+                                        >
+                                            <NewComponent
+                                                news={item}
+                                                venueId={venueId}
+                                                token={user?.token || ""}
+                                                isReadOnly={true}
+                                                onDelete={() => {
+                                                }}
+                                                onUpdate={() => {
+                                                }}
+                                            />
+                                        </Link>
                                     ))
                                 ) : (
-                                    <p className={styles.emptyState}>There are no active news in this category at the moment</p>
+                                    <p className={styles.emptyState}>There are no active news in this category at the
+                                        moment</p>
                                 )}
 
                             </>

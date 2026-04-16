@@ -118,8 +118,11 @@ export const ReviewFormComponent = ({ venueId, onSubmit, orders, onUploadComplet
             </div>
 
             <div className={styles.selectWrapper}>
-                <label className={styles.label}>Select your visit:</label>
+                <label
+                    htmlFor="visit-select"
+                    className={styles.label}>Select your visit:</label>
                 <select
+                    id="visit-select"
                     className={styles.select}
                     value={selectedOrderId}
                     onChange={(e) => setSelectedOrderId(e.target.value)}
@@ -163,6 +166,7 @@ export const ReviewFormComponent = ({ venueId, onSubmit, orders, onUploadComplet
                 <button
                     onClick={handleAddReview}
                     disabled={loading || !!createdReview}
+                    aria-label="Add review"
                     className={`${styles.saveBtn} ${(loading || !!createdReview) ? styles.buttonDisabled : ''}`}
                 >
                     {loading ? (

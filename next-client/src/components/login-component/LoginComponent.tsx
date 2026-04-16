@@ -91,7 +91,12 @@ const LoginComponent = () => {
                 </Link>
                 {errorMsg && <p className={styles.error}>{errorMsg}</p>}
 
-                <button type="submit" className={styles.button} disabled={loading}>
+                <button
+                    type="submit"
+                    className={styles.button}
+                    disabled={loading}
+                    aria-label={loading ? "Sending data, please wait" : "Submit form"}
+                >
                     {loading ? (
                         <div className={`authButton ${styles.loaderWrapper}`}>
                             <LoaderComponent/>

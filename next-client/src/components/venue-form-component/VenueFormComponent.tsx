@@ -128,7 +128,8 @@ export const VenueFormComponent = ({
                             </div>
 
                             <div className={styles.inputWrapper}>
-                                <label className={styles.label}>Venue currency *</label>
+                                <label
+                                    className={styles.label}>Venue currency *</label>
                                 <select
                                     name="currency"
                                     value={form.currency || "UAH"}
@@ -198,6 +199,7 @@ export const VenueFormComponent = ({
                         {message && <p className={styles.success}>{message}</p>}
 
                         <button
+                            aria-label="Save venue"
                             type="submit"
                             disabled={saving || !!phoneError}
                             className={styles.submitButton}

@@ -89,7 +89,7 @@ const VenueManagementComponent: React.FC<Props> = ({userId}) => {
                         </div>
                     ))
                 ) : (
-                    <p>You haven't added any venues yet.</p>
+                    <p className={styles.titleNo}>You haven't added any venues yet.</p>
                 )}
             </div>
             {totalPages > 1 && (

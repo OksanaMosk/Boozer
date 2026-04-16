@@ -20,6 +20,7 @@ import {ButtonScrollTopComponent} from "@/components/button-scroll-top-component
 import {useSearchParams} from "next/navigation";
 import {PaginationComponent} from "@/components/pagination-component/PaginationComponent";
 import ReviewsAdminManagerComponent from "@/components/reviews-admin-manager-component/ReviewsAdminManagerComponent";
+import {ChatComponent} from "@/components/chat-component/ChatComponent";
 
 interface IVenueWithId extends Omit<IVenue, 'id'> {
     id: string;
@@ -42,6 +43,7 @@ const DashboardComponent: React.FC = () => {
 
     const DASHBOARD_TABS = useMemo(() => [
         { id: "profile", label: "My Profile", show: true },
+        { id: "chat", label: "Chat", show: true },
         { id: "favorites", label: "My Favorites", show: true },
         { id: "manage_tops", label: "🎊 Manage Tops", show: isAdmin },
         { id: "venues_control", label: "My Venues", show: isVenueAdmin },
@@ -101,12 +103,18 @@ const DashboardComponent: React.FC = () => {
                     <button
                         key={tab.id}
                         onClick={() => setTab(tab.id as any)}
+                        aria-label="tab"
                         className={`${styles.navButton} ${activeTab === tab.id ? styles.activeTab : ""}`}
                     >
                         <span>{tab.label}</span>
                     </button>
                 ))}
             </div>
+            {activeTab === "chat" && (
+    <section className={styles.section}>
+            <ChatComponent />
+    </section>
+)}
 
             <div className={styles.mainContent}>
                 {activeTab === "favorites" && (
@@ -181,7 +189,6 @@ const DashboardComponent: React.FC = () => {
                 )}
                  {activeTab === "reviews" && (
                     <section className={styles.section}>
-                        <h2 className={styles.titleManage}>Reviews</h2>
                         <ReviewListEditComponent/>
                     </section>
                  )}

@@ -125,6 +125,7 @@ export const NewComponent = ({news, venueId, onDelete, onUpdate, isReadOnly = fa
                             <div className={styles.statusSelectWrapper}>
                                 <strong>Status:</strong>
                                 <select
+                                    aria-label="Select status"
                                     name="status"
                                     value={editNews.status}
                                     onChange={(e) => setEditNews({...editNews, status: e.target.value})}
@@ -143,19 +144,26 @@ export const NewComponent = ({news, venueId, onDelete, onUpdate, isReadOnly = fa
                     <div className={styles.buttonGroup}>
                         {editMode ? (
                             <>
-                                <button onClick={handleSave} disabled={loading} className={styles.editButton}>
+                                <button
+                                    onClick={handleSave}
+                                    disabled={loading}
+                                    aria-label="Save changes"
+                                    className={styles.editButton}>
                                 {loading ? "Saving..." : "Save"}
                             </button>
-                            <button onClick={() => setEditMode(false)} className={styles.deleteButton}>
+                            <button onClick={() => setEditMode(false)}
+                                    className={styles.deleteButton}
+                                    aria-label="Cancel change"
+                            >
                                 Cancel
                             </button>
                         </>
                     ) : (
                         <>
-                            <button onClick={() => setEditMode(true)} className={styles.editButton}>
+                            <button onClick={() => setEditMode(true)}  aria-label="Edit new item"  className={styles.editButton}>
                                 Edit
                             </button>
-                            <button onClick={() => onDelete(editNews.id)} className={styles.deleteButton}>
+                            <button onClick={() => onDelete(editNews.id)} aria-label="Delete new item"  className={styles.deleteButton}>
                                 Delete
                             </button>
                         </>

@@ -57,6 +57,7 @@ body {
      --label-color: var(--color-text-muted);
      --title-color:var(--color-text);
      --title-primary-color:var(--color-container);
+     --read-color: var(--color-noposter);
      --logo-color: linear-gradient(
     90deg,
     #7a5c1e,
@@ -92,6 +93,7 @@ html.dark {
     --title-primary-color:var(--color-text);
     --logo-hover-color: var(--color-text);
     --logo-color: var(--color-text);
+    --read-color: var(--color-text-muted);
     --menu-color: linear-gradient(
     90deg,
     #000 0%,

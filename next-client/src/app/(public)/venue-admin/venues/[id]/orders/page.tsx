@@ -1,11 +1,26 @@
-import React from "react";
 import {ButtonGoBackComponent} from "@/components/button-go-back-component/ButtonGoBackComponent";
 import {ButtonScrollTopComponent} from "@/components/button-scroll-top-component/ButtonScrollTopComponent";
 import {OrdersManagerComponent} from "@/components/orders-manager-component/OrdersManagerComponent";
+import {Metadata} from "next";
 
-// export default async function OrdersPage({ params }: { params: Promise<{ id: string }> }) {
-//   const {id} = await params
-export default async function OrdersPage({ params }: { params: Promise<{ id: string }> }) {
+interface Props {
+    params: Promise<{ id: string }>;
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+    const { id } = await params;
+
+    return {
+        title: `Manage Orders for Venue ${id} | Boozer`,
+        description: `Manage Orders for Venue ${id} on Boozer.`,
+        robots: {
+            index: false,
+            follow: false,
+        },
+    };
+}
+
+export default async function OrdersPage({ params }:Props) {
   const { id } = await params;
     return (
         <div

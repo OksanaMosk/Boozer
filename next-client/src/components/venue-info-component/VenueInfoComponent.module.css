@@ -275,3 +275,21 @@
     font-size: 20px;
     font-weight: 600;
 }
+.buttonChat{
+    margin: 0 auto;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0.7rem 4rem;
+    border-radius: 1.5rem;
+    color:var(--logo-hover-color);
+    background: var(--menu-color);
+    cursor: pointer;
+    outline: none;
+    transition: all 0.3s ease-in-out;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+.buttonChat:hover {
+    border: 1px solid var(--input-color);
+}

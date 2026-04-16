@@ -86,10 +86,14 @@ const TopHeaderCollection = ({ collection, token, onUpdate }: Props) => {
       </div>
 
       <div className={styles.actions}>
-        <button className={styles.actionBtn} onClick={() => setIsEditing(true)}>
+        <button className={styles.actionBtn}
+                aria-label="Edit name of Staff TOP"
+                onClick={() => setIsEditing(true)}>
           Edit Name
         </button>
-        <button className={styles.deleteBtn} onClick={handleDelete}>
+        <button className={styles.deleteBtn}
+                aria-label="Delete item Staff TOP"
+                onClick={handleDelete}>
           Delete TOP
         </button>
       </div>
