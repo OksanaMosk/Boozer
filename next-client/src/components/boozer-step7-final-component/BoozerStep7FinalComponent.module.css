@@ -19,7 +19,8 @@
     padding: 0;
     margin: 0 ;
     color:var(--title-color);
-    font-size: 10rem;
+    /*font-size: 10rem;*/
+    font-size: clamp(6rem, 30vw, 10rem);
     font-style: italic;
     font-weight: 700;
     position: relative;
@@ -33,7 +34,8 @@
     top: 85%;
     right:0;
     transform: translateY(-50%);
-    font-size: 12rem;
+    /*font-size: 12rem;*/
+    font-size: clamp(8rem, 25vw, 12rem);
     font-weight: 500;
     z-index: 2;
     color: var(--title-primary-color);

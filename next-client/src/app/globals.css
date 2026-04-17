@@ -111,19 +111,24 @@ html.dark {
     #7a5c1e
   );
 }
-
+html.light body .burgerMenu,
 html.light body {
-    background: url("/images/light-background11.jpg") no-repeat center center;
-     background-size: cover;
-  overflow-x: hidden;
+    background: url("/images/light-background11.jpg") no-repeat center center / cover;;
 }
 
-html.light body .burgerMenu {
-        background: url("/images/light-background1.jpg") no-repeat center center,
-        radial-gradient(circle at 30% 30%, #5ff, #00b8b8 40%, #d3b3e0);
-     background-size: cover;
-  overflow-x: hidden;
+html.dark body,
+html.dark .burgerMenu {
+    background: url("/images/dark-background11.jpg") no-repeat center center / cover;
 }
+
+html.dark body.burgerMenu,
+html.light body.burgerMenu {
+    position: fixed;
+    height: 100%;
+    background-size: cover;
+    overflow-x: hidden;
+}
+
 
 html.light .search-input,
 html.light .sort-select {
@@ -165,10 +170,6 @@ html.light .burgerUserLogoutBtn {
         color: black;
     }
 
-html.dark body,
-html.dark .burgerMenu {
-    background: url("/images/dark-background11.jpg") no-repeat center center / cover;
-}
 html.dark .registerMessage {
     color: var(--color-text);
 }

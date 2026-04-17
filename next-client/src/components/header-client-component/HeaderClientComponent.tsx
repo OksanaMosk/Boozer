@@ -137,6 +137,7 @@ export const HeaderClientComponent = () => {
                 from={from}
                 authenticated={authenticated}
                 user={user}
+                menuItems={menuItems}
                 logoutBtnAction={handleLogout}
                 closeMenuAction={() => setIsOpen(false)}
                 onDarkThemeAction={handleDark}

@@ -4,7 +4,12 @@
     height: 4.375rem;
     box-shadow: 0 0.25rem 0.75rem rgba(191, 219, 254, 0.5);
     align-items: center;
+    /* Твій оригінальний колір */
     background-color: rgba(0,0,0,0.1);
+    /* Додав тільки це, щоб контент ховався за ним при скролі */
+    /*position: sticky;*/
+    /*top: 0;*/
+    z-index: 1000;
 }
 
 .navbar {
@@ -27,12 +32,11 @@
     align-items: center;
     gap: 0.8rem;
     text-decoration: none;
-    width: 30%;
-    text-align: center;
-     font-weight: 700;
-    background:var(--logo-color);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+    width: auto; /* Змінив на auto для гумовості */
+    font-weight: 700;
+    background: var(--logo-color);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 .logoLink:hover {
@@ -45,23 +49,23 @@
     margin-left: 0.5rem;
 }
 
-.logoImage{
-   width: 60px;
+.logoImage {
+    width: 60px;
     height: 60px;
     padding: 5px;
     border-radius: 50%;
-     font-weight: 700;
+    font-weight: 700;
 }
+
 .logoTitle {
     font-family: var(--font-imperial), cursive;
-    margin: 0 auto;
-    font-size:4rem;
+    margin: 0;
+    font-size: 1.5rem; /* Гумовий розмір для мобілки */
 }
 
 .menuList {
-    display: flex;
+    display: none; /* Ховаємо на мобілці */
     align-items: center;
-    width: 25%;
     list-style: none;
     padding: 0;
     margin: 0;
@@ -69,32 +73,34 @@
 }
 
 .rightBlock {
-    width: 30%;
+    display: none; /* Ховаємо на мобілці */
     justify-content: flex-end;
     align-items: center;
-    display: none;
 }
+
 .authLinks {
     display: flex;
     gap: 0.8rem;
 }
-    .authLinks a {
+
+.authLinks a {
     color: var(--color-white);
     text-decoration: none;
 }
 
-     .authLinks a:hover {
-        color:#d4af37;
-    }
+.authLinks a:hover {
+    color: #d4af37;
+}
 
 .burger {
-    width: 30%;
     display: flex;
     flex-direction: column;
     gap: 4px;
     cursor: pointer;
-   align-items: flex-end;
+    background: none;
+    border: none;
 }
+
 .burgerLine {
     width: 24px;
     height: 2px;
@@ -102,31 +108,162 @@
     transition: all 0.3s ease;
 }
 
-@media (min-width: 768px) {
+/* Медіа-запит для ПК: повертаємо меню і ховаємо лінії */
+@media (min-width: 1024px) {
+    .menuList {
+        display: flex;
+        width: 25%;
+    }
     .rightBlock {
         display: flex;
-        align-items: center;
-        justify-content: space-between;
-    }
-    .logoTitle {
-        margin: 0;
-        font-size: 0.9rem;
+        width: 30%;
     }
     .burger {
-        display:none;
+        display: none;
     }
-    .rightBlock {
-        width: 30%;
+    .logoTitle {
+        font-size: 2.4rem;
     }
 }
 
 @media (min-width: 1280px) {
-    .navbar {
-
-    }
     .logoTitle {
-        margin: 0;
         font-size: 2.4rem;
-          letter-spacing: 0.1em;
+        letter-spacing: 0.1em;
     }
 }
+
+
+
+/*.header {*/
+/*    display: flex;*/
+/*    width: 100vw;*/
+/*    height: 4.375rem;*/
+/*    box-shadow: 0 0.25rem 0.75rem rgba(191, 219, 254, 0.5);*/
+/*    align-items: center;*/
+/*    background-color: rgba(0,0,0,0.1);*/
+/*}*/
+
+/*.navbar {*/
+/*    display: flex;*/
+/*    justify-content: space-between;*/
+/*    align-items: center;*/
+/*    width: 80%;*/
+/*    margin: 0 auto;*/
+/*    max-width: 1536px;*/
+/*    height: 80px;*/
+/*    color: white;*/
+/*    position: relative;*/
+/*    z-index: 10;*/
+/*}*/
+
+/*.logoLink {*/
+/*    font-family: var(--font-imperial),serif;*/
+/*    display: flex;*/
+/*    justify-content: flex-start;*/
+/*    align-items: center;*/
+/*    gap: 0.8rem;*/
+/*    text-decoration: none;*/
+/*    width: 30%;*/
+/*    text-align: center;*/
+/*     font-weight: 700;*/
+/*    background:var(--logo-color);*/
+/*  -webkit-background-clip: text;*/
+/*  -webkit-text-fill-color: transparent;*/
+/*}*/
+
+/*.logoLink:hover {*/
+/*    background: linear-gradient(90deg, var(--logo-hover-color) 30%, white);*/
+/*    -webkit-background-clip: text;*/
+/*    -webkit-text-fill-color: transparent;*/
+/*}*/
+
+/*.logo {*/
+/*    margin-left: 0.5rem;*/
+/*}*/
+
+/*.logoImage{*/
+/*   width: 60px;*/
+/*    height: 60px;*/
+/*    padding: 5px;*/
+/*    border-radius: 50%;*/
+/*     font-weight: 700;*/
+/*}*/
+/*.logoTitle {*/
+/*    font-family: var(--font-imperial), cursive;*/
+/*    margin: 0 auto;*/
+/*    font-size:4rem;*/
+/*}*/
+
+/*.menuList {*/
+/*    display: flex;*/
+/*    align-items: center;*/
+/*    width: 25%;*/
+/*    list-style: none;*/
+/*    padding: 0;*/
+/*    margin: 0;*/
+/*    gap: 1rem;*/
+/*}*/
+
+/*.rightBlock {*/
+/*    width: 30%;*/
+/*    justify-content: flex-end;*/
+/*    align-items: center;*/
+/*    display: none;*/
+/*}*/
+/*.authLinks {*/
+/*    display: flex;*/
+/*    gap: 0.8rem;*/
+/*}*/
+/*    .authLinks a {*/
+/*    color: var(--color-white);*/
+/*    text-decoration: none;*/
+/*}*/
+
+/*     .authLinks a:hover {*/
+/*        color:#d4af37;*/
+/*    }*/
+
+/*.burger {*/
+/*    width: 30%;*/
+/*    display: flex;*/
+/*    flex-direction: column;*/
+/*    gap: 4px;*/
+/*    cursor: pointer;*/
+/*   align-items: flex-end;*/
+/*}*/
+/*.burgerLine {*/
+/*    width: 24px;*/
+/*    height: 2px;*/
+/*    background-color: var(--color-white);*/
+/*    transition: all 0.3s ease;*/
+/*}*/
+
+/*@media (min-width: 768px) {*/
+/*    .rightBlock {*/
+/*        display: flex;*/
+/*        align-items: center;*/
+/*        justify-content: space-between;*/
+/*    }*/
+/*    .logoTitle {*/
+/*        margin: 0;*/
+/*        font-size: 0.9rem;*/
+/*    }*/
+/*    .burger {*/
+/*        display:none;*/
+/*    }*/
+/*    .rightBlock {*/
+/*        width: 30%;*/
+/*    }*/
+/*}*/
+
+/*@media (min-width: 1280px) {*/
+/*    .navbar {*/
+
+/*    }*/
+/*    .logoTitle {*/
+/*        margin: 0;*/
+/*        font-size: 2.4rem;*/
+/*          letter-spacing: 0.1em;*/
+/*    }*/
+/*}*/
