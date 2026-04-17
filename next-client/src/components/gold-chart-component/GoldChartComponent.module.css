@@ -4,7 +4,6 @@
     background: linear-gradient(165deg, #141414 0%, #050505 100%);
     padding: 20px;
     border-radius: 16px;
-    /* Міняємо звичайний border на відносне позиціонування для псевдоелемента */
     position: relative;
     box-shadow: 0 15px 35px rgba(0,0,0,0.8);
     font-family: sans-serif;
@@ -12,12 +11,11 @@
     overflow: hidden;
 }
 
-/* ЗОЛОТИЙ БОРДЕР */
 .chartContainer::before {
     content: "";
     position: absolute;
     inset: 0;
-    padding: 2px; /* Товщина бордера */
+    padding: 2px;
     border-radius: 16px;
     background: linear-gradient(
         90deg,
@@ -128,7 +126,6 @@
     font-size: 9px;
 }
 
-/* Tooltip Styles */
 .recharts-tooltip-wrapper .recharts-default-tooltip {
   background-color: #121212 !important;
   border: 1px solid #ae8625 !important;

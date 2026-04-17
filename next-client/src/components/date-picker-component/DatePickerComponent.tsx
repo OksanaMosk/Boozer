@@ -20,7 +20,7 @@ export const DatePickerComponent: React.FC<CalendarProps> = ({
                                                                  readOnly = false,
                                                                  yearRange,
                                                              }) => {
-    const selectedDate = dateValue ?? new Date(); // використовуємо сьогодні, якщо null
+    const selectedDate = dateValue ?? new Date();
     const [animation, setAnimation] = useState('');
     const [yeardrawer, setYeardrawer] = useState(false);
     const [darkModeValue, setDarkModeValue] = useState(darkMode);

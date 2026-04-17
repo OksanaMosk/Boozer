@@ -65,7 +65,6 @@ class EmailService:
 
     @classmethod
     def venue_approval(cls, venue):
-        # admin_name = getattr(venue.venue_admin, 'username', venue.venue_admin.email)
         admin_name = f"{getattr(venue.venue_admin.profile, 'name', '')} {getattr(venue.venue_admin.profile, 'surname', '')}".strip() or venue.venue_admin.email
         context = {
             'name': admin_name,

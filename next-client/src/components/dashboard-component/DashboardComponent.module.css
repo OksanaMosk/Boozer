@@ -201,28 +201,6 @@
     color: var(--color-text);
     line-height: 1;
 }
-/*.chatTabWrapper {*/
-/*    text-align: center;*/
-/*    margin: 20px auto 40px;*/
-/*    width: 70vw;*/
-/*    height: calc(100vh - 250px);*/
-/*    min-height: 500px;*/
-/*    background: var(--reverse-menu-color);*/
-/*    border-radius: 20px;*/
-/*    overflow: hidden;*/
-/*    border: 1px solid rgba(255, 255, 255, 0.25);*/
-/*    backdrop-filter: blur(20px);*/
-/*    -webkit-backdrop-filter: blur(20px);*/
-/*    box-shadow: 0 0 12px white;*/
-/*    animation: float 6s ease-in-out infinite;*/
-/*    transition: transform 0.3s ease, box-shadow 0.3s ease;*/
-/*}*/
-
-/*.chatTabWrapper:hover {*/
-/*    transform: translateY(-8px) scale(1.02);*/
-/*    box-shadow: 0 25px 50px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.2);*/
-/*}*/
-
 
 @keyframes float {
     0% { transform: translateY(0); }
@@ -236,22 +214,11 @@
         font-size: 0.75rem;
     }
 
-    /*.button,*/
-    /*.editButton,*/
-    /*.deleteButton {*/
-    /*    width: 80px;*/
-    /*    font-size: 0.75rem;*/
-    /*}*/
 }
 
 @media (min-width: 1200px) {
     .table {
         font-size: 0.9rem;
     }
-    /*.button,*/
-    /*.editButton,*/
-    /*.deleteButton {*/
-    /*    width: 90px;*/
-    /*    font-size: 0.8rem;*/
-    /*}*/
+
 }

@@ -246,9 +246,9 @@ const BoozerStep6Summary = ({ venueId, orderId, onNext }: any) => {
                             <div className={styles.billRowTransfers}>
                                 <p>✈️ Flight Price:</p>
                                 <span>
-        {getConverted(Number(order.flight_price), order.currency)
-            .toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} {currency}
-    </span>
+                                     {getConverted(Number(order.flight_price), order.currency)
+                                    .toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} {currency}
+                                    </span>
                             </div>
                         </div>
 

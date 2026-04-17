@@ -29,9 +29,4 @@ class AuthSocketMiddleware(BaseMiddleware):
         token_str = token_list[0] if token_list else None
         scope['user'] = await get_user(token_str)
 
-
-        print(f"--- DEBUG WS ---")
-        print(f"User identified: {scope['user']}")
-        print(f"-----------------")
-
         return await super().__call__(scope, receive, send)

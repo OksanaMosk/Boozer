@@ -34,7 +34,6 @@
     top: 85%;
     right:0;
     transform: translateY(-50%);
-    /*font-size: 12rem;*/
     font-size: clamp(8rem, 25vw, 12rem);
     font-weight: 500;
     z-index: 2;

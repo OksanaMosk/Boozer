@@ -60,7 +60,6 @@ export const ReviewFormComponent = ({ venueId, onSubmit, orders, onUploadComplet
     setLoading(true);
     try {
         const res = await onSubmit({
-            // rating: overallRating,
             comment: text,
             order: selectedOrderId,
             food_rating: subRatings.food,

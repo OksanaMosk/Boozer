@@ -36,7 +36,6 @@ export const OrdersManagerComponent = ({ venueId: propsVenueId }: OrdersManagerP
         try {
             setLoading(true);
             setError(null);
-            // setOrders([]);
             const response:AxiosResponse = await venueServices.venues
                 .orders({ accessToken: user.token })(activeVenueId)
                 .getAll({page: currentPage});

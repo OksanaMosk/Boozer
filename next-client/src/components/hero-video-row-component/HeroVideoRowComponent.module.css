@@ -32,7 +32,7 @@
   background: #000;
 
   animation: float 3s ease-in-out infinite;
-  z-index: 1;  /* щоб не лізли на Hero */
+  z-index: 1;
 }
 
 

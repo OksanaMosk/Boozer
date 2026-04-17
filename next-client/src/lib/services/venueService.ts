@@ -299,7 +299,7 @@ const venueServices = {
         delete: (id: string | number) => api(token).delete(urls.collections.detail(id)),
         update: (id: string | number, data: { name?: string; category?: string }) => api(token).patch(urls.collections.detail(id), data),
         reorderItems: (id: string | number, items: any[]) => api(token).patch(urls.collections.reorder(id), items),
-        removeVenue: (collectionId: string | number, venueId: string | number) => api(token).delete(`${urls.collections.detail(collectionId)}remove-venue/`, {params: { venue_id: venueId } // Бекенд чекає саме query-параметр venue_id
+        removeVenue: (collectionId: string | number, venueId: string | number) => api(token).delete(`${urls.collections.detail(collectionId)}remove-venue/`, {params: { venue_id: venueId }
         }),
         staffTop: () => api(token).get<IFavoriteCollection[]>(urls.collections.staffTop),
         mostHearted: () => api(token).get<any[]>(urls.collections.mostHearted),

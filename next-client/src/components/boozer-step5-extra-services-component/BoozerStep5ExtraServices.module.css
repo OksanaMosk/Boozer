@@ -38,7 +38,6 @@
     margin: 0 ;
     font-family: Sans,sans-serif;
     color:var(--title-color);
-    /*font-size: 12rem;*/
     font-size: clamp(5rem, 10vw, 12rem);
     font-style: italic;
     font-weight: 700;
