@@ -72,8 +72,9 @@ export default function GoldChartComponent({ user = true, stats }: Props) {
           </div>
 
           <div className={styles.chartWrapper}>
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={stats[period] || []}>
+            <ResponsiveContainer width="100%" height={50}>
+              <AreaChart
+                  data={stats[period] || []}>
                 <defs>
                   <linearGradient id="goldFill" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0%" stopColor="#ae8625" stopOpacity={0.5} />

@@ -26,18 +26,20 @@
     border-radius: 2rem;
 }
 .tablePhoto{
-  text-align: left;
-    width: 30%;
+    text-align: left;
+    width: 100%;
+    max-width: 380px;
 }
 
 .row {
-    width: 67%;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     flex-wrap: wrap;
     gap: 1rem;
     height: 100%;
+    width: 100%;
+    flex: 1 1 300px;
 }
 .titleBlock {
     width: 100%;
@@ -50,9 +52,10 @@
     text-align: left;
     font-family: var(--font-imperial), serif;
     letter-spacing: 4px;
-    font-size: 2rem;
+    font-size: clamp(1.2rem, 4vw, 2rem);
     font-weight: 600;
     color: var(--logo-hover-color);
+    width: 250px;
 }
 .status {
     font-family: var(--font-playfair),serif;
@@ -89,6 +92,7 @@
     font-size: 0.9rem;
 }
 .info {
+    width: auto;
     display: flex;
     justify-content: center;
     align-items:flex-start;
@@ -99,7 +103,10 @@
 .rightWrapper {
     display: flex;
     justify-content: space-between;
-    width: 60%;
+    /*width: 60%;*/
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 1rem;
 }
 
 .actionsLink,
@@ -146,8 +153,8 @@
     cursor: pointer;
     font-size: 0.9rem;
     transition: all 0.2s ease;
-    width: 36px;
-    height: 36px;
+    width: 100px;
+    height: 34px;
     background-color: var(--color-container);
     border: 1px solid var(--color-text);
 }
@@ -248,24 +255,75 @@
     background-color: var(--logo-hover-color);
     margin: 2px 0;
 }
-@media (min-width: 768px) {
-    .button,
-    .buttonLink,
-    .editButton,
-    .deleteButton {
-     width: 100px;
-    height: 34px;
 
+@media (max-width: 600px) {
+    .tableRowTitle {
+        width: 40%;
+        padding-top: 70px;
+    }
+    .tableRow {
+        gap: 0;
+        flex-direction: column;
+        align-items: center;
+        max-width: 338px;
+        text-align: center;
+        width: 100%;
+        box-sizing: border-box;
+        padding: 1rem;
     }
 
+    .row {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .tablePhoto, .row {
+        width: 100%;
+        max-width: 380px;
+    }
+
+    .venuePoster {
+        width: 100%;
+        max-width: 380px;
+    }
+    .info {
+        max-width: 80px;
+    }
 }
 
-@media (min-width: 1200px) {
-    /*.button,*/
-    /* .buttonLink,*/
-    /*.editButton,*/
-    /*.deleteButton {*/
-    /*     width: 130px;*/
-    /*height: 45px;*/
-    /*}*/
+@media (max-width: 768px) {
+    .tableRow {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+    }
+
+    .tablePhoto,
+    .row {
+        width: 100% !important;
+    }
+
+    .venuePoster {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .rightWrapper {
+        width: 100%;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .stats {
+        width: 100%;
+        max-width: 340px;
+    }
+}
+
+@media (min-width: 1440px) {
+    .tablePhoto { width: 30%; }
+    .row { width: 67%; }
+    .rightWrapper { width: 60%; flex-wrap: nowrap; }
 }

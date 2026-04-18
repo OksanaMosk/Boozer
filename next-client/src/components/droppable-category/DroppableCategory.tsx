@@ -11,7 +11,14 @@ interface DroppableCategoryProps {
 const DroppableCategory: React.FC<DroppableCategoryProps> = ({id, children}) => {
     const {setNodeRef} = useDroppable({id});
 
-    return <div ref={setNodeRef} id={id}>{children}</div>;
+    return <div
+        style={{
+           width: "100%",
+            textAlign: 'center',
+            margin: '0 auto',
+        }}
+
+        ref={setNodeRef} id={id}>{children}</div>;
 };
 
 export default DroppableCategory;

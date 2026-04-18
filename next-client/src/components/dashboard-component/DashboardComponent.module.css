@@ -10,7 +10,7 @@
     justify-content: center;
     text-align: center;
     width: 100%;
-    gap: -20px;
+    gap: -10px;
 }
 
 .navButton {
@@ -19,10 +19,10 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-left: -40px;
+    margin-left: -20px;
     border-radius: 40px;
     border: 1px solid var(--color-noposter);
-    font-size: 12px;
+    font-size: clamp(8px, 2vw, 12px);
     cursor: pointer;
     background:var(--menu-color);
     color: var(--logo-hover-color);
@@ -213,6 +213,13 @@
     .table {
         font-size: 0.75rem;
     }
+    .tabNavigation {
+    gap: -20px;
+}
+
+    .navButton {
+    margin-left: -40px;
+}
 
 }
 

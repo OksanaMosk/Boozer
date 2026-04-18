@@ -2,10 +2,20 @@
     margin: 0 auto;
     text-align: center;
     display: flex;
-    width: 50vw;
-    height: 70vh;
+    width: 80vw;
+    height: 50vh;
+    max-height: 500px;
     background: var(--reverse-menu-color);
     overflow: hidden;
     position: relative;
     border-radius: 1.5rem;
+
+}
+
+@media (min-width: 768px) {
+     .container {
+         width: 50vw;
+         height: 90vh;
+
+     }
 }

@@ -21,6 +21,7 @@ export const useChatLogic = () => {
         if (!venueIdFromUrl || !user?.id) return;
 
         const expectedName = `venue_${venueIdFromUrl}_user_${user.id}`;
+
         const existingRoom = rooms.find(r => r.name === expectedName);
 
         if (existingRoom) {
@@ -102,7 +103,7 @@ export const useChatLogic = () => {
                 return;
             }
             if (data.message) {
-                const senderId = data.user?.split('_')[0]; // Дістаємо ID відправника
+                const senderId = data.user?.split('_')[0];
                 const isFromOther = String(senderId) !== String(user?.id);
 
                 const newMessage = {
@@ -162,6 +163,7 @@ export const useChatLogic = () => {
             if (!found && activeRoom && activeRoom.name === expectedName) {
                 result.push(activeRoom);
             }
+
             return result.filter(room => room.name.startsWith(`venue_${venueIdFromUrl}_`));
         }
         return result;

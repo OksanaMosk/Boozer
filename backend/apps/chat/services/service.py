@@ -6,8 +6,6 @@ from apps.venue.models import VenueModel
 class ChatRoomService:
     @staticmethod
     def get_user_rooms(user):
-        if user.is_superuser:
-            return ChatRoomModel.objects.all().order_by('-updated_at')
 
         user_query = Q(name__endswith=f'_user_{user.id}')
 

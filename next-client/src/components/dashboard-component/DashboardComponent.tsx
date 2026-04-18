@@ -111,10 +111,10 @@ const DashboardComponent: React.FC = () => {
                 ))}
             </div>
             {activeTab === "chat" && (
-    <section className={styles.section}>
-            <ChatComponent />
-    </section>
-)}
+                <section className={styles.section}>
+                    <ChatComponent/>
+                </section>
+            )}
 
             <div className={styles.mainContent}>
                 {activeTab === "favorites" && (
