@@ -37,6 +37,15 @@ The project includes a pre-configured Postman collection and environment to help
 
 🏢 Venue Management. For all users: Browse venues.
 
+
+Roles. 
+
+👫Visitor: Browse platform, Create Boozer orders, Book menus, tables, transfer, and more, Make payments.
+
+🤵Venue Admin: Manage own venues, Menus, tables, services.
+
+👨‍⚖️Admin: Manage: users, venues, Moderation, Analytics.
+
 🧑‍💼 Venue Admin. Can: Create venues: country, city, currency, photos, description. Edit / delete venues.
 
 Create menus: multiple menus, one public menu, drag & drop categories and items.
@@ -72,26 +81,37 @@ Total number of confirmed orders.
 Visitor demographics (gender distribution).
 Budget preferences to analyze potential customer expectations and adjust pricing strategies accordingly.
 
-📰 Reviews — can only be posted after a confirmed order. Review Limits: Users will see a notification: "You have already submitted reviews for all your confirmed visits" if there are no new confirmed orders available for feedback.
 
-Roles. 👫Visitor: Browse platform, Create Boozer orders, Book menus, tables, transfer, and more, Make payments.
+🏆 TOP Collections.
+Formation Logic:
+TOP Collections are generated based on visitor preferences ("Favorites").
+Preference Analytics: The system automatically tracks venues that have received the highest number of "hearts" (likes) from visitors.
+Data Pools: The Admin is provided with up to 5 automatically generated pools containing venues with the highest favorite counts.
 
-🤵Venue Admin: Manage own venues, Menus, tables, services.
+🏷️ Content Creation: The Admin defines a title for the collection (e.g., "Best Summer Terraces" or "Top 2025").
+🖱 Drag-and-Drop Builder: The Admin manually assembles the collection by dragging and dropping venues from the 5 available pools into the specific "TOPs".
 
-👨‍⚖️Admin: Manage: users, venues, Moderation, Analytics.
 
-💬 Chat System
+💬 Chat System.
 The platform features a real-time communication system that bridges the gap between visitors and venue management.
 🔄 Communication Flow:
 Initiating Chat: From the VenueInfo page, visitors can start a conversation via the chat trigger located in the page footer.
 Room Creation: Upon initiation, a private chat room is automatically created, linking the specific visitor and the venue.
+
 Venue Management:
 Through the Venue Admin Dashboard, administrators of venue can view all incoming inquiries.
+
 The Venue Admin can respond and chat with visitors directly on behalf of the establishment.
 ✨ Key Features:
 Direct Interaction: Seamless transition from viewing venue details to active communication.
+
 Brand Representation: Venue Admins speak as the venue, maintaining professional brand consistency.
+
 Centralized Dashboard: All visitor chats are organized and managed in one place for the Venue Admin.
+
+
+📰 Reviews — can only be posted after a confirmed order. Review Limits: Users will see a notification: "You have already submitted reviews for all your confirmed visits" if there are no new confirmed orders available for feedback.
+
 
 ## 🛠 Tech Stack
 
