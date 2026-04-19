@@ -186,11 +186,12 @@ const handleTextSubmit = async (e: React.SyntheticEvent) => {
                         {(phoneServerError || phoneError) && (
                             <p className={styles.errorMessage}>{phoneServerError || phoneError}</p>
                         )}
-                    </div>
-
-                    <button type="submit" disabled={loading} className={styles.saveBtn}>
+                         <button type="submit" disabled={loading} className={styles.saveBtn}>
                         {loading ? "Saving..." : "Save Text Changes"}
                     </button>
+                    </div>
+
+
                 </form>
             </div>
         </div>

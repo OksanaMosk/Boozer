@@ -189,7 +189,7 @@ export const NewItemFormComponent: React.FC<NewNewsFormProps> = ({venueId, onCre
                         <input
                             type="text"
                             placeholder="Add end_date"
-                            className={styles.input}
+                            className={styles.inputDate}
                             value={newsItem.end_date ? new Date(newsItem.end_date).toLocaleDateString("uk-UA") : ""}
                             readOnly
                             onClick={() => setIsCalendarOpen(true)}

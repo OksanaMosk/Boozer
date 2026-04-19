@@ -43,6 +43,7 @@ export const urls = {
     venues: {
         list: `${paths.venues}/`,
         approve: (id: string) => `${paths.venues}/${id}/approve/`,
+        changeAdmin: (id: string) => `${paths.venues}/${id}/change_admin/`,
         ordersStats: (id: string) => `${paths.venues}/${id}/orders_stats/`,
         detail: (id: string) => `${paths.venues}/${id}/`,
         create: `${paths.venues}/`,

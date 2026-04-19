@@ -145,6 +145,7 @@ const venueServices = {
             api(token).get<PaginatedResponse<IVenue>>(urls.venues.list, {params: buildVenueParams(filterCriteria)}),
         ...createService<IVenue>(urls.venues.list),
         approve: (id: string, token?: Token) => api(token).post(urls.venues.approve(id)),
+        changeAdmin: (id: string, newAdminId: number, token?: Token) => api(token).patch(urls.venues.changeAdmin(id), {new_admin_id: newAdminId}),
         ordersStats: (id: string, token?: Token) => api(token).get<{ stats: { average_check: number; total_revenue: number; success_orders_count: number; total_orders_count: number; currency: string; }; orders: IOrder[]; }>(urls.venues.ordersStats(id)),
         photos: getByParent<IVenuePhoto>(urls.venues.photos),
         tables: (token?: Token) => (venueId: string) => ({

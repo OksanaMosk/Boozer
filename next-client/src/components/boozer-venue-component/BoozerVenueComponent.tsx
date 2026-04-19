@@ -15,7 +15,9 @@ interface Props {
 const BoozerVenueComponent: React.FC<Props> = ({venue, selected = false, onSelect, onDeselect}) => {
     const [isSelected, setIsSelected] = useState(selected);
 
-    const handleToggle = () => {
+    const handleToggle = (e:any) => {
+         e.stopPropagation();
+            e.preventDefault();
         if (isSelected) {
             setIsSelected(false);
             if (onDeselect) onDeselect(venue);
@@ -35,6 +37,7 @@ const BoozerVenueComponent: React.FC<Props> = ({venue, selected = false, onSelec
         >
             <VenueComponent venue={venue}/>
             <button
+
                 className={styles.selectButton}
                 onClick={handleToggle}
                 aria-label="Toggle selection"

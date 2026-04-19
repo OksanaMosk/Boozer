@@ -1,7 +1,7 @@
 
 .wrapper{
     margin: 0 auto 60px;
-    width: 50%;
+    width: 100%;
     display: flex;
     flex-direction: column;
     flex-wrap: wrap;
@@ -171,3 +171,12 @@ background: linear-gradient(
     text-align: left;
 }
 
+@media (min-width: 768px) {
+    .wrapper {
+        width: 50%;
+    }
+}
+
+@media (min-width: 1024px) {
+
+}

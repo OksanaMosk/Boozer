@@ -5,6 +5,7 @@ import {IVenue} from "@/models/IVenue";
 import {PaginationComponent} from "@/components/pagination-component/PaginationComponent";
 import BoozerVenueComponent from "@/components/boozer-venue-component/BoozerVenueComponent";
 import styles from "./BoozerStep1VenuesComponent.module.css";
+import Link from "next/link";
 
 interface VenuesComponentProps {
   venues: IVenue[];
@@ -20,10 +21,14 @@ const BoozerStep1VenuesComponent: React.FC<VenuesComponentProps> = ({venues, tot
                     .filter(venue => venue.status === 'active')
                     .map((venue) => (
                     <li key={venue.id}>
-                        <BoozerVenueComponent
+                        <Link
+                            href={`/venues/${venue.id}`}
+                            className={styles.link}
+                        >
+                            <BoozerVenueComponent
                             venue={venue}
                             onSelect={onSelectVenue}
-                        />
+                        /></Link>
                     </li>
                 ))}
             </ul>

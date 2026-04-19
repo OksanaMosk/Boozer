@@ -1,10 +1,13 @@
 .container {
     text-align: center;
     margin: 0 auto;
+    max-width: 1000px;
     width: 80%;
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
+    align-items:center;
+    flex-wrap: wrap;
+    gap: 1rem;
     padding: 2rem;
     border: 1px solid rgba(212, 175, 55, 0.15);
     position: relative;
@@ -42,6 +45,7 @@
 
 .profileMain {
     display: flex;
+    flex-wrap: wrap;
     gap: 2rem;
 }
 
@@ -81,9 +85,11 @@
 
 .infoContent {
     padding: 0;
-    margin: 0;
+    margin: 0 auto;
     display: flex;
     flex-direction: column;
+    justify-content: center;
+    align-items: center;
     gap: 1rem;
 }
 .ageBadge {
@@ -102,6 +108,8 @@
 .nameRow {
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: 1rem;
 }
 
@@ -162,8 +170,11 @@
 }
 
 .actionsWrapper {
+    margin: 0 auto;
+    align-items: center;
     display: flex;
     gap: 1rem;
+
 }
 .loader{
     display: flex;
@@ -178,4 +189,23 @@
 }
 .phone {
     text-align: left;
+}
+
+@media (min-width: 768px) {
+    .infoContent,
+    .container {
+        flex-wrap: nowrap;
+    }
+}
+
+
+@media (min-width: 1024px) {
+    .infoContent,
+    .container {
+        align-items: flex-start;
+        flex-wrap: nowrap;
+    }
+    .actionsWrapper {
+        margin: 0;
+    }
 }

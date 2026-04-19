@@ -10,23 +10,22 @@
     text-align: center;
     width:50vw;
     margin: 0 auto 20px;
-  display: flex;
+    display: flex;
     flex-direction: column;
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
-      color: var(--input-color);
+    color: var(--input-color);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-  animation: float 6s ease-in-out infinite;
+    animation: float 6s ease-in-out infinite;
     overflow: hidden;
-     background: rgba(255, 255, 255, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  border-radius: 2rem;
-  box-shadow:
-    0 8px 32px rgba(0, 0, 0, 0.3);
-  gap: 20px;
-  padding: 20px;
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 2rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    gap: 20px;
+    padding: 20px;
 }
 
 @keyframes float {
@@ -167,11 +166,11 @@
 }
 .error {
     padding: 0;
-  background: linear-gradient(90deg, #7a5c1e, #d4af37, #f5e6a1, #d4af37, #7a5c1e);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  color: transparent;
+    background: linear-gradient(90deg, #7a5c1e, #d4af37, #f5e6a1, #d4af37, #7a5c1e);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
     font-size: 0.6rem;
 }
 
@@ -179,19 +178,19 @@
     display: flex;
     justify-content: center;
     align-items: center;
-width: 160px;
+    width: 160px;
     height: 45px;
     padding: 0.5rem 1rem;
     border-radius: 1.5rem;
     color: #30240b;
-      background: linear-gradient(90deg, #30240b, white, #30240b);
+    background: linear-gradient(90deg, #30240b, white, #30240b);
     cursor: pointer;
     outline: none;
     transition: all 0.3s ease-in-out;
     border: 1px solid rgba(255,255,255,0.5);
 }
 .submitButton:hover {
-   background: linear-gradient(90deg, white, #30240b, white);
+    background: linear-gradient(90deg, white, #30240b, white);
     color: white;
 }
 

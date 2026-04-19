@@ -99,7 +99,7 @@ export const ReviewEditComponent = ({
             <div className={styles.top}>
                 <div className={styles.about}>
                     <div className={styles.subTitle}>
-                        <div >
+                        <div className={styles.aboutTop}>
                             <p className={styles.subTitleP}>{editData.author_name}</p>
                             <p className={styles.date}>
                                 Created
@@ -157,7 +157,6 @@ export const ReviewEditComponent = ({
                           {message && <p className={styles.errorMessage}>{message}</p>}
                     </div>
 
-                    <div>
                         <div className={styles.bottom}>
                             {editMode ? (
                                 <div style={{ marginTop: "15px" }}>
@@ -183,7 +182,6 @@ export const ReviewEditComponent = ({
                                 )
                             )}
                         </div>
-                    </div>
                     <div className={styles.starBlock}>
                         <div className={styles.starBlockTitle} >
                             <p className={styles.star}>★ {calculateOverall(editData)}</p>

@@ -1,0 +1,156 @@
+.container {
+    max-width: 500px;
+    text-align: center;
+    margin: 60px auto;
+    padding: 30px;
+    background: var(--menu-color);
+    border-radius: 1.5rem;
+    background-color: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 0 12px white;
+    animation: float 6s ease-in-out infinite;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+@keyframes float {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+    100% { transform: translateY(0); }
+}
+
+.container:hover {
+     transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 25px 50px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.2);
+}
+
+.currentAdmin {
+    margin-bottom: 20px;
+    font-size: 1rem;
+    color: dimgrey;
+}
+
+.title {
+    padding: 0;
+    margin: 12px 0;
+    font-weight: 700;
+    font-size: 2rem;
+    color: var(--logo-hover-color);
+}
+.titleVenue {
+    font-size: 1.5rem;
+    letter-spacing: 2px;
+    color: var(--color-noposter);
+}
+
+.label {
+    padding: 0;
+    margin: 12px 0;
+    font-size: 1rem;
+    color: var(--logo-hover-color);
+}
+
+.success {
+    padding: 10px;
+    color: var(--logo-hover-color);
+    margin-bottom: 15px;
+}
+
+.selectWrapper {
+    color: var(--color-text);
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 40px;
+
+}
+.select {
+    color: var(--logo-hover-color);
+    width: 100%;
+    font-size: 0.9rem;
+    cursor: pointer;
+    outline: none;
+    padding: 0.5rem 2.5rem 0.5rem 1rem;
+    border-radius: 1.5rem;
+    border: 1px solid var(--input-color);
+    background-color: transparent;
+    box-sizing: border-box;
+    justify-content: flex-start;
+    height: 40px;
+}
+.select option {
+    font-size: 0.9rem;
+    max-width: 100vw;
+    outline: none;
+    background: var(--title-color);
+    color: var(--logo-hover-color);
+    border: none;
+}
+.select:focus {
+    background: var(--reverse-menu-color);
+    color: var(--read-color);
+}
+
+.error {
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(90deg, #7a5c1e, #d4af37, #f5e6a1, #d4af37, #7a5c1e);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
+    font-size: 0.6rem;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.cancelBtn {
+   display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 160px;
+    height: 45px;
+    border-radius: 1.5rem;
+    outline: none;
+    color: var(--color-text);
+    background: var(--menu-color);
+    border: 1px solid var(--color-text);
+}
+
+.cancelBtn:hover {
+    color: var(--color-text);
+    background: var(--reverse-menu-color);
+}
+
+.confirmBtn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 160px;
+    height: 45px;
+    border-radius: 1.5rem;
+    outline: none;
+    border: 1px solid var(--color-text);
+   color: var(--title-color);
+    background: var(--reverse-menu-color);
+}
+.confirmBtn:hover {
+    background: transparent;
+    color: var(--color-text);
+}
+
+.confirmBtn:disabled {
+    cursor: not-allowed;
+}

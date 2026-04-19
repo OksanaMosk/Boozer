@@ -55,7 +55,7 @@ const AdminUserManagementComponent: React.FC<AdminUserManagementProps> = ({activ
             setLoading(true);
             try {
                 const ordering = sortOrder === "desc" ? `-${sortBy}` : sortBy;
-                const filters = {role, is_active, ordering};
+                const filters = {role, is_active, ordering, size: 100};
                 const allUsers = await userService.getAll(filters, {accessToken});
                 if (!isCancelled) setUsers(allUsers.map(u => ({...u, message: ""})));
             } catch (err: any) {

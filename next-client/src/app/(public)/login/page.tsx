@@ -5,7 +5,12 @@ import {ButtonGoBackComponent} from "@/components/button-go-back-component/Butto
 
 const LoginPage = () => {
     return (
-        <div>
+        <div style={{
+            margin: "0 auto",
+            minHeight: "100dvh",
+            textAlign: "center",
+            boxSizing: "border-box"
+        }}>
             <ButtonGoBackComponent/>
             <LoginComponent/>
         </div>

@@ -9,11 +9,12 @@ interface TableProps {
     draggable?: boolean;
     onDragEnd?: (updatedTable: ITable) => void;
     onClick?: (table: ITable) => void;
+    onTap?: () => void;
     onContextMenu?: (e: any, table: ITable) => void;
     isSelected?: boolean;
 }
 
-const Table: React.FC<TableProps> = ({table, draggable = false, onDragEnd, onClick, onContextMenu, isSelected}) => {
+const Table: React.FC<TableProps> = ({table, draggable = false, onDragEnd, onClick, onTap, onContextMenu, isSelected}) => {
     const {x, y, capacity} = table;
 
     const getImageSrc = (capacity: number) => {
@@ -55,9 +56,10 @@ const Table: React.FC<TableProps> = ({table, draggable = false, onDragEnd, onCli
                     y: e.target.y()
                 });
             }
-        }}
-                 onClick={() => onClick && onClick(table)}
-        onContextMenu={(e) => onContextMenu && onContextMenu(e, table)}
+                }}
+               onClick={() => onClick && onClick(table)}
+               onTap={() => onClick && onClick(table)}
+               onContextMenu={(e) => onContextMenu && onContextMenu(e, table)}
         >
 
             {isSelected && (

@@ -86,12 +86,12 @@ The platform features a real-time communication system that bridges the gap betw
 Initiating Chat: From the VenueInfo page, visitors can start a conversation via the chat trigger located in the page footer.
 Room Creation: Upon initiation, a private chat room is automatically created, linking the specific visitor and the venue.
 Venue Management:
-Through the Venue Admin Dashboard, administrators can view all incoming inquiries.
+Through the Venue Admin Dashboard, administrators of venue can view all incoming inquiries.
 The Venue Admin can respond and chat with visitors directly on behalf of the establishment.
 ✨ Key Features:
 Direct Interaction: Seamless transition from viewing venue details to active communication.
-Brand Representation: Admins speak as the venue, maintaining professional brand consistency.
-Centralized Dashboard: All visitor chats are organized and managed in one place for the admin.
+Brand Representation: Venue Admins speak as the venue, maintaining professional brand consistency.
+Centralized Dashboard: All visitor chats are organized and managed in one place for the Venue Admin.
 
 ## 🛠 Tech Stack
 

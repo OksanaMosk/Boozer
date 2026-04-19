@@ -4,7 +4,8 @@
     display: flex;
     justify-content: center;
     align-items: flex-end;
-    gap: 1rem;
+    flex-wrap: wrap;
+    gap: 2rem;
     padding-left: 1rem;
 
 }
@@ -73,6 +74,7 @@
 }
 
 .submitButton {
+    margin: 0 auto;
     padding: 0;
     width: 160px;
     height: 45px;
@@ -115,4 +117,11 @@
     padding: 0;
      line-height: 1.2;
     transform: scale(0.2);
+}
+@media (min-width: 768px) {
+
+}
+
+@media (min-width: 1024px) {
+
 }

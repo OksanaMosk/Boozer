@@ -10,11 +10,11 @@ export const metadata: Metadata = {
 
 const NewsPage = () => {
     return (
-         <div style={{margin: "40px auto", textAlign: "center" }}>
+         <div style={{margin: "40px auto", textAlign: "center"}}>
              <ButtonGoBackComponent/>
-            <NewsGlobalComponent/>
+             <NewsGlobalComponent/>
              <ButtonScrollTopComponent/>
-        </div>
+         </div>
     );
 };
 

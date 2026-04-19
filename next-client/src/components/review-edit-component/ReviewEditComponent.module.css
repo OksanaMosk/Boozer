@@ -5,10 +5,10 @@
     padding: 12px;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
-    width: 70%;
-    height:230px;
+    width: 70vw;
+    height:auto;
     flex-wrap: wrap;
     color: var(--input-color);
     backdrop-filter: blur(20px);
@@ -21,6 +21,7 @@
     0 8px 32px rgba(0, 0, 0, 0.3);
     gap: 20px;
     transition: all 0.4s ease-in-out;
+    flex: 1;
 }
 
 @keyframes float {
@@ -34,11 +35,14 @@
     min-height: 100%;
 }
 .top {
+    margin: 0 auto;
+    text-align: center;
     width: 100%;
     gap: 4px;
     display: flex;
     justify-content: space-between;
     height: auto;
+    flex-wrap: wrap;
 }
 
 .subTitle {
@@ -51,29 +55,39 @@
     color: var(--color-text);
     font-family: var(--font-imperial),serif;
     letter-spacing: 4px;
-    width: 40%;
     margin: 0;
     padding: 0;
+    gap: 1rem;
 
 }.subTitleP {
     margin: 0;
     padding: 0;
  }
-
+.aboutTop {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 2rem;
+}
 .about {
+    margin: 0 auto;
+    text-align: center;
     display: flex;
     width: 100%;
     align-items: flex-start;
-    justify-content: space-between;
-    gap: 16px;
-    margin: 0;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 2rem;
     padding: 0;
     height: auto;
     min-height: 100%;
+
 }
 
 
 .buttonGroup {
+    margin-top: 60px;
     width: 100%;
     display: flex;
     gap: 1rem;
@@ -119,7 +133,11 @@
 .deleteButton:hover {
     background-color: #a94444;
 }
-
+.contentWrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
 .cardInfo {
     display: flex;
     width: 100%;
@@ -132,7 +150,7 @@
     padding: 0;
     margin: 0;
     color: var(--color-text);
-    font-size: 1rem;
+    font-size: 1.5rem;
     text-align: left;
 }
 
@@ -157,46 +175,6 @@
     margin: 0 8px 0 0;
     font-weight: 600;
     font-size: 1.2rem;
-}
-
-.subRatings {
-    box-sizing: border-box;
-    width: 200px;
-    height: 180px;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    flex-direction: column;
-    background: var(--menu-color);
-    gap: 0;
-    border-radius: 12px;
-    box-shadow: 0 0 8px white;
-}
-
-.subRatingItem {
-    width: 100%;
-    text-align: left;
-    height: 34px;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 40px;
-    transform: scale(0.7);
-    transform-origin: left;
-}
-
-.ratingLabel {
-   width:40%;
-     text-align: left;
-     margin: 0;
-    padding: 10px 18px;
-    font-size: 16px;
-    color: var(--logo-hover-color);
-    letter-spacing: 1px;
 }
 
 .galleryWrapper {
@@ -271,7 +249,7 @@
     border: none;
 }
 .reportTextarea {
-    font-size: 0.9rem;
+    font-size: 1.2rem;
     width: 100%;
     height: 150px;
     padding: 0.5rem;
@@ -314,8 +292,18 @@
     margin: 0;
     padding: 0;
 }
+
+.bottom {
+    margin: 100px auto 0;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
 .bottomAlert {
-    margin: 0 auto auto 0;
+    min-width: 50%;
+    margin: 0 auto;
     padding: 0;
     font-size: 0.6rem;
     color: var(--logo-hover-color);
@@ -380,26 +368,7 @@
     align-items: flex-start;
     margin: 70px auto;
 }
-.starBlock {
-    padding: 0;
-    margin:0;
-    height: 180px;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 4px;
-}
-.starBlockTitle {
-     margin: 0;
-    padding: 0;
-    display: flex;
-    height: 15%;
-    width: 100%;
-    justify-content: space-between;
-    align-items: center;
-   gap: 8px;
-}
+
 .id{
     margin: 0;
     padding: 0;
@@ -423,4 +392,118 @@
     width: 100%;
     color: var(--logo-hover-color);
     font-size: 0.8rem;
+}
+
+.starBlock {
+    box-sizing: border-box;
+    width: 300px;
+    min-height: 300px;
+    background: var(--menu-color);
+    border-radius: 20px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+    border: 1px solid var(--logo-hover-color);
+    flex-shrink: 0;
+
+}
+
+.starBlockTitle {
+    width: 100%;
+    text-align: center;
+    border-bottom: 1px solid var(--logo-hover-color);
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+}
+
+.star {
+    margin: 0;
+    font-size: 2.2rem;
+    font-family: var(--font-imperial), serif;
+    color: var(--color-noposter);
+    font-weight: 700;
+}
+
+.id {
+    margin: 5px 0 0 0;
+    font-size: 0.7rem;
+    color: var(--color-text);
+    opacity: 0.7;
+}
+
+.subRatings {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.subRatingItem {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    transform: scale(0.9);
+    transform-origin: left;
+}
+
+.ratingLabel {
+    font-size: 0.85rem;
+    color: var(--logo-hover-color);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+@media (max-width: 991px) {
+    .starBlock {
+        text-align: center;
+        width: 100%;
+        max-width: 320px;
+        margin: 20px auto;
+        aspect-ratio: auto;
+        min-height: fit-content;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        scale: calc(0.8);
+    }
+}
+
+@media (min-width: 768px) {
+    .newsCard {
+        width: 70vw;
+    }
+    .about {
+        flex: none;
+    }
+    .top {
+        flex-direction: row;
+        align-items: flex-start;
+    }
+    .subTitle {
+        height: auto;
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis
+    }
+
+}
+
+@media (min-width: 992px) {
+    .subTitle {
+    height: auto;
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    }
+}
+@media (min-width: 1096px) {
+    .about{
+        flex: 1;
+    }
 }

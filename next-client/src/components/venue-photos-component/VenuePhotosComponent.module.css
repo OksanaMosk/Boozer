@@ -1,5 +1,6 @@
 .photoWrapper {
-    width:80vw;
+    text-align: center;
+    width:80%;
     margin: 0 auto 60px;
     display: flex;
     flex-direction: column;
@@ -17,7 +18,7 @@
     box-shadow:
     0 8px 32px rgba(0, 0, 0, 0.3);
     gap: 10px;
-    padding: 20px;
+    padding: 10px 0;
 }
 
 @keyframes float {
@@ -38,7 +39,10 @@
     width: 200px;
 }
 .inputFile {
+    margin: 0 auto;
+    text-align: center;
     padding: 8px 10px;
+    scale: calc(0.8);
     font-size: 16px;
 }
 
@@ -47,7 +51,7 @@
     font-weight: 600;
     font-style: italic;
     margin-right: 20px;
-    width: 160px;
+    width: 120px;
     height: 36px;
     border-radius: 2rem;
     border: none;
@@ -70,16 +74,19 @@
 }
 
 .photoContainer {
+    text-align: center;
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
-    width: 100%;
-    margin-top: 10px;
-    justify-content: space-evenly;
+    margin: 10px auto;
+    justify-content: center;
+    align-items: center;
 
 }
 
 .photoArray {
+    text-align: center;
+    margin: 0 auto;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -164,5 +171,18 @@
     .photoLabel {
         font-size: 0.95rem;
     }
-
+    .photoWrapper {
+        padding: 20px;
+    }
+    .photoContainer {
+        margin-top: 10px;
+        justify-content: space-evenly;
+        scale: none;
+    }
+    .inputFile {
+        scale: none;
+    }
+    .inputFile::file-selector-button {
+        width: 160px;
+    }
 }

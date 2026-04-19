@@ -1,5 +1,5 @@
 .container {
-    margin: 0 auto;
+    margin: 0 auto 40px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -10,6 +10,7 @@
   margin: 80px auto 10px;
   display: flex;
   align-items:flex-start;
+     justify-content: center;
   gap: 6px;
   flex-wrap: wrap;
 }
@@ -25,7 +26,7 @@
     margin: 0;
     font-family: Sans,sans-serif;
     color:var(--title-color);
-    font-size: 14rem;
+    font-size: clamp(8rem, 20vw, 16rem);
     font-style: italic;
     font-weight: 700;
     position: relative;
@@ -41,7 +42,7 @@
     top: 70%;
     right:25%;
     transform: translateY(-50%);
-    font-size: 16rem;
+    font-size: clamp(10rem, 20vw, 16rem);
     font-weight: 500;
     z-index: 2;
     color: var(--title-primary-color);
@@ -130,11 +131,14 @@
     color: var(--color-white);
 }
 .stageWrapper {
-  display: flex;
-  justify-content: center;
-  border-radius: 20px;
-  overflow: hidden;
+    display: flex;
+    justify-content: center;
+    border-radius: 20px;
+    overflow: hidden;
+    touch-action: none;
 }
+
+
 .saveStatus,
 .hintMessage {
     display: flex;

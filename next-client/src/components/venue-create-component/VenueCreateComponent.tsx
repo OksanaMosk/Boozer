@@ -119,7 +119,7 @@ const VenueCreateComponent = () => {
             }
 
             setMessage("Photos uploaded successfully!");
-            router.push(`/venue-admin/venues/${newVenue.id}`);
+            router.push("/dashboard?tab=venues_control");
         } catch (err) {
             setMessage("Error uploading photos.");
         } finally {

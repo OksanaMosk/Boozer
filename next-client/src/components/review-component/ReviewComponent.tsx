@@ -46,15 +46,9 @@ export const ReviewComponent = ({review, onLike, onReport, isAdminView = false}:
             <div className={styles.top}>
                 <div className={styles.about}>
                     <div className={styles.text}>
+
                         <div className={styles.subTitle}>
                             {data.author_name || "Anonymous Guest"}
-                            {(data.status === "is_active" || data.status === "active") && (
-                                <div className={styles.statusWrapper}>
-                                    <span className={styles.statusDot} title="Online"/>
-                                    <span className={styles.statusPulse}/>
-                                </div>
-                            )}
-
                         </div>
                         <p className={styles.date}>
                                 Created
@@ -115,7 +109,7 @@ export const ReviewComponent = ({review, onLike, onReport, isAdminView = false}:
 
                                                 <button onClick={() => setShowReportForm(false)}
                                                         aria-label="Cancel report"
-                                                        className={styles.cancelReportBtn}>✕
+                                                        className={styles.cancelReportBtn}>Cansel
                                                 </button>
                                             </div>
                                         </div>

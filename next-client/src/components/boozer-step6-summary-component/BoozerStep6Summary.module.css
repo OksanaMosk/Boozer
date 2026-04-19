@@ -28,7 +28,7 @@
     padding: 0;
     margin: 0 ;
     color:var(--title-color);
-    font-size: clamp(6rem, 20vw, 12rem);
+    font-size: clamp(5.5rem, 20vw, 12rem);
     font-style: italic;
     font-weight: 700;
     position: relative;
@@ -111,15 +111,15 @@
     align-items: center;
     flex-direction: column;
     overflow: hidden;
-   height: clamp(300px, 45vw, 700px);
+    height: clamp(300px, 45vw, 700px);
     width: 70%;
     border: 1px solid var(--color-noposter);
-     box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
 }
 
 .billSide {
     width: 50%;
-    min-width: 400px;
+    min-width: 370px;
     background: var(--menu-color);
     border: 1px solid var(--color-noposter);
     border-radius: 24px;

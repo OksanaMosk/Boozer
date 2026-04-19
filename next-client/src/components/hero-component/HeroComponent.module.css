@@ -1,12 +1,11 @@
 .container {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100vw;
-    min-height: 100vh;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
     height: auto;
-  overflow: hidden;
-  background: black;
+    overflow: hidden;
+    background: black;
     z-index: 2;
 }
 
@@ -25,27 +24,29 @@
 
 .heroContent {
   position: absolute;
-  top: 50%;
+  top: 75%;
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 2;
   color: #fff;
   text-align: center;
   padding: 0 20px;
+    width: 100%;
 }
 
 .videoSoundToggle {
-  position: absolute;
-  top: 50vh;
-  right: 32px;
-  z-index: 3;
-  background: rgba(0, 0, 0, 0.5);
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  border-radius: 999px;
-  padding: 10px 18px;
-  cursor: pointer;
-  backdrop-filter: blur(6px);
+    font-size: clamp(0.4rem, 1vw, 0.7rem);
+    position: absolute;
+    top: 30%;
+    right: 32px;
+    z-index: 3;
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 999px;
+    padding: clamp(4px, 1vh, 10px) clamp(8px, 2vw, 18px);
+    cursor: pointer;
+    backdrop-filter: blur(6px);
 }
 .videoSoundToggle:hover{
      background: linear-gradient(90deg, #7a5c1e, #d4af37, #f5e6a1, #d4af37, #7a5c1e);
@@ -53,9 +54,9 @@
 }
 .fadeUp {
     font-family: var(--font-imperial), cursive;
-    font-size: 4rem;
-      letter-spacing: 0.1em;
-     background: linear-gradient(
+    font-size: clamp(2rem, 5vw + 1rem, 4rem);
+    letter-spacing: 0.1em;
+    background: linear-gradient(
     90deg,
     #7a5c1e,
     #d4af37,

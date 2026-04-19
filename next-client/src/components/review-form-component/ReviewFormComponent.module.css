@@ -49,23 +49,29 @@
     margin: 0 auto;
     padding: 0;
     text-align: center;
-    font-size: 2rem;
+    font-size: clamp(1.25rem, 3vw, 2rem);
     font-family: var(--font-imperial),serif;
     color: var(--logo-hover-color);
     letter-spacing: 4px;
 }
 .subRatings {
-    width: 50%;
+    display: flex;
+    flex-direction: column;
+    width: 85%;
+    justify-content: space-between;
+
  }
 .starsRating {
+    width: 100%;
     display: flex;
-    gap: 1.5rem;
+    gap: 1rem;
     justify-content: space-between;
     align-items: center;
+    scale: calc(0.8);
 }
 .starsLabel {
     color:var(--logo-hover-color) ;
-    font-size: 1.5rem;
+    font-size: clamp(0.7rem, 1.6vw, 1.5rem);
     letter-spacing: 4px;
     text-align: left;
     font-family: var(--font-imperial),serif;
@@ -173,4 +179,10 @@
     background: var(--title-color);
     color: var(--color-badgeId);
     border: none;
+}
+@media (min-width: 420px) {
+    .starsRating {
+        scale: none;
+    }
+
 }

@@ -3,11 +3,13 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    margin: 40px auto;
+    margin: 10px auto;
     gap: 20px;
     position: relative;
     padding-bottom: 40px;
-     height: 100%;
+    max-height: fit-content;
+    min-height: 100dvh;
+    height: auto;
 }
 
 .form {
@@ -18,10 +20,10 @@
     background-color: transparent;
     padding: 0 2.5rem 1rem 2.5rem;
     border-radius: 1.5rem;
-    width: 380px;
- backdrop-filter: blur(20px);
+    width: 340px;
+    backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-      box-shadow: 0 0 12px white;
+    box-shadow: 0 0 12px white;
     animation: float 6s ease-in-out infinite;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
@@ -227,4 +229,9 @@
 .linkRul {
     padding: 0;
     font-size: 12px;
+}
+@media (min-width: 420px) {
+    .form {
+        width: 380px;
+    }
 }

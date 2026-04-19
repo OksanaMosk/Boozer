@@ -162,6 +162,10 @@
 .stageWrapper {
     margin: 0 auto;
     padding: 0;
+    display: flex;
+    justify-content: center;
+    border-radius: 20px;
+    overflow: hidden;
 }
 
 .stage {

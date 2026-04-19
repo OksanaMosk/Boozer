@@ -13,6 +13,7 @@ from .filters import VenueFilter
 from .models import VenueModel, TagModel, TableModel, VenuePhotoModel, VenueTagModel, VenueTraffic
 from .serializers import VenueSerializer, TagSerializer, TableSerializer, VenuePhotoSerializer, VenueTagSerializer, \
     VenueOrdersStatsResponseSerializer, VenueTrafficSerializer
+from .services import venue_service
 from .services.geocode import geocode_city
 from .services.stats_service import update_venue_stats, handle_venue_update_profanity, get_venue_analytics, \
     get_venue_stats_for_user
@@ -115,6 +116,22 @@ class VenueViewSet(viewsets.ModelViewSet):
         venue = self.get_object()
         data = get_venue_stats_for_user(venue.id, request.user)
         return Response(data)
+
+    @action(detail=True, methods=['patch'], permission_classes=[IsAdmin])
+    def change_admin(self, request, pk=None):
+        venue = self.get_object()
+        new_venue_admin_id = request.data.get('new_admin_id')
+
+        if not new_venue_admin_id:
+            return Response({'detail': 'new_admin_id is required'}, status=400)
+
+        updated_venue = venue_service.change_venue_admin_service(venue, new_venue_admin_id)
+
+        return Response({
+            'status': 'success',
+            'venue': updated_venue.name,
+            'new_venue_admin': updated_venue.venue_admin.email
+        })
 
 class VenuePhotoViewSet(viewsets.ModelViewSet):
     queryset = VenuePhotoModel.objects.all()

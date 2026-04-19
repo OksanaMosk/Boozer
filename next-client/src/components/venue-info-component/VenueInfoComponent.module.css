@@ -78,19 +78,24 @@
 }
 
 .content {
+    padding: 20px;
+    width: 100%;
+    text-align: center;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8rem;
+    flex-wrap: wrap;
+    gap: 1rem;
     margin: 8rem 0;
 }
 
 .contentHero{
+    text-align: center;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: flex-start;
-    width: 25rem;
+    width: 100%;
 }
 
 
@@ -154,10 +159,13 @@
 }
 
 .contentNews {
-     display: flex;
+    width: 100%;
+    padding: 20px;
+    display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 8rem;
+    justify-content:center;
+    flex-wrap: wrap;
+    gap: 2rem;
     margin-bottom:  8rem;
 }
 
@@ -198,37 +206,43 @@
 }
 
 .venuePoster2{
+    text-align: center;
+    margin: 0 auto;
     width: 40rem;
+    max-width: 350px;
     height: 380px;
     object-fit: cover;
 }
 
-
 .footerContainer {
   display: flex;
   justify-content: space-between;
-  padding: 0 20px 0;
+  padding: 0;
   background-color: transparent;
 }
 .footerTitle{
+     font-size: clamp(0.5rem, 2.2vw, 1.2rem);
     color: var(--color-noposter);
 }
 .footerSection {
     flex-direction: column;
-
-  flex: 1;
-  padding: 0 20px;
+    width: 100vw;
+    flex: 1;
+    padding: 0;
 }
 .openList{
     text-align: left;
+    padding: 0;
 }
 .footerSection:not(:last-child) {
   border-right: 1px solid var(--input-color);
 }
 
 .footerSection p {
+    color: var(--color-text);
     padding: 0 20px;
-  margin: 4px 0;
+    margin: 4px 0;
+    font-size: clamp(0.5rem, 2.2vw, 1rem);
 }
 
 
@@ -253,14 +267,18 @@
 .footerSection {
   transition: transform 0.4s ease, box-shadow 0.4s ease;
 }
-
 .footerSection:hover {
   transform: translateY(-6px);
 }
 .open{
     display: flex;
     justify-content: center;
+    align-items: center;
+    padding: 0;
+    color: var(--color-text);
+    font-size: clamp(0.5rem, 2.2vw, 1rem);
 }
+
 
 .hidden {
     visibility: hidden;
@@ -292,4 +310,24 @@
 }
 .buttonChat:hover {
     border: 1px solid var(--input-color);
+}
+
+@media (min-width: 576px) {
+    .footerContainer {
+        padding: 0 20px;
+    }
+}
+@media (min-width: 796px) {
+    .content,
+    .contentNews {
+        justify-content: space-between;
+        flex-wrap: nowrap;
+        width: 80%;
+    }
+    .contentNews {
+        gap: 8rem;
+    }
+    .venuePoster2{
+        width: 400px;
+    }
 }

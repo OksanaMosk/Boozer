@@ -175,6 +175,7 @@ export const NewComponent = ({news, venueId, onDelete, onUpdate, isReadOnly = fa
 
             <div className={styles.bottomWrapper}>
                 <div className={styles.cardInfo}>
+                    <div className={styles.dates}>
                     {editMode ? (
                         <textarea
                             name="content"
@@ -185,8 +186,6 @@ export const NewComponent = ({news, venueId, onDelete, onUpdate, isReadOnly = fa
                     ) : (
                         <p className={styles.contentText}>{editNews.content}</p>
                     )}
-
-                    <div className={styles.dates}>
                         <p className={styles.date}>
                             <small>Created: {editNews.created_at ? new Date(editNews.created_at).toLocaleDateString() : "---"}</small>
                         </p>
@@ -201,8 +200,6 @@ export const NewComponent = ({news, venueId, onDelete, onUpdate, isReadOnly = fa
                 </div>
 
                 <div className={styles.bottom}>
-
-
                     {!isReadOnly && editMode && (
                         <div className={styles.photoWrapper}>
                             {coverMessage && <div className={styles.error}>{coverMessage}</div>}

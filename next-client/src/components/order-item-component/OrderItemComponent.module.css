@@ -1,11 +1,12 @@
 
 .receiptCard {
+    min-width: 300px;
     text-align: center;
     margin: 0 auto;
-    width: 40vw;
+    max-width: 40vw;
     background: var(--menu-color);
     border-radius: 30px;
-    padding: 40px;
+    padding: 20px;
     position: relative;
     overflow: hidden;
     border: 1px solid rgba(255, 255, 255, 0.25);
@@ -27,12 +28,14 @@
 .cardHeader {
     display: flex;
     justify-content: space-between;
+    flex-wrap: wrap;
     align-items: center;
     cursor: pointer;
     padding-bottom: 10px;
 }
 
 .headerInfo {
+     max-width: 30%;
     display: flex;
     flex-direction: column;
     gap: 5px;
@@ -49,13 +52,14 @@
     margin: 0;
     padding: 0;
     color: var(--logo-hover-color);
-    font-size: 1.5rem;
+    font-size: clamp(0.8rem, 2vw, 1.5rem);
 }
 .venueCity {
     text-align: left;
     margin: 0;
     padding: 0;
     color: var(--logo-hover-color);
+    font-size: clamp(0.8rem, 2vw, 1.5rem);
 }
 
 .headerStatus {
@@ -161,7 +165,7 @@
 }
 
 .totalAmount {
-    font-size: 34px;
+    font-size: clamp(1rem, 2vw, 2.125rem);
     font-weight: 900;
     color: var(--color-noposter);
     text-shadow: 0 0 25px rgba(212, 175, 55, 0.4);
@@ -188,9 +192,6 @@
     border-color:var(--color-noposter);
 }
 .cancelled {
-    /*background: rgba(255, 0, 0, 0.1);*/
-    /*color: #ff4444; */
-    /*border-color: #ff4444;*/
     color: var(--color-border);
     background: rgba(239, 68, 68, 0.1);
     border-color: rgba(239, 68, 68, 0.3);
@@ -416,4 +417,21 @@
 
 @keyframes shine {
     to { background-position: 200% center; }
+}
+
+@media (min-width: 576px) {
+    .receiptCard {
+        width: 40vw;
+    }
+}
+@media (min-width: 768px) {
+    .receiptCard {
+        padding: 40px;
+    }
+
+}
+@media (min-width: 992px) {
+  .headerInfo {
+        max-width: 50%;
+    }
 }

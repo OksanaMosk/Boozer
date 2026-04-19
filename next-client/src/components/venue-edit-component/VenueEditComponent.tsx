@@ -76,7 +76,7 @@ const VenueEditComponent = ({ venueId }: Props) => {
             );
 
             setMessage("Venue updated successfully!");
-            setTimeout(() => router.push("/dashboard"), 1000);
+            setTimeout(() => router.push("/dashboard?tab=venues_control"), 1000);
         } catch (err: any) {
             const serverError = err?.response?.data?.description || err?.response?.data?.detail || "Update failed";
             setError(Array.isArray(serverError) ? serverError[0] : serverError);

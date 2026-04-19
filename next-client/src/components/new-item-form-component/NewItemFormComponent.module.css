@@ -1,7 +1,7 @@
 
 .wrapper{
     margin: 0 auto 60px;
-    width: 50vw;
+    width: 90vw;
     display: flex;
     flex-direction: column;
     flex-wrap: wrap;
@@ -177,7 +177,9 @@
     background-color: transparent;
     box-sizing: border-box;
     height: 40px;
-}
+}.inputDate {
+    color: var(--logo-hover-color);
+ }
 
 .input:focus {
     background-color: rgba(255, 255, 255, 0.3);
@@ -194,9 +196,10 @@
     border-radius: 30px;
     border: none;
     background-color: var(--title-primary-color);
-    left: 47%;
+    left: 0;
     bottom: 40%;
     z-index: 1001;
+    scale: calc(0.7);
 }
 
 .errorMessage {
@@ -205,4 +208,16 @@
     width: 100%;
     color: var(--logo-hover-color);
     font-size: 0.8rem;
+}
+@media (min-width: 576px) {
+.calendarSidebar {
+    left: 47%;
+    bottom: 40%;
+}
+
+}
+@media (min-width: 796px) {
+    .wrapper {
+        width: 50vw;
+    }
 }

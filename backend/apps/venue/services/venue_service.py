@@ -2,6 +2,7 @@ from decimal import Decimal
 from django.db.models import Q, Exists, OuterRef
 from django.core.mail import send_mail
 from django.db.models.aggregates import Count
+from django.db import transaction
 from better_profanity import profanity
 from apps.orders.services.exchange_service import get_today_rates
 from django.utils import timezone
@@ -188,3 +189,17 @@ def get_venue_orders_statistics(venue):
             'payment_distribution': payment_dist
         }
     }
+
+
+def change_venue_admin_service(venue, new_venue_admin_id):
+    from django.contrib.auth import get_user_model
+    from django.shortcuts import get_object_or_404
+
+    User = get_user_model()
+    new_venue_admin = get_object_or_404(User, pk=new_venue_admin_id)
+
+    with transaction.atomic():
+        venue.venue_admin = new_venue_admin
+        venue.save(update_fields=['venue_admin'])
+
+    return venue

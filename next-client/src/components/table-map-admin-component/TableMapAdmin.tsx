@@ -79,7 +79,7 @@ const TableMapAdmin: React.FC<TableMapAdminProps> = ({venueId, token}) => {
         updateSize();
         window.addEventListener("resize", updateSize);
         return () => window.removeEventListener("resize", updateSize);
-    }, []);
+    }, [background]);
 
     useEffect(() => {
         const handleClick = () => setContextMenu(null);
@@ -280,7 +280,13 @@ const handleDragEnd = (updatedTable: ITable) => {
                         {tables.map(table => (
                             <Table
                                 key={`${venueId}-${table.id}`}
-                                table={{...table, x: table.x * stageSize.width, y: table.y * stageSize.height}}
+
+                                table={{
+                                    ...table, x: table.x * stageSize.width, y: table.y * stageSize.height,
+                                    width: Math.max(80, (table.width || 160) * (stageSize.width / 1000)),
+                                    height: Math.max(80, (table.height || 160) * (stageSize.width / 1000))
+
+                                }}
                                 draggable
                                 onDragEnd={handleDragEnd}
                                 onContextMenu={(e, tbl) => {
@@ -292,6 +298,7 @@ const handleDragEnd = (updatedTable: ITable) => {
                                         table: tbl,
                                     })
                                 }}
+
 
                             />
                         ))}

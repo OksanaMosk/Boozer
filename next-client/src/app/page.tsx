@@ -43,18 +43,18 @@ function HomePageContent() {
         >
             {message && (
                 <p
-  style={{
-    position: "fixed",
-      height: "100px",
-    top: 80,
-    left: "50%",
-    transform: "translateX(-50%)",
-    color: "white",
-    fontWeight: "bolder",
-    zIndex: 1100,
-      width: "100vw",
-  }}
->{message}</p>
+                    style={{
+                        position: "fixed",
+                        height: "100px",
+                        top: 80,
+                        left: "50%",
+                        transform: "translateX(-50%)",
+                        color: "white",
+                        fontWeight: "bolder",
+                        zIndex: 1100,
+                        width: "100vw",
+                    }}
+                >{message}</p>
             )}
             <div>
                 <HeroComponent/>

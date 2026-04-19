@@ -174,6 +174,16 @@ const VenueListingComponent: React.FC<Props> = ({ venue, onDelete, onStatusChang
                                     </Link>
                                 )}
                                 <button className={styles.deleteButton} onClick={handleDelete}>Delete</button>
+                                {isAdmin && (
+                                    <Link href={`/venues/${venue.id}/change-owner/`}>
+                                        <button
+                                            onClick={e => e.stopPropagation()}
+                                            className={styles.changeOwnerButton}
+                                        >
+                                            Change Owner
+                                        </button>
+                                    </Link>
+                                )}
 
                                 {message &&
                                     <p className={message.isError ? styles.error : styles.success}>{message.text}</p>}

@@ -11,7 +11,7 @@
 
 }
 .wrapperTitle {
-    width: 80%;
+    width: 100%;
     text-align: center;
     margin: 0 auto 60px;
     padding: 0;
@@ -26,7 +26,7 @@
     text-align: center;
     font-family: Sans,sans-serif;
     color:var(--title-color);
-    font-size: 12rem;
+    font-size: clamp(6rem, 20vw, 12rem);
     font-style: italic;
     font-weight: 800;
     position: relative;
@@ -41,8 +41,8 @@
     color:var(--title-color);
     position: absolute;
     top: 90%;
-    left:0;
-    font-size: 12rem;
+    left:10%;
+    font-size: clamp(6rem, 20vw, 12rem);
     transform: translateY(-50%);
     z-index: 2;
     text-shadow: 1px 1px 1px var(--title-primary-color);
@@ -54,7 +54,7 @@
     top: 30%;
     left:30%;
     transform: translateY(-50%);
-    font-size: 12rem;
+    font-size: clamp(6rem, 20vw, 12rem);
     font-weight: 500;
     z-index: 3;
     color: var(--title-primary-color);

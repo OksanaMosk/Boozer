@@ -4,22 +4,23 @@ import { GetUserVenuesResponse } from "@/models/IVenue";
 import { IUser } from "@/models/IUser";
 
 const userService = {
-  getAll: async (
-    filterCriteria: { role?: string; is_active?: boolean; ordering?: string },
-    token: { accessToken: string }
-  ): Promise<IUser[]> => {
-    const params = new URLSearchParams();
-    if (filterCriteria.role) params.append("role", filterCriteria.role);
-    if (filterCriteria.is_active !== undefined) params.append("is_active", String(filterCriteria.is_active));
-    if (filterCriteria.ordering) params.append("ordering", filterCriteria.ordering);
+    getAll: async (
+        filterCriteria: { role?: string; is_active?: boolean; ordering?: string, size?: number; },
+        token: { accessToken: string }
+    ): Promise<IUser[]> => {
+        const params = new URLSearchParams();
+        if (filterCriteria.role) params.append("role", filterCriteria.role);
+        if (filterCriteria.is_active !== undefined) params.append("is_active", String(filterCriteria.is_active));
+        if (filterCriteria.ordering) params.append("ordering", filterCriteria.ordering);
+        if (filterCriteria.size) params.append("size", String(filterCriteria.size));
 
-    try {
-      const response = await apiService(token.accessToken).get(`${urls.users.list}?${params.toString()}`);
-      return Array.isArray(response.data) ? response.data : response.data.data || [];
-    } catch (err: any) {
-      if (err.isUnauthorized) throw new Error("Please Sign In");
-      throw err;
-    }
+        try {
+            const response = await apiService(token.accessToken).get(`${urls.users.list}?${params.toString()}`);
+            return Array.isArray(response.data) ? response.data : response.data.data || [];
+        } catch (err: any) {
+            if (err.isUnauthorized) throw new Error("Please Sign In");
+            throw err;
+        }
   },
 
   toggleActive: async (userId: string, isActive: boolean, token: { accessToken: string }) => {

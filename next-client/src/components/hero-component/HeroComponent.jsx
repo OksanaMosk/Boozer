@@ -55,7 +55,7 @@ const HeroComponent = () => {
                 <source src="/videos/hero.webm" type="video/webm"/>
             </video>
 
-            <div className={styles.heroVideoOverlay}/>
+            {/*<div className={styles.heroVideoOverlay}/>*/}
             <div className={styles.heroContent}>
                 <p className={styles.fadeUp} style={{"--delay": ".15s"}}>
                     Premium Places

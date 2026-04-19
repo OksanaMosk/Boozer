@@ -284,15 +284,22 @@ const BoozerStep4TableSelectionComponent: React.FC<Props> = ({venueId, orderId, 
 
                             return (
                                 <Group key={tid}>
-                                    <Table table={{...table, x: tX, y: tY}} onClick={() => handleTableClick(table)}
+                                    <Table table={{...table,
+                                        x: tX, y: tY,
+                                    width: Math.max(80, (table.width || 160) * (stageSize.width / 1000)),
+                                    height: Math.max(80, (table.height || 160) * (stageSize.width / 1000))
+                                    }} onClick={() => handleTableClick(table)}
+                                            onTap={() => handleTableClick(table)}
                                            isSelected={isSelected}/>
                                     {isReserved && (
-                                        <Group x={tX + 45} y={tY + 65}>
+                                        // <Group x={tX + 45} y={tY + 65}>
+                                        <Group x={tX + 45 * (stageSize.width / 1000)}
+                                               y={tY + 65 * (stageSize.width / 1000)} scaleX={stageSize.width / 1000}
+                                               scaleY={stageSize.width / 1000}>
                                             <Rect
                                                 width={70}
                                                 height={22}
                                                 fill="#bf8282"
-
                                                 cornerRadius={12}
                                             />
                                             <Text text="RESERVED" fill="white" fontSize={10} padding={6}

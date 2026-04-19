@@ -6,7 +6,7 @@
     color: var(--logo-hover-color);
    font-family: var(--font-playfair),sans-serif;
     text-align: center;
-    width: 70vw;
+    width: 90vw;
     justify-content: center;
     align-items: center;
     gap: 60px;
@@ -66,7 +66,7 @@
     padding: 0;
     font-size: 1rem;
     text-align: left;
-  text-transform: capitalize;
+    text-transform: capitalize;
 }
 
 .value {
@@ -86,22 +86,23 @@
 }
 
 .formWrapper {
+    width: 100%;
     margin:  0 auto;
     text-align: center;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 1rem;
+    gap: 3rem;
 }
 
 .mainTitle {
-     font-family: var(--font-imperial), sans-serif;
+    font-family: var(--font-imperial), sans-serif;
     letter-spacing: 6px;
-  font-size: 5rem;
-  font-weight: 500;
-  color: var(--logo-hover-color);
-  text-align: center;
+    font-size: 5rem;
+    font-weight: 500;
+    color: var(--logo-hover-color);
+    text-align: center;
 }
 
 .editorBlock {
@@ -110,7 +111,7 @@
     align-items: center;
     flex-direction: column;
     background:var(--menu-color);
-    width: 380px;
+    width: 360px;
     padding: 2rem;
     border-radius: 1.5rem;
     background-color: transparent;

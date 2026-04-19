@@ -49,7 +49,7 @@
     top: 85%;
     right:-7%;
     transform: translateY(-50%);
-      font-size: clamp(10rem, 20vw, 16rem);
+    font-size: clamp(10rem, 20vw, 16rem);
     font-weight: 500;
     z-index: 2;
     color: var(--title-primary-color);

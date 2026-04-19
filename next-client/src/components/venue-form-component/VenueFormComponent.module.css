@@ -153,6 +153,7 @@
 }
 
 .submitButton {
+    margin: 40px auto 40px 20px;
     padding: 0;
     width: 160px;
     height: 45px;
@@ -267,36 +268,6 @@ display: flex;
     transform: scale(0.2);
 }
 
-@media (min-width: 768px) {
-    .wrapper {
-        /*max-width: 800px;*/
-    }
-
-    .select {
-        padding: 6px;
-        border: 1px solid var(--color-white);
-        font-size: 1rem;
-        border-radius: 2rem;
-        cursor: pointer;
-    }
-.select {
-    padding: 6px;
-    font-size: 1rem;
-}
-    .label,
-    .photoLabel {
-        font-size: 0.95rem;
-    }
-    .topSection {
-        width: 100%;
-        flex-direction: row;
-    }
-    .inputSection {
-        flex-direction: row;
-    }
-}
-
-
 .styleSelector {
   margin-bottom: 20px;
   display: flex;
@@ -408,4 +379,32 @@ display: flex;
 .select:disabled {
   opacity: 0.7;
   cursor: not-allowed;
+}
+.coordinatesWrapper{
+  display: flex;
+    flex-wrap: wrap;
+ }
+
+@media (min-width: 768px) {
+    .select {
+        padding: 6px;
+        border: 1px solid var(--color-white);
+        font-size: 1rem;
+        border-radius: 2rem;
+        cursor: pointer;
+    }
+    .label,
+    .photoLabel {
+        font-size: 0.95rem;
+    }
+    .topSection {
+        width: 100%;
+        flex-direction: row;
+    }
+    .inputSection {
+        flex-direction: row;
+    }
+     .coordinatesWrapper{
+    flex-wrap: nowrap;
+ }
 }

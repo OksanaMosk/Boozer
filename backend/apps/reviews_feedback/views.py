@@ -22,7 +22,11 @@ class ReviewImageViewSet(viewsets.ModelViewSet):
         return self.queryset.filter(review_id=self.kwargs['review_pk'])
 
     def perform_create(self, serializer):
-        review = get_object_or_404(ReviewModel, id=self.kwargs['review_pk'], user=self.request.user)
+        filter_kwargs = {'id': self.kwargs['review_pk']}
+        if not self.request.user.is_superuser:
+            filter_kwargs['user'] = self.request.user
+
+        review = get_object_or_404(ReviewModel, **filter_kwargs)
         serializer.save(review=review)
 
 class ReviewViewSet(viewsets.ModelViewSet):
