@@ -128,6 +128,7 @@ class TableBookingViewSet(viewsets.ModelViewSet):
         return [IsAdminOrVenueAdminOrReadOnly()]
 
     def get_queryset(self):
+        if self.request.user.is_anonymous: return self.queryset.none()
         venue_pk = self.kwargs.get('venue_pk')
         table_pk = self.kwargs.get('table_pk')
 

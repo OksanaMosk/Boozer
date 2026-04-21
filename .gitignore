@@ -34,3 +34,4 @@ out/
 dist/
 build/
 next-client/.env.local
+backend/static/

@@ -28,8 +28,11 @@ export const urls = {
     users: {
         list: `${paths.users}/`,
         active: (id: string) => `${paths.users}/${id}/active/`,
-        changeRole: (id: string) => `${paths.users}/change-role/${id}/`,
-        delete: (id: string) => `${paths.users}/${id}/delete/`,
+        // changeRole: (id: string) => `${paths.users}/change-role/${id}/`,
+        // delete: (id: string) => `${paths.users}/${id}/delete/`,
+        changeRole: (id: string) => `${paths.users}/${id}/change-role/`,
+        delete: (id: string) => `${paths.users}/${id}/`,
+
         reviews: (userId: string) => `${paths.users}/${userId}/reviews/`,
         updateProfile:(userId: string) => `${paths.users}/${userId}/profile/`,
         userVenues: (userId: string) => `${paths.users}/${userId}/venues/`,

@@ -182,7 +182,6 @@ const handleTextSubmit = async (e: React.SyntheticEvent) => {
                             className={styles.inputCreate}
                             defaultValue={formData.phone}
                         />
-                        {phoneError && <p className={styles.errorMessage}>{phoneError}</p>}
                         {(phoneServerError || phoneError) && (
                             <p className={styles.errorMessage}>{phoneServerError || phoneError}</p>
                         )}

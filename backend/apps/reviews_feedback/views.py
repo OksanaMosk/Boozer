@@ -19,7 +19,9 @@ class ReviewImageViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     def get_queryset(self):
-        return self.queryset.filter(review_id=self.kwargs['review_pk'])
+        # return self.queryset.filter(review_id=self.kwargs['review_pk'])
+
+        return self.queryset.filter(review_id=self.kwargs.get('review_pk'))
 
     def perform_create(self, serializer):
         filter_kwargs = {'id': self.kwargs['review_pk']}
@@ -91,6 +93,9 @@ class FavoriteCollectionViewSet(viewsets.ModelViewSet):
     pagination_class = None
 
     def get_queryset(self):
+        if self.request.user.is_anonymous:
+            return self.serializer_class.Meta.model.objects.none()
+
         return FavoriteCollectionService.get_collections_for_user(
             user=self.request.user,
             action=self.action
@@ -156,8 +161,11 @@ class FavoriteVenueViewSet(viewsets.ModelViewSet):
     pagination_class = None
 
     def get_queryset(self):
+        if self.request.user.is_anonymous: return FavoriteVenue.objects.none()
+
         queryset = FavoriteVenue.objects.filter(user=self.request.user)
         venue_id = self.kwargs.get('venue_pk')
+
         if venue_id:
             queryset = queryset.filter(venue_id=venue_id)
         return queryset

@@ -31,6 +31,9 @@ The project includes a pre-configured Postman collection and environment to help
 "key": "adminToken",
  "value": "".
 
+Swagger.
+python manage.py collectstatic.
+
 🎊VIP Boozer is a modern platform for discovering venues, booking tables, planning events, and creating personalized “Boozer” orders with additional services like transfers, hotels, decor, and more. Core Features.
 
 👤 Authentication. Email registration (with activation link). Login via: Google Facebook. Only authenticated users can: Create orders, View real prices, Requirements: Provide date of birth, Confirm legal age, Accept platform rules.

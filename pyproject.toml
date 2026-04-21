@@ -29,6 +29,7 @@ django-storages = "^1.14.6"
 boto3 = "^1.42.57"
 googlemaps = "^4.10.0"
 better-profanity = "^0.7.0"
+drf-yasg = "==1.21.15"
 
 [tool.poetry.dev-dependencies]
 isort = ">=7.0.0,<8.0.0"

@@ -20,12 +20,22 @@ class TravelLogisticsViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAdminOrVenueAdminOrReadOnly]
     serializer_class = TravelLogisticsSerializer
 
+    # def get_queryset(self):
+    #     """
+    #     Filter travel steps specifically for the venue ID provided in the URL.
+    #     'venue_pk' is passed automatically by the nested router.
+    #     """
+    #     return TravelLogisticsModel.objects.filter(venue_id=self.kwargs['venue_pk'])
+
     def get_queryset(self):
         """
         Filter travel steps specifically for the venue ID provided in the URL.
         'venue_pk' is passed automatically by the nested router.
         """
-        return TravelLogisticsModel.objects.filter(venue_id=self.kwargs['venue_pk'])
+        venue_pk = self.kwargs.get('venue_pk')
+        return TravelLogisticsModel.objects.filter(venue_id=venue_pk) if venue_pk else TravelLogisticsModel.objects.none()
+
+
 
     def perform_create(self, serializer):
         """

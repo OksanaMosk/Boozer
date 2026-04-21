@@ -2,23 +2,20 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404
 from rest_framework import filters, status, viewsets
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateAPIView, DestroyAPIView, GenericAPIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
-from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import ValidationError, PermissionDenied
+
 from apps.user.models import ProfileModel
 from apps.reviews_feedback.models import ReviewModel, FavoriteVenue
 from apps.reviews_feedback.serializers import ReviewSerializer, FavoriteVenueSerializer
 from apps.user.permissions import IsAdmin
+from rest_framework.decorators import action
 
 from apps.user.serializers import (
     ProfileSerializer,
-    UserSerializer,
-    UserUpdateSerializer,
-    UserActiveSerializer,
-    UserRoleUpdateSerializer,
+    UserSerializer
 )
 from apps.user.services.profile_service import validate_social_auth_profile, get_profile_target_user
 from apps.user.services.user_service import UserService
@@ -40,73 +37,7 @@ class UserUpdateMixin:
         serializer.save()
         return Response(serializer.data)
 
-class UserListCreateAPIView(ListCreateAPIView):
-    queryset = UserModel.objects.all()
-    serializer_class = UserSerializer
-    filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
-    filterset_fields = ['role', 'is_active']
-    ordering_fields = ['id', 'email', 'role', 'is_active']
-    ordering = ['id']
 
-    def get_permissions(self):
-        if self.request.method == 'POST':
-            return [AllowAny()]
-        return [IsAuthenticated(), IsAdmin()]
-
-
-class UpdateUserActiveAPIView(RetrieveUpdateAPIView):
-    queryset = UserModel.objects.all()
-    serializer_class = UserActiveSerializer
-    permission_classes = [IsAdmin]
-    lookup_field = 'pk'
-
-    def patch(self, request, *args, **kwargs):
-        user = self.get_object()
-        serializer = self.get_serializer(user, data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
-
-        if user == request.user and serializer.validated_data.get('is_active') is False:
-            raise ValidationError({'detail': 'You cannot block yourself.'})
-
-        user = UserService.toggle_user_active_status(user, serializer.validated_data['is_active'])
-        return Response(UserActiveSerializer(user).data)
-
-
-class UpdateUserRoleAPIView(GenericAPIView):
-    serializer_class = UserRoleUpdateSerializer
-    permission_classes = [IsAuthenticated, IsAdmin]
-
-    def patch(self, request, user_id):
-        user = get_object_or_404(UserModel, pk=user_id)
-
-        serializer = self.get_serializer(user, data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
-
-        if user == request.user and serializer.validated_data.get('role') != 'admin':
-            raise ValidationError({'detail': 'You cannot demote yourself from admin role.'})
-        user = UserService.change_user_role(request.user, user_id, serializer.validated_data['role'])
-        return Response(UserSerializer(user).data)
-
-
-class UpdateUserAPIView(RetrieveUpdateAPIView, UserUpdateMixin):
-    queryset = UserModel.objects.all()
-    serializer_class = UserUpdateSerializer
-    permission_classes = [IsAuthenticated, IsAdmin]
-    lookup_field = 'pk'
-
-    def patch(self, request, *args, **kwargs):
-        return self.update_instance(request, self.get_object())
-
-
-class DeleteUserAPIView(DestroyAPIView):
-    queryset = UserModel.objects.all()
-    permission_classes = [IsAdmin]
-    lookup_field = 'pk'
-
-    def perform_destroy(self, instance):
-        if instance == self.request.user:
-            raise ValidationError({'detail': 'You cannot delete yourself.'})
-        instance.delete()
 
 class ProfileViewSet(viewsets.ModelViewSet):
     serializer_class = ProfileSerializer
@@ -118,6 +49,9 @@ class ProfileViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
+
+        if user.is_anonymous: return ProfileModel.objects.none()
+
         if user.is_staff or user.is_superuser:
             target_user_pk = self.kwargs.get('pk')
             if target_user_pk:
@@ -168,6 +102,40 @@ class UserViewSet(viewsets.ModelViewSet):
     ordering_fields = ['id', 'email', 'role', 'is_active']
     search_fields = ['email']
 
+    @action(detail=True, methods=['patch'], url_path='active')
+    def active(self, request, pk=None):
+        user = self.get_object()
+
+        if user == request.user and request.data.get('is_active') is False:
+            raise ValidationError({'detail': 'You cannot block yourself.'})
+
+        UserService.toggle_user_active_status(user, request.data.get('is_active'))
+        return Response({'status': 'active updated'})
+
+    @action(detail=True, methods=['patch'], url_path='change-role')
+    def change_role(self, request, pk=None):
+        user = self.get_object()
+
+        if user == request.user and request.data.get('role') != UserModel.Role.ADMIN:
+            raise ValidationError({'detail': 'You cannot demote yourself from admin role.'})
+
+        UserService.change_user_role(
+            requesting_user=self.request.user,
+            target_user_id=pk,
+            new_role=request.data.get('role')
+        )
+        return Response({'status': 'role updated'})
+
+    def perform_destroy(self, instance):
+        if instance == self.request.user:
+            raise ValidationError({'detail': 'You cannot delete yourself.'})
+        instance.delete()
+
+    def get_permissions(self):
+        if self.action == 'create':
+            return [AllowAny()]
+        return [IsAdmin()]
+
     def reviews(self, request, user_pk=None):
         user = get_object_or_404(UserModel, pk=user_pk)
         queryset = ReviewModel.objects.filter(user=user)
@@ -179,4 +147,3 @@ class UserViewSet(viewsets.ModelViewSet):
         queryset = FavoriteVenue.objects.filter(user=user)
         serializer = FavoriteVenueSerializer(queryset, many=True)
         return Response(serializer.data)
-

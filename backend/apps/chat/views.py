@@ -9,5 +9,7 @@ class ChatRoomViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
+        if self.request.user.is_anonymous:
+            return self.serializer_class.Meta.model.objects.none()
         return ChatRoomService.get_user_rooms(self.request.user)
 
