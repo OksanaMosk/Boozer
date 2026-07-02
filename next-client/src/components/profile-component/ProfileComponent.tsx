@@ -49,8 +49,10 @@ const getPhotoUrl = (avatarUrl?: string | null) => {
     if (!avatarUrl || avatarUrl === "EMPTY") return "/default-avatar.png";
     if (avatarUrl.startsWith("http")) return avatarUrl;
     const cleanPath = avatarUrl.replace(/^\//, "");
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+    const baseDomain = apiUrl ? apiUrl.replace(/\/api$/, '') : 'http://localhost:8888';
+    return `${baseDomain}/${cleanPath}?t=${Date.now()}`;
 
-    return `http://localhost:8888/${cleanPath}?t=${Date.now()}`;
 };
 
     return (

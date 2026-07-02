@@ -38,7 +38,9 @@ export const UserInfoComponent = ({onLogoutAction, classNames = {}}: UserInfoPro
         if (!avatarUrl || avatarUrl === "" || avatarUrl === "EMPTY") return null;
         if (avatarUrl.startsWith("http")) return avatarUrl;
         const cleanPath = avatarUrl.replace(/^\/?(api\/media\/)?/, "");
-        return `http://localhost:8888/api/media/${cleanPath}?t=${Date.now()}`;
+        const baseMediaUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8888/api";
+        return `${baseMediaUrl}/media/${cleanPath}?t=${Date.now()}`;
+
     };
 
     const photoUrl = getPhotoUrl(user.profile?.avatar);

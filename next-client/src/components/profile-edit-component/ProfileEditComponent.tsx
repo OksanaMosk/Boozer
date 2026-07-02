@@ -119,7 +119,9 @@ const handleTextSubmit = async (e: React.SyntheticEvent) => {
         if (!formData.avatar || formData.avatar === "EMPTY") return "";
         if (formData.avatar.startsWith("http")) return formData.avatar;
         const cleanPath = formData.avatar.replace(/^\/?(api\/media\/)?/, "");
-        return `http://localhost:8888/api/media/${cleanPath}?t=${Date.now()}`;
+        const baseMediaUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8888/api";
+        return `${baseMediaUrl}/media/${cleanPath}?t=${Date.now()}`;
+
     };
 
     if (!user) return <LoaderComponent />;

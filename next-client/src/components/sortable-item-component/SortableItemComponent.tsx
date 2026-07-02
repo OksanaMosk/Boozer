@@ -20,7 +20,8 @@ const SortableMenuItem = ({item, onDelete, isOverlay}: MenuItemProps) => {
     const getPhotoUrl = (preview?: string | null, photo_menu_item?: string) => {
         const photo = preview || photo_menu_item;
         if (!photo) return "/images/noPosterMenu.webp";
-        return photo.startsWith("http") ? photo : `http://localhost:8888${photo}`;
+        const domain = process.env.NEXT_PUBLIC_API_URL?.replace(/\/api$/, '') || 'http://localhost:8888';
+        return photo.startsWith("http") ? photo : `${domain}${photo}`;
     };
 
     const photoUrl = getPhotoUrl(item.preview, item.photo_menu_item);

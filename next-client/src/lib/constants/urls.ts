@@ -140,11 +140,12 @@ export const urls = {
         detail: (id: string | number) => `${paths.reviews}/favorites/${id}/`,
         candidates: `${paths.reviews}/favorites/candidates/`,
     },
-     chat: {
+    chat: {
         rooms: `${paths.chat}/`,
         socket: (roomName: string, token: string) =>
-            `ws://localhost:8888/ws/chat/${roomName}?token=${token}`,
+            `${typeof window !== "undefined" && window.location.protocol === "https:" ? "wss://vipboozer.duckdns.org" : "ws://localhost:8888"}/ws/chat/${roomName}?token=${token}`,
     },
+
     constants: {
         constantsList: `${paths.constants}/`
 },

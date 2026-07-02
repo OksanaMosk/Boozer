@@ -9,7 +9,10 @@ const ActivateAccount = () => {
     const {token} = useParams();
     useEffect(() => {
         if (token) {
-            const activationUrl = `http://localhost:8888/api/auth/activate/${token}/`;
+	    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+            const activationUrl = `${apiUrl}/auth/activate/${token}/`;
+
+
             fetch(activationUrl, {
                 method: "PATCH",
                 headers: {
@@ -23,7 +26,7 @@ const ActivateAccount = () => {
                     return response.json();
                 })
                 .then((data) => {
-                    if (data.detail === "Account activated successfully!") {
+                    if (data && (data.id || data.email || data.status === 'info')) {
                         setIsActivated(true);
                     } else {
                         setError("Failed to activate account");

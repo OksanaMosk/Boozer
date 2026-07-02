@@ -19,10 +19,13 @@ const SortableVenueItemComponent = ({item, position, showIndex, isOverlay, onDel
     const id = venue.id || "Unknown Venue";
     const city = venue.city || "";
     const country = venue.country || "";
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
     const rawPhoto = venue.main_photo || item.venue_main_photo;
+    const baseMediaUrl = apiUrl && apiUrl.endsWith('/api') ? apiUrl : 'http://localhost:8888/api';
+
     const photoUrl = rawPhoto
-        ? (rawPhoto.startsWith('http') ? rawPhoto : `http://localhost:8888/api/media/${rawPhoto}`)
-        : "/images/noVenue.webp";
+    ? (rawPhoto.startsWith('http') ? rawPhoto : `${baseMediaUrl}/media/${rawPhoto}`)
+    : "/images/noVenue.webp";
     const totalVotes = venue.total_votes || 0;
 
     const {

@@ -102,7 +102,10 @@ const VenueListingComponent: React.FC<Props> = ({ venue, onDelete, onStatusChang
     const photoUrl = useMemo(() => {
         const photo = venue.photos?.find(p => p.is_main)?.photo || venue.photos?.[0]?.photo;
         if (!photo) return '/images/noPosterVenue.webp';
-        return photo.startsWith('http') ? photo : `http://localhost:8888${photo}`;
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+        const baseDomain = apiUrl ? apiUrl.replace(/\/api$/, '') : 'http://localhost:8888';
+        return photo.startsWith('http') ? photo : `${baseDomain}${photo}`;
+
     }, [venue.photos]);
 
     return (

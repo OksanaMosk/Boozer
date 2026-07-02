@@ -11,7 +11,7 @@ import { ITable } from "@/models/IVenue";
 import Table from "./Table";
 import styles from "./TableMapAdmin.module.css";
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:8888";
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://vipboozer.duckdns.org/";
 
 const TABLE_TYPES = [
     {capacity: 2},
